@@ -2,14 +2,12 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import registerNNPushToken from 'native-notify';
 
-// Mock the function outside the component scope
 jest.mock('native-notify', () => ({
-  registerNNPushToken: jest.fn(), // Create a mock function
+  registerNNPushToken: jest.fn(),
 }));
 
-export default function App() {
-  registerNNPushToken(18122, 'dVHwMdzg6cW9cdVqiIDmM7');
 
+export default function App() {
   return (
     <View style={styles.container}>
       <Text>Open up App.js to start working on your app!</Text>
@@ -26,4 +24,3 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-
