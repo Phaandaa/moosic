@@ -1,0 +1,25 @@
+name: React Native Tests
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Add any setup steps specific to your Java backend here, if needed.
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install React Native CLI
+        run: npm install -g react-native-cli
+
+      - name: Run Jest tests
+        run: npx react-native test
