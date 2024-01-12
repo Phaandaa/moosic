@@ -13,11 +13,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install dependencies and Jest
-        run: |
-          cd mobile-client
-          npm install
-          npm install --save-dev jest
+      # - name: Install dependencies and Jest
+      #   run: |
+      #     cd mobile-client
+      #     npm install
+      #     npm install --save-dev jest
 
       - name: Run Jest tests
         run: |
