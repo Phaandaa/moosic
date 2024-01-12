@@ -13,9 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Change to mobile-client directory
-        run: cd mobile-client
-
       - name: Install dependencies and Jest
         directory: mobile-client
         run: |
