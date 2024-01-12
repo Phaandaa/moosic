@@ -13,13 +13,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Add any setup steps specific to your Java backend here, if needed.
+      - name: Change to mobile-client directory
+        run: cd mobile-client
 
       # - name: Install dependencies
       #   run: npm install
 
-      # - name: Install React Native CLI
-      #   run: npm install -g react-native-cli
-
       - name: Run Jest tests
-        run: npx react-native test
+        run: npm run test
