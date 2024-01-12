@@ -15,11 +15,11 @@ jobs:
 
       # Add any setup steps specific to your Java backend here, if needed.
 
-      - name: Install dependencies
-        run: npm install
+      # - name: Install dependencies
+      #   run: npm install
 
-      - name: Install React Native CLI
-        run: npm install -g react-native-cli
+      # - name: Install React Native CLI
+      #   run: npm install -g react-native-cli
 
       - name: Run Jest tests
         run: npx react-native test
