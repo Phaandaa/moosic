@@ -3,9 +3,6 @@
 # dependencies
 node_modules/
 
-# Ignore coverage reports
-coverage/
-
 # Expo
 .expo/
 dist/
