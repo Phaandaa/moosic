@@ -17,7 +17,9 @@ jobs:
         run: cd mobile-client
 
       - name: Install dependencies and Jest
+        directory: mobile-client
         run: |
+
           npm install
           npm install --save-dev jest
 
