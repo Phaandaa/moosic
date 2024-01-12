@@ -1,4 +1,4 @@
-name: React Native CI with Java and Multi-Platform
+name: React Native CI with Jest Testing
 
 on:
   push:
@@ -13,48 +13,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          java-version: 11  # Adjust to your required Java version
-          distribution: 'adopt'
-          cache: gradle
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-
-      - name: Install dependencies
-        working-directory: client  # Target the shared client directory
-        run: npm ci
-
       - name: Run tests (client)
         working-directory: client
         run: npm run test
 
   test-mobile-client:
-    needs: test-client  # Depend on client tests passing
+    needs: test-client
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
-
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          java-version: 11
-          distribution: 'adopt'
-          cache: gradle
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-
-      - name: Install mobile-client dependencies
-        working-directory: mobile-client
-        run: npm ci
 
       - name: Run tests (mobile-client)
         working-directory: mobile-client
