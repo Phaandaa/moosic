@@ -1,31 +1,25 @@
-name: React Native CI with Jest Testing
+name: React Native Tests
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  test-client:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Run tests (client)
-        working-directory: mobile-client
+      - name: Change to mobile-client directory
+        run: cd mobile-client
+
+      - name: Install dependencies and Jest
+        run: |
+          npm install
+          npm install --save-dev jest
+
+      - name: Run Jest tests
         run: npm run test
-
-  test-mobile-client:
-    needs: test-client
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Run tests (mobile-client)
-        working-directory: mobile-client
-        run: npm run test  # Adapt if needed
-
-  # Additional jobs for web-client, server, and deployment
