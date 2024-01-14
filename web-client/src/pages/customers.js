@@ -10,6 +10,7 @@ import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { CustomersTable } from 'src/sections/customer/customers-table';
 import { CustomersSearch } from 'src/sections/customer/customers-search';
 import { applyPagination } from 'src/utils/apply-pagination';
+import CustomersModal from 'src/sections/customer/customers-modal';
 
 const now = new Date();
 
@@ -195,6 +196,13 @@ const Page = () => {
     []
   );
 
+  const handleAdd = useCallback(
+    () => {
+      alert('Add');
+    },
+    []
+  );
+
   return (
     <>
       <Head>
@@ -248,16 +256,7 @@ const Page = () => {
                 </Stack>
               </Stack>
               <div>
-                <Button
-                  startIcon={(
-                    <SvgIcon fontSize="small">
-                      <PlusIcon />
-                    </SvgIcon>
-                  )}
-                  variant="contained"
-                >
-                  Add
-                </Button>
+                <CustomersModal />
               </div>
             </Stack>
             <CustomersSearch />
