@@ -16,6 +16,8 @@ import {
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
+import CustomersEditModal from './customers-edit-modal';
+
 
 export const CustomersTable = (props) => {
   const {
@@ -70,6 +72,9 @@ export const CustomersTable = (props) => {
                 <TableCell>
                   Signed Up
                 </TableCell>
+                <TableCell>
+                  Actions
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -120,6 +125,9 @@ export const CustomersTable = (props) => {
                     </TableCell>
                     <TableCell>
                       {createdAt}
+                    </TableCell>
+                    <TableCell>
+                      <CustomersEditModal customer={customer} />
                     </TableCell>
                   </TableRow>
                 );
