@@ -2,7 +2,7 @@
 import React from 'react';
 import { View, Text, TextInput, Button } from 'react-native';
 
-const Login = ({ navigation }) => {
+const LoginPage = ({ navigation }) => {
   // Your login component code here
   return (
     <View>
@@ -14,4 +14,4 @@ const Login = ({ navigation }) => {
   );
 };
 
-export default Login;
+export default LoginPage;
