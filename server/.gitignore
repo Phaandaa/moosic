@@ -36,4 +36,4 @@ build/
 *.application.properties
 
 ### Firebase Key ###
-*.serviceAccountKey.json
+*serviceAccountKey.json
