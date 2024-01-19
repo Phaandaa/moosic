@@ -22,9 +22,9 @@ import com.example.server.service.UserService;
 @RequestMapping("/users")
 public class UserController {
     
-    public UserService userService;
-
     @Autowired
+    public UserService userService;
+    
     public UserController(UserService userService) {
         this.userService = userService;
     }

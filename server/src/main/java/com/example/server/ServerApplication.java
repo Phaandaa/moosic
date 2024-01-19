@@ -21,6 +21,7 @@ public class ServerApplication {
 			FirebaseOptions options = FirebaseOptions.builder()
 					.setCredentials(GoogleCredentials.fromStream(serviceAccount))
 					.build();
+			System.out.println("ServiceAccountKey.json file located and opened successfully.");
 			if (FirebaseApp.getApps().isEmpty()) {
 				FirebaseApp.initializeApp(options);
 			}
@@ -28,6 +29,7 @@ public class ServerApplication {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+			System.exit(1);
 		}
 
 		SpringApplication.run(ServerApplication.class, args);
