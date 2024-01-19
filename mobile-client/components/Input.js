@@ -1,5 +1,6 @@
 import { Text, TextInput, View, StyleSheet } from 'react-native';
 import Colors from '../constants/colors';
+import AnimatedPlaceholderInput from './ui/animateTextInput';
 function Input({label, textInputConfig}){
     return (
     <View style={styles.inputContainer}>
@@ -25,6 +26,10 @@ const styles = StyleSheet.create({
         color: Colors.primary700,
         padding: 6,
         borderRadius: 6,
-        fontSize: 18
+        fontSize: 18,
+    //     height: 40,
+    // borderColor: 'gray',
+    // borderWidth: 1,
+    // marginBottom: 20,
     }
 })

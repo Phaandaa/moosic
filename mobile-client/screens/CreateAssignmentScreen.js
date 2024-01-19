@@ -1,16 +1,33 @@
 import {useState} from 'react';
-import {View, Text, TextInput, StyleSheet} from 'react-native';
-import InstructionText from '../components/ui/InstructionText';
-import Input from '../components/Input';
+import { View } from 'react-native';
+import theme from './styles/theme';
+import AnimatedPlaceholderInput from '../components/ui/animateTextInput';
 
 function CreateAssignmentScreen({  }){
-    // const [assignmentName, setAssignmentName] = useState('');
-    // const [assignmentDesc, setAssignmentDesc] = useState('');
-    function assignmentNameChangedHandler(){}
-
+    // function assignmentNameChangedHandler(){}
     return (
-        <View>
-            <Input label="Assignment Name" textInputConfig={{
+        <View style={theme.container}>
+            <AnimatedPlaceholderInput 
+                placeholder="Assignment Name" 
+                secureTextEntry={false} 
+                textInputConfig={{autoCapitalize: 'words'}}>
+            </AnimatedPlaceholderInput>
+
+            <AnimatedPlaceholderInput 
+                placeholder="Description" 
+                secureTextEntry={false} 
+                textInputConfig={{multiline: true}}>
+            </AnimatedPlaceholderInput>
+
+            <AnimatedPlaceholderInput 
+                placeholder="Deadline (DD-MM-YYYY)" 
+                secureTextEntry={false} 
+                textInputConfig={{ 
+                    maxLength: 10
+                }}>
+            </AnimatedPlaceholderInput>
+            
+            {/* <Input label="Assignment Name" textInputConfig={{
                 // keyboardType: 'decimal-pad',
                 autoCapitalize: 'words',
                 onChangeText:assignmentNameChangedHandler,
@@ -23,40 +40,17 @@ function CreateAssignmentScreen({  }){
                 placeholder: 'DD-MM-YYYY',
                 maxLength: 10,
                 onChangeText: () => {}
-            }}/>
+            }}/> */}
         </View>
-        // <View style={styles.container}>
-        //     <Text>Create Assignment</Text>
-        //     <InstructionText>Assignment Name:</InstructionText>
-        //     <TextInput
-        //         // placeholder="Assignment Name"
-        //         value={assignmentName}
-        //         onChangeText={setAssignmentName}
-        //     />
-        //     <InstructionText>Description:</InstructionText>
-        //     <TextInput
-        //         // placeholder="Description"
-        //         value={assignmentDesc}
-        //         onChangeText={setAssignmentDesc}
-        //     />
-        //     <InstructionText>Assignment Deadline:</InstructionText>
-        //     <TextInput
-        //         // placeholder="Deadline"
-        //         value={assignmentDeadline}
-        //         onChangeText={setAssignmentDeadline}
-        //     />
-
-        //     // attach files from Google Drive or own device
-        //     // assign students to assignment
-        // </View>
+        
     )
 };
 export default CreateAssignmentScreen;
 
-const styles = StyleSheet.create({
-    container:{
-        flex: 1,
-        marginTop: 100,
-        alignItems: 'center',
-    }
-})
+// const styles = StyleSheet.create({
+//     container:{
+//         flex: 1,
+//         marginTop: 100,
+//         alignItems: 'center',
+//     }
+// })

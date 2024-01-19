@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, TextInput, StyleSheet, Animated } from 'react-native';
 
-const AnimatedPlaceholderInput = ({ placeholder, secureTextEntry }) => {
+const AnimatedPlaceholderInput = ({ placeholder, secureTextEntry, textInputConfig }) => {
   const [inputText, setInputText] = useState('');
   const animatedValue = new Animated.Value(0);
 
@@ -42,6 +42,7 @@ const AnimatedPlaceholderInput = ({ placeholder, secureTextEntry }) => {
         onFocus={handleFocus}
         onBlur={handleBlur}
         secureTextEntry={secureTextEntry}
+        {...textInputConfig}
       />
     </View>
   );
