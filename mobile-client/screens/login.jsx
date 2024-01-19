@@ -1,13 +1,16 @@
 // Login.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import theme from './styles/theme';
-import Box from './styles/box';
 import AnimatedPlaceholderInput from '../components/ui/animateTextInput';
+import * as SplashScreen from 'expo-splash-screen';
 
 const LoginPage = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  // Load fonts
+ 
 
   const handleLogin = () => {
     // Add your login logic here
@@ -18,20 +21,31 @@ const LoginPage = ({ navigation }) => {
     navigation.navigate('HomeScreen');
   };
 
+  
+
+  // Fonts are loaded, render the LoginPage
   return (
     <View style={theme.container}>
-      <AnimatedPlaceholderInput placeholder="Email" secureTextEntry={false}/>
-      <AnimatedPlaceholderInput placeholder="Password"secureTextEntry={true}/>
-        
-        <TouchableOpacity style={theme.button} onPress={handleLogin}>
-          <Text style={theme.buttonText}>Log In</Text>
-        </TouchableOpacity>
-      
-      
+      <AnimatedPlaceholderInput
+        style={theme.input}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        secureTextEntry={false}
+      />
+      <AnimatedPlaceholderInput
+        style={theme.input}
+        placeholder="Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry={true}
+      />
+
+      <TouchableOpacity style={theme.button} onPress={handleLogin}>
+        <Text style={theme.buttonText}>Login</Text>
+      </TouchableOpacity>
     </View>
   );
 };
-
-
 
 export default LoginPage;
