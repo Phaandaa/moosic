@@ -1,9 +1,12 @@
 // Login.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import theme from './styles/theme';
+import Box from './styles/box';
+import AnimatedPlaceholderInput from '../components/ui/animateTextInput';
 
 const LoginPage = ({ navigation }) => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
@@ -16,22 +19,19 @@ const LoginPage = ({ navigation }) => {
   };
 
   return (
-    <View>
-      <Text>Login Page</Text>
-      <TextInput
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <TextInput
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-      <Button title="Login" onPress={handleLogin} />
+    <View style={theme.container}>
+      <AnimatedPlaceholderInput placeholder="Email" secureTextEntry={false}/>
+      <AnimatedPlaceholderInput placeholder="Password"secureTextEntry={true}/>
+        
+        <TouchableOpacity style={theme.button} onPress={handleLogin}>
+          <Text style={theme.buttonText}>Log In</Text>
+        </TouchableOpacity>
+      
+      
     </View>
   );
 };
+
+
 
 export default LoginPage;
