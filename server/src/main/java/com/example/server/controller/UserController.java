@@ -1,10 +1,10 @@
 package com.example.server.controller;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,24 +19,21 @@ import com.example.server.service.UserService;
 // TODO: make return into Response Entity and add status codes
 
 @RestController
+@CrossOrigin
 @RequestMapping("/users")
 public class UserController {
     
     @Autowired
     public UserService userService;
-    
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createUser(@RequestBody User user) throws InterruptedException, ExecutionException {
-        return ResponseEntity.ok(userService.createUser());
+    public ResponseEntity<User> createUser(@RequestBody User user){
+        return ResponseEntity.ok(userService.createUser(user));
     }
 
     // get all users
     @GetMapping()
-    public ResponseEntity<List<User>> getAllUsers() throws InterruptedException, ExecutionException {
+    public ResponseEntity<List<User>> getAllUsers(){
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
@@ -47,14 +44,15 @@ public class UserController {
     // get students under a certain teacher
 
     // get user by id user_id
-    @GetMapping("/{user_id}")
-    public ResponseEntity<User> getUserById(@PathVariable Integer userId) throws InterruptedException, ExecutionException {
+    @GetMapping("/{userId}")
+    public ResponseEntity<User> getUserById(@PathVariable Integer userId) {
+        System.out.println("Masuk kok");
         return ResponseEntity.ok(userService.getUserById(userId));
     }
 
     // delete user by user_id
-    @DeleteMapping("/{user_id}")
-    public ResponseEntity<String> deleteUserById(@PathVariable Integer userId) throws InterruptedException, ExecutionException {
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<String> deleteUserById(@PathVariable Integer userId){
         userService.deleteUserById(userId);
         return ResponseEntity.ok("User with id " + userId + " was deleted.");
     }

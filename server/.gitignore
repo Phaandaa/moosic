@@ -35,5 +35,5 @@ build/
 ### Application Properties ###
 *.application.properties
 
-### Firebase Key ###
-*serviceAccountKey.json
+### .env ###
+.env
