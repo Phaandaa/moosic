@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { View, TextInput, StyleSheet, Animated } from 'react-native';
 
 const AnimatedPlaceholderInput = ({ placeholder, secureTextEntry, textInputConfig, value, onChangeText }) => {
-  // const [inputText, setInputText] = useState('');
   const animatedValue = new Animated.Value(0);
 
   const handleFocus = () => {
@@ -30,9 +29,14 @@ const AnimatedPlaceholderInput = ({ placeholder, secureTextEntry, textInputConfi
     outputRange: [25, 0],
   });
 
+  const fontSize = animatedValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [16, 14], // Adjust these values based on your preference
+  });
+
   return (
     <View style={styles.container}>
-      <Animated.Text style={[styles.placeholder, { transform: [{ translateY }] }]}>
+      <Animated.Text style={[styles.placeholder, { transform: [{ translateY }], fontSize }]}>
         {placeholder}
       </Animated.Text>
       <TextInput
@@ -59,10 +63,8 @@ const styles = StyleSheet.create({
   },
   placeholder: {
     position: 'absolute',
-    
     bottom: 40, // Adjusted to align with the bottom of the TextInput
-    fontSize: 16,
-    color: '#6e6e6e',
+    color: '#A1B2CF',
   },
 });
 
