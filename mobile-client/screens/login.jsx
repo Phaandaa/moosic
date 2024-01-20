@@ -1,6 +1,6 @@
 // Login.js
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Image, Stylesheet } from 'react-native';
 import theme from './styles/theme';
 import AnimatedPlaceholderInput from '../components/ui/animateTextInput';
 import * as SplashScreen from 'expo-splash-screen';
@@ -8,8 +8,6 @@ import * as SplashScreen from 'expo-splash-screen';
 const LoginPage = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  // Load fonts
  
 
   const handleLogin = () => {
@@ -26,9 +24,13 @@ const LoginPage = ({ navigation }) => {
   // Fonts are loaded, render the LoginPage
   return (
     <View style={theme.container}>
+      <Image source={require('../assets/learn2playlogo.png')} style={{...theme.logo}} />
+      <Text style={theme.textTitle}>Log Into Your Profile</Text>
+      <Text style={{...theme.textSubtitle, marginBottom: 40}}>Welcome Back!</Text>
+
       <AnimatedPlaceholderInput
         style={theme.input}
-        placeholder="Email"
+        placeholder="E-mail"
         value={email}
         onChangeText={setEmail}
         secureTextEntry={false}
@@ -41,11 +43,15 @@ const LoginPage = ({ navigation }) => {
         secureTextEntry={true}
       />
 
-      <TouchableOpacity style={theme.button} onPress={handleLogin}>
+      
+
+      <TouchableOpacity style={{...theme.button, marginTop: 100}} onPress={handleLogin}>
         <Text style={theme.buttonText}>Login</Text>
       </TouchableOpacity>
     </View>
   );
 };
+
+
 
 export default LoginPage;
