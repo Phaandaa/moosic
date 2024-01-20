@@ -3,27 +3,17 @@ import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView} from 'reac
 import theme from './styles/theme';
 import AnimatedPlaceholderInput from '../components/ui/animateTextInput';
 import * as ImagePicker from "expo-image-picker";
-import StudentDropdown from '../components/Dropdown';
+import StudentDropdown from '../components/StudentDropdown';
 function CreateAssignmentScreen({navigation}){
     const [assignmentName, setAssignmentName] = useState('');
     const [assignmentDesc, setAssignmentDesc] = useState('');
     const [assignmentDeadline, setAssignmentDeadline] = useState('');
-    // const [inputValues, setInputValues] = useState({
-    //     name: '',
-    //     description:'',
-    //     deadline:''
-    // })
+    const [selectedStudents, setSelectedStudents] = useState([]);
+
     const cancelIcon = require('../assets/cancel.png');
     const [images, setImages] = useState([]);
 
-    // function inputChangedHandler(inputIdentifier, enteredValue){
-    //     setInputValues((curInputValues) => {
-    //         return {
-    //             ...curInputValues,
-    //             [inputIdentifier]: enteredValue 
-    //         };
-    //     });
-    // }
+    
 
     const uploadImage = async(mode) => {
         try {
@@ -91,12 +81,15 @@ function CreateAssignmentScreen({navigation}){
         console.log('Assignment Name on Submit:', assignmentName, 'Type:', typeof assignmentName );
         console.log('Assignment Desc on Submit:', assignmentDesc, 'Type:', typeof assignmentDesc );
         console.log('Assignment Deadline on Submit:', assignmentDeadline, 'Type:', typeof assignmentDeadline );
+        console.log('Students', selectedStudents, 'Type:', typeof selectedStudents );
+
         // Step 1: Collect Data
         const assignmentData = {
             name: assignmentName,
             description: assignmentDesc,
             deadline: new Date(assignmentDeadline),
-            images: images
+            images: images,
+            students: selectedStudents
         };
         console.log(assignmentData)
 
@@ -156,9 +149,7 @@ function CreateAssignmentScreen({navigation}){
             </ScrollView>
             
             <Text style={styles.label}>Assign Students</Text>
-            <StudentDropdown>
-
-            </StudentDropdown>
+            <StudentDropdown onSelectionChange={setSelectedStudents} />
 
             {/* Cancel button */}
             {/* <TouchableOpacity style={theme.button} onPress={cancelHandler}>
@@ -206,7 +197,6 @@ const styles = StyleSheet.create({
         marginRight: 10, // Add space between images
         marginTop: 20,
         marginLeft: 10,
-        marginRight: 10
     },
     image: {
         width: 150,

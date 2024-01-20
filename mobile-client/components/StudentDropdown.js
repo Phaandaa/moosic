@@ -2,8 +2,12 @@ import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import { MultipleSelectList } from 'react-native-dropdown-select-list';
 
-const StudentDropdown = () => {
+const StudentDropdown = ({ onSelectionChange }) => {
     const [selected, setSelected] = React.useState([]);
+
+    React.useEffect(() => {
+        onSelectionChange(selected); // This will call the function passed as a prop with the new selected values
+    }, [selected, onSelectionChange]);
 
     const data = [
         {key: '1', value: 'Jessica'},
@@ -14,7 +18,7 @@ const StudentDropdown = () => {
         {key: '6', value: 'John'},
         {key: '7', value: 'Olivia'}
     ]
-
+    
     return (
         <View style={styles.dropdownContainer}>
             <MultipleSelectList
