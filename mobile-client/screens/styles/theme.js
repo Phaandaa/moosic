@@ -30,6 +30,12 @@ const theme = StyleSheet.create({
     borderRadius: 15,
     marginTop: 10,
   },
+  button2: {
+    backgroundColor: '#525F7F',
+    padding: 15,
+    borderRadius: 15,
+    marginTop: 10,
+  },
   buttonText: {
     color: 'white',
     fontWeight: 'bold',

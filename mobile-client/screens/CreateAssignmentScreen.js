@@ -1,15 +1,30 @@
-import {useState} from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, Text} from 'react-native';
+import React, {useState} from 'react';
+import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView} from 'react-native';
 import theme from './styles/theme';
 import AnimatedPlaceholderInput from '../components/ui/animateTextInput';
 import * as ImagePicker from "expo-image-picker";
 
-function CreateAssignmentScreen({  }){
-    const [assignmentName, setAssignmentName] = useState();
-    const [assignmentDesc, setAssignmentDesc] = useState();
-    const [assignmentDeadline, setAssignmentDeadline] = useState();
+function CreateAssignmentScreen({navigation}){
+    const [assignmentName, setAssignmentName] = useState('');
+    const [assignmentDesc, setAssignmentDesc] = useState('');
+    const [assignmentDeadline, setAssignmentDeadline] = useState('');
+    // const [inputValues, setInputValues] = useState({
+    //     name: '',
+    //     description:'',
+    //     deadline:''
+    // })
+    const cancelIcon = require('../assets/cancel.png');
+    const [images, setImages] = useState([]);
 
-    const [image, setImage] = useState();
+    // function inputChangedHandler(inputIdentifier, enteredValue){
+    //     setInputValues((curInputValues) => {
+    //         return {
+    //             ...curInputValues,
+    //             [inputIdentifier]: enteredValue 
+    //         };
+    //     });
+    // }
+
     const uploadImage = async(mode) => {
         try {
             let result = {};
@@ -41,28 +56,60 @@ function CreateAssignmentScreen({  }){
             alert("error uploading image:"+ error.message
             );
             setModalVisible(false);
-    
+
         }
     };
     
-    const removeImage = async() => {
-        console.log("Removing image");
-        try {
-            saveImage(null);
-        } catch ({message}){
-            alert(message);
-        }
+    // const removeImage = async() => {
+    //     console.log("Removing image");
+    //     try {
+    //         saveImage(null);
+    //     } catch ({message}){
+    //         alert(message);
+    //     }
+    // };
+    const removeImage = (index) => {
+        setImages((currentImages) => currentImages.filter((_, i) => i !== index));
     };
 
-    const saveImage = async(image) => {
-        try {
-            console.log(image)
-            setImage(image);
-            // setModalVisible(false);
-        } catch (error){
-            throw error;
+    const saveImage = (newImage) => {
+        setImages((currentImages) => [...currentImages, newImage]);
+        // try {
+        //     console.log(image)
+        //     setImage(image);
+        //     // setModalVisible(false);
+        // } catch (error){
+        //     throw error;
+        // }
+    };
+
+    const cancelHandler = () =>{
+        navigation.navigate('HomeScreen');
+    }
+        
+    const submitHandler = () => {
+        console.log('Assignment Name on Submit:', assignmentName, 'Type:', typeof assignmentName );
+        console.log('Assignment Desc on Submit:', assignmentDesc, 'Type:', typeof assignmentDesc );
+        console.log('Assignment Deadline on Submit:', assignmentDeadline, 'Type:', typeof assignmentDeadline );
+        // Step 1: Collect Data
+        const assignmentData = {
+            name: assignmentName,
+            description: assignmentDesc,
+            deadline: new Date(assignmentDeadline),
+            images: images
+        };
+        console.log(assignmentData)
+
+        // Step 2: Validate Data (this is a basic example, you might need more complex validation)
+        if (!assignmentData.name || !assignmentData.description || !assignmentData.deadline) {
+            alert('Please fill all fields');
+            return;
+        }
+        else{
+            alert('Success!')
         }
     }
+   
     return (
         <View style={theme.container}>
             <AnimatedPlaceholderInput 
@@ -91,10 +138,34 @@ function CreateAssignmentScreen({  }){
                 onChangeText={setAssignmentDeadline}>
             </AnimatedPlaceholderInput>
 
-            <TouchableOpacity style={theme.button} onPress={() => uploadImage("gallery")}>
-                <Text style={theme.buttonText }>Upload Photo</Text>
+            <TouchableOpacity style={theme.button2} onPress={() => uploadImage("gallery")}>
+                <Text style={theme.buttonText}>Upload Photo</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={theme.button} onPress={() => {console.log('Remove button pressed');
+            
+            {/* Render each image with a remove button next to it */}
+            <ScrollView horizontal>
+                {images.map((uri, index) => (
+                    <View key={uri} style={styles.imageContainer}>
+                        <Image source={{ uri }} style={styles.image} />
+                        <TouchableOpacity onPress={() => removeImage(index)} style={styles.removeButton}>
+                            {/* <Text style={theme.buttonText}>x</Text> */}
+                            <Image source={cancelIcon} style={styles.cancelIcon} /> 
+                        </TouchableOpacity>
+                    </View>
+                ))}
+            </ScrollView>
+
+            {/* Cancel button */}
+            <TouchableOpacity style={theme.button} onPress={cancelHandler}>
+                <Text style={theme.buttonText}>Cancel</Text>
+            </TouchableOpacity>
+
+            {/* Submit button */}
+            <TouchableOpacity style={theme.button} onPress={submitHandler}>
+                <Text style={theme.buttonText}>Submit</Text>
+            </TouchableOpacity>
+            
+            {/* <TouchableOpacity style={theme.button} onPress={() => {console.log('Remove button pressed');
             removeImage()}}>
                 <Text style={theme.buttonText }>Remove Photo</Text>
             </TouchableOpacity>
@@ -104,7 +175,7 @@ function CreateAssignmentScreen({  }){
                     source={{ uri: image }}
                     style={styles.image}
                 />
-            )}
+            )} */}
 
             {/* <Image
                 source={{ uri: image }}
@@ -125,8 +196,25 @@ const styles = StyleSheet.create({
     //     marginTop: 100,
     //     alignItems: 'center',
     // },
+    imageContainer: {
+        position: 'relative',
+        marginRight: 10, // Add space between images
+        marginTop: 20
+    },
     image: {
         width: 150,
         height: 150
+    }, 
+    removeButton: {
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        // backgroundColor: '#4664EA',
+        // padding: 5,
+        // borderRadius: 10,
+    },
+    cancelIcon: {
+        width: 30,
+        height: 30
     }
 });
