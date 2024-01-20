@@ -3,7 +3,7 @@ import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView} from 'reac
 import theme from './styles/theme';
 import AnimatedPlaceholderInput from '../components/ui/animateTextInput';
 import * as ImagePicker from "expo-image-picker";
-
+import StudentDropdown from '../components/Dropdown';
 function CreateAssignmentScreen({navigation}){
     const [assignmentName, setAssignmentName] = useState('');
     const [assignmentDesc, setAssignmentDesc] = useState('');
@@ -83,9 +83,9 @@ function CreateAssignmentScreen({navigation}){
         // }
     };
 
-    const cancelHandler = () =>{
-        navigation.navigate('HomeScreen');
-    }
+    // const cancelHandler = () =>{
+    //     navigation.navigate('HomeScreen');
+    // }
         
     const submitHandler = () => {
         console.log('Assignment Name on Submit:', assignmentName, 'Type:', typeof assignmentName );
@@ -154,11 +154,16 @@ function CreateAssignmentScreen({navigation}){
                     </View>
                 ))}
             </ScrollView>
+            
+            <Text style={styles.label}>Assign Students</Text>
+            <StudentDropdown>
+
+            </StudentDropdown>
 
             {/* Cancel button */}
-            <TouchableOpacity style={theme.button} onPress={cancelHandler}>
+            {/* <TouchableOpacity style={theme.button} onPress={cancelHandler}>
                 <Text style={theme.buttonText}>Cancel</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             {/* Submit button */}
             <TouchableOpacity style={theme.button} onPress={submitHandler}>
@@ -199,7 +204,9 @@ const styles = StyleSheet.create({
     imageContainer: {
         position: 'relative',
         marginRight: 10, // Add space between images
-        marginTop: 20
+        marginTop: 20,
+        marginLeft: 10,
+        marginRight: 10
     },
     image: {
         width: 150,
@@ -216,5 +223,11 @@ const styles = StyleSheet.create({
     cancelIcon: {
         width: 30,
         height: 30
+    },
+    label:{
+        marginTop: 20,
+        marginLeft: 20,
+        fontSize: 16,
+        color: '#6e6e6e',
     }
 });
