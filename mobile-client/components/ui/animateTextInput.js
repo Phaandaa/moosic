@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, TextInput, StyleSheet, Animated } from 'react-native';
 
-const AnimatedPlaceholderInput = ({ placeholder, secureTextEntry, textInputConfig }) => {
-  const [inputText, setInputText] = useState('');
+const AnimatedPlaceholderInput = ({ placeholder, secureTextEntry, textInputConfig, value, onChangeText }) => {
+  // const [inputText, setInputText] = useState('');
   const animatedValue = new Animated.Value(0);
 
   const handleFocus = () => {
@@ -16,7 +16,7 @@ const AnimatedPlaceholderInput = ({ placeholder, secureTextEntry, textInputConfi
 
   const handleBlur = () => {
     // Animate placeholder back to its original position when the input is blurred
-    if (inputText === '') {
+    if (value === '') {
       Animated.timing(animatedValue, {
         toValue: 0,
         duration: 200,
@@ -37,8 +37,8 @@ const AnimatedPlaceholderInput = ({ placeholder, secureTextEntry, textInputConfi
       </Animated.Text>
       <TextInput
         style={styles.input}
-        value={inputText}
-        onChangeText={(text) => setInputText(text)}
+        value={value}
+        onChangeText={onChangeText}
         onFocus={handleFocus}
         onBlur={handleBlur}
         secureTextEntry={secureTextEntry}
