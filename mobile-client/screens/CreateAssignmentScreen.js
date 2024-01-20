@@ -104,7 +104,8 @@ function CreateAssignmentScreen({navigation}){
     }
    
     return (
-        <View style={theme.container}>
+        <ScrollView style={theme.container} contentContainerStyle={styles.contentContainer}> 
+        <View>
             <AnimatedPlaceholderInput 
                 placeholder="Assignment Name" 
                 secureTextEntry={false} 
@@ -181,17 +182,18 @@ function CreateAssignmentScreen({navigation}){
                 ]}
             /> */}
         </View>
-        
+    </ScrollView> 
     )
 };
 export default CreateAssignmentScreen;
 
 const styles = StyleSheet.create({
-    // container:{
-    //     flex: 1,
-    //     marginTop: 100,
-    //     alignItems: 'center',
-    // },
+    contentContainer:{
+        flexGrow: 1, // Makes sure all content will be scrolled
+    },
+    innerContainer:{
+        padding: 20,
+    },
     imageContainer: {
         position: 'relative',
         marginRight: 10, // Add space between images
