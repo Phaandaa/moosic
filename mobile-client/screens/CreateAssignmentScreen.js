@@ -1,9 +1,11 @@
 import React, {useState} from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView} from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert} from 'react-native';
 import theme from './styles/theme';
 import AnimatedPlaceholderInput from '../components/ui/animateTextInput';
 import * as ImagePicker from "expo-image-picker";
+import * as DocumentPicker from "expo-document-picker";
 import StudentDropdown from '../components/StudentDropdown';
+
 function CreateAssignmentScreen({navigation}){
     const [assignmentName, setAssignmentName] = useState('');
     const [assignmentDesc, setAssignmentDesc] = useState('');
@@ -11,9 +13,9 @@ function CreateAssignmentScreen({navigation}){
     const [selectedStudents, setSelectedStudents] = useState([]);
 
     const cancelIcon = require('../assets/cancel.png');
+    const documentLogo = require('../assets/filelogo.png')
     const [images, setImages] = useState([]);
-
-    
+    const [uploadedDocuments, setUploadedDocuments] = useState([]);
 
     const uploadImage = async(mode) => {
         try {
@@ -28,16 +30,6 @@ function CreateAssignmentScreen({navigation}){
                     quality: 1,
                 })
             } 
-            // else {
-                // await ImagePicker.requestCameraPermissionsAsync();
-                // result = await ImagePicker.launchCameraAsync({
-                //     cameraType: ImagePicker.CameraType.back,
-                //     allowsEditing: true,
-                //     // aspect: [1,1],
-                //     quality: 1
-                // });
-            // }
-            
             if(!result.canceled){
                 console.log('result not cancelled')
                 await saveImage(result.assets[0].uri);
@@ -50,33 +42,31 @@ function CreateAssignmentScreen({navigation}){
         }
     };
     
-    // const removeImage = async() => {
-    //     console.log("Removing image");
-    //     try {
-    //         saveImage(null);
-    //     } catch ({message}){
-    //         alert(message);
-    //     }
-    // };
     const removeImage = (index) => {
         setImages((currentImages) => currentImages.filter((_, i) => i !== index));
     };
 
     const saveImage = (newImage) => {
         setImages((currentImages) => [...currentImages, newImage]);
-        // try {
-        //     console.log(image)
-        //     setImage(image);
-        //     // setModalVisible(false);
-        // } catch (error){
-        //     throw error;
-        // }
     };
 
-    // const cancelHandler = () =>{
-    //     navigation.navigate('HomeScreen');
-    // }
-        
+    const uploadDocument = async () => {
+        try {
+          const result = await DocumentPicker.getDocumentAsync({ multiple: true });
+          if (!result.canceled) {
+            setUploadedDocuments(currentDocs => [...currentDocs, ...result.assets]);
+          }
+        } catch (err) {
+          console.log('Error picking document:', err);
+          Alert.alert('Something went wrong');
+        }
+    };
+
+    const removeDocument = (index) => {
+        setUploadedDocuments(currentDocs => currentDocs.filter((_, i) => i !== index));
+    };
+    
+
     const submitHandler = () => {
         console.log('Assignment Name on Submit:', assignmentName, 'Type:', typeof assignmentName );
         console.log('Assignment Desc on Submit:', assignmentDesc, 'Type:', typeof assignmentDesc );
@@ -131,11 +121,18 @@ function CreateAssignmentScreen({navigation}){
                 value={assignmentDeadline}
                 onChangeText={setAssignmentDeadline}>
             </AnimatedPlaceholderInput>
-
-            <TouchableOpacity style={theme.button2} onPress={() => uploadImage("gallery")}>
-                <Text style={theme.buttonText}>Upload Photo</Text>
-            </TouchableOpacity>
             
+            {/* Upload Buttons  */}
+            <View style={styles.buttonsContainer}>
+                <TouchableOpacity style={theme.button2} onPress={() => uploadImage("gallery")}>
+                    <Text style={theme.buttonText}>Upload Photo</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={theme.button2} onPress={() => uploadDocument()}>
+                    <Text style={theme.buttonText}>Upload Document</Text>
+                </TouchableOpacity>
+            </View>
+
             {/* Render each image with a remove button next to it */}
             <ScrollView horizontal>
                 {images.map((uri, index) => (
@@ -148,39 +145,28 @@ function CreateAssignmentScreen({navigation}){
                     </View>
                 ))}
             </ScrollView>
+
+            {/* Show uploaded documents section */}
+            {uploadedDocuments.map((doc, index) => (
+                <View key={index.toString()} style={styles.documentItemContainer}>
+                    <Image
+                    source={documentLogo}
+                    style={styles.documentThumbnail}
+                    />
+                    <Text style={styles.documentName}>{doc.name}</Text>
+                    <TouchableOpacity onPress={() => removeDocument(index)} style={styles.removeButton}>
+                    <Image source={cancelIcon} style={styles.cancelIcon} />
+                    </TouchableOpacity>
+                </View>
+                ))}
             
             <Text style={styles.label}>Assign Students</Text>
             <StudentDropdown onSelectionChange={setSelectedStudents} />
-
-            {/* Cancel button */}
-            {/* <TouchableOpacity style={theme.button} onPress={cancelHandler}>
-                <Text style={theme.buttonText}>Cancel</Text>
-            </TouchableOpacity> */}
 
             {/* Submit button */}
             <TouchableOpacity style={theme.button} onPress={submitHandler}>
                 <Text style={theme.buttonText}>Submit</Text>
             </TouchableOpacity>
-            
-            {/* <TouchableOpacity style={theme.button} onPress={() => {console.log('Remove button pressed');
-            removeImage()}}>
-                <Text style={theme.buttonText }>Remove Photo</Text>
-            </TouchableOpacity>
-            
-            {image && (
-                <Image
-                    source={{ uri: image }}
-                    style={styles.image}
-                />
-            )} */}
-
-            {/* <Image
-                source={{ uri: image }}
-                // source={{ uri }}
-                style={[
-                    styles.image,
-                ]}
-            /> */}
         </View>
     </ScrollView> 
     )
@@ -221,5 +207,28 @@ const styles = StyleSheet.create({
         marginLeft: 20,
         fontSize: 16,
         color: '#6e6e6e',
+    }, 
+    documentItemContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        marginTop: 20,
+        marginLeft: 10,
+    },
+    documentThumbnail: {
+        width: 30,
+        height: 30,
+        marginRight: 10,
+    },
+    documentName: {
+        flexGrow: 1,
+        flexShrink: 1,
+        marginRight: 10,
+    },
+    buttonsContainer:{
+        flexDirection: 'row',
+        justifyContent: 'space-between', // This will space out the buttons evenly
+        marginTop: 20,
+        paddingHorizontal: 10, // Add some padding on the sides
     }
 });

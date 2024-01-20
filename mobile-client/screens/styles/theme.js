@@ -35,6 +35,8 @@ const theme = StyleSheet.create({
     padding: 15,
     borderRadius: 15,
     marginTop: 10,
+    flex: 1,
+    marginHorizontal: 5
   },
   buttonText: {
     color: 'white',
