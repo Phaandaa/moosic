@@ -15,11 +15,11 @@ public class User {
     @Id
     private String id;
     
-    @Field(name = "user_id")
-    private Integer userId;
-
     @Field(name = "name")
     private String name;
+
+    @Field(name = "email")
+    private String email;
 
     @Field(name = "role")
     private String role;
@@ -27,4 +27,12 @@ public class User {
     public User() {
 
     }
+
+    public User(String id, String name, String email, String role) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.role = role;
+    }
+ 
 }

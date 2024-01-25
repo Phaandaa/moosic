@@ -1,6 +1,7 @@
 package com.example.server.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +14,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.server.dto.CreateUserDTO;
 import com.example.server.entity.User;
 import com.example.server.service.UserService;
 
 // TODO: make return into Response Entity and add status codes
+// TODO: Validation before processing
 
 @RestController
 @CrossOrigin
@@ -27,8 +30,8 @@ public class UserController {
     public UserService userService;
 
     @PostMapping("/create")
-    public ResponseEntity<User> createUser(@RequestBody User user){
-        return ResponseEntity.ok(userService.createUser(user));
+    public ResponseEntity<User> createUser(@RequestBody CreateUserDTO userDTO){
+        return ResponseEntity.ok(userService.createUser(userDTO));
     }
 
     // get all users
@@ -45,14 +48,18 @@ public class UserController {
 
     // get user by id user_id
     @GetMapping("/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable Integer userId) {
-        System.out.println("Masuk kok");
-        return ResponseEntity.ok(userService.getUserById(userId));
+    public ResponseEntity<User> getUserById(@PathVariable String userId) {
+        try {
+            User user = userService.getUserById(userId);
+            return ResponseEntity.ok(user);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     // delete user by user_id
     @DeleteMapping("/{userId}")
-    public ResponseEntity<String> deleteUserById(@PathVariable Integer userId){
+    public ResponseEntity<String> deleteUserById(@PathVariable String userId){
         userService.deleteUserById(userId);
         return ResponseEntity.ok("User with id " + userId + " was deleted.");
     }
