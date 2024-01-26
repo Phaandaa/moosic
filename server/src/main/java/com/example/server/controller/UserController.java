@@ -30,8 +30,13 @@ public class UserController {
     public UserService userService;
 
     @PostMapping("/create")
-    public ResponseEntity<User> createUser(@RequestBody CreateUserDTO userDTO){
+    public ResponseEntity<User> createUser(@RequestBody CreateUserDTO userDTO) {
         return ResponseEntity.ok(userService.createUser(userDTO));
+    }
+    
+    @PostMapping("/create-admin")
+    public ResponseEntity<User> createAdmin(@RequestBody CreateUserDTO userDTO) {
+        return ResponseEntity.ok(userService.createAdmin(userDTO));
     }
 
     // get all users
