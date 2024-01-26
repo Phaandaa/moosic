@@ -15,14 +15,16 @@ import lombok.Setter;
 public class Teacher {
     @Id
     private String id;
+    private String name;
     private ArrayList<String> studentIds; // References to Students' User IDs
 
     public Teacher() {
 
     }
 
-    public Teacher(String id, ArrayList<String> studentIds) {
+    public Teacher(String id, String name, ArrayList<String> studentIds) {
         this.id = id;
+        this.name = name;
         this.studentIds = studentIds;
     }
 

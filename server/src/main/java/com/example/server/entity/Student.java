@@ -16,6 +16,7 @@ public class Student {
     private String id;
     private Integer pointsCounter;
     private String teacherId; // Reference to a Teacher's User ID
+    private String name;
     private ArrayList<String> purchaseHistory; // List of references to Rewards Shop Items
     private String instrument;
 
@@ -23,10 +24,11 @@ public class Student {
 
     }
 
-    public Student(String id, Integer pointsCounter, String teacherId, ArrayList<String> purchaseHistory, String instrument) {
+    public Student(String id, Integer pointsCounter, String teacherId, String name, ArrayList<String> purchaseHistory, String instrument) {
         this.id = id;
         this.pointsCounter = pointsCounter;
         this.teacherId = teacherId;
+        this.name = name;
         this.purchaseHistory = purchaseHistory;
         this.instrument = instrument;
     }
