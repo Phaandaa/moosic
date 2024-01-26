@@ -45,14 +45,14 @@ public class UserController {
 
     // get user by id user_id
     @GetMapping("/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable Integer userId) {
+    public ResponseEntity<User> getUserById(@PathVariable String userId) {
         System.out.println("Masuk kok");
         return ResponseEntity.ok(userService.getUserById(userId));
     }
 
     // delete user by user_id
     @DeleteMapping("/{userId}")
-    public ResponseEntity<String> deleteUserById(@PathVariable Integer userId){
+    public ResponseEntity<String> deleteUserById(@PathVariable String userId){
         userService.deleteUserById(userId);
         return ResponseEntity.ok("User with id " + userId + " was deleted.");
     }
