@@ -1,12 +1,13 @@
 package com.example.server.service;
 
-import java.util.List;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.server.dao.UserRepository;
 import com.example.server.entity.User;
+import com.example.server.models.FirebaseToken;
 
 
 // TODO: Handle possible exceptions, please check with example from OOP project
@@ -29,16 +30,24 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User getUserById(Integer userId) {
+    public User getUserById(String userId) {
         return userRepository.findByUserId(userId);
     }
 
-    public void deleteUserById(Integer userId) {
+    public void deleteUserById(String userId) {
 
         User toBeDeletedUser = userRepository.findByUserId(userId);
         if (toBeDeletedUser != null) {
             userRepository.delete(toBeDeletedUser);
         }
-
     }
+
+    public User updateUser(FirebaseToken firebaseToken) {
+        User toBeUpdatedUser = userRepository.findByUserId(firebaseToken.getLocalId());
+        if (toBeUpdatedUser != null) {
+            toBeUpdatedUser.setEmail(firebaseToken.getEmail());
+            return userRepository.save(toBeUpdatedUser);
+        }
+        throw new NoSuchElementException("User not found for ID: " + firebaseToken.getLocalId());
+    } 
 }
