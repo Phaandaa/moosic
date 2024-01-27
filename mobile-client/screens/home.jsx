@@ -1,11 +1,13 @@
 // HomeScreen.js
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import BoxComponent from '../components/ui/practiceModuleBoxes';
 
 const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Music Practice App</Text>
+      <BoxComponent  color="#3498db" title="Sample Box" iconName="bulb" navigation={navigation} />
+      <Text style={styles.title}>Welcome!</Text>
       <TouchableOpacity
         style={styles.button}
         // onPress={() => navigation.navigate('Practice')}

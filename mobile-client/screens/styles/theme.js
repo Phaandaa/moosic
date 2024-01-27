@@ -44,7 +44,14 @@ const theme = StyleSheet.create({
   
   },
   
-  // Add other font styles as needed
+  //component themes
+  box:{
+    padding: 20,
+    borderRadius: 15,
+    marginTop: 20,
+    width: '75%',
+    
+  },
   button: {
     backgroundColor: '#4664EA',
     padding: 15,
