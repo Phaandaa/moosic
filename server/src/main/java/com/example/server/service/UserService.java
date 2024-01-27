@@ -42,9 +42,7 @@ public class UserService {
         String email = userDTO.getEmail();
         String password = userDTO.getPassword();
         FirebaseToken firebaseResponse = firebaseAuthService.signUpWithEmailAndPassword(email, password);
-        // TODO: insert firebase request here
-        // send request to firebase, await response for user id
-        String id = firebaseResponse.getLocalId(); // shud be response from firebase
+        String id = firebaseResponse.getLocalId();
         String name = userDTO.getName();
         String role = userDTO.getRole();
         User newUser = new User(id, name, email, role);
@@ -110,6 +108,8 @@ public class UserService {
 
     public User updateUser(FirebaseToken firebaseToken) {
         User toBeUpdatedUser = userRepository.findById(firebaseToken.getLocalId()).orElseThrow();
+
+        TODO: // Update user's name and email in firebase (update name and email)
         toBeUpdatedUser.setEmail(firebaseToken.getEmail());
         return userRepository.save(toBeUpdatedUser);
     } 
