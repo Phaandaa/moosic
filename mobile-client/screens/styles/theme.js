@@ -8,7 +8,7 @@ const theme = StyleSheet.create({
     padding: 20,
     marginTop: 30,
     backgroundColor: '#ffffff',
-    flex: 1,
+    
     width: '100%',
     height : '100%',
     
@@ -28,18 +28,23 @@ const theme = StyleSheet.create({
     paddingVertical: 6,
     
   },
+  textBold:{
+    fontSize: 24,
+    paddingVertical: 6,
+    fontWeight: 'bold',
+  },
   textTitle: {
     fontSize: 24,
     paddingVertical: 6,
     fontWeight: 'bold',
-    alignSelf: 'center',
+    
     color: '#525F7F',
   },
   textSubtitle:{
     fontSize: 16,
     paddingVertical: 6,
     fontWeight: 'light',
-    alignSelf: 'center',
+    
     color: '#A1B2CF',
   
   },
@@ -49,7 +54,8 @@ const theme = StyleSheet.create({
     padding: 20,
     borderRadius: 15,
     marginTop: 20,
-    width: '75%',
+    width: '90%',
+    
     
   },
   button: {

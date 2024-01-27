@@ -6,7 +6,8 @@ import BoxComponent from '../components/ui/practiceModuleBoxes';
 const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <BoxComponent  color="#3498db" title="Sample Box" iconName="bulb" navigation={navigation} />
+      <BoxComponent  color="#686BFF" title="Knowledge" subtitle=" Hand and Finger Work" iconName="bulb" navigation={navigation} iconColor="white" />
+
       <Text style={styles.title}>Welcome!</Text>
       <TouchableOpacity
         style={styles.button}
