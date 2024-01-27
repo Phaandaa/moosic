@@ -44,7 +44,7 @@ public class UserService {
         FirebaseToken firebaseResponse = firebaseAuthService.signUpWithEmailAndPassword(email, password);
         // TODO: insert firebase request here
         // send request to firebase, await response for user id
-        String id = firebaseResponse.getIdToken(); // shud be response from firebase
+        String id = firebaseResponse.getLocalId(); // shud be response from firebase
         String name = userDTO.getName();
         String role = userDTO.getRole();
         User newUser = new User(id, name, email, role);
@@ -69,9 +69,8 @@ public class UserService {
         String email = userDTO.getEmail();
         String password = userDTO.getPassword();
         String name = userDTO.getName();
-        // TODO: send request to firebase
-        
-        String id = "randomid3";
+        FirebaseToken firebaseResponse = firebaseAuthService.signUpWithEmailAndPassword(email, password);
+        String id = firebaseResponse.getLocalId();
         User newUser = new User(id, name, email, "Admin");
         userRepository.save(newUser);
         return newUser;

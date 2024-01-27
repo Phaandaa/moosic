@@ -20,6 +20,7 @@ import com.example.server.service.UserService;
 
 // TODO: make return into Response Entity and add status codes
 // TODO: Validation before processing
+// TODO: Throw error if there is duplicate user 
 
 @RestController
 @CrossOrigin
