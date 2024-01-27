@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.server.dto.CreateUserDTO;
 import com.example.server.entity.User;
+import com.example.server.models.CreateUserDTO;
 import com.example.server.service.UserService;
 
 // TODO: make return into Response Entity and add status codes
