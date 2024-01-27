@@ -77,7 +77,66 @@ const theme = StyleSheet.create({
     borderBottomWidth: 1,
     padding: 10,
     fontSize: 16,
-  
+  }, 
+  card: {
+    backgroundColor: '#EE97BC',
+    padding: 20,
+    borderRadius: 15,
+    marginTop: 10, 
+    flexDirection: 'row',
+    justifyContent: 'space-between', // Align items on both ends
+    alignItems: 'center', // Center items vertically
+  },
+  card2:{
+      backgroundColor: '#EE97BC',
+      padding: 20,
+      borderRadius: 15,
+      marginTop: 10,
+      flexDirection: 'col',
+  },
+  cardTextContainer: {
+      flex: 1, // Take up as much space as possible
+      marginRight: 8, // Add some margin to the right of the text
+  },
+  cardTitle:{
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 20,
+    paddingVertical: 5
+  },
+  cardTextBold:{
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+    paddingVertical: 5
+  },
+  cardText: {
+      color: 'white',
+      fontWeight: '300',
+      fontSize: 16,
+      paddingVertical: 5
+  },
+  buttonContainer: {
+      flexDirection: 'row',
+      // If you need space between buttons add justifyContent: 'space-between',
+  },
+  buttonContainer2: {
+    flexDirection: 'row',
+    justifyContent: 'space-between', // This will space out the buttons evenly
+    // width: '100%', // Set the width to take up the full container width
+    marginTop: 10, // Add some margin to the top of the button container
+  },
+  smallButton: {
+      backgroundColor: '#4664EA',
+      padding: 10,
+      borderRadius: 15,
+      marginLeft: 8, // Add some margin to separate the buttons
+  },
+  smallButtonText: {
+      color: 'white',
+      fontWeight: 'bold',
+      fontSize: 14,
+      textAlign: 'center',
   }
 });
 

@@ -21,6 +21,13 @@ const HomeScreen = ({ navigation }) => {
         <Text style={styles.buttonText}>Create Assignment</Text>
       </TouchableOpacity>
 
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('MyStudentsScreen')}
+      >
+        <Text style={styles.buttonText}>View My Students</Text>
+      </TouchableOpacity>
+
     </View>
   );
 };

@@ -1,8 +1,6 @@
 package com.example.server.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +14,7 @@ import com.example.server.entity.Student;
 import com.example.server.entity.Teacher;
 import com.example.server.entity.User;
 import com.mongodb.lang.NonNull;
+import com.example.server.models.FirebaseToken;
 
 
 // TODO: Handle possible exceptions, please check with example from OOP project
@@ -25,6 +24,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private FirebaseAuthService firebaseAuthService;
 
     @Autowired
     private StudentRepository studentRepository;
@@ -39,9 +41,10 @@ public class UserService {
         }
         String email = userDTO.getEmail();
         String password = userDTO.getPassword();
+        FirebaseToken firebaseResponse = firebaseAuthService.signUpWithEmailAndPassword(email, password);
         // TODO: insert firebase request here
         // send request to firebase, await response for user id
-        String id = "randomid3"; // shud be response from firebase
+        String id = firebaseResponse.getIdToken(); // shud be response from firebase
         String name = userDTO.getName();
         String role = userDTO.getRole();
         User newUser = new User(id, name, email, role);
@@ -67,6 +70,7 @@ public class UserService {
         String password = userDTO.getPassword();
         String name = userDTO.getName();
         // TODO: send request to firebase
+        
         String id = "randomid3";
         User newUser = new User(id, name, email, "Admin");
         userRepository.save(newUser);
@@ -104,4 +108,10 @@ public class UserService {
         User toBeDeletedUser = userRepository.findById(userId).orElseThrow();
         userRepository.delete(toBeDeletedUser);
     }
+
+    public User updateUser(FirebaseToken firebaseToken) {
+        User toBeUpdatedUser = userRepository.findById(firebaseToken.getLocalId()).orElseThrow();
+        toBeUpdatedUser.setEmail(firebaseToken.getEmail());
+        return userRepository.save(toBeUpdatedUser);
+    } 
 }

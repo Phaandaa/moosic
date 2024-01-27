@@ -4,6 +4,8 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LoginPage from './screens/login';
 import HomePage from './screens/home';
 import CreateAssignmentScreen from './screens/CreateAssignmentScreen';
+import MyStudentsScreen from './screens/MyStudentsScreen';
+import ViewCreatedAssignmentsScreen from './screens/ViewCreatedAssignmentsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -13,7 +15,9 @@ const App = () => {
       <Stack.Navigator>
         <Stack.Screen name="LoginScreen" component={LoginPage} options={{title: 'Login', headerShown: false}}/>
         <Stack.Screen name="HomeScreen" component={HomePage} options={{title: 'Home'}}/>
-        <Stack.Screen name="CreateAssignmentScreen" component={CreateAssignmentScreen} options={{title: 'CreateAssignment'}}/>
+        <Stack.Screen name="CreateAssignmentScreen" component={CreateAssignmentScreen} options={{title: 'Create Assignment'}}/>
+        <Stack.Screen name="MyStudentsScreen" component={MyStudentsScreen} options={{title: 'My Students'}}/>
+        <Stack.Screen name="ViewCreatedAssignmentsScreen" component={ViewCreatedAssignmentsScreen} options={{title: 'Assignments'}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
