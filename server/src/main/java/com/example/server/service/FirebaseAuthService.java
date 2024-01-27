@@ -63,6 +63,7 @@ public class FirebaseAuthService {
         AuthRequest request = new AuthRequest();
         request.setEmail(email);
         request.setPassword(password);
+        request.setReturnSecureToken(true);
 
         HttpEntity<AuthRequest> entity = new HttpEntity<>(request, headers);
 
