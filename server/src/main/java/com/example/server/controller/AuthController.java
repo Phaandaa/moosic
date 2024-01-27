@@ -1,18 +1,32 @@
-// package com.example.server.controller;
+package com.example.server.controller;
 
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.web.bind.annotation.PostMapping;
-// import org.springframework.web.bind.annotation.RequestBody;
+import com.example.server.models.FirebaseToken;
+import com.example.server.service.FirebaseAuthService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import com.example.server.models.AuthRequest;
 
-// import com.example.server.models.FirebaseToken;
-// import com.example.server.service.FirebaseAuthService;
+@RestController
+@RequestMapping("api/auth")
+public class AuthController {
 
-// public class AuthController {
-//     @Autowired
-//     private FirebaseAuthService firebaseAuthService;
+    private FirebaseAuthService firebaseAuthService;
 
-//     @PostMapping("/signin")
-//     public FirebaseToken signInWithEmailAndPassword(@RequestBody AuthRequest authRequest) {
-//         return firebaseAuthService.signInWithEmailAndPassword(authRequest.getEmail(), authRequest.getPassword());
-//     }
-// }
+    @Autowired
+    public AuthController(FirebaseAuthService firebaseAuthService) {
+        this.firebaseAuthService = firebaseAuthService;
+    }
+
+    @PostMapping("/signup")
+    public FirebaseToken signUpWithEmailAndPassword(@RequestBody AuthRequest authRequest) {
+        return firebaseAuthService.signUpWithEmailAndPassword(authRequest.getEmail(), authRequest.getPassword());
+    }
+
+    @PostMapping("/signin")
+    public FirebaseToken signInWithEmailAndPassword(@RequestBody AuthRequest authRequest) {
+        return firebaseAuthService.signInWithEmailAndPassword(authRequest.getEmail(), authRequest.getPassword());
+    }
+}
