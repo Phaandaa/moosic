@@ -1,6 +1,5 @@
 package com.example.server.entity;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import org.springframework.data.annotation.Id;
