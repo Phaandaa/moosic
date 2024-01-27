@@ -54,24 +54,24 @@ public class FirebaseAuthService {
         return responseEntity.getBody();
     }
 
-    // public FirebaseToken signInWithEmailAndPassword(String email, String password){
-    //     String url = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" + firebaseApiKey;
+    public FirebaseToken signInWithEmailAndPassword(String email, String password){
+        String url = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" + firebaseApiKey;
 
-    //     HttpHeaders headers = new HttpHeaders();
-    //     headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
-    //     AuthRequest request = new AuthRequest();
-    //     request.setEmail(email);
-    //     request.setPassword(password);
+        AuthRequest request = new AuthRequest();
+        request.setEmail(email);
+        request.setPassword(password);
 
-    //     HttpEntity<AuthRequest> entity = new HttpEntity<>(request, headers);
+        HttpEntity<AuthRequest> entity = new HttpEntity<>(request, headers);
 
-    //     RestTemplate restTemplate = new RestTemplate();
-    //     ResponseEntity<FirebaseToken> responseEntity = restTemplate.exchange(
-    //         url, HttpMethod.POST, entity, FirebaseToken.class);
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<FirebaseToken> responseEntity = restTemplate.exchange(
+            url, HttpMethod.POST, entity, FirebaseToken.class);
 
-    //     return responseEntity.getBody();
-    // }
+        return responseEntity.getBody();
+    }
 
     // public FirebaseUserData getUserData(String idToken){
 

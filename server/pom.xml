@@ -39,11 +39,11 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- <dependency>
+		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter</artifactId>
 			<scope>test</scope>
-		</dependency> -->
+		</dependency>
 		<!-- <dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
@@ -63,7 +63,7 @@
 		<dependency>
 			<groupId>io.github.cdimascio</groupId>
 			<artifactId>dotenv-java</artifactId>
-			<version>3.1.0</version>
+			<version>3.0.0</version>
 		</dependency>
      
 
@@ -80,10 +80,10 @@
 				<artifactId>frontend-maven-plugin</artifactId>
 				<version>1.12.1</version>
 			</plugin>
-			<!-- <plugin>
+			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.2.1</version>
-			</plugin> -->
+			</plugin>
 		</plugins>
 	</build>
 
