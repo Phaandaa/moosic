@@ -77,8 +77,9 @@ function CreateAssignmentScreen({navigation}){
         const assignmentData = {
             name: assignmentName,
             description: assignmentDesc,
-            deadline: new Date(assignmentDeadline),
+            deadline: assignmentDeadline,
             images: images,
+            documents: uploadedDocuments,
             students: selectedStudents
         };
         console.log(assignmentData)
@@ -89,12 +90,13 @@ function CreateAssignmentScreen({navigation}){
             return;
         }
         else{
+            navigation.navigate('ViewCreatedAssignmentsScreen', { assignmentData });
             alert('Success!')
         }
     }
    
     return (
-        <ScrollView style={theme.container} contentContainerStyle={styles.contentContainer}> 
+        <ScrollView style={theme.container} contentContainerStyle={theme.contentContainer}> 
         <View>
             <AnimatedPlaceholderInput 
                 placeholder="Assignment Name" 
@@ -123,7 +125,7 @@ function CreateAssignmentScreen({navigation}){
             </AnimatedPlaceholderInput>
             
             {/* Upload Buttons  */}
-            <View style={styles.buttonsContainer}>
+            <View style={theme.buttonsContainer}>
                 <TouchableOpacity style={theme.button2} onPress={() => uploadImage("gallery")}>
                     <Text style={theme.buttonText}>Upload Photo</Text>
                 </TouchableOpacity>
@@ -136,11 +138,11 @@ function CreateAssignmentScreen({navigation}){
             {/* Render each image with a remove button next to it */}
             <ScrollView horizontal>
                 {images.map((uri, index) => (
-                    <View key={uri} style={styles.imageContainer}>
-                        <Image source={{ uri }} style={styles.image} />
-                        <TouchableOpacity onPress={() => removeImage(index)} style={styles.removeButton}>
+                    <View key={uri} style={theme.imageContainer}>
+                        <Image source={{ uri }} style={theme.assignmentImage} />
+                        <TouchableOpacity onPress={() => removeImage(index)} style={theme.removeButton}>
                             {/* <Text style={theme.buttonText}>x</Text> */}
-                            <Image source={cancelIcon} style={styles.cancelIcon} /> 
+                            <Image source={cancelIcon} style={theme.cancelIcon} /> 
                         </TouchableOpacity>
                     </View>
                 ))}
@@ -148,19 +150,19 @@ function CreateAssignmentScreen({navigation}){
 
             {/* Show uploaded documents section */}
             {uploadedDocuments.map((doc, index) => (
-                <View key={index.toString()} style={styles.documentItemContainer}>
+                <View key={index.toString()} style={theme.documentItemContainer}>
                     <Image
                     source={documentLogo}
-                    style={styles.documentThumbnail}
+                    style={theme.documentThumbnail}
                     />
-                    <Text style={styles.documentName}>{doc.name}</Text>
-                    <TouchableOpacity onPress={() => removeDocument(index)} style={styles.removeButton}>
-                    <Image source={cancelIcon} style={styles.cancelIcon} />
+                    <Text style={theme.documentName}>{doc.name}</Text>
+                    <TouchableOpacity onPress={() => removeDocument(index)} style={theme.removeButton}>
+                    <Image source={cancelIcon} style={theme.cancelIcon} />
                     </TouchableOpacity>
                 </View>
-                ))}
+            ))}
             
-            <Text style={styles.label}>Assign Students</Text>
+            <Text style={theme.label}>Assign Students</Text>
             <StudentDropdown onSelectionChange={setSelectedStudents} />
 
             {/* Submit button */}
@@ -173,18 +175,12 @@ function CreateAssignmentScreen({navigation}){
 };
 export default CreateAssignmentScreen;
 
-const styles = StyleSheet.create({
+const assignmentStyles = StyleSheet.create({
     contentContainer:{
         flexGrow: 1, // Makes sure all content will be scrolled
     },
     innerContainer:{
         padding: 20,
-    },
-    imageContainer: {
-        position: 'relative',
-        marginRight: 10, // Add space between images
-        marginTop: 20,
-        marginLeft: 10,
     },
     image: {
         width: 150,
