@@ -134,8 +134,8 @@ const theme = StyleSheet.create({
   },
   buttonContainer2: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // This will space out the buttons evenly
-    // width: '100%', // Set the width to take up the full container width
+    justifyContent: 'flex-end',
+    // justifyContent: 'space-between', // This will space out the buttons evenly
     marginTop: 10, // Add some margin to the top of the button container
   },
   smallButton: {
@@ -149,6 +149,67 @@ const theme = StyleSheet.create({
       fontWeight: 'bold',
       fontSize: 14,
       textAlign: 'center',
+  }, 
+  assignmentImage: {
+    width: 150,
+    height: 150
+  }, 
+  imageContainer: {
+    position: 'relative',
+    marginRight: 10, // Add space between images
+    marginTop: 20,
+    marginLeft: 10,
+  },
+  contentContainer:{
+    flexGrow: 1, // Makes sure all content will be scrolled
+  },
+  innerContainer:{
+      padding: 20,
+  },
+  image: {
+      width: 150,
+      height: 150
+  }, 
+  removeButton: {
+      position: 'absolute',
+      right: 0,
+      top: 0,
+      // backgroundColor: '#4664EA',
+      // padding: 5,
+      // borderRadius: 10,
+  },
+  cancelIcon: {
+      width: 30,
+      height: 30
+  },
+  label:{
+      marginTop: 20,
+      marginLeft: 20,
+      fontSize: 16,
+      color: '#6e6e6e',
+  }, 
+  documentItemContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      marginTop: 20,
+      marginLeft: 10,
+  },
+  documentThumbnail: {
+      width: 30,
+      height: 30,
+      marginRight: 10,
+  },
+  documentName: {
+      flexGrow: 1,
+      flexShrink: 1,
+      marginRight: 10,
+  },
+  buttonsContainer:{
+      flexDirection: 'row',
+      justifyContent: 'space-between', // This will space out the buttons evenly
+      marginTop: 20,
+      paddingHorizontal: 10, // Add some padding on the sides
   }
 });
 

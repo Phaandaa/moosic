@@ -1,0 +1,27 @@
+// Send create student request
+{
+    "name": "Davina",
+    "email": "phandavina@gmail.com",
+    "role": "Student",
+    "password": "davina123",
+    "info": {
+        "teacher_id": "125frg4",
+        "instrument": "piano"
+    } 
+}
+
+// Send create teacher request
+{
+    "name": "Edmay",
+    "email": "edmay@gmail.com",
+    "password": "edmay123",
+    "role": "Teacher"
+}
+
+// Send create admin request
+{
+    "name": "Angeline",
+    "email": "angeline@gmail.com",
+    "password": "angeline123",
+    "role": "Admin"
+}
