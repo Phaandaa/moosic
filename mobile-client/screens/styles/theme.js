@@ -7,8 +7,8 @@ const theme = StyleSheet.create({
   container: {
     padding: 20,
     marginTop: 30,
+    marginBottom: 20,
     backgroundColor: '#ffffff',
-    flex: 1,
     width: '100%',
     height : '100%',
     
@@ -28,23 +28,36 @@ const theme = StyleSheet.create({
     paddingVertical: 6,
     
   },
+  textBold:{
+    fontSize: 24,
+    paddingVertical: 6,
+    fontWeight: 'bold',
+  },
   textTitle: {
     fontSize: 24,
     paddingVertical: 6,
     fontWeight: 'bold',
-    alignSelf: 'center',
+    
     color: '#525F7F',
   },
   textSubtitle:{
     fontSize: 16,
     paddingVertical: 6,
     fontWeight: 'light',
-    alignSelf: 'center',
+    
     color: '#A1B2CF',
   
   },
   
-  // Add other font styles as needed
+  //component themes
+  box:{
+    padding: 20,
+    borderRadius: 15,
+    marginTop: 20,
+    width: '100%',
+    
+    
+  },
   button: {
     backgroundColor: '#4664EA',
     padding: 15,
