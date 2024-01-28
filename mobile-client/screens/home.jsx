@@ -8,7 +8,7 @@ const HomeScreen = ({ navigation }) => {
       <Text style={styles.title}>Music Practice App</Text>
       <TouchableOpacity
         style={styles.button}
-        // onPress={() => navigation.navigate('Practice')}
+        onPress={() => navigation.navigate('PracticeScreen')}
       >
         <Text style={styles.buttonText}>Start Practice</Text>
       </TouchableOpacity>
