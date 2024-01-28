@@ -8,7 +8,6 @@ const theme = StyleSheet.create({
     padding: 20,
     marginTop: 30,
     backgroundColor: '#ffffff',
-    
     width: '100%',
     height : '100%',
     
@@ -54,7 +53,7 @@ const theme = StyleSheet.create({
     padding: 20,
     borderRadius: 15,
     marginTop: 20,
-    width: '90%',
+    width: '100%',
     
     
   },

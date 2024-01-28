@@ -1,0 +1,3 @@
+MONGODB_URI = mongodb+srv://phandavina:lDPN6RBRKU12ddcZ@test-springboot.ehqh3nl.mongodb.net/?retryWrites=true&w=majority
+MONGODB_DB = moosic
+FIREBASE_API_KEY = AIzaSyBN1eVExW9R6SZVNkm_ZXBg87lf0thK0xU
