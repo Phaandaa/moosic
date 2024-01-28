@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Correct import statement
+import { Ionicons } from '@expo/vector-icons'; 
 import theme from '../../screens/styles/theme';
 
 const BoxComponent = ({
@@ -30,7 +30,7 @@ const BoxComponent = ({
   };
 
   return (
-    <View style={[theme.box, { backgroundColor: color, overflow: 'hidden', position: 'relative' }]}>
+    <View style={[theme.box, { backgroundColor: color, overflow: 'hidden', position: 'relative'}]}>
       {/* Icon (conditional rendering) */}
       {iconName && (
         <Ionicons
