@@ -1,5 +1,12 @@
 package com.example.server.models;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@NoArgsConstructor
+@Getter
+@Setter
 public class FirebaseToken {
     private String localId;
     private String email;
@@ -15,21 +22,4 @@ public class FirebaseToken {
         this.expiresIn = 3600;
         this.localId = localId;
     }
-
-    public String getLocalId() {
-        return localId;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-    
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public String getIdToken() {
-        return idToken;
-    }
-
 }
