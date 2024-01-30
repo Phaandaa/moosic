@@ -12,7 +12,7 @@ function ViewCreatedAssignmentsScreen({route}){
                 <Text style={theme.cardTitle}>{assignmentData.name}</Text>
                     <Text style={theme.cardText}>Description: {assignmentData.description}</Text>
                     <Text style={theme.cardText}>Deadline: {assignmentData.deadline}</Text>
-                    <Text style={theme.cardText}>Created on: 20/05/2024</Text>
+                    <Text style={theme.cardText}>Created on: {assignmentData.submissionDate}</Text>
                     <Text style={theme.cardText}>Attachments:</Text>
                     
                     {/* Map over the images array to display each image */}
