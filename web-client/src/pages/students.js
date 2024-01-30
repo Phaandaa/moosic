@@ -183,7 +183,6 @@ const Page = () => {
 
   const useStudents = (page, rowsPerPage) => {
     return useMemo(() => {
-<<<<<<< HEAD
       const filteredData = searchTerm
         ? studentData.filter((student) => 
             student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -194,12 +193,6 @@ const Page = () => {
       return applyPagination(filteredData, page, rowsPerPage);
     }, [studentData, page, rowsPerPage, searchTerm]);
   };
-  
-=======
-      return applyPagination(studentData, page, rowsPerPage);
-    }, [studentData, page, rowsPerPage]);
-  };
->>>>>>> cf75ef1 (feat: view students & view teachers integrated)
 
   const useStudentIds = (students) => {
     return useMemo(() => {
@@ -274,13 +267,8 @@ const Page = () => {
                 <StudentsModal />
               </div>
             </Stack>
-<<<<<<< HEAD
             <StudentsSearch handleSearchChange={handleSearchChange} />
             <StudentsTable
-=======
-            <CustomersSearch />
-            <CustomersTable
->>>>>>> cf75ef1 (feat: view students & view teachers integrated)
               count={studentData.length}
               items={students}
               onDeselectAll={studentsSelection.handleDeselectAll}
