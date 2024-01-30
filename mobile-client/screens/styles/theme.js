@@ -7,8 +7,8 @@ const theme = StyleSheet.create({
   container: {
     padding: 20,
     marginTop: 30,
+    marginBottom: 20,
     backgroundColor: '#ffffff',
-    flex: 1,
     width: '100%',
     height : '100%',
     
@@ -28,23 +28,36 @@ const theme = StyleSheet.create({
     paddingVertical: 6,
     
   },
+  textBold:{
+    fontSize: 24,
+    paddingVertical: 6,
+    fontWeight: 'bold',
+  },
   textTitle: {
     fontSize: 24,
     paddingVertical: 6,
     fontWeight: 'bold',
-    alignSelf: 'center',
+    
     color: '#525F7F',
   },
   textSubtitle:{
     fontSize: 16,
     paddingVertical: 6,
     fontWeight: 'light',
-    alignSelf: 'center',
+    
     color: '#A1B2CF',
   
   },
   
-  // Add other font styles as needed
+  //component themes
+  box:{
+    padding: 20,
+    borderRadius: 15,
+    marginTop: 20,
+    width: '100%',
+    
+    
+  },
   button: {
     backgroundColor: '#4664EA',
     padding: 15,
@@ -123,8 +136,8 @@ const theme = StyleSheet.create({
   },
   buttonContainer2: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // This will space out the buttons evenly
-    // width: '100%', // Set the width to take up the full container width
+    justifyContent: 'flex-end',
+    // justifyContent: 'space-between', // This will space out the buttons evenly
     marginTop: 10, // Add some margin to the top of the button container
   },
   smallButton: {
@@ -138,6 +151,67 @@ const theme = StyleSheet.create({
       fontWeight: 'bold',
       fontSize: 14,
       textAlign: 'center',
+  }, 
+  assignmentImage: {
+    width: 150,
+    height: 150
+  }, 
+  imageContainer: {
+    position: 'relative',
+    marginRight: 10, // Add space between images
+    marginTop: 20,
+    marginLeft: 10,
+  },
+  contentContainer:{
+    flexGrow: 1, // Makes sure all content will be scrolled
+  },
+  innerContainer:{
+      padding: 20,
+  },
+  image: {
+      width: 150,
+      height: 150
+  }, 
+  removeButton: {
+      position: 'absolute',
+      right: 0,
+      top: 0,
+      // backgroundColor: '#4664EA',
+      // padding: 5,
+      // borderRadius: 10,
+  },
+  cancelIcon: {
+      width: 30,
+      height: 30
+  },
+  label:{
+      marginTop: 20,
+      marginLeft: 20,
+      fontSize: 16,
+      color: '#6e6e6e',
+  }, 
+  documentItemContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      marginTop: 20,
+      marginLeft: 10,
+  },
+  documentThumbnail: {
+      width: 30,
+      height: 30,
+      marginRight: 10,
+  },
+  documentName: {
+      flexGrow: 1,
+      flexShrink: 1,
+      marginRight: 10,
+  },
+  buttonsContainer:{
+      flexDirection: 'row',
+      justifyContent: 'space-between', // This will space out the buttons evenly
+      marginTop: 20,
+      paddingHorizontal: 10, // Add some padding on the sides
   }
 });
 

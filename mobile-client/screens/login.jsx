@@ -25,8 +25,8 @@ const LoginPage = ({ navigation }) => {
   return (
     <View style={theme.container}>
       <Image source={require('../assets/learn2playlogo.png')} style={{...theme.logo}} />
-      <Text style={theme.textTitle}>Log Into Your Profile</Text>
-      <Text style={{...theme.textSubtitle, marginBottom: 40}}>Welcome Back!</Text>
+      <Text style={[theme.textTitle, {textAlign: 'center'}]}>Log Into Your Profile</Text>
+      <Text style={{...theme.textSubtitle, marginBottom: 40, textAlign:'center'}}>Welcome Back!</Text>
 
       <AnimatedPlaceholderInput
         style={theme.input}
