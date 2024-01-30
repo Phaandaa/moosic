@@ -88,15 +88,6 @@ public class UserService {
         studentRepository.save(newStudent);
     }
 
-    public void updateStudentGrade(String studentId, String grade){
-        Optional<Student> selectedStudent = studentRepository.findById(studentId);
-        if (selectedStudent.isPresent()) {
-            Student student = selectedStudent.get();
-            student.setGrade(grade);
-            studentRepository.save(student);
-        }
-    }
-
     private void createTeacher(String id, String name) {
         Teacher newTeacher = new Teacher(id, name, new ArrayList<>());
         teacherRepository.save(newTeacher);

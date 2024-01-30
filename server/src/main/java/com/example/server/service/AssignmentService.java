@@ -15,23 +15,23 @@ public class AssignmentService {
     @Autowired
     private AssignmentRepository assignmentRepository;
 
-    public Assignment createAssignment(CreateAssignmentDTO AssignmentDTO) {
-        if (AssignmentDTO == null) {
+    public Assignment createAssignment(Assignment assignment) {
+        if (assignment == null) {
             throw new IllegalArgumentException("AssignmentDTO cannot be null");
         }
 
-        String title = AssignmentDTO.getStudentName();
-        String description = AssignmentDTO.getDescription();
-        Date deadline = AssignmentDTO.getDeadline();
-        String studentName = AssignmentDTO.getStudentName();
-        String teacherName = AssignmentDTO.getTeacherName();
-        String teacherId = AssignmentDTO.getTeacherId();
-        String studentId = AssignmentDTO.getStudentId();
-        String submission = AssignmentDTO.getSubmission();
-        String teacherFeedback = AssignmentDTO.getTeacherFeedback();
-        String feedbackDocumentLink = AssignmentDTO.getFeedbackDocumentLink();
-        String assignmentDocumentLink = AssignmentDTO.getAssignmentDocumentLink();
-        Integer points = AssignmentDTO.getPoints();
+        String title = assignment.getStudentName();
+        String description = assignment.getDescription();
+        Date deadline = assignment.getDeadline();
+        String studentName = assignment.getStudentName();
+        String teacherName = assignment.getTeacherName();
+        String teacherId = assignment.getTeacherId();
+        String studentId = assignment.getStudentId();
+        String submission = assignment.getSubmission();
+        String teacherFeedback = assignment.getTeacherFeedback();
+        String feedbackDocumentLink = assignment.getFeedbackDocumentLink();
+        String assignmentDocumentLink = assignment.getAssignmentDocumentLink();
+        Integer points = assignment.getPoints();
 
         Assignment newAssignment = new Assignment(title, assignmentDocumentLink, description, deadline, studentId,
             studentName, submission, teacherId, teacherName, teacherFeedback,

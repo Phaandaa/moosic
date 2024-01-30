@@ -8,10 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.example.server.models.AuthRequest;
 import com.example.server.service.AssignmentService;
 
-import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -23,7 +21,6 @@ public class AssignmentController {
 
     @PostMapping("/create")
     public ResponseEntity<Assignment> createAssignment(@RequestBody Assignment assignment) {
-        Assignment newAssignment = assignmentService.createAssignment(assignment);
-        
+        return ResponseEntity.ok(assignmentService.createAssignment(assignment));
     }
 }
