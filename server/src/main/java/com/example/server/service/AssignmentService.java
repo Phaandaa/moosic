@@ -24,26 +24,26 @@ public class AssignmentService {
 
     public List<Assignment> createAssignment(CreateAssignmentDTO createAssignmentDTO, List<MultipartFile> files) throws IOException {
         List<String> publicUrls = cloudStorageService.uploadFileToGCS(files);
-        // List<HashMap<String, String>> students = createAssignmentDTO.getSelectedStudents();
-        // String title = createAssignmentDTO.getAssignmentTitle();
-        // String description = createAssignmentDTO.getAssignmentDesc();
-        // String teacherId = createAssignmentDTO.getTeacherId();
-        // String teacherName = createAssignmentDTO.getTeacherName();
-        // String deadline = createAssignmentDTO.getAssignmentDeadline();
-        // Integer points = createAssignmentDTO.getPoints();
+        List<HashMap<String, String>> students = createAssignmentDTO.getSelectedStudents();
+        String title = createAssignmentDTO.getAssignmentTitle();
+        String description = createAssignmentDTO.getAssignmentDesc();
+        String teacherId = createAssignmentDTO.getTeacherId();
+        String teacherName = createAssignmentDTO.getTeacherName();
+        String deadline = createAssignmentDTO.getAssignmentDeadline();
+        Integer points = createAssignmentDTO.getPoints();
 
-        // List<Assignment> newAssignments = new ArrayList<>();
-        // for (HashMap<String, String> student : students) {
-        //     String studentId = student.get("student_id");
-        //     String studentName = student.get("student_name");
-        //     Assignment newAssignment = new Assignment(title, publicUrls, description, deadline, studentId, studentName,
-        //             null, teacherId, teacherName, null, points, null);
-        //     newAssignments.add(newAssignment);
-        // }
-        // return assignmentRepository.saveAll(newAssignments);
-        System.out.println(createAssignmentDTO);
-        System.out.println(publicUrls);
-        return null;
+        List<Assignment> newAssignments = new ArrayList<>();
+        for (HashMap<String, String> student : students) {
+            String studentId = student.get("student_id");
+            String studentName = student.get("student_name");
+            Assignment newAssignment = new Assignment(title, publicUrls, description, deadline, studentId, studentName,
+                    null, teacherId, teacherName, null, points, null);
+            newAssignments.add(newAssignment);
+        }
+        return assignmentRepository.saveAll(newAssignments);
+        // System.out.println(createAssignmentDTO);
+        // System.out.println(publicUrls);
+        // return null;
 
     }
 
