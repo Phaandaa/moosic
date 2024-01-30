@@ -7,6 +7,8 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,12 +22,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class CloudStorageService {
+    
+    private Dotenv dotenv = Dotenv.load();
 
     public List<String> uploadFileToGCS(List<MultipartFile> files) throws IOException { 
         List<String> publicUrls = new ArrayList<>();
         // TODO: change placeholder projectId and bucketName using real values and dotenv
-        String projectId = "";
-        String bucketName = "";
+        String projectId = dotenv.get("GCP_PROJECT_ID");
+        String bucketName = dotenv.get("GCS_BUCKET_NAME");
 
         Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
         for (MultipartFile file : files) {
