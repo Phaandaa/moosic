@@ -9,8 +9,6 @@ import LottieView from 'lottie-react-native';
 function PracticeScreen({navigation}){
     const [title, setTitle] = useState('');
     const [comment, setComment] = useState('');
-    const [recording, setRecording] = useState();
-    const [permissionResponse, requestPermission] = Audio.usePermissions();
     const cancelIcon = require('../assets/cancel.png');
     const [videos, setVideos] = useState([]);
     const [loadingStates, setLoadingStates] = useState({});
@@ -29,46 +27,13 @@ function PracticeScreen({navigation}){
         console.log(practiceData)
 
         // Step 2: Validate Data (this is a basic example, you might need more complex validation)
-        if (!practiceData.title) {
+        if (!practiceData.title || !practiceData.comment || !practiceData.videos) {
             alert('Please fill all fields');
             return;
         }
         else{
             alert('Success!')
         }
-    }
-
-    async function startRecording() {
-        try {
-            if (permissionResponse.status !== 'granted') {
-                console.log('Requesting permission..');
-                await requestPermission();
-            }
-            await Audio.setAudioModeAsync({
-                allowsRecordingIOS: true,
-                playsInSilentModeIOS: true,
-            });
-    
-            console.log('Starting recording..');
-            const { recording } = await Audio.Recording.createAsync( Audio.RecordingOptionsPresets.HIGH_QUALITY );
-            setRecording(recording);
-            console.log('Recording started');
-        } catch (err) {
-            console.error('Failed to start recording', err);
-        }
-      }
-    
-    async function stopRecording() {
-        console.log('Stopping recording..');
-        setRecording(undefined);
-        await recording.stopAndUnloadAsync();
-        await Audio.setAudioModeAsync(
-        {
-            allowsRecordingIOS: false,
-        }
-        );
-        const uri = recording.getURI();
-        console.log('Recording stopped and stored at', uri);
     }
 
     const uploadVideo = async(mode) => {
@@ -127,9 +92,6 @@ function PracticeScreen({navigation}){
             
             {/* Upload Buttons  */}
             <View style={styles.buttonsContainer}>
-                <TouchableOpacity style={theme.button2} onPress={recording ? stopRecording : startRecording}>
-                    <Text style={theme.buttonText}>{recording ? 'Stop Recording' : 'Start Recording'}</Text>
-                </TouchableOpacity>
                 <TouchableOpacity style={theme.button2} onPress={() => uploadVideo("gallery")}>
                     <Text style={theme.buttonText}>Upload Video</Text>
                 </TouchableOpacity>
