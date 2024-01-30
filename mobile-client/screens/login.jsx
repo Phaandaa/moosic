@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image, Stylesheet } from 'react-native';
 import theme from './styles/theme';
 import AnimatedPlaceholderInput from '../components/ui/animateTextInput';
-import * as SplashScreen from 'expo-splash-screen';
+
 
 const LoginPage = ({ navigation }) => {
   const [email, setEmail] = useState('');
