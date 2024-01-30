@@ -63,15 +63,15 @@ export const CustomersTable = (props) => {
                 <TableCell>
                   Email
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   Location
-                </TableCell>
-                <TableCell>
+                </TableCell> */}
+                {/* <TableCell>
                   Phone
                 </TableCell>
                 <TableCell>
                   Signed Up
-                </TableCell>
+                </TableCell> */}
                 <TableCell>
                   Actions
                 </TableCell>
@@ -80,7 +80,7 @@ export const CustomersTable = (props) => {
             <TableBody>
               {items.map((customer) => {
                 const isSelected = selected.includes(customer.id);
-                const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
+                // const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
 
                 return (
                   <TableRow
@@ -106,9 +106,9 @@ export const CustomersTable = (props) => {
                         direction="row"
                         spacing={2}
                       >
-                        <Avatar src={customer.avatar}>
+                        {/* <Avatar src={customer.avatar}>
                           {getInitials(customer.name)}
-                        </Avatar>
+                        </Avatar> */}
                         <Typography variant="subtitle2">
                           {customer.name}
                         </Typography>
@@ -117,15 +117,15 @@ export const CustomersTable = (props) => {
                     <TableCell>
                       {customer.email}
                     </TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       {customer.address.city}, {customer.address.state}, {customer.address.country}
-                    </TableCell>
-                    <TableCell>
+                    </TableCell> */}
+                    {/* <TableCell>
                       {customer.phone}
-                    </TableCell>
-                    <TableCell>
+                    </TableCell> */}
+                    {/* <TableCell>
                       {createdAt}
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell>
                       <CustomersEditModal customer={customer} />
                     </TableCell>
