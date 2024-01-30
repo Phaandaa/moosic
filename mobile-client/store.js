@@ -1,11 +1,11 @@
 // store.js
-import { configureStore, combineReducers } from 'redux';
+import { createStore, combineReducers } from 'redux';
 import cacheReducer from './cacheReducer';
 
 const rootReducer = combineReducers({
   cache: cacheReducer,
 });
 
-const store = configureStore(rootReducer);
+const store = createStore(rootReducer);
 
 export default store;

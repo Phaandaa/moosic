@@ -1,5 +1,5 @@
 // cacheReducer.js
-import { SET_CACHE, CLEAR_CACHE } from './cacheActions';
+import { SET_CACHE, CLEAR_CACHE } from "./cacheAction";
 
 const initialState = {};
 
