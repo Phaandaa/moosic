@@ -5,6 +5,7 @@ import AnimatedPlaceholderInput from '../components/ui/animateTextInput';
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 import StudentDropdown from '../components/StudentDropdown';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 function CreateAssignmentScreen({navigation}){
     const [assignmentName, setAssignmentName] = useState('');
@@ -17,6 +18,31 @@ function CreateAssignmentScreen({navigation}){
     const [images, setImages] = useState([]);
     const [uploadedDocuments, setUploadedDocuments] = useState([]);
 
+    const [date, setDate] = useState(new Date());
+    const [showPicker, setShowPicker] = useState(false);
+
+    const toggleDatepicker = () => {
+        setShowPicker(!showPicker);
+    };
+    const onChange = ({type}, selectedDate) => {
+        if(type=='set'){
+            const currentDate = selectedDate;
+            setDate(currentDate)
+
+            if (Platform.OS === "android"){
+                toggleDatepicker();
+                setDate(currentDate.toDateString());
+            }
+        } else {
+            toggleDatepicker();
+        }
+    };
+
+    const confirmIOSDate = () => {
+        setAssignmentDeadline(date.toDateString());
+        toggleDatepicker();
+    }
+    
     const uploadImage = async(mode) => {
         try {
             let result = {};
@@ -114,7 +140,7 @@ function CreateAssignmentScreen({navigation}){
                 onChangeText={setAssignmentDesc}>
             </AnimatedPlaceholderInput>
 
-            <AnimatedPlaceholderInput 
+            {/*<AnimatedPlaceholderInput 
                 placeholder="Deadline (DD-MM-YYYY)" 
                 secureTextEntry={false} 
                 textInputConfig={{ 
@@ -122,7 +148,47 @@ function CreateAssignmentScreen({navigation}){
                 }}
                 value={assignmentDeadline}
                 onChangeText={setAssignmentDeadline}>
-            </AnimatedPlaceholderInput>
+            </AnimatedPlaceholderInput>*/}
+
+            {showPicker && Platform.OS === "ios" &&(
+                <View></View>
+            )}
+
+
+
+            <View style={{flexDirection:'row', justifyContent: 'space-around'}}> 
+                <TouchableOpacity style={theme.button} onPress={toggleDatepicker}>
+                    <Text style={theme.buttonText}>Select Date</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={theme.button} onPress={confirmIOSDate}>
+                    <Text style={theme.buttonText}>Confirm</Text>
+                </TouchableOpacity>
+            </View>
+            {!showPicker && (
+                <AnimatedPlaceholderInput 
+                    onPress={toggleDatepicker}
+                    placeholder="Deadline (DD-MM-YYYY)" 
+                    secureTextEntry={false} 
+                    // textInputConfig={{ 
+                    //     maxLength: 10
+                    // }}
+                    value={assignmentDeadline}
+                    onChangeText={setAssignmentDeadline}
+                    onPressIn={toggleDatepicker}
+                    editable={false}
+                    >
+                </AnimatedPlaceholderInput>
+            )}
+            
+            {showPicker && (
+                <DateTimePicker 
+                    mode="date"
+                    display="spinner"
+                    value={date}
+                    onChange={onChange}
+                    style={assignmentStyles.datePicker}
+                />
+            )}     
             
             {/* Upload Buttons  */}
             <View style={theme.buttonsContainer}>
@@ -226,5 +292,9 @@ const assignmentStyles = StyleSheet.create({
         justifyContent: 'space-between', // This will space out the buttons evenly
         marginTop: 20,
         paddingHorizontal: 10, // Add some padding on the sides
+    },
+    datePicker:{
+        height: 120,
+        marginTop: -10,
     }
 });
