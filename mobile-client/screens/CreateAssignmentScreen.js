@@ -12,6 +12,8 @@ function CreateAssignmentScreen({navigation}){
     const [assignmentDesc, setAssignmentDesc] = useState('');
     const [assignmentDeadline, setAssignmentDeadline] = useState('');
     const [selectedStudents, setSelectedStudents] = useState([]);
+    const [submissionDate, setSubmissionDate] = useState(Date.now());
+
 
     const cancelIcon = require('../assets/cancel.png');
     const documentLogo = require('../assets/filelogo.png')
@@ -94,11 +96,14 @@ function CreateAssignmentScreen({navigation}){
     
 
     const submitHandler = () => {
+        const nowDate = Date.now();
+        setSubmissionDate(nowDate);
         console.log('Assignment Name on Submit:', assignmentName, 'Type:', typeof assignmentName );
         console.log('Assignment Desc on Submit:', assignmentDesc, 'Type:', typeof assignmentDesc );
         console.log('Assignment Deadline on Submit:', assignmentDeadline, 'Type:', typeof assignmentDeadline );
         console.log('Students', selectedStudents, 'Type:', typeof selectedStudents );
-
+        console.log('Submission Date', submissionDate, 'Type:', typeof submissionDate );
+        
         // Step 1: Collect Data
         const assignmentData = {
             name: assignmentName,
@@ -106,7 +111,8 @@ function CreateAssignmentScreen({navigation}){
             deadline: assignmentDeadline,
             images: images,
             documents: uploadedDocuments,
-            students: selectedStudents
+            students: selectedStudents,
+            submissionDate: submissionDate        
         };
         console.log(assignmentData)
 
@@ -150,6 +156,8 @@ function CreateAssignmentScreen({navigation}){
                 onChangeText={setAssignmentDeadline}>
             </AnimatedPlaceholderInput>*/}
 
+            {/* <View style={{margin: 20}}><Text style={assignmentStyles.placeholder}>Deadline</Text></View> */}
+
             {showPicker && Platform.OS === "ios" &&(
                 <View></View>
             )}
@@ -167,11 +175,8 @@ function CreateAssignmentScreen({navigation}){
             {!showPicker && (
                 <AnimatedPlaceholderInput 
                     onPress={toggleDatepicker}
-                    placeholder="Deadline (DD-MM-YYYY)" 
+                    // placeholder="Deadline (DD-MM-YYYY)" 
                     secureTextEntry={false} 
-                    // textInputConfig={{ 
-                    //     maxLength: 10
-                    // }}
                     value={assignmentDeadline}
                     onChangeText={setAssignmentDeadline}
                     onPressIn={toggleDatepicker}
@@ -296,5 +301,10 @@ const assignmentStyles = StyleSheet.create({
     datePicker:{
         height: 120,
         marginTop: -10,
-    }
+    },
+    placeholder: {
+        position: 'absolute',
+        bottom: 40, // Adjusted to align with the bottom of the TextInput
+        color: '#A1B2CF',
+      },
 });
