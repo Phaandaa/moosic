@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import Head from "next/head";
 import { subDays, subHours } from "date-fns";
 import ArrowDownOnSquareIcon from "@heroicons/react/24/solid/ArrowDownOnSquareIcon";
@@ -159,32 +159,43 @@ const data = [
 ];
 
 // const { userData } = useAuth();
-// const [students, setStudents] = useState([]);
-
-const fetchStudents = async () => {
-  const response = await getAsync(`users`);
-  const data = await response.json();
-  console.log(data);
-};
-
-const useCustomers = (page, rowsPerPage) => {
-  return useMemo(() => {
-    return applyPagination(data, page, rowsPerPage);
-  }, [page, rowsPerPage]);
-};
-
-const useCustomerIds = (customers) => {
-  return useMemo(() => {
-    return customers.map((customer) => customer.id);
-  }, [customers]);
-};
 
 const Page = () => {
+  const [studentData, setStudentData] = useState([]);
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const response = await getAsync(`users`);
+        const data = await response.json();
+        setStudentData(data.filter((user) => user.role === "Student"));
+      } catch (error) {
+        console.error("Error fetching students:", error);
+      }
+    };
+  
+    fetchStudents();
+  }, []);
+
+  console.log("studentData", studentData);
+
+  const useStudents = (page, rowsPerPage) => {
+    return useMemo(() => {
+      return applyPagination(studentData, page, rowsPerPage);
+    }, [studentData, page, rowsPerPage]);
+  };
+
+  const useStudentIds = (students) => {
+    return useMemo(() => {
+      return students.map((student) => student.id);
+    }, [students]);
+  };
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const customers = useCustomers(page, rowsPerPage);
-  const customersIds = useCustomerIds(customers);
-  const customersSelection = useSelection(customersIds);
+  const students = useStudents(page, rowsPerPage);
+  const studentsIds = useStudentIds(students);
+  const studentsSelection = useSelection(studentsIds);
 
   const handlePageChange = useCallback((event, value) => {
     setPage(value);
@@ -198,7 +209,6 @@ const Page = () => {
     alert("Add");
   }, []);
 
-  fetchStudents();
 
   return (
     <>
@@ -246,17 +256,17 @@ const Page = () => {
             </Stack>
             <CustomersSearch />
             <CustomersTable
-              count={data.length}
-              items={customers}
-              onDeselectAll={customersSelection.handleDeselectAll}
-              onDeselectOne={customersSelection.handleDeselectOne}
+              count={studentData.length}
+              items={students}
+              onDeselectAll={studentsSelection.handleDeselectAll}
+              onDeselectOne={studentsSelection.handleDeselectOne}
               onPageChange={handlePageChange}
               onRowsPerPageChange={handleRowsPerPageChange}
-              onSelectAll={customersSelection.handleSelectAll}
-              onSelectOne={customersSelection.handleSelectOne}
+              onSelectAll={studentsSelection.handleSelectAll}
+              onSelectOne={studentsSelection.handleSelectOne}
               page={page}
               rowsPerPage={rowsPerPage}
-              selected={customersSelection.selected}
+              selected={studentsSelection.selected}
             />
           </Stack>
         </Container>
