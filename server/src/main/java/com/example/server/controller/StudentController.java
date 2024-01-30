@@ -16,9 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.server.entity.Student;
-import com.example.server.entity.User;
-import com.example.server.models.CreateUserDTO;
-import com.example.server.service.UserService;
+import com.example.server.service.StudentService;
 
 @RestController
 @CrossOrigin
@@ -26,14 +24,14 @@ import com.example.server.service.UserService;
 public class StudentController {
 
     @Autowired
-    private UserService userService;
+    private StudentService studentService;
 
     // Create student - already in user controller
 
     // Get all student
     @GetMapping
-    public ResponseEntity<List<User>> getAllStudents() {
-        return ResponseEntity.ok(userService.getAllStudents());
+    public ResponseEntity<List<Student>> getAllStudents() {
+        return ResponseEntity.ok(studentService.getAllStudents());
     }
 
     // Get specific student using student id
