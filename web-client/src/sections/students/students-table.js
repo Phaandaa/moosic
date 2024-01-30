@@ -16,10 +16,10 @@ import {
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
-import CustomersEditModal from './customers-edit-modal';
+import StudentsEditModal from './students-edit-modal';
 
 
-export const CustomersTable = (props) => {
+export const StudentsTable = (props) => {
   const {
     count = 0,
     items = [],
@@ -127,7 +127,7 @@ export const CustomersTable = (props) => {
                       {createdAt}
                     </TableCell> */}
                     <TableCell>
-                      <CustomersEditModal customer={customer} />
+                      <StudentsEditModal customer={customer} />
                     </TableCell>
                   </TableRow>
                 );
@@ -149,7 +149,7 @@ export const CustomersTable = (props) => {
   );
 };
 
-CustomersTable.propTypes = {
+StudentsTable.propTypes = {
   count: PropTypes.number,
   items: PropTypes.array,
   onDeselectAll: PropTypes.func,
