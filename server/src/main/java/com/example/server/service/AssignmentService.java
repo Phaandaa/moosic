@@ -22,6 +22,10 @@ public class AssignmentService {
     @Autowired
     private CloudStorageService cloudStorageService;
 
+    // TODO: Ask if assignment should be created for each student or no. tbh easier to code
+    // if each student has their own assignment entry so teacher can give feedback
+    // and student can submit individually without complex code on frontend
+
     public List<Assignment> createAssignment(CreateAssignmentDTO createAssignmentDTO, List<MultipartFile> files) throws IOException {
         List<String> publicUrls = cloudStorageService.uploadFileToGCS(files);
         List<HashMap<String, String>> students = createAssignmentDTO.getSelectedStudents();
