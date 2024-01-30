@@ -18,7 +18,7 @@ export const StudentsSearch = ({ handleSearchChange }) => (
           </SvgIcon>
         </InputAdornment>
       )}
-      sx={{ maxWidth: 500 }}
+      // sx={{ maxWidth: 500 }}
     />
   </Card>
 );
