@@ -6,12 +6,15 @@ import HomePage from './screens/home';
 import CreateAssignmentScreen from './screens/CreateAssignmentScreen';
 import MyStudentsScreen from './screens/MyStudentsScreen';
 import ViewCreatedAssignmentsScreen from './screens/ViewCreatedAssignmentsScreen';
+import { Provider } from 'react-redux';
+import store from './store';
 import PracticeScreen from './screens/PracticeScreen';
 
 const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
+    <Provider store={store}>
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="LoginScreen" component={LoginPage} options={{title: 'Login', headerShown: false}}/>
@@ -23,6 +26,7 @@ const App = () => {
 
       </Stack.Navigator>
     </NavigationContainer>
+    </Provider>
   );
 };
 
