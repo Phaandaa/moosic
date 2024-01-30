@@ -86,7 +86,8 @@ public class UserService {
     private void createStudent(String id, String name, CreateUserDTO userDTO) {
         String teacherId = userDTO.getInfo().get("teacher_id");
         String instrument = userDTO.getInfo().get("instrument");
-        Student newStudent = new Student(id, 0, teacherId, name, new ArrayList<>(), instrument);
+        String grade = userDTO.getInfo().get("grade");
+        Student newStudent = new Student(id, 0, teacherId, name, new ArrayList<>(), instrument, grade);
         Optional<Teacher> selectedTeacher = teacherRepository.findById(teacherId);
         if (selectedTeacher.isPresent()) {
             Teacher teacher = selectedTeacher.get();

@@ -22,12 +22,11 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View style={theme.container}>
-      
 
       {/* Search bar */}
       <HomepageSearchBar onSearch={handleSearch} />
       
-      <Text style={[theme.textTitle, {marginTop: 10}]}> Welcome! </Text>
+      <Text style={[theme.textTitle, {marginTop: 10}]}> Welcome!</Text>
 
       {/* Display modules or search results */}
       <FlatList

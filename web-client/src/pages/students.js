@@ -7,10 +7,10 @@ import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material';
 import { useSelection } from 'src/hooks/use-selection';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { CustomersTable } from 'src/sections/customer/customers-table';
-import { CustomersSearch } from 'src/sections/customer/customers-search';
+import { CustomersTable } from 'src/sections/students/customers-table';
+import { CustomersSearch } from 'src/sections/students/customers-search';
 import { applyPagination } from 'src/utils/apply-pagination';
-import CustomersModal from 'src/sections/customer/customers-modal';
+import CustomersModal from 'src/sections/students/customers-modal';
 
 const now = new Date();
 
@@ -207,7 +207,7 @@ const Page = () => {
     <>
       <Head>
         <title>
-          Customers
+          Students
         </title>
       </Head>
       <Box
@@ -226,7 +226,7 @@ const Page = () => {
             >
               <Stack spacing={1}>
                 <Typography variant="h4">
-                  Customers
+                  Students
                 </Typography>
                 <Stack
                   alignItems="center"

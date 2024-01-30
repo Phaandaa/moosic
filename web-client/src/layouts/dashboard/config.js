@@ -19,8 +19,19 @@ export const items = [
     )
   },
   {
-    title: 'Customers',
-    path: '/customers',
+    title: 'Students',
+    // path: '/customers',
+    path: '/students',
+    icon: (
+      <SvgIcon fontSize="small">
+        <UsersIcon />
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Teachers',
+    // path: '/customers',
+    path: '/teachers',
     icon: (
       <SvgIcon fontSize="small">
         <UsersIcon />
