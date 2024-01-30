@@ -1,11 +1,11 @@
-## MOOSIC - IS Project Experience for Team Moosic
+# MOOSIC - IS Project Experience for Team Moosic
 
 ## HOW TO START
 ***Web-Client***
-npm run dev
+- Windows & Mac: npm run dev
 
 ***Mobile-Client***
-npx expo start
+- Windows & Mac: npx expo start
 
 ***Server***
 - Windows: cd server; mvnw spring-boot:run
