@@ -7,10 +7,10 @@ import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import { Box, Button, Container, Stack, SvgIcon, Typography } from "@mui/material";
 import { useSelection } from "src/hooks/use-selection";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
-import { CustomersTable } from "src/sections/students/customers-table";
-import { CustomersSearch } from "src/sections/students/customers-search";
+import { StudentsTable } from "src/sections/students/students-table";
+import { StudentsSearch } from "src/sections/students/students-search";
 import { applyPagination } from "src/utils/apply-pagination";
-import CustomersModal from "src/sections/students/customers-modal";
+import StudentsModal from "src/sections/students/students-modal";
 import { getAsync } from "src/utils/utils";
 
 const now = new Date();
@@ -162,6 +162,7 @@ const data = [
 
 const Page = () => {
   const [studentData, setStudentData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -181,9 +182,17 @@ const Page = () => {
 
   const useStudents = (page, rowsPerPage) => {
     return useMemo(() => {
-      return applyPagination(studentData, page, rowsPerPage);
-    }, [studentData, page, rowsPerPage]);
+      const filteredData = searchTerm
+        ? studentData.filter((student) => 
+            student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            student.email.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+        : studentData;
+  
+      return applyPagination(filteredData, page, rowsPerPage);
+    }, [studentData, page, rowsPerPage, searchTerm]);
   };
+  
 
   const useStudentIds = (students) => {
     return useMemo(() => {
@@ -204,6 +213,10 @@ const Page = () => {
   const handleRowsPerPageChange = useCallback((event) => {
     setRowsPerPage(event.target.value);
   }, []);
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
 
   const handleAdd = useCallback(() => {
     alert("Add");
@@ -251,11 +264,11 @@ const Page = () => {
                 </Stack>
               </Stack>
               <div>
-                <CustomersModal />
+                <StudentsModal />
               </div>
             </Stack>
-            <CustomersSearch />
-            <CustomersTable
+            <StudentsSearch handleSearchChange={handleSearchChange} />
+            <StudentsTable
               count={studentData.length}
               items={students}
               onDeselectAll={studentsSelection.handleDeselectAll}

@@ -7,10 +7,10 @@ import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import { Box, Button, Container, Stack, SvgIcon, Typography } from "@mui/material";
 import { useSelection } from "src/hooks/use-selection";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
-import { CustomersTable } from "src/sections/students/customers-table";
-import { CustomersSearch } from "src/sections/students/customers-search";
+import { TeachersTable } from "src/sections/teachers/teachers-table";
+import { TeachersSearch } from "src/sections/teachers/teachers-search";
 import { applyPagination } from "src/utils/apply-pagination";
-import CustomersModal from "src/sections/students/customers-modal";
+import TeachersModal from "src/sections/teachers/teachers-modal";
 import { getAsync } from "src/utils/utils";
 
 const now = new Date();
@@ -19,6 +19,7 @@ const now = new Date();
 
 const Page = () => {
   const [teacherData, setTeacherData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchTeachers = async () => {
@@ -38,8 +39,15 @@ const Page = () => {
 
   const useTeachers = (page, rowsPerPage) => {
     return useMemo(() => {
-      return applyPagination(teacherData, page, rowsPerPage);
-    }, [teacherData, page, rowsPerPage]);
+      const filteredData = searchTerm
+        ? teacherData.filter((teacher) => 
+            teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            teacher.email.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+        : teacherData;
+  
+      return applyPagination(filteredData, page, rowsPerPage);
+    }, [teacherData, page, rowsPerPage, searchTerm]);
   };
 
   const useTeacherIds = (teachers) => {
@@ -62,6 +70,11 @@ const Page = () => {
     setRowsPerPage(event.target.value);
   }, []);
 
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+  
+
   const handleAdd = useCallback(() => {
     alert("Add");
   }, []);
@@ -70,7 +83,7 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>Students</title>
+        <title>Teachers</title>
       </Head>
       <Box
         component="main"
@@ -83,7 +96,7 @@ const Page = () => {
           <Stack spacing={3}>
             <Stack direction="row" justifyContent="space-between" spacing={4}>
               <Stack spacing={1}>
-                <Typography variant="h4">Students</Typography>
+                <Typography variant="h4">Teachers</Typography>
                 <Stack alignItems="center" direction="row" spacing={1}>
                   <Button
                     color="inherit"
@@ -108,11 +121,11 @@ const Page = () => {
                 </Stack>
               </Stack>
               <div>
-                <CustomersModal />
+                <TeachersModal />
               </div>
             </Stack>
-            <CustomersSearch />
-            <CustomersTable
+            <TeachersSearch handleSearchChange={handleSearchChange}/>
+            <TeachersTable
               count={teacherData.length}
               items={teachers}
               onDeselectAll={teachersSelection.handleDeselectAll}
