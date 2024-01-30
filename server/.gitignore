@@ -37,3 +37,6 @@ build/
 
 ### .env ###
 .env
+
+### GCP credentials ###
+*serviceAccountKey.json
