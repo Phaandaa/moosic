@@ -70,7 +70,8 @@ const theme = StyleSheet.create({
     borderRadius: 15,
     marginTop: 10,
     flex: 1,
-    marginHorizontal: 5
+    marginHorizontal: 5,
+    justifyContent: 'center', // Centers content vertically
   },
   buttonText: {
     color: 'white',
