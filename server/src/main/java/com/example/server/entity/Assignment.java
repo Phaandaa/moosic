@@ -28,6 +28,10 @@ public class Assignment {
     private String feedbackDocumentLink;
 
 
+    public Assignment() {
+
+    }
+    
     public Assignment(String title, String assignmentDocumentLink, String description, Date deadline, String studentId,
             String studentName, String submission, String teacherId, String teacherName, String teacherFeedback,
             Integer points, String feedbackDocumentLink) {

@@ -6,7 +6,8 @@
     "password": "davina123",
     "info": {
         "teacher_id": "125frg4",
-        "instrument": "piano"
+        "instrument": "piano",
+        "grade": 7
     } 
 }
 
