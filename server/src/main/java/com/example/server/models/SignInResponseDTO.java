@@ -12,12 +12,14 @@ public class SignInResponseDTO {
     private String name;
     private String userId;
     private String email;
+    private String role;
     private String idToken;
     private String refreshToken;
     private int expiresIn;
 
-    public SignInResponseDTO(FirebaseToken firebaseToken, String name) {
+    public SignInResponseDTO(FirebaseToken firebaseToken, String name, String role) {
         this.name = name;
+        this.role = role;
         this.userId = firebaseToken.getLocalId();
         this.email = firebaseToken.getEmail();
         this.idToken = firebaseToken.getIdToken();

@@ -79,7 +79,7 @@ public class UserService {
     public SignInResponseDTO signInWithEmailAndPassword(String email, String password) {
         FirebaseToken firebaseToken = firebaseAuthService.signInWithEmailAndPassword(email, password);
         User selectedUser = userRepository.findById(firebaseToken.getLocalId()).orElseThrow();
-        SignInResponseDTO signInResponseDTO = new SignInResponseDTO(firebaseToken, selectedUser.getName());
+        SignInResponseDTO signInResponseDTO = new SignInResponseDTO(firebaseToken, selectedUser.getName(), selectedUser.getRole());
         return signInResponseDTO;
     }
 
@@ -103,7 +103,6 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
-        System.out.println(userRepository.findAll());
         return userRepository.findAll();
     }
 
