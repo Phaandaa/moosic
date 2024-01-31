@@ -66,19 +66,6 @@ public class UserController {
         }
     }
 
-    @PutMapping("/{studentId}/update-grade")
-    public ResponseEntity<String> updateStudentGrade(
-            @PathVariable String studentId,
-            @RequestParam String grade) {
-
-        try {
-            userService.updateStudentGrade(studentId, grade);
-            return ResponseEntity.ok("Student's grade updated successfully.");
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
     // delete user by user_id
     @DeleteMapping("/{userId}")
     public ResponseEntity<String> deleteUserById(@PathVariable String userId){
