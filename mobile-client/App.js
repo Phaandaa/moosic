@@ -7,13 +7,15 @@ import CreateAssignmentScreen from './screens/CreateAssignmentScreen';
 import MyStudentsScreen from './screens/MyStudentsScreen';
 import ViewCreatedAssignmentsScreen from './screens/ViewCreatedAssignmentsScreen';
 import { Provider } from 'react-redux';
-import store from './store';
 import PracticeScreen from './screens/PracticeScreen';
+import store from './store';
+import { AuthProvider } from './screens/context/Authcontext';
 
 const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
+    <AuthProvider>
     <Provider store={store}>
     <NavigationContainer>
       <Stack.Navigator>
@@ -27,6 +29,7 @@ const App = () => {
       </Stack.Navigator>
     </NavigationContainer>
     </Provider>
+    </AuthProvider>
   );
 };
 
