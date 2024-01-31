@@ -16,7 +16,6 @@ const LoginPage = ({ navigation }) => {
   const handleLogin = async () => {
     try {
       await signIn(email, password); // Call the signIn function from AuthContext
-      
       navigation.navigate('HomeScreen'); // Navigate to the HomeScreen after successful login
     } catch (error) {
       console.error(error);
