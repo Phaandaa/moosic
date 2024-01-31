@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 const AuthContext = createContext({
   state: { isLoggedIn: false, user: null, error: null },
@@ -80,17 +81,11 @@ export const AuthProvider = ({ children }) => {
 
   const signIn = async (email, password) => {
     try {
-      const response = await fetch('http://192.168.32.15:8080/api/auth/signin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await axios.post('http://192.168.32.15:8080/api/auth/signin', { email, password }); // replace with own IP address
 
-      const data = await response.json();
+      const data = response.data;
 
-      if (response.ok) {
+      if (response.status === 200) {
         await saveAuthDataToCache(data);
         dispatch({ type: LOGIN_SUCCESS, payload: data });
         return data;
@@ -99,8 +94,9 @@ export const AuthProvider = ({ children }) => {
         throw new Error(data.message || 'Failed to sign in');
       }
     } catch (error) {
-      dispatch({ type: LOGIN_ERROR, payload: error.message || 'An error occurred during sign in' });
-      throw error;
+      const errorMessage = error.response?.data?.message || error.message || 'An error occurred during sign in';
+      dispatch({ type: LOGIN_ERROR, payload: errorMessage });
+      throw new Error(errorMessage);
     }
   };
 
@@ -112,7 +108,9 @@ export const AuthProvider = ({ children }) => {
   const signUp = () => {
     // Implement sign up logic here
   };
+
   const values = { state, dispatch, signIn, signOut, signUp };
+
   return (
     <AuthContext.Provider value={values}>
       {children}
