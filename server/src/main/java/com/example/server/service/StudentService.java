@@ -3,11 +3,13 @@ package com.example.server.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.example.server.dao.StudentRepository;
 import com.example.server.entity.Student;
 import java.util.Optional;
 
+@Service
 public class StudentService {
     
     @Autowired
