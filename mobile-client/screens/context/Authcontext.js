@@ -1,13 +1,9 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// AuthContext.js
 const AuthContext = createContext({
-    state: { isLoggedIn: false, user: null, error: null },
-    signIn: async () => {},
-    signOut: () => {},
+  state: { isLoggedIn: false, user: null, error: null },
 });
-
-export const useAuth = () => useContext(AuthContext);
 
 // Action Types
 const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
@@ -15,22 +11,53 @@ const LOGIN_ERROR = 'LOGIN_ERROR';
 const LOGOUT = 'LOGOUT';
 
 const authReducer = (state, action) => {
-  // ... same as before
+  switch (action.type) {
+    case LOGIN_SUCCESS:
+      return {
+        ...state,
+        isLoggedIn: true,
+        user: action.payload,
+      };
+    case LOGIN_ERROR:
+      return {
+        ...state,
+        isLoggedIn: false,
+        error: action.payload,
+      };
+    case LOGOUT:
+      return {
+        ...state,
+        isLoggedIn: false,
+        user: null,
+      };
+    default:
+      return state;
+  }
 };
 
-const saveAuthDataToCache = (data) => {
-  // Assuming using AsyncStorage or similar
-  localStorage.setItem('authData', JSON.stringify(data));
+const saveAuthDataToCache = async (data) => {
+  try {
+    await AsyncStorage.setItem('authData', JSON.stringify(data));
+  } catch (error) {
+    console.error('Error saving data to cache', error);
+  }
 };
 
-const getAuthDataFromCache = () => {
-  // Assuming using AsyncStorage or similar
-  const data = localStorage.getItem('authData');
-  return data ? JSON.parse(data) : null;
+const getAuthDataFromCache = async () => {
+  try {
+    const data = await AsyncStorage.getItem('authData');
+    return data ? JSON.parse(data) : null;
+  } catch (error) {
+    console.error('Error retrieving data from cache', error);
+  }
 };
 
-const clearAuthDataFromCache = () => {
-  localStorage.removeItem('authData');
+const clearAuthDataFromCache = async () => {
+  try {
+    await AsyncStorage.removeItem('authData');
+  } catch (error) {
+    console.error('Error clearing auth data from cache', error);
+  }
 };
 
 export const AuthProvider = ({ children }) => {
@@ -41,38 +68,56 @@ export const AuthProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    // On mount, check if auth data is cached and update state
-    const cachedData = getAuthDataFromCache();
-    if (cachedData) {
-      dispatch({ type: LOGIN_SUCCESS, payload: cachedData });
-    }
+    const loadAuthData = async () => {
+      const cachedData = await getAuthDataFromCache();
+      if (cachedData) {
+        dispatch({ type: LOGIN_SUCCESS, payload: cachedData });
+      }
+    };
+
+    loadAuthData();
   }, []);
 
   const signIn = async (email, password) => {
-    // ... same as before
-    if (response.ok) {
-      saveAuthDataToCache(data);
-      dispatch({ type: LOGIN_SUCCESS, payload: data });
-    } else {
-      dispatch({ type: LOGIN_ERROR, payload: data.message || 'Failed to sign in' });
+    try {
+      const response = await fetch('http://192.168.32.15:8080/api/auth/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        await saveAuthDataToCache(data);
+        dispatch({ type: LOGIN_SUCCESS, payload: data });
+        return data;
+      } else {
+        dispatch({ type: LOGIN_ERROR, payload: data.message || 'Failed to sign in' });
+        throw new Error(data.message || 'Failed to sign in');
+      }
+    } catch (error) {
+      dispatch({ type: LOGIN_ERROR, payload: error.message || 'An error occurred during sign in' });
+      throw error;
     }
   };
 
-  const signOut = () => {
-    clearAuthDataFromCache();
+  const signOut = async () => {
+    await clearAuthDataFromCache();
     dispatch({ type: LOGOUT });
   };
 
-  const signUp = () =>{
+  const signUp = () => {
     // Implement sign up logic here
-
-  }
-
-  // Pass down signIn and signOut along with the state and dispatch through the context
+  };
+  const values = { state, dispatch, signIn, signOut, signUp };
   return (
-    <AuthContext.Provider value={{ state, dispatch, signIn, signOut }}>
+    <AuthContext.Provider value={values}>
       {children}
     </AuthContext.Provider>
   );
-
 };
+
+export const useAuth = () => useContext(AuthContext);

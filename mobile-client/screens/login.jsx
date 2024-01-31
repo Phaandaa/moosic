@@ -15,8 +15,12 @@ const LoginPage = ({ navigation }) => {
 
   const handleLogin = async () => {
     try {
-      await signIn(email, password); // Call the signIn function from AuthContext
-      navigation.navigate('HomeScreen'); // Navigate to the HomeScreen after successful login
+      const response = await signIn(email, password);
+      console.log(response)
+      
+      if (response != null){
+        navigation.navigate('HomeScreen');
+      }
     } catch (error) {
       console.error(error);
     }
@@ -25,6 +29,7 @@ const LoginPage = ({ navigation }) => {
 
   // Fonts are loaded, render the LoginPage
   return (
+    
     <View style={theme.container}>
       <Image source={require('../assets/learn2playlogo.png')} style={{...theme.logo}} />
       <Text style={[theme.textTitle, {textAlign: 'center'}]}>Log Into Your Profile</Text>

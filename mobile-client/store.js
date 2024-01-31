@@ -1,8 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
-import reducer from './cacheSlice';
+import cacheReducer  from './cacheSlice';
 
-export const store = configureStore({
+const store = configureStore({
   reducer: {
     cache: cacheReducer,
   },
 });
+
+export default store;
