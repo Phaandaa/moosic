@@ -1,48 +1,48 @@
 // BottomTabNavigator.js
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons'; // Make sure to install @expo/vector-icons
+import { Ionicons } from '@expo/vector-icons';
 
 // Import your screen components
-import HomeScreen from './screens/home';
-import GoalsScreen from './screens/GoalsScreen';
-import NotificationsScreen from './screens/NotificationsScreen';
-import ProfileScreen from './screens/profilepage';
+import HomeScreen from '../../screens/home'; // Adjust the path as needed
+import GoalsScreen from '../../screens/goalsScreen'; // Adjust the path as needed
+import NotificationsScreen from '../../screens/notificationspage'; // Adjust the path as needed
+import ProfileScreen from '../../screens/profilepage'; // Adjust the path as needed
 
 const Tab = createBottomTabNavigator();
 
 const BottomTabNavigator = () => {
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
 
-            if (route.name === 'HomeScreen') {
+          switch (route.name) {
+            case 'Home':
               iconName = focused ? 'home' : 'home-outline';
-            } else if (route.name === 'Goals') {
+              break;
+            case 'Goals':
               iconName = focused ? 'flag' : 'flag-outline';
-            } else if (route.name === 'Notifications') {
+              break;
+            case 'Notifications':
               iconName = focused ? 'notifications' : 'notifications-outline';
-            } else if (route.name === 'Profile') {
+              break;
+            case 'Profile':
               iconName = focused ? 'person' : 'person-outline';
-            }
-
-            // You can return any component that you like here!
-            return <Ionicons name={iconName} size={size} color={color} />;
-          },
-          tabBarActiveTintColor: 'tomato',
-          tabBarInactiveTintColor: 'gray',
-        })}
-      >
-        <Tab.Screen name="Lessons" component={LessonsScreen} />
-        <Tab.Screen name="Goals" component={GoalsScreen} />
-        <Tab.Screen name="Notifications" component={NotificationsScreen} />
-        <Tab.Screen name="Profile" component={ProfileScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
+              break;
+          }
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: 'tomato',
+        tabBarInactiveTintColor: 'gray',
+      })}
+    >
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Goals" component={GoalsScreen} />
+      <Tab.Screen name="Notifications" component={NotificationsScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+    </Tab.Navigator>
   );
 };
 

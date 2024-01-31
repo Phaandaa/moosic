@@ -3,6 +3,7 @@ import { View, Text, FlatList } from 'react-native';
 import BoxComponent from '../components/ui/homepageModuleBoxes';
 import theme from './styles/theme';
 import HomepageSearchBar from '../components/ui/homepageSearchbar';
+import BottomTabNavigator from '../components/ui/navbar';
 
 const HomeScreen = ({ navigation }) => {
   const [searchResults, setSearchResults] = useState([]);
@@ -47,6 +48,9 @@ const HomeScreen = ({ navigation }) => {
           />
         )}
       />
+
+      {/* Bottom navigation bar */}
+      <BottomTabNavigator />
     </View>
   );
 };

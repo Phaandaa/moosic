@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import BottomTabNavigator from './components/ui/navbar';
 
 //pages
 import LoginPage from './screens/login';
@@ -11,6 +12,7 @@ import ViewCreatedAssignmentsScreen from './screens/ViewCreatedAssignmentsScreen
 import ProfileScreen from './screens/profilepage';
 import PracticeScreen from './screens/PracticeScreen';
 import NotificationsScreen from './screens/notificationspage';
+import GoalsScreen from './screens/goalsScreen';
 
 
 //cache
@@ -34,7 +36,10 @@ const App = () => {
         <Stack.Screen name="ViewCreatedAssignmentsScreen" component={ViewCreatedAssignmentsScreen} options={{title: 'Assignments'}}/>
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{title: 'Profile'}}/>
         <Stack.Screen name="NotificationsScreen" component={NotificationsScreen} options={{title: 'Notifications'}}/>
+        <Stack.Screen name="GoalsScreen" component={GoalsScreen} options={{title: 'Goals'}}/>
       </Stack.Navigator>
+      {/* Bottom navigation bar */}
+      <BottomTabNavigator />
     </NavigationContainer>
     </Provider>
     </AuthProvider>
