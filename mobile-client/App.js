@@ -1,13 +1,20 @@
 import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+
+//pages
 import LoginPage from './screens/login';
 import HomePage from './screens/home';
 import CreateAssignmentScreen from './screens/CreateAssignmentScreen';
 import MyStudentsScreen from './screens/MyStudentsScreen';
 import ViewCreatedAssignmentsScreen from './screens/ViewCreatedAssignmentsScreen';
-import { Provider } from 'react-redux';
+import ProfileScreen from './screens/profilepage';
 import PracticeScreen from './screens/PracticeScreen';
+import NotificationsScreen from './screens/notificationspage';
+
+
+//cache
+import { Provider } from 'react-redux';
 import store from './store';
 import { AuthProvider } from './screens/context/Authcontext';
 
@@ -25,7 +32,8 @@ const App = () => {
         <Stack.Screen name="PracticeScreen" component={PracticeScreen} options={{title: 'Start Practice'}}/>
         <Stack.Screen name="MyStudentsScreen" component={MyStudentsScreen} options={{title: 'My Students'}}/>
         <Stack.Screen name="ViewCreatedAssignmentsScreen" component={ViewCreatedAssignmentsScreen} options={{title: 'Assignments'}}/>
-
+        <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{title: 'Profile'}}/>
+        <Stack.Screen name="NotificationsScreen" component={NotificationsScreen} options={{title: 'Notifications'}}/>
       </Stack.Navigator>
     </NavigationContainer>
     </Provider>
