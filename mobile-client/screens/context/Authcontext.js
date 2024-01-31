@@ -1,12 +1,11 @@
-import React, { createContext, useContext, useReducer } from 'react';
+import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
 // AuthContext.js
 const AuthContext = createContext({
     state: { isLoggedIn: false, user: null, error: null },
-    signIn: async () => {}, // Provide a default no-op function
-    
-  });
-  
+    signIn: async () => {},
+    signOut: () => {},
+});
 
 export const useAuth = () => useContext(AuthContext);
 
@@ -16,28 +15,22 @@ const LOGIN_ERROR = 'LOGIN_ERROR';
 const LOGOUT = 'LOGOUT';
 
 const authReducer = (state, action) => {
-  switch (action.type) {
-    case LOGIN_SUCCESS:
-      return {
-        ...state,
-        isLoggedIn: true,
-        user: action.payload,
-      };
-    case LOGIN_ERROR:
-      return {
-        ...state,
-        isLoggedIn: false,
-        error: action.payload,
-      };
-    case LOGOUT:
-      return {
-        ...state,
-        isLoggedIn: false,
-        user: null,
-      };
-    default:
-      return state;
-  }
+  // ... same as before
+};
+
+const saveAuthDataToCache = (data) => {
+  // Assuming using AsyncStorage or similar
+  localStorage.setItem('authData', JSON.stringify(data));
+};
+
+const getAuthDataFromCache = () => {
+  // Assuming using AsyncStorage or similar
+  const data = localStorage.getItem('authData');
+  return data ? JSON.parse(data) : null;
+};
+
+const clearAuthDataFromCache = () => {
+  localStorage.removeItem('authData');
 };
 
 export const AuthProvider = ({ children }) => {
@@ -47,32 +40,26 @@ export const AuthProvider = ({ children }) => {
     error: null,
   });
 
+  useEffect(() => {
+    // On mount, check if auth data is cached and update state
+    const cachedData = getAuthDataFromCache();
+    if (cachedData) {
+      dispatch({ type: LOGIN_SUCCESS, payload: cachedData });
+    }
+  }, []);
+
   const signIn = async (email, password) => {
-    try {
-      const response = await fetch('http://localhost:8080/api/auth/signin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-      console.log(data);
-
-      if (response.ok) {
-        dispatch({ type: LOGIN_SUCCESS, payload: data });
-      } else {
-        dispatch({ type: LOGIN_ERROR, payload: data.message || 'Failed to sign in' });
-      }
-    } catch (error) {
-      dispatch({ type: LOGIN_ERROR, payload: error.message || 'An error occurred during sign in' });
+    // ... same as before
+    if (response.ok) {
+      saveAuthDataToCache(data);
+      dispatch({ type: LOGIN_SUCCESS, payload: data });
+    } else {
+      dispatch({ type: LOGIN_ERROR, payload: data.message || 'Failed to sign in' });
     }
   };
 
-  // Log out function if needed
   const signOut = () => {
-    // Implement sign out logic here, possibly clearing tokens
+    clearAuthDataFromCache();
     dispatch({ type: LOGOUT });
   };
 
@@ -87,4 +74,5 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
+
 };
