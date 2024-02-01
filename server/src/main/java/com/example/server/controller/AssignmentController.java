@@ -8,14 +8,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.server.entity.Assignment;
 import com.example.server.models.CreateAssignmentDTO;
 import com.example.server.service.AssignmentService;
+import com.example.server.exception.ErrorResponse;
 
 @RestController
 @CrossOrigin
@@ -35,7 +39,20 @@ public class AssignmentController {
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("An error occurred while processing the files. Please try again later.");
+                    .body("An error occurred while processing the files. Please try again later.");
+        }
+    }
+    
+    @GetMapping("/{studentId}")
+    public ResponseEntity<?> getAssignmentByStudentId(@PathVariable String studentId) {
+         try {
+            List<Assignment> assignments = assignmentService.findAssignmentByStudentId(studentId);
+            return ResponseEntity.ok(assignments);
+        } catch (Exception e) {
+            ErrorResponse error = new ErrorResponse();
+            error.setMessage("Error fetching all portfolios by user id");
+            error.setDetails(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }
 }

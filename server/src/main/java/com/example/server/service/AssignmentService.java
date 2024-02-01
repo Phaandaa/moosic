@@ -26,7 +26,8 @@ public class AssignmentService {
     // if each student has their own assignment entry so teacher can give feedback
     // and student can submit individually without complex code on frontend
 
-    public List<Assignment> createAssignment(CreateAssignmentDTO createAssignmentDTO, List<MultipartFile> files) throws IOException {
+    public List<Assignment> createAssignment(CreateAssignmentDTO createAssignmentDTO, List<MultipartFile> files)
+            throws IOException {
         List<String> publicUrls = cloudStorageService.uploadFileToGCS(files);
         List<HashMap<String, String>> students = createAssignmentDTO.getSelectedStudents();
         String title = createAssignmentDTO.getAssignmentTitle();
@@ -49,6 +50,16 @@ public class AssignmentService {
         // System.out.println(publicUrls);
         // return null;
 
+    }
+    
+    public List<Assignment> findAssignmentByStudentId(String studentId) {
+        try {
+            return assignmentRepository.findByStudentId(studentId);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Illegal argument", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error fetching assignments for student ID: " + studentId + " " + e.getMessage(), e);
+        }
     }
 
 
