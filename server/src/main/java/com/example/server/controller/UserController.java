@@ -31,8 +31,8 @@ public class UserController {
     @Autowired
     public UserService userService;
 
-    @Autowired
-    private StudentService studentService;
+    // @Autowired
+    // private StudentService studentService;
 
     @PostMapping("/create")
     public ResponseEntity<User> createUser(@RequestBody CreateUserDTO userDTO) {

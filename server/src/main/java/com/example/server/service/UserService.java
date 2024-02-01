@@ -50,7 +50,7 @@ public class UserService {
         userRepository.save(newUser);
         switch (role) {
             case "Student":
-                createStudent(id, name, userDTO);
+                createStudent(id, name, email, userDTO);
                 break;
             case "Teacher":
                 createTeacher(id, name);
@@ -83,11 +83,12 @@ public class UserService {
         return signInResponseDTO;
     }
 
-    private void createStudent(String id, String name, CreateUserDTO userDTO) {
+    private void createStudent(String id, String name, String email, CreateUserDTO userDTO) {
         String teacherId = userDTO.getInfo().get("teacher_id");
         String instrument = userDTO.getInfo().get("instrument");
         String grade = userDTO.getInfo().get("grade");
-        Student newStudent = new Student(id, 0, teacherId, name, new ArrayList<>(), instrument, grade);
+        String avatar = userDTO.getInfo().get("avatar");
+        Student newStudent = new Student(id, 0, teacherId, name, new ArrayList<>(), instrument, grade, avatar, email);
         Optional<Teacher> selectedTeacher = teacherRepository.findById(teacherId);
         if (selectedTeacher.isPresent()) {
             Teacher teacher = selectedTeacher.get();
