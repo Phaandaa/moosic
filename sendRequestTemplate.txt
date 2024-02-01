@@ -46,6 +46,7 @@ http://localhost:8080/assignments/create
 }
 
 for the value of "assignment", send in form of string so dont forget to JSON.stringfy() first
+and you need to set "assignment" content-type to be application/json
 
 // Create Practice
 // multipart/form-data
@@ -62,3 +63,4 @@ http://localhost:8080/practices/create
 }
 
 For the value of "practice" you have to send the json data in string format, so maybe perlu JSON.stringify()
+and you need to set "practice" content-type to be application/json
