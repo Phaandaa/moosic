@@ -4,6 +4,8 @@ import BoxComponent from '../components/ui/homepageModuleBoxes';
 import theme from './styles/theme';
 import HomepageSearchBar from '../components/ui/homepageSearchbar';
 
+
+
 const HomeScreen = ({ navigation }) => {
   const [searchResults, setSearchResults] = useState([]);
 
@@ -21,7 +23,7 @@ const HomeScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={theme.container}>
+    <View style={[theme.container, {paddingBottom: 50}]}>
 
       {/* Search bar */}
       <HomepageSearchBar onSearch={handleSearch} />
@@ -47,6 +49,10 @@ const HomeScreen = ({ navigation }) => {
           />
         )}
       />
+
+      
+
+      
     </View>
   );
 };

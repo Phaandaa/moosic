@@ -1,36 +1,66 @@
-import * as React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import React, { useEffect, useState, useContext } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import BottomTabNavigator from './components/ui/navbar';
+import LoadingScreen from './components/ui/loadingstate';
+
+// Pages
 import LoginPage from './screens/login';
-import HomePage from './screens/home';
 import CreateAssignmentScreen from './screens/CreateAssignmentScreen';
 import MyStudentsScreen from './screens/MyStudentsScreen';
 import ViewCreatedAssignmentsScreen from './screens/ViewCreatedAssignmentsScreen';
-import { Provider } from 'react-redux';
 import PracticeScreen from './screens/PracticeScreen';
+
+// Cache and Context
+import { Provider } from 'react-redux';
 import store from './store';
-import { AuthProvider } from './screens/context/Authcontext';
+import { AuthProvider, useAuth } from './screens/context/Authcontext';
 
 const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
     <AuthProvider>
-    <Provider store={store}>
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="LoginScreen" component={LoginPage} options={{title: 'Login', headerShown: false}}/>
-        <Stack.Screen name="HomeScreen" component={HomePage} options={{title: 'Home', headerShown: false}}/>
-        <Stack.Screen name="CreateAssignmentScreen" component={CreateAssignmentScreen} options={{title: 'Create Assignment'}}/>
-        <Stack.Screen name="PracticeScreen" component={PracticeScreen} options={{title: 'Start Practice'}}/>
-        <Stack.Screen name="MyStudentsScreen" component={MyStudentsScreen} options={{title: 'My Students'}}/>
-        <Stack.Screen name="ViewCreatedAssignmentsScreen" component={ViewCreatedAssignmentsScreen} options={{title: 'Assignments'}}/>
-
-      </Stack.Navigator>
-    </NavigationContainer>
-    </Provider>
+      <Provider store={store}>
+        <NavigationContainer>
+          <AuthNavigation />
+        </NavigationContainer>
+      </Provider>
     </AuthProvider>
   );
 };
 
+const AuthNavigation = () => {
+  const { state } = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setIsLoading(state.isLoggedIn === null);
+  }, [state.isLoggedIn]);
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  return (
+    <Stack.Navigator>
+      {state.isLoggedIn ? (
+        <>
+          <Stack.Screen name="MainApp" component={BottomTabNavigator} options={{ headerShown: false }} />
+          {/* You can place other screens here if they are part of the main app */}
+                <Stack.Screen name="CreateAssignmentScreen" component={CreateAssignmentScreen} options={{ title: 'Create Assignment' }}/>
+                <Stack.Screen name="PracticeScreen" component={PracticeScreen} options={{ title: 'Start Practice' }}/>
+                <Stack.Screen name="MyStudentsScreen" component={MyStudentsScreen} options={{ title: 'My Students' }}/>
+                <Stack.Screen name="ViewCreatedAssignmentsScreen" component={ViewCreatedAssignmentsScreen} options={{ title: 'Assignments' }}/>
+              </>
+            ) : (
+              // User is not logged in, show the login screen
+              <Stack.Screen name="LoginScreen" component={LoginPage} options={{ title: 'Login', headerShown: false }}/>
+            )}
+          </Stack.Navigator>
+  );
+};
+
 export default App;
+
+
