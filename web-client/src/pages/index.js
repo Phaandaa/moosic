@@ -10,10 +10,14 @@ import { OverviewTasksProgress } from 'src/sections/overview/overview-tasks-prog
 import { OverviewTotalCustomers } from 'src/sections/overview/overview-total-customers';
 import { OverviewTotalProfit } from 'src/sections/overview/overview-total-profit';
 import { OverviewTraffic } from 'src/sections/overview/overview-traffic';
+import { useAuth } from 'src/hooks/use-auth';
 
 const now = new Date();
 
-const Page = () => (
+const Page = () => {
+  const { user } = useAuth();
+  console.log(user);
+  return (
   <>
     <Head>
       <title>
@@ -28,10 +32,11 @@ const Page = () => (
       }}
     >
       <Container maxWidth="xl">
-        <Grid
+        <Box><h1>Welcome, {user.name?.split(' ')[0]}!</h1></Box><Grid
           container
           spacing={3}
         >
+          
           <Grid
             xs={12}
             sm={6}
@@ -221,7 +226,8 @@ const Page = () => (
       </Container>
     </Box>
   </>
-);
+  );
+};
 
 Page.getLayout = (page) => (
   <DashboardLayout>

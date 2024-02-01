@@ -9,7 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import PencilSquareIcon from "@heroicons/react/24/outline/PencilSquareIcon";
 import { SvgIcon } from "@mui/material";
 
-export default function CustomersEditModal(props) {
+export default function TeachersEditModal(props) {
   const [open, setOpen] = React.useState(false);
   const [step, setStep] = React.useState(1); // New state for tracking the step
 

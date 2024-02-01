@@ -9,7 +9,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import { SvgIcon } from "@mui/material";
 
-export default function CustomersModal() {
+export default function TeachersModal() {
   const [open, setOpen] = React.useState(false);
   const [step, setStep] = React.useState(1); // New state for tracking the step
 

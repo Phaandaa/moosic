@@ -6,10 +6,10 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
+import PencilSquareIcon from "@heroicons/react/24/outline/PencilSquareIcon";
 import { SvgIcon } from "@mui/material";
 
-export default function CustomersModal() {
+export default function StudentsEditModal(props) {
   const [open, setOpen] = React.useState(false);
   const [step, setStep] = React.useState(1); // New state for tracking the step
 
@@ -35,13 +35,13 @@ export default function CustomersModal() {
       <Button
         startIcon={
           <SvgIcon fontSize="small">
-            <PlusIcon />
+            <PencilSquareIcon />
           </SvgIcon>
         }
-        variant="contained"
+        variant="outlined"
         onClick={handleClickOpen}
       >
-        Add
+        Edit
       </Button>
       <Dialog
         open={open}
@@ -57,7 +57,7 @@ export default function CustomersModal() {
             // Step 1: Student Details
             <>
               <DialogContentText>
-                To create an account, please enter the student's details.
+                Edit the student's details below.
               </DialogContentText>
               {/* Student Details Form Fields */}
               <TextField
@@ -109,7 +109,7 @@ export default function CustomersModal() {
           {step === 2 && (
             // Step 2: Parent Details
             <>
-              <DialogContentText>Please enter the parent's details.</DialogContentText>
+              <DialogContentText>Edit the parent's details below.</DialogContentText>
               {/* Parent Details Form Fields */}
               <TextField
                 autoFocus
@@ -150,7 +150,7 @@ export default function CustomersModal() {
           {step === 3 && (
             // Step 2: Parent Details
             <>
-              <DialogContentText>Please enter the login details.</DialogContentText>
+              <DialogContentText>Edit login details below.</DialogContentText>
               {/* Parent Details Form Fields */}
               <TextField
                 autoFocus

@@ -13,7 +13,6 @@ const Page = () => {
   const formik = useFormik({
     initialValues: {
       email: "",
-      username: "",
       name: "",
       password: "",
       submit: null,
@@ -22,7 +21,6 @@ const Page = () => {
       email: Yup.string().email("Must be a valid email").max(255).required("Email is required"),
       name: Yup.string().max(255).required("Name is required"),
       password: Yup.string().max(255).required("Password is required"),
-      username: Yup.string().max(255).required("Username is required"),
     }),
     onSubmit: async (values, helpers) => {
       try {
@@ -69,16 +67,6 @@ const Page = () => {
             </Stack>
             <form noValidate onSubmit={formik.handleSubmit}>
               <Stack spacing={3}>
-                <TextField
-                  error={!!(formik.touched.username && formik.errors.username)}
-                  fullWidth
-                  helperText={formik.touched.username && formik.errors.username}
-                  label="Username"
-                  name="username"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  value={formik.values.username}
-                />
                 <TextField
                   error={!!(formik.touched.name && formik.errors.name)}
                   fullWidth

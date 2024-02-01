@@ -16,10 +16,10 @@ import {
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
-import CustomersEditModal from './teachers-edit-modal';
+import TeachersEditModal from './teachers-edit-modal';
 
 
-export const CustomersTable = (props) => {
+export const TeachersTable = (props) => {
   const {
     count = 0,
     items = [],
@@ -63,7 +63,7 @@ export const CustomersTable = (props) => {
                 <TableCell>
                   Email
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   Location
                 </TableCell>
                 <TableCell>
@@ -71,7 +71,7 @@ export const CustomersTable = (props) => {
                 </TableCell>
                 <TableCell>
                   Signed Up
-                </TableCell>
+                </TableCell> */}
                 <TableCell>
                   Actions
                 </TableCell>
@@ -80,7 +80,7 @@ export const CustomersTable = (props) => {
             <TableBody>
               {items.map((customer) => {
                 const isSelected = selected.includes(customer.id);
-                const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
+                // const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
 
                 return (
                   <TableRow
@@ -106,9 +106,9 @@ export const CustomersTable = (props) => {
                         direction="row"
                         spacing={2}
                       >
-                        <Avatar src={customer.avatar}>
+                        {/* <Avatar src={customer.avatar}>
                           {getInitials(customer.name)}
-                        </Avatar>
+                        </Avatar> */}
                         <Typography variant="subtitle2">
                           {customer.name}
                         </Typography>
@@ -117,7 +117,7 @@ export const CustomersTable = (props) => {
                     <TableCell>
                       {customer.email}
                     </TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       {customer.address.city}, {customer.address.state}, {customer.address.country}
                     </TableCell>
                     <TableCell>
@@ -125,9 +125,9 @@ export const CustomersTable = (props) => {
                     </TableCell>
                     <TableCell>
                       {createdAt}
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell>
-                      <CustomersEditModal customer={customer} />
+                      <TeachersEditModal customer={customer} />
                     </TableCell>
                   </TableRow>
                 );
@@ -149,7 +149,7 @@ export const CustomersTable = (props) => {
   );
 };
 
-CustomersTable.propTypes = {
+TeachersTable.propTypes = {
   count: PropTypes.number,
   items: PropTypes.array,
   onDeselectAll: PropTypes.func,
