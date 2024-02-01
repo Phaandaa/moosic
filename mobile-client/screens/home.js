@@ -23,7 +23,7 @@ const HomeScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={theme.container}>
+    <View style={[theme.container, {paddingBottom: 50}]}>
 
       {/* Search bar */}
       <HomepageSearchBar onSearch={handleSearch} />
