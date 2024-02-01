@@ -1,9 +1,13 @@
 package com.example.server.service;
 
-import java.util.Date;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.server.dao.AssignmentRepository;
 import com.example.server.entity.Assignment;
@@ -15,30 +19,37 @@ public class AssignmentService {
     @Autowired
     private AssignmentRepository assignmentRepository;
 
-    public Assignment createAssignment(Assignment assignment) {
-        if (assignment == null) {
-            throw new IllegalArgumentException("AssignmentDTO cannot be null");
+    @Autowired
+    private CloudStorageService cloudStorageService;
+
+    // TODO: Ask if assignment should be created for each student or no. tbh easier to code
+    // if each student has their own assignment entry so teacher can give feedback
+    // and student can submit individually without complex code on frontend
+
+    public List<Assignment> createAssignment(CreateAssignmentDTO createAssignmentDTO, List<MultipartFile> files) throws IOException {
+        List<String> publicUrls = cloudStorageService.uploadFileToGCS(files);
+        List<HashMap<String, String>> students = createAssignmentDTO.getSelectedStudents();
+        String title = createAssignmentDTO.getAssignmentTitle();
+        String description = createAssignmentDTO.getAssignmentDesc();
+        String teacherId = createAssignmentDTO.getTeacherId();
+        String teacherName = createAssignmentDTO.getTeacherName();
+        String deadline = createAssignmentDTO.getAssignmentDeadline();
+        Integer points = createAssignmentDTO.getPoints();
+
+        List<Assignment> newAssignments = new ArrayList<>();
+        for (HashMap<String, String> student : students) {
+            String studentId = student.get("student_id");
+            String studentName = student.get("student_name");
+            Assignment newAssignment = new Assignment(title, publicUrls, description, deadline, studentId, studentName,
+                    null, teacherId, teacherName, null, points, null);
+            newAssignments.add(newAssignment);
         }
-
-        String title = assignment.getStudentName();
-        String description = assignment.getDescription();
-        Date deadline = assignment.getDeadline();
-        String studentName = assignment.getStudentName();
-        String teacherName = assignment.getTeacherName();
-        String teacherId = assignment.getTeacherId();
-        String studentId = assignment.getStudentId();
-        String submission = assignment.getSubmission();
-        String teacherFeedback = assignment.getTeacherFeedback();
-        String feedbackDocumentLink = assignment.getFeedbackDocumentLink();
-        String assignmentDocumentLink = assignment.getAssignmentDocumentLink();
-        Integer points = assignment.getPoints();
-
-        Assignment newAssignment = new Assignment(title, assignmentDocumentLink, description, deadline, studentId,
-            studentName, submission, teacherId, teacherName, teacherFeedback,
-            points,feedbackDocumentLink);
-
-    return assignmentRepository.save(newAssignment);
+        return assignmentRepository.saveAll(newAssignments);
+        // System.out.println(createAssignmentDTO);
+        // System.out.println(publicUrls);
+        // return null;
 
     }
+
 
 }

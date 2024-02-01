@@ -4,20 +4,24 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
+import java.util.List;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@NoArgsConstructor
 @Getter
 @Setter
 @Document(collection = "assignments")
 public class Assignment {
+    // TODO: check implementation on how deadline can be used as Date object 
     @Id
     private String assignmentId;
     private String title;
-    private String assignmentDocumentLink;
+    private List<String> assignmentDocumentLinks;
     private String description;
-    private Date deadline;
+    private String deadline;
     private String studentId; // reference student
     private String studentName;
     private String submission;
@@ -28,15 +32,11 @@ public class Assignment {
     private String feedbackDocumentLink;
 
 
-    public Assignment() {
-
-    }
-    
-    public Assignment(String title, String assignmentDocumentLink, String description, Date deadline, String studentId,
+    public Assignment(String title, List<String> assignmentDocumentLinks, String description, String deadline, String studentId,
             String studentName, String submission, String teacherId, String teacherName, String teacherFeedback,
             Integer points, String feedbackDocumentLink) {
         this.title = title;
-        this.assignmentDocumentLink = assignmentDocumentLink;
+        this.assignmentDocumentLinks = assignmentDocumentLinks;
         this.description = description;
         this.deadline = deadline;
         this.studentId = studentId;
@@ -53,7 +53,7 @@ public class Assignment {
     @Override
     public String toString() {
         return "Assignment [assignmentId=" + assignmentId + ", title=" + title + ", assignmentDocumentLink="
-                + assignmentDocumentLink + ", description=" + description + ", deadline=" + deadline + ", studentId="
+                + assignmentDocumentLinks + ", description=" + description + ", deadline=" + deadline + ", studentId="
                 + studentId + ", studentName=" + studentName + ", submission=" + submission + ", teacherId=" + teacherId
                 + ", teacherName=" + teacherName + ", teacherFeedback=" + teacherFeedback + ", points=" + points
                 + ", feedbackDocumentLink=" + feedbackDocumentLink + "]";

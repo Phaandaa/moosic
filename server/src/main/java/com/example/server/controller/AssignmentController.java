@@ -1,15 +1,21 @@
 package com.example.server.controller;
 
-import com.example.server.entity.Assignment;
+import java.io.IOException;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import com.example.server.service.AssignmentService;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.example.server.models.CreateAssignmentDTO;
+import com.example.server.service.AssignmentService;
 
 @RestController
 @CrossOrigin
@@ -17,10 +23,19 @@ import com.example.server.service.AssignmentService;
 public class AssignmentController {
 
     @Autowired
-    public AssignmentService assignmentService;
+    private AssignmentService assignmentService;
 
-    @PostMapping("/create")
-    public ResponseEntity<Assignment> createAssignment(@RequestBody Assignment assignment) {
-        return ResponseEntity.ok(assignmentService.createAssignment(assignment));
+    @PostMapping(path = "/create", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<?> createAssignment(
+            @RequestPart("assignment") CreateAssignmentDTO assignmentDTO,
+            @RequestPart("files") List<MultipartFile> files) {
+
+        try {
+            return ResponseEntity.ok(assignmentService.createAssignment(assignmentDTO, files));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("An error occurred while processing the files. Please try again later.");
+        }
     }
 }

@@ -1,49 +1,47 @@
 package com.example.server.models;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class CreateAssignmentDTO {
-    private String assignmentId;
-    private String title;
-    private String assignmentDocumentLink;
-    private String description;
-    private Date deadline;
-    private String studentId; // reference student
-    private String studentName;
-    private String submission;
-    private String teacherId; // reference teacher 
+
+    @JsonProperty("teacher_id")
+    private String teacherId;
+
+    @JsonProperty("teacher_name")
     private String teacherName;
-    private String teacherFeedback;
+
+    @JsonProperty("assignment_title")
+    private String assignmentTitle;
+
+    @JsonProperty("assignment_desc")
+    private String assignmentDesc;
+
+    @JsonProperty("assignment_deadline")
+    private String assignmentDeadline;
+
+    @JsonProperty("selected_students")
+    private ArrayList<HashMap<String, String>> selectedStudents;
+
+    @JsonProperty("points")
     private Integer points;
-    private String feedbackDocumentLink;
 
-    public CreateAssignmentDTO() {
-
+    @Override
+    public String toString() {
+        return "CreateAssignmentDTO [teacherId=" + teacherId + ", teacherName=" + teacherName + ", assignmentTitle="
+                + assignmentTitle + ", assignmentDesc=" + assignmentDesc + ", assignmentDeadline=" + assignmentDeadline
+                + ", selectedStudents=" + selectedStudents + ", points=" + points + "]";
     }
-
-    public CreateAssignmentDTO(String assignmentId, String title, String assignmentDocumentLink, String description,
-            Date deadline, String studentId, String studentName, String submission, String teacherId,
-            String teacherName, String teacherFeedback, Integer points, String feedbackDocumentLink) {
-        this.assignmentId = assignmentId;
-        this.title = title;
-        this.assignmentDocumentLink = assignmentDocumentLink;
-        this.description = description;
-        this.deadline = deadline;
-        this.studentId = studentId;
-        this.studentName = studentName;
-        this.submission = submission;
-        this.teacherId = teacherId;
-        this.teacherName = teacherName;
-        this.teacherFeedback = teacherFeedback;
-        this.points = points;
-        this.feedbackDocumentLink = feedbackDocumentLink;
-    }
-
     
 }

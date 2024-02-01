@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.server.entity.User;
 import com.example.server.models.CreateUserDTO;
+import com.example.server.service.StudentService;
 import com.example.server.service.UserService;
 
 // TODO: make return into Response Entity and add status codes
@@ -29,6 +30,9 @@ public class UserController {
     
     @Autowired
     public UserService userService;
+
+    @Autowired
+    private StudentService studentService;
 
     @PostMapping("/create")
     public ResponseEntity<User> createUser(@RequestBody CreateUserDTO userDTO) {

@@ -15,6 +15,7 @@ import com.example.server.entity.User;
 import com.mongodb.lang.NonNull;
 import com.example.server.models.CreateUserDTO;
 import com.example.server.models.FirebaseToken;
+import com.example.server.models.SignInResponseDTO;
 
 
 // TODO: Handle possible exceptions, please check with example from OOP project
@@ -60,6 +61,7 @@ public class UserService {
         return newUser;
     }
 
+    @Transactional
     public User createAdmin(CreateUserDTO userDTO) {
         if (userDTO == null) {
             throw new IllegalArgumentException();
@@ -72,6 +74,13 @@ public class UserService {
         User newUser = new User(id, name, email, "Admin");
         userRepository.save(newUser);
         return newUser;
+    }
+
+    public SignInResponseDTO signInWithEmailAndPassword(String email, String password) {
+        FirebaseToken firebaseToken = firebaseAuthService.signInWithEmailAndPassword(email, password);
+        User selectedUser = userRepository.findById(firebaseToken.getLocalId()).orElseThrow();
+        SignInResponseDTO signInResponseDTO = new SignInResponseDTO(firebaseToken, selectedUser.getName(), selectedUser.getRole());
+        return signInResponseDTO;
     }
 
     private void createStudent(String id, String name, CreateUserDTO userDTO) {
@@ -94,7 +103,6 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
-        System.out.println(userRepository.findAll());
         return userRepository.findAll();
     }
 

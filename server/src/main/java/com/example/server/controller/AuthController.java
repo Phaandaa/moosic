@@ -1,8 +1,12 @@
 package com.example.server.controller;
 
 import com.example.server.models.FirebaseToken;
+import com.example.server.models.SignInResponseDTO;
 import com.example.server.service.FirebaseAuthService;
+import com.example.server.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +20,9 @@ public class AuthController {
     private FirebaseAuthService firebaseAuthService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     public AuthController(FirebaseAuthService firebaseAuthService) {
         this.firebaseAuthService = firebaseAuthService;
     }
@@ -26,7 +33,9 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
-    public FirebaseToken signInWithEmailAndPassword(@RequestBody AuthRequest authRequest) {
-        return firebaseAuthService.signInWithEmailAndPassword(authRequest.getEmail(), authRequest.getPassword());
+    public ResponseEntity<SignInResponseDTO> signInWithEmailAndPassword(@RequestBody AuthRequest authRequest) {
+        return ResponseEntity.ok(
+                userService.signInWithEmailAndPassword(authRequest.getEmail(), authRequest.getPassword())
+            );
     }
 }
