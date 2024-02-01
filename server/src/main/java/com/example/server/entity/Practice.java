@@ -30,6 +30,12 @@ public class Practice {
     @Field(name = "video_link")
     private String videoLink;
 
+    @Field(name = "title")
+    private String title;
+
+    @Field(name = "comment")
+    private String comment;
+
     @Field(name = "feedback")
     private String feedback;
 
@@ -38,12 +44,14 @@ public class Practice {
     }
 
     public Practice(String studentId, String studentName, String teacherId, String teacherName, String videoLink,
-            String feedback) {
+            String title, String comment, String feedback) {
         this.studentId = studentId;
         this.studentName = studentName;
         this.teacherId = teacherId;
         this.teacherName = teacherName;
         this.videoLink = videoLink;
+        this.title = title;
+        this.comment = comment;
         this.feedback = feedback;
     }
 

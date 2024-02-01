@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.server.dao.AssignmentRepository;
@@ -26,9 +27,10 @@ public class AssignmentService {
     // if each student has their own assignment entry so teacher can give feedback
     // and student can submit individually without complex code on frontend
 
+    @Transactional
     public List<Assignment> createAssignment(CreateAssignmentDTO createAssignmentDTO, List<MultipartFile> files)
             throws IOException {
-        List<String> publicUrls = cloudStorageService.uploadFileToGCS(files);
+        List<String> publicUrls = cloudStorageService.uploadFilesToGCS(files);
         List<HashMap<String, String>> students = createAssignmentDTO.getSelectedStudents();
         String title = createAssignmentDTO.getAssignmentTitle();
         String description = createAssignmentDTO.getAssignmentDesc();

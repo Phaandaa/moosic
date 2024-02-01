@@ -34,7 +34,7 @@ public class CloudStorageService {
         return storage;
     }
 
-    public List<String> uploadFileToGCS(List<MultipartFile> files) throws IOException { 
+    public List<String> uploadFilesToGCS(List<MultipartFile> files) throws IOException {
         List<String> publicUrls = new ArrayList<>();
         String bucketName = dotenv.get("GCS_BUCKET_NAME");
 
@@ -46,14 +46,30 @@ public class CloudStorageService {
                     .setContentType(file.getContentType())
                     .build();
 
-            // Upload the file to Google Cloud Storage
             byte[] content = file.getBytes();
             storage.createFrom(blobInfo, new ByteArrayInputStream(content));
 
-            // Generate the public URL
             String publicUrl = "https://storage.googleapis.com/" + bucketName + "/" + objectName;
             publicUrls.add(publicUrl);
         }
         return publicUrls;
+    }
+    
+    public String uploadFileToGCS(MultipartFile file) throws IOException {
+        String bucketName = dotenv.get("GCS_BUCKET_NAME");
+
+        Storage storage = getStorage();
+        String objectName = "practice/" + file.getOriginalFilename();
+        BlobId blobId = BlobId.of(bucketName, objectName);
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
+                .setContentType(file.getContentType())
+                .build();
+
+        byte[] content = file.getBytes();
+        storage.createFrom(blobInfo, new ByteArrayInputStream(content));
+
+        String publicUrl = "https://storage.googleapis.com/" + bucketName + "/" + objectName;
+        
+        return publicUrl;
     }
 } 

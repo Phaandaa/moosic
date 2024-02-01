@@ -1,0 +1,64 @@
+// Send create student request
+http://localhost:8080/users/create
+{
+    "name": "Davina",
+    "email": "phandavina@gmail.com",
+    "role": "Student",
+    "password": "davina123",
+    "info": {
+        "teacher_id": "125frg4",
+        "instrument": "piano",
+        "grade": 7
+    } 
+}
+
+// Send create teacher request
+http://localhost:8080/users/create
+{
+    "name": "Edmay",
+    "email": "edmay@gmail.com",
+    "password": "edmay123",
+    "role": "Teacher"
+}
+
+// Send create admin request
+http://localhost:8080/users/create
+{
+    "name": "Angeline",
+    "email": "angeline@gmail.com",
+    "password": "angeline123",
+    "role": "Admin"
+}
+
+// Create assignment
+// multipart/form-data
+http://localhost:8080/assignments/create
+"files" : multiple file uploads
+"assignment" : 
+{
+  "teacher_id": "RXYoTd0JjMW3XYyhOE2RJJGC4482",
+  "teacher_name": "Frida",
+  "assignment_title": "Music Homework",
+  "assignment_desc": "Complete all problems on page 10",
+  "assignment_deadline": "2024-02-15T23:59:00",
+  "selected_students": [{"student_id": "nj0i6iOcX4dtAqYB5xKgIp3v3S63", "student_name": "Tzuyu"}],
+  "points": 100
+}
+
+for the value of "assignment", send in form of string so dont forget to JSON.stringfy() first
+
+// Create Practice
+// multipart/form-data
+http://localhost:8080/practices/create
+"video" : video file
+"practice" : 
+{
+    "student_id": "1OZmknpSoWbCYWh10loEy7z9mD82",
+    "student_name": "Bop",
+    "teacher_id": "eoEVKbuH2ncLb25ZJb7Cf54wT382",
+    "teacher_name": "Dion",
+    "title": "Piano Practice",
+    "comment": "Need help with bar 67"
+}
+
+For the value of "practice" you have to send the json data in string format, so maybe perlu JSON.stringify()
