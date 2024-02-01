@@ -12,7 +12,7 @@ function CreateAssignmentScreen({navigation}){
     const [assignmentDesc, setAssignmentDesc] = useState('');
     const [assignmentDeadline, setAssignmentDeadline] = useState('');
     const [selectedStudents, setSelectedStudents] = useState([]);
-    const [submissionDate, setSubmissionDate] = useState(Date.now());
+    const [submissionDate, setSubmissionDate] = useState(new Date());
 
 
     const cancelIcon = require('../assets/cancel.png');
@@ -96,7 +96,7 @@ function CreateAssignmentScreen({navigation}){
     
 
     const submitHandler = () => {
-        const nowDate = Date.now();
+        const nowDate = new Date();
         setSubmissionDate(nowDate);
         console.log('Assignment Name on Submit:', assignmentName, 'Type:', typeof assignmentName );
         console.log('Assignment Desc on Submit:', assignmentDesc, 'Type:', typeof assignmentDesc );
@@ -112,7 +112,7 @@ function CreateAssignmentScreen({navigation}){
             images: images,
             documents: uploadedDocuments,
             students: selectedStudents,
-            submissionDate: submissionDate        
+            submissionDate: submissionDate.toString()     
         };
         console.log(assignmentData)
 

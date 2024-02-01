@@ -81,7 +81,7 @@ export const AuthProvider = ({ children }) => {
 
   const signIn = async (email, password) => {
     try {
-      const response = await axios.post('http://192.168.32.15:8080/api/auth/signin', { email, password }); // replace with own IP address
+      const response = await axios.post('http://192.168.50.47:8080/api/auth/signin', { email, password }); // replace with own IP address
 
       const data = response.data;
 
