@@ -53,7 +53,7 @@ public class UserService {
                 createStudent(id, name, email, userDTO);
                 break;
             case "Teacher":
-                createTeacher(id, name);
+                createTeacher(id, name, email);
                 break;
             default:
                 break;
@@ -98,8 +98,9 @@ public class UserService {
         studentRepository.save(newStudent);
     }
 
-    private void createTeacher(String id, String name) {
-        Teacher newTeacher = new Teacher(id, name, new ArrayList<>());
+    private void createTeacher(String id, String name, String email, CreateUserDTO userDTO) {
+        String avatar = userDTO.getInfo().get("avatar");
+        Teacher newTeacher = new Teacher(id, name, email, avatar, new ArrayList<>());
         teacherRepository.save(newTeacher);
     }
 
@@ -115,12 +116,4 @@ public class UserService {
         User toBeDeletedUser = userRepository.findById(userId).orElseThrow();
         userRepository.delete(toBeDeletedUser);
     }
-
-    public User updateUser(FirebaseToken firebaseToken) {
-        User toBeUpdatedUser = userRepository.findById(firebaseToken.getLocalId()).orElseThrow();
-
-        TODO: // Update user's name and email in firebase (update name and email)
-        toBeUpdatedUser.setEmail(firebaseToken.getEmail());
-        return userRepository.save(toBeUpdatedUser);
-    } 
 }

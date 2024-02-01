@@ -15,20 +15,28 @@ public class Teacher {
     @Id
     private String id;
     private String name;
+    private String email;
     private ArrayList<String> studentIds; // References to Students' User IDs
+    private String avatar;
 
     public Teacher() {
 
     }
 
-    public Teacher(String id, String name, ArrayList<String> studentIds) {
+    public Teacher(String id, String name, String email, String avatar, ArrayList<String> studentIds) {
         this.id = id;
         this.name = name;
+        this.email = email;
         this.studentIds = studentIds;
+        this.avatar = avatar;
     }
 
     public void addStudent(String string) {
         studentIds.add(string);
+    }
+
+    public void deleteStudent(String string) {
+        studentIds.remove(string);
     }
 
 }
