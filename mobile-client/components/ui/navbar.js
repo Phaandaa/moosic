@@ -35,6 +35,11 @@ const BottomTabNavigator = () => {
         },
         tabBarActiveTintColor: 'tomato',
         tabBarInactiveTintColor: 'gray',
+        tabBarStyle: { 
+          
+          paddingBottom: 5, // Increase vertical padding
+          height: 60, // You might want to increase the height as well
+        },
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} options={{ headerShown: false }}/>
