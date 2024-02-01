@@ -4,10 +4,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
 // Import your screen components
-import HomeScreen from '../../screens/home'; // Adjust the path as needed
-import GoalsScreen from '../../screens/goalsScreen'; // Adjust the path as needed
-import NotificationsScreen from '../../screens/notificationspage'; // Adjust the path as needed
-import ProfileScreen from '../../screens/profilepage'; // Adjust the path as needed
+import HomeScreen from '../../screens/home';
+import GoalsScreen from '../../screens/goalsScreen';
+import NotificationsScreen from '../../screens/notificationspage';
+import ProfileScreen from '../../screens/profilepage';
 
 const Tab = createBottomTabNavigator();
 
@@ -17,7 +17,6 @@ const BottomTabNavigator = () => {
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
-
           switch (route.name) {
             case 'Home':
               iconName = focused ? 'home' : 'home-outline';
@@ -38,10 +37,10 @@ const BottomTabNavigator = () => {
         tabBarInactiveTintColor: 'gray',
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Goals" component={GoalsScreen} />
-      <Tab.Screen name="Notifications" component={NotificationsScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Home" component={HomeScreen} options={{ headerShown: false }}/>
+      <Tab.Screen name="Goals" component={GoalsScreen} options={{ headerShown: false }}/>
+      <Tab.Screen name="Notifications" component={NotificationsScreen} options={{ headerShown: false }}/>
+      <Tab.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }}/>
     </Tab.Navigator>
   );
 };

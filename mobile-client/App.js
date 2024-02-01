@@ -29,17 +29,19 @@ const App = () => {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="LoginScreen" component={LoginPage} options={{title: 'Login', headerShown: false}}/>
-        <Stack.Screen name="HomeScreen" component={HomePage} options={{title: 'Home', headerShown: false}}/>
+        
+        <Stack.Screen name="MainApp" component={BottomTabNavigator} options={{ headerShown: false }}/>
+
+
         <Stack.Screen name="CreateAssignmentScreen" component={CreateAssignmentScreen} options={{title: 'Create Assignment'}}/>
         <Stack.Screen name="PracticeScreen" component={PracticeScreen} options={{title: 'Start Practice'}}/>
         <Stack.Screen name="MyStudentsScreen" component={MyStudentsScreen} options={{title: 'My Students'}}/>
         <Stack.Screen name="ViewCreatedAssignmentsScreen" component={ViewCreatedAssignmentsScreen} options={{title: 'Assignments'}}/>
-        <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{title: 'Profile'}}/>
-        <Stack.Screen name="NotificationsScreen" component={NotificationsScreen} options={{title: 'Notifications'}}/>
-        <Stack.Screen name="GoalsScreen" component={GoalsScreen} options={{title: 'Goals'}}/>
+        
+        
       </Stack.Navigator>
-      {/* Bottom navigation bar */}
-      <BottomTabNavigator />
+     
+      
     </NavigationContainer>
     </Provider>
     </AuthProvider>

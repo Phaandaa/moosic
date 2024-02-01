@@ -4,25 +4,29 @@ import { View, Text, TouchableOpacity, Image } from 'react-native';
 import theme from './styles/theme';
 import AnimatedPlaceholderInput from '../components/ui/animateTextInput';
 import { useAuth } from './context/Authcontext';
+import LottieView from 'lottie-react-native';
 
 const LoginPage = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { signIn } = useAuth(); 
+  const [isLoading, setIsLoading] = useState(false);
 
   console.log(email)
   console.log(password)
 
   const handleLogin = async () => {
+    setIsLoading(true);
     try {
       const response = await signIn(email, password);
       console.log(response)
       
       if (response != null){
-        navigation.navigate('HomeScreen');
+        navigation.navigate('MainApp');
       }
     } catch (error) {
-      console.error(error);
+      alert("Wrong email or password");
+      setIsLoading(false);
     }
   };
   
