@@ -6,6 +6,7 @@ const HANDLERS = {
   INITIALIZE: "INITIALIZE",
   SIGN_IN: "SIGN_IN",
   SIGN_OUT: "SIGN_OUT",
+  SIGN_UP: "SIGN_UP",
 };
 
 const initialState = {
@@ -33,6 +34,15 @@ const handlers = {
     };
   },
   [HANDLERS.SIGN_IN]: (state, action) => {
+    const user = action.payload;
+
+    return {
+      ...state,
+      isAuthenticated: true,
+      user,
+    };
+  },
+  [HANDLERS.SIGN_UP]: (state, action) => {
     const user = action.payload;
 
     return {
@@ -105,26 +115,6 @@ export const AuthProvider = (props) => {
     []
   );
 
-  const skip = () => {
-    try {
-      window.sessionStorage.setItem("authenticated", "true");
-    } catch (err) {
-      console.error(err);
-    }
-
-    const user = {
-      id: "5e86809283e28b96d2d38537",
-      avatar: "/assets/avatars/avatar-anika-visser.png",
-      name: "Anika Visser",
-      email: "anika.visser@devias.io",
-    };
-
-    dispatch({
-      type: HANDLERS.SIGN_IN,
-      payload: user,
-    });
-  };
-
   const signIn = async (email, password) => {
     const body = {
       email: email,
@@ -156,7 +146,34 @@ export const AuthProvider = (props) => {
   };
 
   const signUp = async (email, name, password) => {
-    throw new Error("Sign up is not implemented");
+    const body = {
+      email: email,
+      name: name,
+      password: password,
+      role: "Admin",
+    };
+
+    try {
+      const response = await postAsync(`users/create`, body);
+      if (!response.ok) {
+        // If the server response is not ok, throw an error with the response status
+        console.error(`Error: ${response.status}`);
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json(); // Assuming the response body will be in JSON format
+      console.log("signUp response", data);
+      // Here, you might want to do something with the response data, like storing the user data or token
+      window.sessionStorage.setItem("authenticated", "true");
+      // Adjust the user object as per your actual API response structure
+      dispatch({
+        type: HANDLERS.SIGN_UP,
+        payload: data || { email, ...data }, // Adjust according to what your API returns
+      });
+
+    } catch (err) {
+      console.error(err);
+      throw err; // Re-throw the error so it can be caught by the calling code
+    }
   };
 
   const signOut = () => {
@@ -169,7 +186,6 @@ export const AuthProvider = (props) => {
     <AuthContext.Provider
       value={{
         ...state,
-        skip,
         signIn,
         signUp,
         signOut,
