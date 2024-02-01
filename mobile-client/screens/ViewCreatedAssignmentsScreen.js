@@ -1,9 +1,22 @@
 import React, {useState} from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView} from 'react-native';
 import theme from './styles/theme';
+import Modal from 'react-native-modal';
 function ViewCreatedAssignmentsScreen({route}){
     const { assignmentData } = route.params;
     const documentLogo = require('../assets/filelogo.png')
+    const [isModalVisible, setModalVisible] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
+
+    const toggleModal = () => {
+        setModalVisible(!isModalVisible);
+    };
+
+    const openImage = (uri) => {
+        setSelectedImage(uri);
+        toggleModal(); 
+    }
+
     return (
         <ScrollView style={theme.container}>
         <View> 
@@ -26,15 +39,21 @@ function ViewCreatedAssignmentsScreen({route}){
 
                     <ScrollView horizontal>
                         {assignmentData.images && assignmentData.images.map((uri, index) => (
-                            <View key={uri} style={theme.imageContainer}>
+                            <TouchableOpacity key={uri} onPress={() => openImage(uri)} style={theme.imageContainer}>
                                 <Image
                                     key={index}
                                     source={{ uri }}
                                     style={theme.assignmentImage} // Add your image style here
                                 />
-                            </View>
+                            </TouchableOpacity>
                         ))}
                     </ScrollView>
+
+                    <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
+                        <View style={theme.modalContent}>
+                            <Image source={{uri:selectedImage}} style={theme.fullSizeImage} />
+                        </View>
+                    </Modal>
                     
                     {assignmentData.documents.map((doc, index) => (
                         <View key={index.toString()} style={theme.documentItemContainer}>

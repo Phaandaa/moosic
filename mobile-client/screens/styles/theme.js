@@ -212,6 +212,19 @@ const theme = StyleSheet.create({
       justifyContent: 'space-between', // This will space out the buttons evenly
       marginTop: 20,
       paddingHorizontal: 10, // Add some padding on the sides
+  },
+  modalContent:{
+    backgroundColor: 'white',
+    padding: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 4,
+    borderColor: 'rgba(0,0,0, 0.1)',
+  },
+  fullSizeImage: {
+    width:250,
+    height: 600,
+    resizeMode: 'contain'
   }
 });
 
