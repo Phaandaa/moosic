@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView} from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView } from 'react-native';
 import theme from './styles/theme';
 import Modal from 'react-native-modal';
 import { useSelector } from 'react-redux';

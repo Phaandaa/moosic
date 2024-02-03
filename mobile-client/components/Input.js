@@ -1,6 +1,5 @@
 import { Text, TextInput, View, StyleSheet } from 'react-native';
 import Colors from '../constants/colors';
-import AnimatedPlaceholderInput from './ui/animateTextInput';
 function Input({label, textInputConfig}){
     return (
     <View style={styles.inputContainer}>
