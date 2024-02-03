@@ -11,7 +11,7 @@ const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 const LOGIN_ERROR = 'LOGIN_ERROR';
 const LOGOUT = 'LOGOUT';
 
-const IP_ADDRESS = 'http://192.168.32.15:8081'; // Replace with your own IP address
+const IP_ADDRESS = 'http://192.168.32.15:8080'; // Replace with your own IP address
 
 const authReducer = (state, action) => {
   switch (action.type) {
@@ -83,9 +83,7 @@ export const AuthProvider = ({ children }) => {
 
   const signIn = async (email, password) => {
     try {
-      const response = await axios.post(`${IP_ADDRESS}/api/auth/signin`, { email, password });
-
-
+      const response = await axios.post( `${IP_ADDRESS}/api/auth/signin`, { email, password });
       const data = response.data;
       
       if (response.status === 200) {

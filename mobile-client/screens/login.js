@@ -3,7 +3,7 @@ import React, { useState, useContext } from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import theme from './styles/theme';
 import AnimatedPlaceholderInput from '../components/ui/animateTextInput';
-import { useAuth } from './context/Authcontext';
+import { useAuth, IP_ADDRESS } from './context/Authcontext';
 
 
 const LoginPage = ({ navigation }) => {
@@ -12,18 +12,17 @@ const LoginPage = ({ navigation }) => {
   const { signIn } = useAuth(); 
   const [isLoading, setIsLoading] = useState(false);
 
-  console.log(email)
-  console.log(password)
+ 
 
   const handleLogin = async () => {
     setIsLoading(true);
     try {
       const response = await signIn(email, password);
       console.log(response)
-      
       if (response != null){
         navigation.navigate('MainApp');
       }
+      
     } catch (error) {
       alert(error.message);
       setIsLoading(false);
