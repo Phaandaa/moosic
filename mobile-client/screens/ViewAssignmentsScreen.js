@@ -70,11 +70,11 @@ function ViewAssignmentsScreen({route}){
                 </View>
                 <View style={theme.buttonContainer2}> 
                     <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText}>View Submission</Text>
+                        <Text style={theme.smallButtonText}>Submit Assignment</Text>
                     </TouchableOpacity>
-                    {/* <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText}>Give Feedback</Text>
-                    </TouchableOpacity> */}
+                    <TouchableOpacity style={theme.smallButton}>
+                        <Text style={theme.smallButtonText}>View Feedback</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         </View>
