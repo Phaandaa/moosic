@@ -47,19 +47,18 @@ function ProvidePracticeFeedbackScreen({navigation}){
   
     return (
         <View style={theme.container}> 
-            <ScrollView style={theme.container} contentContainerStyle={theme.contentContainer}> 
+            <ScrollView style={theme.container} contentContainerStyle={theme.contentContainer} keyboardShouldPersistTaps='handled'> 
                 <View>
                 <View style={theme.card2}>
-                <View style={theme.cardTextContainer}>
-                <Text style={theme.cardTitle}>{practiceData.title}</Text>
-                <Text style={theme.cardText}>Comment: {practiceData.comment}</Text>
-                <Text style={theme.cardText}>Created on:</Text>
-                
-                {toggleFeedback && ( 
-                <Text style={theme.cardText}>Feedback: {practiceData.feedback}</Text>
-                )}
-
-                </View>
+                    <View style={theme.cardTextContainer}>
+                        <Text style={theme.cardTitle}>{practiceData.title}</Text>
+                        <Text style={theme.cardText}>Comment: {practiceData.comment}</Text>
+                        <Text style={theme.cardText}>Created on:</Text>
+                        
+                        {toggleFeedback && ( 
+                        <Text style={theme.cardText}>Feedback: {practiceData.feedback}</Text>
+                        )}
+                    </View>
                 </View>
                     {/* <AnimatedPlaceholderInput 
                         placeholder="Feedback" 
@@ -68,7 +67,7 @@ function ProvidePracticeFeedbackScreen({navigation}){
                         onChangeText={setFeedback}>    
                     </AnimatedPlaceholderInput> */}
 
-                    <InputBox label="Feedback" value={feedback} onChangeText={setFeedback} />
+                    <InputBox label="Feedback" placeholder='Good Job!' value={feedback} onChangeText={setFeedback}/>
 
                     {/* Submit button */}
                     <TouchableOpacity style={theme.button} onPress={submitHandler}>
