@@ -41,6 +41,7 @@ function PracticeScreen({navigation}){
             title: title,
             comment: comment,
             videos: videos,
+            feedback: null
         };
         console.log(practiceData)
 
