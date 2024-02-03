@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert, Button} from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert, Button, Dimensions } from 'react-native';
+import Modal from 'react-native-modal';
 import theme from './styles/theme';
 import AnimatedPlaceholderInput from '../components/ui/animateTextInput';
 import * as ImagePicker from "expo-image-picker";
@@ -13,6 +14,19 @@ function PracticeScreen({navigation}){
     const [videos, setVideos] = useState([]);
     const [loadingStates, setLoadingStates] = useState({});
 
+    // const [modalVisible, setModalVisible] = useState(false);
+    const [selectedVideo, setSelectedVideo] = useState(null);
+
+    const [isModalVisible, setModalVisible] = useState(false);
+
+    const toggleModal = () => {
+        setModalVisible(!isModalVisible);
+    };
+
+    const openVideo = (uri) => {
+        setSelectedVideo(uri);
+        toggleModal(); 
+    }
 
     const submitHandler = () => {
         console.log('Practice Title on Submit:', title, 'Type:', typeof title );
@@ -97,6 +111,27 @@ function PracticeScreen({navigation}){
                 </TouchableOpacity>
             </View>
 
+            {/* Modal for viewing the video */}
+            <Modal
+                    isVisible={isModalVisible}
+                    animationType="slide"
+                    transparent={true}
+                    visible={isModalVisible}
+                >
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <Video
+                                source={{ uri: selectedVideo }}
+                                style={styles.modalVideo}
+                                resizeMode={ResizeMode.CONTAIN}
+                                useNativeControls
+                                shouldPlay
+                            />
+                            <Button title="Close" onPress={() => setModalVisible(!isModalVisible)} />
+                        </View>
+                    </View>
+                </Modal>
+
             {/* Render each image with a remove button next to it */}
             <ScrollView horizontal>
                 {videos.map((uri, index) => (
@@ -109,17 +144,19 @@ function PracticeScreen({navigation}){
                                 style={styles.lottie}
                             />
                         )}
-                        <Video
-                            source={{ uri }}
-                            style={styles.video}
-                            resizeMode={ResizeMode.COVER}
-                            useNativeControls
-                            onLoadStart={() => setLoadingStates({ ...loadingStates, [uri]: true })}
-                            onLoad={() => setLoadingStates({ ...loadingStates, [uri]: false })}
-                        />
-                        <TouchableOpacity onPress={() => removeVideo(index)} style={styles.removeButton}>
-                            {/* <Text style={theme.buttonText}>x</Text> */}
-                            <Image source={cancelIcon} style={styles.cancelIcon} /> 
+                        <TouchableOpacity onPress={() => openVideo(uri)}>
+                            <Video
+                                source={{ uri }}
+                                style={styles.video}
+                                resizeMode={ResizeMode.COVER}
+                                useNativeControls
+                                onLoadStart={() => setLoadingStates({ ...loadingStates, [uri]: true })}
+                                onLoad={() => setLoadingStates({ ...loadingStates, [uri]: false })}
+                            />
+                            <TouchableOpacity onPress={() => removeVideo(index)} style={styles.removeButton}>
+                                {/* <Text style={theme.buttonText}>x</Text> */}
+                                <Image source={cancelIcon} style={styles.cancelIcon} /> 
+                            </TouchableOpacity>
                         </TouchableOpacity>
                     </View>
                 ))}
@@ -205,5 +242,30 @@ const styles = StyleSheet.create({
         width: '100%',
         size: '50%',
         height: '100%',
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 22,
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 25,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
+    modalVideo: {
+        width: Dimensions.get('window').width * 0.8, // 80% of window width
+        height: Dimensions.get('window').height * 0.5, // 40% of window height
     },
 });
