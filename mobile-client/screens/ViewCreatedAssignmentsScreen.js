@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView} from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Button} from 'react-native';
 import theme from './styles/theme';
 import Modal from 'react-native-modal';
 import { useSelector } from 'react-redux';
@@ -50,9 +50,12 @@ function ViewCreatedAssignmentsScreen({route}){
                         ))}
                     </ScrollView>
 
-                    <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
+                    <Modal isVisible={isModalVisible} 
+                    // onBackdropPress={toggleModal}
+                    >
                         <View style={theme.modalContent}>
                             <Image source={{uri:selectedImage}} style={theme.fullSizeImage} />
+                            <Button title="Close" onPress={toggleModal} />
                         </View>
                     </Modal>
                     
