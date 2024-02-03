@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert} from 'react-native';
 import theme from './styles/theme';
 import ProvidePracticeFeedbackScreen from './ProvidePracticeFeedbackScreen';
-
+import { useSelector } from 'react-redux';
 function PracticeListTeacherScreen({navigation}){
     const practiceData = useSelector(state => state.cache.practiceData);
     return (
@@ -10,7 +10,7 @@ function PracticeListTeacherScreen({navigation}){
         {/* Student 1  */}
             <TouchableOpacity style={theme.card}>
                 <View style={theme.cardTextContainer}>
-                    <Text style={theme.cardTextBold}>practiceData.title</Text>
+                    <Text style={theme.cardTextBold}>practiceData</Text>
                 </View>
                 <View style={theme.buttonContainer}>
                     <TouchableOpacity style={theme.smallButton}>
