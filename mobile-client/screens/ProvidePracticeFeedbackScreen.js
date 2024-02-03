@@ -4,6 +4,7 @@ import theme from './styles/theme';
 import AnimatedPlaceholderInput from '../components/ui/animateTextInput';
 
 function ProvidePracticeFeedbackScreen({}){
+    const [feedback, setFeedback] = useState('');
     return (
         <View style={theme.container}> 
             <ScrollView style={theme.container} contentContainerStyle={theme.contentContainer}> 
@@ -12,8 +13,8 @@ function ProvidePracticeFeedbackScreen({}){
                         placeholder="Feedback" 
                         secureTextEntry={false} 
                         textInputConfig={{autoCapitalize: 'words'}}
-                        value={assignmentName}
-                        onChangeText={setAssignmentName}>    
+                        value={feedback}
+                        onChangeText={setFeedback}>    
                     </AnimatedPlaceholderInput>
                 </View>
             </ScrollView>

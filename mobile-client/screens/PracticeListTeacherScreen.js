@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert} from 'react-native';
 import theme from './styles/theme';
+import ProvidePracticeFeedbackScreen from './ProvidePracticeFeedbackScreen';
 
 function PracticeListTeacherScreen({navigation}){
     return (
@@ -15,7 +16,7 @@ function PracticeListTeacherScreen({navigation}){
                         <Text style={theme.smallButtonText}>Watch</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ProvidePracticeFeedbackScreen.js')}>Give Feedback</Text>
+                        <Text style={theme.smallButtonText} onPress={() => navigation.navigate(ProvidePracticeFeedbackScreen)}>Give Feedback</Text>
                     </TouchableOpacity>
                 </View>
             </TouchableOpacity>
