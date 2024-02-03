@@ -10,33 +10,18 @@ function PracticeListTeacherScreen({navigation}){
         {/* Student 1  */}
             <TouchableOpacity style={theme.card}>
                 <View style={theme.cardTextContainer}>
-                    <Text style={theme.cardTextBold}>practiceData</Text>
+                    <Text style={theme.cardTextBold}>{practiceData.title}</Text>
+                    <Text style={theme.cardText}>{practiceData.comment}</Text>
                 </View>
                 <View style={theme.buttonContainer}>
                     <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText}>Watch</Text>
+                        <Text style={theme.smallButtonText}>Recording</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText} onPress={() => navigation.navigate(ProvidePracticeFeedbackScreen)}>Give Feedback</Text>
+                        <Text style={theme.smallButtonText} onPress={() => navigation.navigate(ProvidePracticeFeedbackScreen)}>Feedback</Text>
                     </TouchableOpacity>
                 </View>
             </TouchableOpacity>
-
-        {/* Student 2 */}
-            <TouchableOpacity style={theme.card}>
-                <View style={theme.cardTextContainer}>
-                    <Text style={theme.cardTextBold}>Thinking Out Loud</Text>
-                </View>
-                <View style={theme.buttonContainer}>
-                    <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText}>Watch</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ProvidePracticeFeedbackScreen.js')} >Give Feedback</Text>
-                    </TouchableOpacity>
-                </View>
-            </TouchableOpacity>
-
         </View>
     )
 }
