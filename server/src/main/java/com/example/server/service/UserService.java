@@ -53,7 +53,7 @@ public class UserService {
                 createStudent(id, name, email, userDTO);
                 break;
             case "Teacher":
-                createTeacher(id, name, email);
+                createTeacher(id, name, email, userDTO);
                 break;
             default:
                 break;

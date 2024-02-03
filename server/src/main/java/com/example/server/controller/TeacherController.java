@@ -16,6 +16,8 @@ import com.example.server.entity.Teacher;
 import com.example.server.service.TeacherService;
 import com.google.api.Http;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/teachers")
@@ -24,14 +26,14 @@ public class TeacherController {
     @Autowired
     private TeacherService teacherService;
 
-    // Get all teachers
+    @Operation(summary = "Get all teachers in the database")
     @GetMapping
     public ResponseEntity<List<Teacher>> getAllTeachers() {
         List<Teacher> teachers = teacherService.getAllTeachers();
         return new ResponseEntity<>(teachers, HttpStatus.OK);
     }
 
-    // Get specific teacher using teacher id
+    @Operation(summary = "Get a teacher by teacher id")
     @GetMapping("/{teacherId}")
     public ResponseEntity<Teacher> getTeacherById(String teacherId) {
         Teacher teacher = teacherService.getTeacherById(teacherId);
@@ -42,14 +44,14 @@ public class TeacherController {
         }
     }
 
-    // add student to teacher
+    @Operation(summary = "Add a student to a teacher")
     @PostMapping("/{teacherId}/add-student")
     public ResponseEntity<String> addStudent(String teacherId, String studentId) {
         teacherService.addStudent(teacherId, studentId);
         return new ResponseEntity<>("Student added successfully.", HttpStatus.OK);
     }
 
-    // delete student from teacher
+    @Operation(summary = "Delete a student from a teacher")
     @PostMapping("/{teacherId}/delete-student")
     public ResponseEntity<String> deleteStudent(String teacherId, String studentId) {
         teacherService.deleteStudent(teacherId, studentId);

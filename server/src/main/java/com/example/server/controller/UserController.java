@@ -19,6 +19,8 @@ import com.example.server.models.CreateUserDTO;
 import com.example.server.service.StudentService;
 import com.example.server.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 // TODO: make return into Response Entity and add status codes
 // TODO: Validation before processing
 // TODO: Throw error if there is duplicate user 
@@ -31,32 +33,25 @@ public class UserController {
     @Autowired
     public UserService userService;
 
-    // @Autowired
-    // private StudentService studentService;
-
+    @Operation(summary = "Create a new user")
     @PostMapping("/create")
     public ResponseEntity<User> createUser(@RequestBody CreateUserDTO userDTO) {
         return ResponseEntity.ok(userService.createUser(userDTO));
     }
     
+    @Operation(summary = "Create a new admin")
     @PostMapping("/create-admin")
     public ResponseEntity<User> createAdmin(@RequestBody CreateUserDTO userDTO) {
         return ResponseEntity.ok(userService.createAdmin(userDTO));
     }
 
-    // get all users
+    @Operation(summary = "Get all users")
     @GetMapping()
     public ResponseEntity<List<User>> getAllUsers(){
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    // get all students
-
-    // get all teachers
-
-    // get students under a certain teacher
-
-    // get user by id user_id
+    @Operation(summary = "Get user by user_id")
     @GetMapping("/{userId}")
     public ResponseEntity<User> getUserById(@PathVariable String userId) {
         try {
@@ -67,18 +62,11 @@ public class UserController {
         }
     }
 
-    // delete user by user_id
+    @Operation(summary = "Delete user by user_id")
     @DeleteMapping("/{userId}")
     public ResponseEntity<String> deleteUserById(@PathVariable String userId){
         userService.deleteUserById(userId);
         return ResponseEntity.ok("User with id " + userId + " was deleted.");
     }
-
-    // test endpoint
-    @GetMapping("/test")
-    public ResponseEntity<String> test() {
-        return ResponseEntity.ok("Hello World!");
-    }
-
 
 }
