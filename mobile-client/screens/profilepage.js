@@ -1,7 +1,22 @@
-import React from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { useAuth } from './context/Authcontext';
 
 const ProfileScreen = () => {
+
+  const {signOut} = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSignOut = async () => {
+    setIsLoading(true);
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Error signing out', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
   return (
     <View style={styles.container}>
       {/* <Image
@@ -13,6 +28,10 @@ const ProfileScreen = () => {
 
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Edit Profile</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.button} onPress={handleSignOut}>
+        <Text style={styles.buttonText}>Log Out</Text>
       </TouchableOpacity>
     </View>
   );

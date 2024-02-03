@@ -4,7 +4,7 @@ import { View, Text, TouchableOpacity, Image } from 'react-native';
 import theme from './styles/theme';
 import AnimatedPlaceholderInput from '../components/ui/animateTextInput';
 import { useAuth } from './context/Authcontext';
-import LottieView from 'lottie-react-native';
+
 
 const LoginPage = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -25,7 +25,7 @@ const LoginPage = ({ navigation }) => {
         navigation.navigate('MainApp');
       }
     } catch (error) {
-      alert("Wrong email or password");
+      alert(error.message);
       setIsLoading(false);
     }
   };

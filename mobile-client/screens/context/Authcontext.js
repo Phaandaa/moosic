@@ -11,6 +11,8 @@ const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 const LOGIN_ERROR = 'LOGIN_ERROR';
 const LOGOUT = 'LOGOUT';
 
+const IP_ADDRESS = 'http://192.168.32.15:8081'; // Replace with your own IP address
+
 const authReducer = (state, action) => {
   switch (action.type) {
     case LOGIN_SUCCESS:
@@ -81,10 +83,11 @@ export const AuthProvider = ({ children }) => {
 
   const signIn = async (email, password) => {
     try {
-      const response = await axios.post('http://192.168.50.47:8080/api/auth/signin', { email, password }); // replace with own IP address
+      const response = await axios.post(`${IP_ADDRESS}/api/auth/signin`, { email, password });
+
 
       const data = response.data;
-
+      
       if (response.status === 200) {
         await saveAuthDataToCache(data);
         dispatch({ type: LOGIN_SUCCESS, payload: data });
@@ -101,15 +104,21 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signOut = async () => {
-    await clearAuthDataFromCache();
-    dispatch({ type: LOGOUT });
+    try {
+      await clearAuthDataFromCache(); // This function should remove auth data from AsyncStorage
+      dispatch({ type: LOGOUT });
+    } catch (error) {
+      console.error('Error during sign out:', error);
+    }
+  };
+  
+
+  const storeUserData = () => {
+    // Implement this function to store user data
+
   };
 
-  const signUp = () => {
-    // Implement sign up logic here
-  };
-
-  const values = { state, dispatch, signIn, signOut, signUp };
+  const values = { state, dispatch, signIn, signOut, storeUserData };
 
   return (
     <AuthContext.Provider value={values}>
