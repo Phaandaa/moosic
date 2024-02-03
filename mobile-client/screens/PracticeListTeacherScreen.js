@@ -2,20 +2,20 @@ import React from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert} from 'react-native';
 import theme from './styles/theme';
 
-function MyStudentsScreen({navigation}){
+function PracticeListTeacherScreen({navigation}){
     return (
         <View style={theme.container}> 
         {/* Student 1  */}
             <TouchableOpacity style={theme.card}>
                 <View style={theme.cardTextContainer}>
-                    <Text style={theme.cardTextBold}>Tiara Himawan</Text>
+                    <Text style={theme.cardTextBold}>Twinkle Twinkle</Text>
                 </View>
                 <View style={theme.buttonContainer}>
                     <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText} onPress={() => navigation.navigate('PracticeListTeacherScreen')}>Practice</Text>
+                        <Text style={theme.smallButtonText}>Watch</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ViewCreatedAssignmentsScreen')}>Assignments</Text>
+                        <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ProvidePracticeFeedbackScreen.js')}>Give Feedback</Text>
                     </TouchableOpacity>
                 </View>
             </TouchableOpacity>
@@ -23,14 +23,14 @@ function MyStudentsScreen({navigation}){
         {/* Student 2 */}
             <TouchableOpacity style={theme.card}>
                 <View style={theme.cardTextContainer}>
-                    <Text style={theme.cardTextBold}>Lee Min Hui</Text>
+                    <Text style={theme.cardTextBold}>Thinking Out Loud</Text>
                 </View>
                 <View style={theme.buttonContainer}>
                     <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText}>Practice</Text>
+                        <Text style={theme.smallButtonText}>Watch</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText}>Assignments</Text>
+                        <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ProvidePracticeFeedbackScreen.js')} >Give Feedback</Text>
                     </TouchableOpacity>
                 </View>
             </TouchableOpacity>
@@ -38,7 +38,7 @@ function MyStudentsScreen({navigation}){
         </View>
     )
 }
-export default MyStudentsScreen;
+export default PracticeListTeacherScreen;
 
 const styles = StyleSheet.create({
     card: {
