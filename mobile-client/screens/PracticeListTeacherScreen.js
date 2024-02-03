@@ -4,12 +4,13 @@ import theme from './styles/theme';
 import ProvidePracticeFeedbackScreen from './ProvidePracticeFeedbackScreen';
 
 function PracticeListTeacherScreen({navigation}){
+    const practiceData = useSelector(state => state.cache.practiceData);
     return (
         <View style={theme.container}> 
         {/* Student 1  */}
             <TouchableOpacity style={theme.card}>
                 <View style={theme.cardTextContainer}>
-                    <Text style={theme.cardTextBold}>Twinkle Twinkle</Text>
+                    <Text style={theme.cardTextBold}>practiceData.title</Text>
                 </View>
                 <View style={theme.buttonContainer}>
                     <TouchableOpacity style={theme.smallButton}>

@@ -7,7 +7,11 @@ import * as ImagePicker from "expo-image-picker";
 import { Audio, Video, ResizeMode} from 'expo-av';
 import LottieView from 'lottie-react-native';
 
+import { useSelector, useDispatch } from 'react-redux';
+import { setCache, clearCache } from '../cacheSlice';
+
 function PracticeScreen({navigation}){
+    const dispatch = useDispatch();
     const [title, setTitle] = useState('');
     const [comment, setComment] = useState('');
     const cancelIcon = require('../assets/cancel.png');
@@ -47,6 +51,7 @@ function PracticeScreen({navigation}){
         }
         else{
             alert('Success!')
+            dispatch(setCache({ key: 'practiceData', value: practiceData })); 
         }
     }
 
