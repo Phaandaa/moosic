@@ -7,7 +7,11 @@ import * as ImagePicker from "expo-image-picker";
 import { Audio, Video, ResizeMode} from 'expo-av';
 import LottieView from 'lottie-react-native';
 
+import { useSelector, useDispatch } from 'react-redux';
+import { setCache, clearCache } from '../cacheSlice';
+
 function PracticeScreen({navigation}){
+    const dispatch = useDispatch();
     const [title, setTitle] = useState('');
     const [comment, setComment] = useState('');
     const cancelIcon = require('../assets/cancel.png');
@@ -37,16 +41,20 @@ function PracticeScreen({navigation}){
             title: title,
             comment: comment,
             videos: videos,
+            feedback: null
         };
         console.log(practiceData)
 
         // Step 2: Validate Data (this is a basic example, you might need more complex validation)
-        if (!practiceData.title || !practiceData.comment || !practiceData.videos) {
+        // if (!practiceData.title || !practiceData.comment || !practiceData.videos) {
+        if (!practiceData.title || !practiceData.comment) {
             alert('Please fill all fields');
             return;
         }
         else{
             alert('Success!')
+            dispatch(setCache({ key: 'practiceData', value: practiceData })); 
+            navigation.navigate('PracticeListTeacherScreen');
         }
     }
 

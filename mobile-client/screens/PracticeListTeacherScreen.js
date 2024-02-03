@@ -1,44 +1,31 @@
 import React from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert} from 'react-native';
 import theme from './styles/theme';
-
-function MyStudentsScreen({navigation}){
+import ProvidePracticeFeedbackScreen from './ProvidePracticeFeedbackScreen';
+import { useSelector } from 'react-redux';
+function PracticeListTeacherScreen({navigation}){
+    const practiceData = useSelector(state => state.cache.practiceData);
     return (
         <View style={theme.container}> 
         {/* Student 1  */}
             <TouchableOpacity style={theme.card}>
                 <View style={theme.cardTextContainer}>
-                    <Text style={theme.cardTextBold}>Tiara Himawan</Text>
+                    <Text style={theme.cardTextBold}>{practiceData.title}</Text>
+                    <Text style={theme.cardText}>{practiceData.comment}</Text>
                 </View>
                 <View style={theme.buttonContainer}>
                     <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText} onPress={() => navigation.navigate('PracticeListTeacherScreen')}>Practice</Text>
+                        <Text style={theme.smallButtonText}>Recording</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ViewCreatedAssignmentsScreen')}>Assignments</Text>
+                        <Text style={theme.smallButtonText} onPress={() => navigation.navigate(ProvidePracticeFeedbackScreen)}>Feedback</Text>
                     </TouchableOpacity>
                 </View>
             </TouchableOpacity>
-
-        {/* Student 2 */}
-            <TouchableOpacity style={theme.card}>
-                <View style={theme.cardTextContainer}>
-                    <Text style={theme.cardTextBold}>Lee Min Hui</Text>
-                </View>
-                <View style={theme.buttonContainer}>
-                    <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText}>Practice</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText}>Assignments</Text>
-                    </TouchableOpacity>
-                </View>
-            </TouchableOpacity>
-
         </View>
     )
 }
-export default MyStudentsScreen;
+export default PracticeListTeacherScreen;
 
 const styles = StyleSheet.create({
     card: {
