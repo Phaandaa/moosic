@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useReducer, useRef } from "react";
 import PropTypes from "prop-types";
 import { postAsync } from "src/utils/utils";
+import { useCookies } from "react-cookie";
 
 const HANDLERS = {
   INITIALIZE: "INITIALIZE",
@@ -67,8 +68,8 @@ const reducer = (state, action) =>
 
 export const AuthContext = createContext({ undefined });
 
-export const AuthProvider = (props) => {
-  const { children } = props;
+export const AuthProvider = ({ children }) => {
+  const [cookies, setCookie, removeCookie] = useCookies(["authenticated", "user"]);
   const [state, dispatch] = useReducer(reducer, initialState);
   const initialized = useRef(false);
 
@@ -80,22 +81,11 @@ export const AuthProvider = (props) => {
 
     initialized.current = true;
 
-    let isAuthenticated = false;
+    // Check if the user is authenticated by checking the cookie
+    const isAuthenticated = cookies.authenticated;
+    const user = cookies.user ? cookies.user : null;
 
-    try {
-      isAuthenticated = window.sessionStorage.getItem("authenticated") === "true";
-    } catch (err) {
-      console.error(err);
-    }
-
-    if (isAuthenticated) {
-      const user = {
-        id: "5e86809283e28b96d2d38537",
-        avatar: "/assets/avatars/avatar-anika-visser.png",
-        name: "Anika Visser",
-        email: "anika.visser@devias.io",
-      };
-
+    if (isAuthenticated && user) {
       dispatch({
         type: HANDLERS.INITIALIZE,
         payload: user,
@@ -112,7 +102,7 @@ export const AuthProvider = (props) => {
       initialize();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [cookies.authenticated, cookies.user]
   );
 
   const signIn = async (email, password) => {
@@ -131,14 +121,13 @@ export const AuthProvider = (props) => {
       }
       const data = await response.json(); // Assuming the response body will be in JSON format
       console.log("signIn response", data);
-      // Here, you might want to do something with the response data, like storing the user data or token
-      window.sessionStorage.setItem("authenticated", "true");
-      // Adjust the user object as per your actual API response structure
+
+      setCookie("authenticated", "true", { path: "/" });
+      setCookie('user', JSON.stringify(data), { path: '/' });
       dispatch({
         type: HANDLERS.SIGN_IN,
         payload: data || { email, ...data }, // Adjust according to what your API returns
       });
-
     } catch (err) {
       console.error(err);
       throw err; // Re-throw the error so it can be caught by the calling code
@@ -162,14 +151,14 @@ export const AuthProvider = (props) => {
       }
       const data = await response.json(); // Assuming the response body will be in JSON format
       console.log("signUp response", data);
-      // Here, you might want to do something with the response data, like storing the user data or token
-      window.sessionStorage.setItem("authenticated", "true");
-      // Adjust the user object as per your actual API response structure
+
+      setCookie("authenticated", "true", { path: "/" });
+      setCookie('user', JSON.stringify(data), { path: '/' });
+
       dispatch({
         type: HANDLERS.SIGN_UP,
         payload: data || { email, ...data }, // Adjust according to what your API returns
       });
-
     } catch (err) {
       console.error(err);
       throw err; // Re-throw the error so it can be caught by the calling code
@@ -177,6 +166,8 @@ export const AuthProvider = (props) => {
   };
 
   const signOut = () => {
+    removeCookie('authenticated', { path: '/' });
+    removeCookie('user', { path: '/' });
     dispatch({
       type: HANDLERS.SIGN_OUT,
     });
