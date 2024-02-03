@@ -13,7 +13,9 @@ function ProvidePracticeFeedbackScreen({navigation}){
     const [showFeedback, setShowFeedback] = useState(false);
 
     const toggleFeedback = () => {
-        setShowFeedback(!showFeedback);
+        {!feedback &&
+            setShowFeedback(!showFeedback);
+        }
     };
 
     const submitHandler = () => {
@@ -52,7 +54,7 @@ function ProvidePracticeFeedbackScreen({navigation}){
                 <Text style={theme.cardText}>Comment: {practiceData.comment}</Text>
                 <Text style={theme.cardText}>Created on:</Text>
                 
-                {showFeedback && ( 
+                {toggleFeedback && ( 
                 <Text style={theme.cardText}>Feedback: {practiceData.feedback}</Text>
                 )}
 
