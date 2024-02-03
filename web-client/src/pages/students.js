@@ -43,8 +43,8 @@ const Page = () => {
     return useMemo(() => {
       const filteredData = searchTerm
         ? studentData.filter((student) => 
-            student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            student.email.toLowerCase().includes(searchTerm.toLowerCase())
+            student.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            student.email?.toLowerCase().includes(searchTerm.toLowerCase())
           )
         : studentData;
   
