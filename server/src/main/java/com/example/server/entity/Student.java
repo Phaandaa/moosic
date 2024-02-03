@@ -20,12 +20,14 @@ public class Student {
     private ArrayList<String> purchaseHistory; // List of references to Rewards Shop Items
     private String instrument;
     private String grade;
+    private String avatar;
+    private String email;
 
     public Student() {
 
     }
 
-    public Student(String id, Integer pointsCounter, String teacherId, String name, ArrayList<String> purchaseHistory, String instrument, String grade) {
+    public Student(String id, Integer pointsCounter, String teacherId, String name, ArrayList<String> purchaseHistory, String instrument, String grade, String avatar, String email) {
         this.id = id;
         this.pointsCounter = pointsCounter;
         this.teacherId = teacherId;
@@ -33,6 +35,8 @@ public class Student {
         this.purchaseHistory = purchaseHistory;
         this.instrument = instrument;
         this.grade = grade;
+        this.avatar = avatar;
+        this.email = email;
     }
 
 }

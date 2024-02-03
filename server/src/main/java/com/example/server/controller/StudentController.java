@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.server.entity.Student;
 import com.example.server.service.StudentService;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/students")
@@ -23,17 +25,25 @@ public class StudentController {
     @Autowired
     private StudentService studentService;
 
-    // Create student - already in user controller
 
-    // Get all student
+    @Operation(summary = "Get all students in the database")
     @GetMapping
     public ResponseEntity<List<Student>> getAllStudents() {
         return ResponseEntity.ok(studentService.getAllStudents());
     }
 
-    // Get specific student using student id
+    @Operation(summary = "Get a student by student id")
+    @GetMapping("/{studentId}")
+    public ResponseEntity<Student> getStudentById(@PathVariable String studentId) {
+        try {
+            Student student = studentService.getStudentById(studentId);
+            return ResponseEntity.ok(student);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
-    // Change student's grade
+    @Operation(summary = "Get a student by student id")
     @PutMapping("/{studentId}/update-grade")
     public ResponseEntity<String> updateStudentGrade(
             @PathVariable String studentId,

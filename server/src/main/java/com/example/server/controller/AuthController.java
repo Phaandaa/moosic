@@ -5,6 +5,8 @@ import com.example.server.models.SignInResponseDTO;
 import com.example.server.service.FirebaseAuthService;
 import com.example.server.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,11 +29,12 @@ public class AuthController {
         this.firebaseAuthService = firebaseAuthService;
     }
 
-    @PostMapping("/signup")
-    public FirebaseToken signUpWithEmailAndPassword(@RequestBody AuthRequest authRequest) {
-        return firebaseAuthService.signUpWithEmailAndPassword(authRequest.getEmail(), authRequest.getPassword());
-    }
+    // @PostMapping("/signup")
+    // public FirebaseToken signUpWithEmailAndPassword(@RequestBody AuthRequest authRequest) {
+    //     return firebaseAuthService.signUpWithEmailAndPassword(authRequest.getEmail(), authRequest.getPassword());
+    // }
 
+    @Operation(summary = "User sign in with email and password")
     @PostMapping("/signin")
     public ResponseEntity<SignInResponseDTO> signInWithEmailAndPassword(@RequestBody AuthRequest authRequest) {
         return ResponseEntity.ok(

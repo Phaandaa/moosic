@@ -50,10 +50,10 @@ public class UserService {
         userRepository.save(newUser);
         switch (role) {
             case "Student":
-                createStudent(id, name, userDTO);
+                createStudent(id, name, email, userDTO);
                 break;
             case "Teacher":
-                createTeacher(id, name);
+                createTeacher(id, name, email, userDTO);
                 break;
             default:
                 break;
@@ -83,11 +83,12 @@ public class UserService {
         return signInResponseDTO;
     }
 
-    private void createStudent(String id, String name, CreateUserDTO userDTO) {
+    private void createStudent(String id, String name, String email, CreateUserDTO userDTO) {
         String teacherId = userDTO.getInfo().get("teacher_id");
         String instrument = userDTO.getInfo().get("instrument");
         String grade = userDTO.getInfo().get("grade");
-        Student newStudent = new Student(id, 0, teacherId, name, new ArrayList<>(), instrument, grade);
+        String avatar = userDTO.getInfo().get("avatar");
+        Student newStudent = new Student(id, 0, teacherId, name, new ArrayList<>(), instrument, grade, avatar, email);
         Optional<Teacher> selectedTeacher = teacherRepository.findById(teacherId);
         if (selectedTeacher.isPresent()) {
             Teacher teacher = selectedTeacher.get();
@@ -97,8 +98,9 @@ public class UserService {
         studentRepository.save(newStudent);
     }
 
-    private void createTeacher(String id, String name) {
-        Teacher newTeacher = new Teacher(id, name, new ArrayList<>());
+    private void createTeacher(String id, String name, String email, CreateUserDTO userDTO) {
+        String avatar = userDTO.getInfo().get("avatar");
+        Teacher newTeacher = new Teacher(id, name, email, avatar, new ArrayList<>());
         teacherRepository.save(newTeacher);
     }
 
@@ -114,12 +116,4 @@ public class UserService {
         User toBeDeletedUser = userRepository.findById(userId).orElseThrow();
         userRepository.delete(toBeDeletedUser);
     }
-
-    public User updateUser(FirebaseToken firebaseToken) {
-        User toBeUpdatedUser = userRepository.findById(firebaseToken.getLocalId()).orElseThrow();
-
-        TODO: // Update user's name and email in firebase (update name and email)
-        toBeUpdatedUser.setEmail(firebaseToken.getEmail());
-        return userRepository.save(toBeUpdatedUser);
-    } 
 }
