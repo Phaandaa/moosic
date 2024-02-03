@@ -45,13 +45,15 @@ function PracticeScreen({navigation}){
         console.log(practiceData)
 
         // Step 2: Validate Data (this is a basic example, you might need more complex validation)
-        if (!practiceData.title || !practiceData.comment || !practiceData.videos) {
+        // if (!practiceData.title || !practiceData.comment || !practiceData.videos) {
+        if (!practiceData.title || !practiceData.comment) {
             alert('Please fill all fields');
             return;
         }
         else{
             alert('Success!')
             dispatch(setCache({ key: 'practiceData', value: practiceData })); 
+            navigation.navigate('PracticeListTeacherScreen');
         }
     }
 
