@@ -2,6 +2,7 @@ package com.example.server.service;
 
 import java.util.*;
 
+import org.checkerframework.checker.units.qual.t;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,10 +86,11 @@ public class UserService {
 
     private void createStudent(String id, String name, String email, CreateUserDTO userDTO) {
         String teacherId = userDTO.getInfo().get("teacher_id");
+        String teacherName = userDTO.getInfo().get("teacher_name");
         String instrument = userDTO.getInfo().get("instrument");
         String grade = userDTO.getInfo().get("grade");
         String avatar = userDTO.getInfo().get("avatar");
-        Student newStudent = new Student(id, 0, teacherId, name, new ArrayList<>(), instrument, grade, avatar, email);
+        Student newStudent = new Student(id, 0, teacherId, name, new ArrayList<>(), instrument, grade, avatar, email,teacherName);
         Optional<Teacher> selectedTeacher = teacherRepository.findById(teacherId);
         if (selectedTeacher.isPresent()) {
             Teacher teacher = selectedTeacher.get();

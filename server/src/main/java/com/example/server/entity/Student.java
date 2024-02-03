@@ -22,12 +22,13 @@ public class Student {
     private String grade;
     private String avatar;
     private String email;
+    private String teacherName;
 
     public Student() {
 
     }
 
-    public Student(String id, Integer pointsCounter, String teacherId, String name, ArrayList<String> purchaseHistory, String instrument, String grade, String avatar, String email) {
+    public Student(String id, Integer pointsCounter, String teacherId, String name, ArrayList<String> purchaseHistory, String instrument, String grade, String avatar, String email, String teacherName) {
         this.id = id;
         this.pointsCounter = pointsCounter;
         this.teacherId = teacherId;
@@ -37,6 +38,7 @@ public class Student {
         this.grade = grade;
         this.avatar = avatar;
         this.email = email;
+        this.teacherName = teacherName;
     }
 
 }
