@@ -88,7 +88,7 @@ export const AuthProvider = ({ children }) => {
 
   const signIn = async (email, password) => {
     try {
-      // const response = await axios.post('http://172.20.10.3:8081/api/auth/signin', { email, password }); // Audrey's
+      
       const response = await axios.post( `${IP_ADDRESS}/api/auth/signin`, { email, password });
       const data = response.data;
       
