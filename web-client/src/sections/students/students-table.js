@@ -1,5 +1,5 @@
-import PropTypes from 'prop-types';
-import { format } from 'date-fns';
+import PropTypes from "prop-types";
+import { format } from "date-fns";
 import {
   Avatar,
   Box,
@@ -12,12 +12,11 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  Typography
-} from '@mui/material';
-import { Scrollbar } from 'src/components/scrollbar';
-import { getInitials } from 'src/utils/get-initials';
-import StudentsEditModal from './students-edit-modal';
-
+  Typography,
+} from "@mui/material";
+import { Scrollbar } from "src/components/scrollbar";
+import { getInitials } from "src/utils/get-initials";
+import StudentsEditModal from "./students-edit-modal";
 
 export const StudentsTable = (props) => {
   const {
@@ -31,11 +30,11 @@ export const StudentsTable = (props) => {
     onSelectOne,
     page = 0,
     rowsPerPage = 0,
-    selected = []
+    selected = [],
   } = props;
 
-  const selectedSome = (selected.length > 0) && (selected.length < items.length);
-  const selectedAll = (items.length > 0) && (selected.length === items.length);
+  const selectedSome = selected.length > 0 && selected.length < items.length;
+  const selectedAll = items.length > 0 && selected.length === items.length;
 
   return (
     <Card>
@@ -57,24 +56,18 @@ export const StudentsTable = (props) => {
                     }}
                   />
                 </TableCell>
-                <TableCell>
-                  Name
-                </TableCell>
-                <TableCell>
-                  Email
-                </TableCell>
-                {/* <TableCell>
-                  Location
-                </TableCell> */}
+                <TableCell>Name</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Instrument</TableCell>
+                <TableCell>Grade</TableCell>
+                <TableCell>Points</TableCell>
                 {/* <TableCell>
                   Phone
                 </TableCell>
                 <TableCell>
                   Signed Up
                 </TableCell> */}
-                <TableCell>
-                  Actions
-                </TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -83,11 +76,7 @@ export const StudentsTable = (props) => {
                 // const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
 
                 return (
-                  <TableRow
-                    hover
-                    key={customer.id}
-                    selected={isSelected}
-                  >
+                  <TableRow hover key={customer.id} selected={isSelected}>
                     <TableCell padding="checkbox">
                       <Checkbox
                         checked={isSelected}
@@ -101,28 +90,17 @@ export const StudentsTable = (props) => {
                       />
                     </TableCell>
                     <TableCell>
-                      <Stack
-                        alignItems="center"
-                        direction="row"
-                        spacing={2}
-                      >
-                        {/* <Avatar src={customer.avatar}>
-                          {getInitials(customer.name)}
-                        </Avatar> */}
-                        <Typography variant="subtitle2">
-                          {customer.name}
-                        </Typography>
+                      <Stack alignItems="center" direction="row" spacing={2}>
+                        <Avatar src={customer.avatar}>
+                          {getInitials(customer.name ? customer.name : "?")}
+                        </Avatar>
+                        <Typography variant="subtitle2">{customer.name}</Typography>
                       </Stack>
                     </TableCell>
-                    <TableCell>
-                      {customer.email}
-                    </TableCell>
-                    {/* <TableCell>
-                      {customer.address.city}, {customer.address.state}, {customer.address.country}
-                    </TableCell> */}
-                    {/* <TableCell>
-                      {customer.phone}
-                    </TableCell> */}
+                    <TableCell>{customer.email}</TableCell>
+                    <TableCell>{customer.instrument}</TableCell>
+                    <TableCell>{customer.grade}</TableCell>
+                    <TableCell>{customer.pointsCounter}</TableCell>
                     {/* <TableCell>
                       {createdAt}
                     </TableCell> */}
@@ -160,5 +138,5 @@ StudentsTable.propTypes = {
   onSelectOne: PropTypes.func,
   page: PropTypes.number,
   rowsPerPage: PropTypes.number,
-  selected: PropTypes.array
+  selected: PropTypes.array,
 };
