@@ -1,11 +1,40 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useAuth } from './context/Authcontext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProfileScreen = () => {
 
   const {signOut} = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [userName, setuserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+
+  const checkStoredData = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem('authData');
+      if (storedData !== null) {
+        const parsedData = JSON.parse(storedData);
+        return parsedData;
+      }
+    } catch (error) {
+      console.error('Error retrieving data from AsyncStorage', error);
+    }
+    return '';
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await checkStoredData();
+        setuserName(data.name);
+        setUserEmail(data.email);
+      } catch (error) {
+        console.error('Error processing stored data', error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleSignOut = async () => {
     setIsLoading(true);
@@ -17,14 +46,16 @@ const ProfileScreen = () => {
       setIsLoading(false);
     }
   }
+
+
   return (
     <View style={styles.container}>
       {/* <Image
         source={{ uri: 'https://via.placeholder.com/150' }} 
         style={styles.profileImage}
       /> */}
-      <Text style={styles.name}>John Doe</Text>
-      <Text style={styles.email}>johndoe@example.com</Text>
+      <Text style={styles.name}>{userName}</Text>
+      <Text style={styles.email}>{userEmail}</Text>
 
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Edit Profile</Text>
