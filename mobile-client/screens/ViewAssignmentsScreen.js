@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Button} from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView} from 'react-native';
 import theme from './styles/theme';
 import Modal from 'react-native-modal';
 import { useSelector } from 'react-redux';
-function ViewCreatedAssignmentsScreen({route}){
+
+function ViewAssignmentsScreen({route}){
     const assignmentData = useSelector(state => state.cache.assignmentData);
     const documentLogo = require('../assets/filelogo.png')
     const [isModalVisible, setModalVisible] = useState(false);
@@ -50,12 +51,9 @@ function ViewCreatedAssignmentsScreen({route}){
                         ))}
                     </ScrollView>
 
-                    <Modal isVisible={isModalVisible} 
-                    // onBackdropPress={toggleModal}
-                    >
+                    <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
                         <View style={theme.modalContent}>
                             <Image source={{uri:selectedImage}} style={theme.fullSizeImage} />
-                            <Button title="Close" onPress={toggleModal} />
                         </View>
                     </Modal>
                     
@@ -72,15 +70,17 @@ function ViewCreatedAssignmentsScreen({route}){
                 </View>
                 <View style={theme.buttonContainer2}> 
                     <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText}>View Submission</Text>
+                        <Text style={theme.smallButtonText}>Submit Assignment</Text>
                     </TouchableOpacity>
-                    {/* <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText}>Give Feedback</Text>
-                    </TouchableOpacity> */}
+                    <TouchableOpacity style={theme.smallButton}>
+                        <Text style={theme.smallButtonText}>View Feedback</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         </View>
         </ScrollView>
     )
 }; 
-export default ViewCreatedAssignmentsScreen;
+export default ViewAssignmentsScreen;
+
+                

@@ -9,6 +9,7 @@ import LoginPage from './screens/login';
 import CreateAssignmentScreen from './screens/CreateAssignmentScreen';
 import MyStudentsScreen from './screens/MyStudentsScreen';
 import ViewCreatedAssignmentsScreen from './screens/ViewCreatedAssignmentsScreen';
+import ViewAssignmentsScreen from './screens/ViewAssignmentsScreen';
 import PracticeScreen from './screens/PracticeScreen';
 
 // Cache and Context
@@ -51,7 +52,8 @@ const AuthNavigation = () => {
                 <Stack.Screen name="CreateAssignmentScreen" component={CreateAssignmentScreen} options={{ title: 'Create Assignment' }}/>
                 <Stack.Screen name="PracticeScreen" component={PracticeScreen} options={{ title: 'Start Practice' }}/>
                 <Stack.Screen name="MyStudentsScreen" component={MyStudentsScreen} options={{ title: 'My Students' }}/>
-                <Stack.Screen name="ViewCreatedAssignmentsScreen" component={ViewCreatedAssignmentsScreen} options={{ title: 'Assignments' }}/>
+                <Stack.Screen name="ViewCreatedAssignmentsScreen" component={ViewCreatedAssignmentsScreen} options={{ title: 'Created Assignments' }}/>
+                <Stack.Screen name="ViewAssignmentsScreen" component={ViewAssignmentsScreen} options={{ title: 'My Assignments' }}/>
               </>
             ) : (
               // User is not logged in, show the login screen

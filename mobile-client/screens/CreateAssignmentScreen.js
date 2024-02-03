@@ -7,7 +7,11 @@ import * as DocumentPicker from "expo-document-picker";
 import StudentDropdown from '../components/StudentDropdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
+import { useSelector, useDispatch } from 'react-redux';
+import { setCache, clearCache } from '../cacheSlice';
+
 function CreateAssignmentScreen({navigation}){
+    const dispatch = useDispatch();
     const [assignmentName, setAssignmentName] = useState('');
     const [assignmentDesc, setAssignmentDesc] = useState('');
     const [assignmentDeadline, setAssignmentDeadline] = useState('');
@@ -122,6 +126,7 @@ function CreateAssignmentScreen({navigation}){
             return;
         }
         else{
+            dispatch(setCache({ key: 'assignmentData', value: assignmentData })); 
             navigation.navigate('ViewCreatedAssignmentsScreen', { assignmentData });
             alert('Success!')
         }
