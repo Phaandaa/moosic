@@ -32,7 +32,7 @@ const Page = () => {
       }}
     >
       <Container maxWidth="xl">
-        <Box><h1>Welcome, {user.name?.split(' ')[0]}!</h1></Box><Grid
+        <Box><h1>Welcome, {user?.name?.split(' ')[0]}!</h1></Box><Grid
           container
           spacing={3}
         >
