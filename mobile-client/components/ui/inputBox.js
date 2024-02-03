@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import theme from '../../screens/styles/theme';
 
-function InputBox({label, value, onChangeText, textInputConfig = {}}){
+function InputBox({label, placeholder, value, onChangeText, textInputConfig = {}}){
     return (
-        <View style={theme.card2}>
-            <View style={theme.cardTextContainer}>
-                <Text style={theme.cardTitle}>{label}</Text>
-                <TextInput style={styles.input} value={value} onChangeText={onChangeText} {...textInputConfig} />
+        <View style={theme.inputOuterContainer}>
+            <Text style={theme.inputLabel}>{label}</Text>
+            <View style={theme.inputContainer}>
+                <View style={theme.inputTextContainer}>
+                    <TextInput style={styles.inputText} placeholder={placeholder} value={value} onChangeText={onChangeText} multiline={true} {...textInputConfig} />
+                </View>
             </View>
         </View>
     )

@@ -226,7 +226,39 @@ const theme = StyleSheet.create({
     width:250,
     height: 600,
     resizeMode: 'contain'
-  }
+  },
+  inputOuterContainer:{
+    marginTop: 10,
+    marginBottom: 10,
+    flexDirection: 'col',
+  },
+  inputContainer:{
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    marginTop: 10,
+    marginBottom: 10,
+    flexDirection: 'col',
+    borderColor: '#4664EA',
+    borderWidth: '1',
+  },
+  inputLabel:{
+    color: '#4664EA',
+    fontWeight: 'bold',
+    fontSize: 16,
+    paddingVertical: 1,
+    paddingHorizontal: 10
+  },
+  inputText:{
+    color: 'black',
+    fontWeight: '300',
+    fontSize: 16,
+    paddingVertical: 5,
+  }, 
+  inputTextContainer: {
+    flex: 1, // Take up as much space as possible
+    marginRight: 8, // Add some margin to the right of the text
+  },
 });
 
 export default theme;
