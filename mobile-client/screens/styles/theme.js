@@ -106,6 +106,7 @@ const theme = StyleSheet.create({
       padding: 20,
       borderRadius: 15,
       marginTop: 10,
+      marginBottom: 10,
       flexDirection: 'col',
   },
   cardTextContainer: {

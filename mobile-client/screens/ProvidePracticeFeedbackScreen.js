@@ -5,6 +5,7 @@ import AnimatedPlaceholderInput from '../components/ui/animateTextInput';
 import PracticeListTeacherScreen from './PracticeListTeacherScreen';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCache, clearCache } from '../cacheSlice';
+import InputBox from '../components/ui/inputBox';
 
 function ProvidePracticeFeedbackScreen({navigation}){
     const dispatch = useDispatch();
@@ -60,12 +61,14 @@ function ProvidePracticeFeedbackScreen({navigation}){
 
                 </View>
                 </View>
-                    <AnimatedPlaceholderInput 
+                    {/* <AnimatedPlaceholderInput 
                         placeholder="Feedback" 
                         secureTextEntry={false} 
                         value={feedback}
                         onChangeText={setFeedback}>    
-                    </AnimatedPlaceholderInput>
+                    </AnimatedPlaceholderInput> */}
+
+                    <InputBox label="Feedback" value={feedback} onChangeText={setFeedback} />
 
                     {/* Submit button */}
                     <TouchableOpacity style={theme.button} onPress={submitHandler}>
