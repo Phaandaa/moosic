@@ -17,7 +17,7 @@ const HomepageSearchBar = ({ onSearch }) => {
             fontSize: 16, // Adjust the font size as needed
             color: '#333',
           }}
-          placeholder="Search your Lesson"
+          placeholder="Search"
           placeholderTextColor="#A1B2CF" // Adjust the placeholder text color as needed
           value={searchText}
           onChangeText={(text) => {

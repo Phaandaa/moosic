@@ -1,25 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList } from 'react-native';
 import BoxComponent from '../components/ui/homepageModuleBoxes';
 import theme from './styles/theme';
 import HomepageSearchBar from '../components/ui/homepageSearchbar';
-
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = ({ navigation }) => {
   const [searchResults, setSearchResults] = useState([]);
+  const [userRole, setUserRole] = useState('');
 
-  const modules = [
-    { id: 'knowledge', color: '#686BFF', title: 'Knowledge', subtitle: 'Hand and Finger Work', iconName: 'bulb', navigationPage: 'CreateAssignmentScreen', iconColor: 'white', buttonText: 'Continue' },
+  const checkStoredData = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem('authData');
+      if (storedData !== null) {
+        const parsedData = JSON.parse(storedData);
+        return parsedData.role;
+      }
+    } catch (error) {
+      console.error('Error retrieving data from AsyncStorage', error);
+    }
+    return '';
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const role = await checkStoredData();
+        setUserRole(role);
+      } catch (error) {
+        console.error('Error processing stored data', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const teacherModules = [
     { id: 'assignment', color: '#466CFF', title: 'Assignment', subtitle: 'Create an assignment', iconName: 'musical-notes', navigationPage: 'CreateAssignmentScreen', iconColor: 'white', buttonText: 'Create' },
     { id: 'students', color: '#EE97BC', title: 'View My Students', subtitle: 'My lovely students', iconName: 'people', navigationPage: 'MyStudentsScreen', iconColor: 'white', buttonText: 'View' },
-    { id: 'practice', color: '#EE97BC', title: 'Practice', subtitle: 'Record My Practice Sessions', iconName: 'musical-notes', navigationPage: 'PracticeScreen', iconColor: 'white', buttonText: 'View' },
-    { id: 'assignments', color: '#EE97BC', title: 'Assignments', subtitle: 'View My Assignments (student) ', iconName: 'people', navigationPage: 'ViewAssignmentsScreen', iconColor: 'white', buttonText: 'View' },
-    // Add more modules as needed
+    // Add more modules specific to teacher
   ];
 
+  const studentModules = [
+    { id: 'knowledge', color: '#686BFF', title: 'Knowledge', subtitle: 'Hand and Finger Work', iconName: 'bulb', navigationPage: 'CreateAssignmentScreen', iconColor: 'white', buttonText: 'Continue' },
+    { id: 'practice', color: '#EE97BC', title: 'Practice', subtitle: 'Record My Practice Sessions', iconName: 'musical-notes', navigationPage: 'PracticeScreen', iconColor: 'white', buttonText: 'View' },
+    { id: 'assignments', color: '#466CFF', title: 'Assignments', subtitle: 'View My Assignments', iconName: 'people', navigationPage: 'ViewAssignmentsScreen', iconColor: 'white', buttonText: 'View' },
+    // Add more modules specific to student
+  ];
+
+  const modules = userRole === 'Teacher' ? teacherModules : studentModules;
+
   const handleSearch = (searchText) => {
-    // Perform search logic based on ID
     const results = modules.filter(module => module.id.includes(searchText));
     setSearchResults(results);
   };
@@ -47,14 +77,9 @@ const HomeScreen = ({ navigation }) => {
             iconColor={item.iconColor}
             buttonText={item.buttonText}
             id={item.id}
-            
           />
         )}
       />
-
-      
-
-      
     </View>
   );
 };

@@ -10,27 +10,20 @@ const AuthContext = createContext({
 const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 const LOGIN_ERROR = 'LOGIN_ERROR';
 const LOGOUT = 'LOGOUT';
+const STORE_USER_DATA = 'STORE_USER_DATA';
+
+const IP_ADDRESS = 'http://192.168.32.15:8080'; // Replace with your own IP address
 
 const authReducer = (state, action) => {
   switch (action.type) {
     case LOGIN_SUCCESS:
-      return {
-        ...state,
-        isLoggedIn: true,
-        user: action.payload,
-      };
+      return { ...state, isLoggedIn: true, user: action.payload };
     case LOGIN_ERROR:
-      return {
-        ...state,
-        isLoggedIn: false,
-        error: action.payload,
-      };
+      return { ...state, isLoggedIn: false, error: action.payload };
     case LOGOUT:
-      return {
-        ...state,
-        isLoggedIn: false,
-        user: null,
-      };
+      return { ...state, isLoggedIn: false, user: null, userData: null };
+    case STORE_USER_DATA:
+      return { ...state, userData: action.payload };
     default:
       return state;
   }
@@ -74,18 +67,31 @@ export const AuthProvider = ({ children }) => {
       if (cachedData) {
         dispatch({ type: LOGIN_SUCCESS, payload: cachedData });
       }
+      
+    };
+
+    const loadCachedUserData = async () => {
+      try {
+        const userData = await AsyncStorage.getItem('userData');
+        if (userData) {
+          dispatch({ type: STORE_USER_DATA, payload: JSON.parse(userData) });
+        }
+      } catch (error) {
+        console.error('Error retrieving user data from cache', error);
+      }
     };
 
     loadAuthData();
+    loadCachedUserData();
   }, []);
+
 
   const signIn = async (email, password) => {
     try {
-      // const response = await axios.post('http://172.20.10.3:8081/api/auth/signin', { email, password }); // Audrey's
-      const response = await axios.post('http://192.168.50.47:8080/api/auth/signin', { email, password }); // replace with own IP address
-
+      
+      const response = await axios.post( `${IP_ADDRESS}/api/auth/signin`, { email, password });
       const data = response.data;
-
+      
       if (response.status === 200) {
         await saveAuthDataToCache(data);
         dispatch({ type: LOGIN_SUCCESS, payload: data });
@@ -102,15 +108,26 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signOut = async () => {
-    await clearAuthDataFromCache();
-    dispatch({ type: LOGOUT });
+    try {
+      await clearAuthDataFromCache(); // This function should remove auth data from AsyncStorage
+      dispatch({ type: LOGOUT });
+    } catch (error) {
+      console.error('Error during sign out:', error);
+    }
+  };
+  
+
+  const storeUserData = async (userData) => {
+    try {
+      await AsyncStorage.setItem('userData', JSON.stringify(userData));
+      dispatch({ type: STORE_USER_DATA, payload: userData });
+      
+    } catch (error) {
+      console.error('Error storing user data:', error);
+    }
   };
 
-  const signUp = () => {
-    // Implement sign up logic here
-  };
-
-  const values = { state, dispatch, signIn, signOut, signUp };
+  const values = { state, dispatch, signIn, signOut, storeUserData };
 
   return (
     <AuthContext.Provider value={values}>
