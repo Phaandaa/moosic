@@ -106,9 +106,9 @@ export const TeachersTable = (props) => {
                         direction="row"
                         spacing={2}
                       >
-                        {/* <Avatar src={customer.avatar}>
-                          {getInitials(customer.name)}
-                        </Avatar> */}
+                        <Avatar src={customer.avatar}>
+                          {getInitials(customer.name ? customer.name : "?")}
+                        </Avatar>
                         <Typography variant="subtitle2">
                           {customer.name}
                         </Typography>

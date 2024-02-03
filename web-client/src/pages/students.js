@@ -168,9 +168,9 @@ const Page = () => {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await getAsync(`users`);
+        const response = await getAsync(`students`);
         const data = await response.json();
-        setStudentData(data.filter((user) => user.role === "Student"));
+        setStudentData(data);
       } catch (error) {
         console.error("Error fetching students:", error);
       }
