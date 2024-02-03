@@ -53,7 +53,7 @@ const BoxComponent = ({
       <Text
         style={[
           theme.textSubtitle,
-          { textAlign: 'left', color: 'white', fontSize: 20, fontStyle: 'italic' },
+          { textAlign: 'left', color: 'white', fontSize: 20, fontStyle: 'italic',  width: '75%' },
         ]}
       >
         {subtitle}
