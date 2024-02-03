@@ -8,10 +8,43 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import { SvgIcon } from "@mui/material";
+import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { postAsync } from "src/utils/utils";
 
 export default function StudentsModal() {
   const [open, setOpen] = React.useState(false);
   const [step, setStep] = React.useState(1); // New state for tracking the step
+
+  const [studentName, setStudentName] = React.useState("");
+  const [studentEmail, setStudentEmail] = React.useState("");
+  const [instrument, setInstrument] = React.useState("");
+  const [gradeLevel, setGradeLevel] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [passwordCfm, setPasswordCfm] = React.useState("");
+
+  const handleNameChange = (event) => {
+    setStudentName(event.target.value);
+  };
+
+  const handleEmailChange = (event) => {
+    setStudentEmail(event.target.value);
+  };
+
+  const handleInstrumentChange = (event) => {
+    setInstrument(event.target.value);
+  };
+
+  const handleGradeLevelChange = (event) => {
+    setGradeLevel(event.target.value);
+  };
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+  };
+
+  const handlePasswordCfmChange = (event) => {
+    setPasswordCfm(event.target.value);
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -24,9 +57,43 @@ export default function StudentsModal() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const formJson = Object.fromEntries(formData.entries());
-    console.log(formJson);
+    // Perform validation or any other pre-submission logic here
+    if (step !== 2 || !password || !passwordCfm || password !== passwordCfm) {
+      console.error("Form validation failed");
+      return; // Stop the submission if validation fails
+    }
+
+    // Assuming postAsync is correctly defined elsewhere and handles the asynchronous POST request
+    const submitData = async () => {
+      try {
+        const response = await postAsync("users/create", {
+          name: studentName,
+          email: studentEmail,
+          role: "Student",
+          password: password, // Make sure your API expects this structure
+          info: {
+            instrument: instrument,
+            grade: gradeLevel,
+            teacher_id: null,
+            avatar: null,
+            teacher_name: null,
+          },
+        });
+        if (!response.ok) {
+          console.error("Server error:", response.status, response.statusText);
+          throw new Error("Server error");
+        }
+        console.log("Form submitted successfully");
+        // Perform any action on successful submission here
+        setOpen(false); // Close the modal on successful submission
+        // Reset form fields or perform other cleanup tasks here
+      } catch (error) {
+        console.error("Form submission error:", error);
+        // Handle submission errors (e.g., display error message)
+      }
+    };
+
+    submitData();
     handleClose();
   };
 
@@ -51,7 +118,7 @@ export default function StudentsModal() {
           onSubmit: handleSubmit,
         }}
       >
-        <DialogTitle>{step === 1 ? "Student Details" : "Parent Details"}</DialogTitle>
+        <DialogTitle>{step === 1 ? "Student Details" : "Login Details"}</DialogTitle>
         <DialogContent>
           {step === 1 && (
             // Step 1: Student Details
@@ -70,99 +137,60 @@ export default function StudentsModal() {
                 type="text"
                 fullWidth
                 variant="standard"
+                onChange={handleNameChange} // Add onChange
+                value={studentName} // Control the component
               />
+              <TextField
+                autoFocus
+                required
+                margin="dense"
+                id="stu-email"
+                name="stu-email"
+                label="Student Email Address"
+                type="text"
+                fullWidth
+                variant="standard"
+                onChange={handleEmailChange} // Add onChange
+                value={studentEmail} // Control the component
+              />
+              <FormControl fullWidth variant="standard" margin="dense">
+                <InputLabel id="instrument-label">Instrument</InputLabel>
+                <Select
+                  labelId="instrument-label"
+                  id="instrument"
+                  name="instrument"
+                  value={instrument}
+                  onChange={handleInstrumentChange}
+                  required
+                >
+                  <MenuItem value="Piano">Piano</MenuItem>
+                  <MenuItem value="Guitar">Guitar</MenuItem>
+                  <MenuItem value="Ukulele">Ukulele</MenuItem>
+                  <MenuItem value="Violin">Violin</MenuItem>
+                </Select>
+              </FormControl>
+
               <TextField
                 autoFocus
                 required
                 margin="dense"
                 id="age"
                 name="age"
-                label="Student Age"
+                label="Grade Level"
                 type="number"
                 fullWidth
                 variant="standard"
-              />
-              <TextField
-                autoFocus
-                // required
-                margin="dense"
-                id="stu-phone"
-                name="stu-phone"
-                label="Student Phone Number"
-                type="number"
-                fullWidth
-                variant="standard"
-              />
-              <TextField
-                autoFocus
-                // required
-                margin="dense"
-                id="stu-email"
-                name="stu-email"
-                label="Student Email Address"
-                type="number"
-                fullWidth
-                variant="standard"
-              />
-            </>
-          )}
-          {step === 2 && (
-            // Step 2: Parent Details
-            <>
-              <DialogContentText>Please enter the parent's details.</DialogContentText>
-              {/* Parent Details Form Fields */}
-              <TextField
-                autoFocus
-                // required
-                margin="dense"
-                id="parent-name"
-                name="parent-name"
-                label="Parent Full Name"
-                type="text"
-                fullWidth
-                variant="standard"
-              />
-              <TextField
-                autoFocus
-                // required
-                margin="dense"
-                id="parent-phone"
-                name="parent-phone"
-                label="Parent Phone Number"
-                type="number"
-                fullWidth
-                variant="standard"
-              />
-              <TextField
-                autoFocus
-                // required
-                margin="dense"
-                id="parent-email"
-                name="parent-email"
-                label="Parent Email Address"
-                type="email"
-                fullWidth
-                variant="standard"
+                onChange={handleGradeLevelChange} // Add onChange
+                value={gradeLevel} // Control the component
               />
             </>
           )}
 
-          {step === 3 && (
+          {step === 2 && (
             // Step 2: Parent Details
             <>
-              <DialogContentText>Please enter the login details.</DialogContentText>
+              <DialogContentText>Please enter the password details.</DialogContentText>
               {/* Parent Details Form Fields */}
-              <TextField
-                autoFocus
-                required
-                margin="dense"
-                id="username"
-                name="username"
-                label="Username"
-                type="text"
-                fullWidth
-                variant="standard"
-              />
               <TextField
                 autoFocus
                 required
@@ -173,6 +201,8 @@ export default function StudentsModal() {
                 type="password"
                 fullWidth
                 variant="standard"
+                onChange={handlePasswordChange} // Add onChange
+                value={password} // Control the component
               />
               <TextField
                 autoFocus
@@ -184,7 +214,12 @@ export default function StudentsModal() {
                 type="password"
                 fullWidth
                 variant="standard"
+                onChange={handlePasswordCfmChange} // Add onChange
+                value={passwordCfm} // Control the component
               />
+              <span style={{ color: "red", fontSize: "0.75rem" }}>
+                {password !== passwordCfm ? "Passwords do not match" : ""}
+              </span>
             </>
           )}
         </DialogContent>
@@ -192,21 +227,24 @@ export default function StudentsModal() {
           {step === 1 && (
             <>
               <Button onClick={handleClose}>Cancel</Button>
-              <Button onClick={() => setStep(2)}>Next</Button>
+              <Button
+                onClick={() => setStep(2)}
+                disabled={!studentName || !studentEmail || !instrument || !gradeLevel}
+              >
+                Next
+              </Button>
             </>
           )}
 
           {step === 2 && (
             <>
               <Button onClick={() => setStep(1)}>Back</Button>
-              <Button onClick={() => setStep(3)}>Next</Button>
-            </>
-          )}
-
-          {step === 3 && (
-            <>
-              <Button onClick={() => setStep(2)}>Back</Button>
-              <Button type="submit">Create</Button>
+              <Button
+                type="submit"
+                disabled={!password || !passwordCfm || password !== passwordCfm}
+              >
+                Create
+              </Button>
             </>
           )}
         </DialogActions>
