@@ -2,8 +2,9 @@ import React, {useState} from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView} from 'react-native';
 import theme from './styles/theme';
 import Modal from 'react-native-modal';
+import { useSelector } from 'react-redux';
 function ViewCreatedAssignmentsScreen({route}){
-    const { assignmentData } = route.params;
+    const assignmentData = useSelector(state => state.cache.assignmentData);
     const documentLogo = require('../assets/filelogo.png')
     const [isModalVisible, setModalVisible] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
