@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.server.dao.StudentRepository;
+import com.example.server.entity.Practice;
 import com.example.server.entity.Student;
 import com.example.server.entity.Teacher;
 
@@ -54,12 +55,23 @@ public class StudentService {
     }
 
     @Transactional
-    public void updateStudentAvatar(String studentId, String avatar){
+    public void updateStudentAvatar(String studentId, String avatar) {
         Optional<Student> selectedStudent = studentRepository.findById(studentId);
         if (selectedStudent.isPresent()) {
             Student student = selectedStudent.get();
             student.setAvatar(avatar);
             studentRepository.save(student);
+        }
+    }
+    
+    public List<Student> findStudentsByTeacherId(String teacherId) {
+        try {
+            return studentRepository.findAllByTeacherId(teacherId);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Illegal argument", e);
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Error fetching students for teacher ID: " + teacherId + " " + e.getMessage(), e);
         }
     }
     
