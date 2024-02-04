@@ -41,7 +41,6 @@ const BottomTabNavigator = () => {
             case 'Home':
               iconName = focused ? 'home' : 'home-outline';
               break;
-            
             case 'My Students':
               iconName = focused ? 'people' : 'people-outline';
               break;
@@ -54,10 +53,9 @@ const BottomTabNavigator = () => {
             case 'Notifications':
               iconName = focused ? 'notifications' : 'notifications-outline';
               break;
-
             case 'Profile':
-                iconName = focused ? 'person' : 'person-outline';
-                break;
+              iconName = focused ? 'person' : 'person-outline';
+              break;
             // Add more cases as needed
           }
           return <Ionicons name={iconName} size={size} color={color} />;
