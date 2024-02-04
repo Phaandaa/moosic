@@ -75,6 +75,7 @@ public class StudentController {
     }
 
     // Change student's teacher - priority 2
+    @Operation(summary = "Update student's teacher")
     @PutMapping("/{studentId}/update-teacher")
     public ResponseEntity<String> updateStudentTeacher(
             @PathVariable String studentId,
@@ -88,7 +89,7 @@ public class StudentController {
         }
     }
 
-    // Update student avatar 
+    @Operation(summary = "Update student's avatar")
     @PutMapping("/{studentId}/update-avatar")
     public ResponseEntity<String> updateStudentAvatar(
             @PathVariable String studentId,

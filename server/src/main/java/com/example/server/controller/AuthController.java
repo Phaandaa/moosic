@@ -1,6 +1,6 @@
 package com.example.server.controller;
 
-import com.example.server.models.FirebaseToken;
+
 import com.example.server.models.SignInResponseDTO;
 import com.example.server.service.FirebaseAuthService;
 import com.example.server.service.UserService;

@@ -1,4 +1,4 @@
-package com.example.server;
+package com.example.server.exception;
 
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpStatus;
@@ -12,10 +12,4 @@ public class GlobalControllerExceptionHandler {
     public ResponseEntity<String> handleConversion(RuntimeException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
-    
-    // @ExceptionHandler(BookNotFoundException.class)
-    // @ResponseStatus(HttpStatus.NOT_FOUND)
-    // public ResponseEntity<String> handleBookNotFound(RuntimeException ex) {
-    //     return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
-    // }
 }
