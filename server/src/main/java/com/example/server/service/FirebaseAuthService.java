@@ -1,8 +1,5 @@
 package com.example.server.service;
 
-// import java.util.HashMap;
-// import java.util.Map;
-
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -10,9 +7,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-// import com.example.server.models.FirebaseUserData;
-
 
 import com.example.server.models.AuthRequest;
 import com.example.server.models.FirebaseToken;
@@ -73,24 +67,4 @@ public class FirebaseAuthService {
 
         return responseEntity.getBody();
     }
-
-    // public FirebaseUserData getUserData(String idToken){
-
-    //     String url = "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=" + firebaseApiKey;
-
-    //     HttpHeaders headers = new HttpHeaders();
-    //     headers.setContentType(MediaType.APPLICATION_JSON);
-
-    //     Map<String, String> requestMap = new HashMap<>();
-    //     requestMap.put("idToken", idToken);
-
-    //     HttpEntity<Map<String, String>> entity = new HttpEntity<>(requestMap, headers);
-
-    //     RestTemplate restTemplate = new RestTemplate();
-
-    //     ResponseEntity<FirebaseUserData> responseEntity = restTemplate.exchange(
-    //         url, HttpMethod.POST, entity, FirebaseUserData.class);
-
-    //     return responseEntity.getBody();
-    // }
 }
