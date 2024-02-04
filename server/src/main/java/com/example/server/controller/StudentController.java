@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -58,6 +59,30 @@ public class StudentController {
     }
 
     // Change student's teacher - priority 2
+    @PutMapping("/{studentId}/update-teacher")
+    public ResponseEntity<String> updateStudentTeacher(
+            @PathVariable String studentId,
+            @RequestParam String teacherId) {
 
-    // Delete student by Id
+        try {
+            studentService.updateStudentTeacher(studentId, teacherId);
+            return new ResponseEntity<>("Student's teacher updated successfully.", HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("Failed to update student's teacher: "+e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Update student avatar 
+    @PutMapping("/{studentId}/update-avatar")
+    public ResponseEntity<String> updateStudentAvatar(
+            @PathVariable String studentId,
+            @RequestParam String avatar) {
+
+        try {
+            studentService.updateStudentAvatar(studentId, avatar);
+            return new ResponseEntity<>("Student's avatar updated successfully.", HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("Failed to update student's avatar: "+e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
