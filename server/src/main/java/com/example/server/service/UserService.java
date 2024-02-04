@@ -85,24 +85,22 @@ public class UserService {
     }
 
     private void createStudent(String id, String name, String email, CreateUserDTO userDTO) {
-        String teacherId = userDTO.getInfo().get("teacher_id");
-        String teacherName = userDTO.getInfo().get("teacher_name");
         String instrument = userDTO.getInfo().get("instrument");
         String grade = userDTO.getInfo().get("grade");
-        String avatar = userDTO.getInfo().get("avatar");
-        Student newStudent = new Student(id, 0, teacherId, name, new ArrayList<>(), instrument, grade, avatar, email,teacherName);
-        Optional<Teacher> selectedTeacher = teacherRepository.findById(teacherId);
-        if (selectedTeacher.isPresent()) {
-            Teacher teacher = selectedTeacher.get();
-            teacher.addStudent(id);
-            teacherRepository.save(teacher);
-        }
+        // String avatar = userDTO.getInfo().get("avatar");
+        Student newStudent = new Student(id, 0, null, name, new ArrayList<>(), instrument, grade, null, email,null);
+        // Optional<Teacher> selectedTeacher = teacherRepository.findById(teacherId);
+        // if (selectedTeacher.isPresent()) {
+        //     Teacher teacher = selectedTeacher.get();
+        //     teacher.addStudent(id);
+        //     teacherRepository.save(teacher);
+        // }
         studentRepository.save(newStudent);
     }
 
     private void createTeacher(String id, String name, String email, CreateUserDTO userDTO) {
         String avatar = userDTO.getInfo().get("avatar");
-        Teacher newTeacher = new Teacher(id, name, email, avatar, new ArrayList<>());
+        Teacher newTeacher = new Teacher(id, name, email, avatar, new ArrayList<>(), phone);
         teacherRepository.save(newTeacher);
     }
 

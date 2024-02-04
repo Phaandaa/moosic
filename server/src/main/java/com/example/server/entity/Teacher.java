@@ -18,17 +18,20 @@ public class Teacher {
     private String email;
     private ArrayList<String> studentIds; // References to Students' User IDs
     private String avatar;
+    private String phone;
 
     public Teacher() {
 
     }
 
-    public Teacher(String id, String name, String email, String avatar, ArrayList<String> studentIds) {
+    public Teacher(String id, String name, String email, String avatar, ArrayList<String> studentIds, String phone) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.studentIds = studentIds;
         this.avatar = avatar;
+        this.phone = phone;
+
     }
 
     public void addStudent(String string) {

@@ -29,11 +29,6 @@ public class AuthController {
         this.firebaseAuthService = firebaseAuthService;
     }
 
-    // @PostMapping("/signup")
-    // public FirebaseToken signUpWithEmailAndPassword(@RequestBody AuthRequest authRequest) {
-    //     return firebaseAuthService.signUpWithEmailAndPassword(authRequest.getEmail(), authRequest.getPassword());
-    // }
-
     @Operation(summary = "User sign in with email and password")
     @PostMapping("/signin")
     public ResponseEntity<SignInResponseDTO> signInWithEmailAndPassword(@RequestBody AuthRequest authRequest) {
