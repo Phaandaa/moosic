@@ -1,34 +1,122 @@
-import * as React from "react";
+import React from 'react';
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
-import { SvgIcon } from "@mui/material";
+import { FormControl, InputLabel, Select, MenuItem, SvgIcon } from "@mui/material";
+import { postAsync } from "src/utils/utils";
 
-export default function TeachersModal() {
+export default function TeachersModal({ onAddTeacher }) {
   const [open, setOpen] = React.useState(false);
-  const [step, setStep] = React.useState(1); // New state for tracking the step
+  const [step, setStep] = React.useState(1);
+  const [teacherName, setTeacherName] = React.useState("");
+  const [teacherEmail, setTeacherEmail] = React.useState("");
+  const [instrument, setInstrument] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [passwordCfm, setPasswordCfm] = React.useState("");
+
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+  const [snackbarMessage, setSnackbarMessage] = React.useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = React.useState("success"); 
 
   const handleClickOpen = () => {
     setOpen(true);
-    setStep(1); // Reset to step 1 when opening the modal
+    setStep(1); // Start from first step
   };
 
   const handleClose = () => {
     setOpen(false);
   };
 
+  const handleNameChange = (event) => {
+    setTeacherName(event.target.value);
+  };
+
+  const handleEmailChange = (event) => {
+    setTeacherEmail(event.target.value);
+  };
+
+  const handleInstrumentChange = (event) => {
+    setInstrument(event.target.value);
+  };
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+  };
+
+  const handlePasswordCfmChange = (event) => {
+    setPasswordCfm(event.target.value);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const formJson = Object.fromEntries(formData.entries());
-    console.log(formJson);
+    // Perform validation or any other pre-submission logic here
+    if (step !== 2 || !password || !passwordCfm || password !== passwordCfm) {
+      console.error("Form validation failed");
+      setSnackbarMessage("Validation failed. Please check the form.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      return;
+    }
+
+    // Assuming postAsync is correctly defined elsewhere and handles the asynchronous POST request
+    const submitData = async () => {
+      try {
+        const response = await postAsync("users/create", {
+          name: teacherName,
+          email: teacherEmail,
+          role: "Teacher",
+          password: password, // Make sure your API expects this structure
+          info: {
+            instrument: instrument,
+  
+          },
+        });
+        if (!response.ok) {
+          console.error("Server error:", response.status, response.statusText);
+          throw new Error("Server error");
+        }
+        const data = await response.json();
+        console.log("Server response:", data);
+        onAddTeacher(data); // Call the callback function to update the student list
+
+        console.log("Form submitted successfully");
+        setSnackbarMessage("Student added successfully!");
+        setSnackbarSeverity("success");
+        setSnackbarOpen(true);
+
+        // Perform any action on successful submission here
+        setOpen(false); // Close the modal on successful submission
+        // Reset form fields or perform other cleanup tasks here
+
+
+      } catch (error) {
+        console.error("Form submission error:", error);
+        setSnackbarMessage("Failed to add Teacher. Please try again.");
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
+        // Handle submission errors (e.g., display error message)
+      } finally {
+        // Perform any cleanup tasks here
+        setTeacherName("");
+        setTeacherEmail("");
+        setInstrument("");
+        setPassword("");
+        setPasswordCfm("");
+      }
+    };
+
+    submitData();
     handleClose();
   };
+
+  
 
   return (
     <React.Fragment>
@@ -41,7 +129,7 @@ export default function TeachersModal() {
         variant="contained"
         onClick={handleClickOpen}
       >
-        Add
+        Add Teacher
       </Button>
       <Dialog
         open={open}
@@ -51,118 +139,62 @@ export default function TeachersModal() {
           onSubmit: handleSubmit,
         }}
       >
-        <DialogTitle>{step === 1 ? "Student Details" : "Parent Details"}</DialogTitle>
+        <DialogTitle>{step === 1 ? "Teacher Details" : "Login Details"}</DialogTitle>
         <DialogContent>
           {step === 1 && (
-            // Step 1: Student Details
+            // Step 1: Teacher Details
             <>
               <DialogContentText>
-                To create an account, please enter the student's details.
+                To create a teacher account, please enter the teacher's details.
               </DialogContentText>
-              {/* Student Details Form Fields */}
               <TextField
                 autoFocus
                 required
                 margin="dense"
-                id="name"
-                name="name"
-                label="Student Full Name"
+                id="tchr-name"
+                name="tchr-name"
+                label="Full Name"
                 type="text"
                 fullWidth
                 variant="standard"
+                onChange={handleNameChange}
+                value={teacherName}
               />
               <TextField
-                autoFocus
                 required
                 margin="dense"
-                id="age"
-                name="age"
-                label="Student Age"
-                type="number"
-                fullWidth
-                variant="standard"
-              />
-              <TextField
-                autoFocus
-                // required
-                margin="dense"
-                id="stu-phone"
-                name="stu-phone"
-                label="Student Phone Number"
-                type="number"
-                fullWidth
-                variant="standard"
-              />
-              <TextField
-                autoFocus
-                // required
-                margin="dense"
-                id="stu-email"
-                name="stu-email"
-                label="Student Email Address"
-                type="number"
-                fullWidth
-                variant="standard"
-              />
-            </>
-          )}
-          {step === 2 && (
-            // Step 2: Parent Details
-            <>
-              <DialogContentText>Please enter the parent's details.</DialogContentText>
-              {/* Parent Details Form Fields */}
-              <TextField
-                autoFocus
-                // required
-                margin="dense"
-                id="parent-name"
-                name="parent-name"
-                label="Parent Full Name"
-                type="text"
-                fullWidth
-                variant="standard"
-              />
-              <TextField
-                autoFocus
-                // required
-                margin="dense"
-                id="parent-phone"
-                name="parent-phone"
-                label="Parent Phone Number"
-                type="number"
-                fullWidth
-                variant="standard"
-              />
-              <TextField
-                autoFocus
-                // required
-                margin="dense"
-                id="parent-email"
-                name="parent-email"
-                label="Parent Email Address"
+                id="tchr-email"
+                name="tchr-email"
+                label="Email Address"
                 type="email"
                 fullWidth
                 variant="standard"
+                onChange={handleEmailChange}
+                value={teacherEmail}
               />
+              <FormControl fullWidth variant="standard" margin="dense">
+                <InputLabel id="instrument-label">Instrument</InputLabel>
+                <Select
+                  labelId="instrument-label"
+                  id="instrument"
+                  name="instrument"
+                  value={instrument}
+                  onChange={handleInstrumentChange}
+                  required
+                >
+                  <MenuItem value="Piano">Piano</MenuItem>
+                  <MenuItem value="Guitar">Guitar</MenuItem>
+                  <MenuItem value="Ukulele">Ukulele</MenuItem>
+                  <MenuItem value="Violin">Violin</MenuItem>
+                </Select>
+              </FormControl>
             </>
           )}
-
-          {step === 3 && (
-            // Step 2: Parent Details
+          {step === 2 && (
+            // Step 2: Login Details
             <>
-              <DialogContentText>Please enter the login details.</DialogContentText>
-              {/* Parent Details Form Fields */}
-              <TextField
-                autoFocus
-                required
-                margin="dense"
-                id="username"
-                name="username"
-                label="Username"
-                type="text"
-                fullWidth
-                variant="standard"
-              />
+              <DialogContentText>Please enter the password details.</DialogContentText>
+              
               <TextField
                 autoFocus
                 required
@@ -173,9 +205,10 @@ export default function TeachersModal() {
                 type="password"
                 fullWidth
                 variant="standard"
+                onChange={handlePasswordChange} // Add onChange
+                value={password} // Control the component
               />
               <TextField
-                autoFocus
                 required
                 margin="dense"
                 id="password-cfm"
@@ -184,33 +217,49 @@ export default function TeachersModal() {
                 type="password"
                 fullWidth
                 variant="standard"
+                onChange={handlePasswordCfmChange} // Add onChange
+                value={passwordCfm} // Control the component
               />
+              <span style={{ color: "red", fontSize: "0.75rem" }}>
+                {password !== passwordCfm ? "Passwords do not match" : ""}
+              </span>
             </>
           )}
         </DialogContent>
         <DialogActions>
           {step === 1 && (
-            <>
-              <Button onClick={handleClose}>Cancel</Button>
-              <Button onClick={() => setStep(2)}>Next</Button>
-            </>
+             <>
+             <Button onClick={handleClose}>Cancel</Button>
+             <Button
+               onClick={() => setStep(2)}
+               disabled={!teacherName || !teacherEmail || !instrument }
+             >
+               Next
+             </Button>
+           </>
           )}
-
           {step === 2 && (
             <>
               <Button onClick={() => setStep(1)}>Back</Button>
-              <Button onClick={() => setStep(3)}>Next</Button>
-            </>
-          )}
-
-          {step === 3 && (
-            <>
-              <Button onClick={() => setStep(2)}>Back</Button>
-              <Button type="submit">Create</Button>
+              <Button
+                type="submit"
+                disabled={!password || !passwordCfm || password !== passwordCfm}
+              >
+                Create
+              </Button>
             </>
           )}
         </DialogActions>
       </Dialog>
+      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </React.Fragment>
   );
 }

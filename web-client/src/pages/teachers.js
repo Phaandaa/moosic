@@ -79,6 +79,10 @@ const Page = () => {
     alert("Add");
   }, []);
 
+  const handleAddTeacher = (newTeacher) => {
+    setTeacherData((prevTeachers) => [...prevTeachers, newTeacher]);
+  };
+
 
   return (
     <>
@@ -121,7 +125,7 @@ const Page = () => {
                 </Stack>
               </Stack>
               <div>
-                <TeachersModal />
+                <TeachersModal onAddTeacher={handleAddTeacher}/>
               </div>
             </Stack>
             <TeachersSearch handleSearchChange={handleSearchChange}/>
