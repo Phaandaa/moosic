@@ -1,8 +1,8 @@
-// NotificationsScreen.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Mock data for the notifications
 
 const NotificationsScreen = () => {
   // Function to render each notification
