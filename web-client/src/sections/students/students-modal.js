@@ -1,5 +1,7 @@
 import * as React from "react";
 import Button from "@mui/material/Button";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -11,7 +13,7 @@ import { SvgIcon } from "@mui/material";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { postAsync } from "src/utils/utils";
 
-export default function StudentsModal() {
+export default function StudentsModal({ onAddStudent }) {
   const [open, setOpen] = React.useState(false);
   const [step, setStep] = React.useState(1); // New state for tracking the step
 
@@ -21,6 +23,10 @@ export default function StudentsModal() {
   const [gradeLevel, setGradeLevel] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [passwordCfm, setPasswordCfm] = React.useState("");
+
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+  const [snackbarMessage, setSnackbarMessage] = React.useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = React.useState("success"); // can be 'error', 'warning', 'info', 'success'
 
   const handleNameChange = (event) => {
     setStudentName(event.target.value);
@@ -60,7 +66,10 @@ export default function StudentsModal() {
     // Perform validation or any other pre-submission logic here
     if (step !== 2 || !password || !passwordCfm || password !== passwordCfm) {
       console.error("Form validation failed");
-      return; // Stop the submission if validation fails
+      setSnackbarMessage("Validation failed. Please check the form.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      return;
     }
 
     // Assuming postAsync is correctly defined elsewhere and handles the asynchronous POST request
@@ -74,21 +83,29 @@ export default function StudentsModal() {
           info: {
             instrument: instrument,
             grade: gradeLevel,
-            teacher_id: null,
-            avatar: null,
-            teacher_name: null,
           },
         });
         if (!response.ok) {
           console.error("Server error:", response.status, response.statusText);
           throw new Error("Server error");
         }
+        const data = await response.json();
+        console.log("Server response:", data);
+        onAddStudent(data); // Call the callback function to update the student list
+
         console.log("Form submitted successfully");
+        setSnackbarMessage("Student added successfully!");
+        setSnackbarSeverity("success");
+        setSnackbarOpen(true);
+
         // Perform any action on successful submission here
         setOpen(false); // Close the modal on successful submission
         // Reset form fields or perform other cleanup tasks here
       } catch (error) {
         console.error("Form submission error:", error);
+        setSnackbarMessage("Failed to add student. Please try again.");
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
         // Handle submission errors (e.g., display error message)
       }
     };
@@ -205,7 +222,6 @@ export default function StudentsModal() {
                 value={password} // Control the component
               />
               <TextField
-                autoFocus
                 required
                 margin="dense"
                 id="password-cfm"
@@ -249,6 +265,15 @@ export default function StudentsModal() {
           )}
         </DialogActions>
       </Dialog>
+      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </React.Fragment>
   );
 }

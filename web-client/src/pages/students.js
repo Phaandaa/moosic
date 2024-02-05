@@ -3,6 +3,7 @@ import Head from "next/head";
 import { subDays, subHours } from "date-fns";
 import ArrowDownOnSquareIcon from "@heroicons/react/24/solid/ArrowDownOnSquareIcon";
 import ArrowUpOnSquareIcon from "@heroicons/react/24/solid/ArrowUpOnSquareIcon";
+import TrashIcon from "@heroicons/react/24/solid/TrashIcon";
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import { Box, Button, Container, Stack, SvgIcon, Typography } from "@mui/material";
 import { useSelection } from "src/hooks/use-selection";
@@ -12,7 +13,8 @@ import { StudentsSearch } from "src/sections/students/students-search";
 import { applyPagination } from "src/utils/apply-pagination";
 import StudentsModal from "src/sections/students/students-modal";
 import { getAsync } from "src/utils/utils";
-import * as XLSX from 'xlsx';
+import * as XLSX from "xlsx";
+import { Card } from "@mui/material";
 
 const now = new Date();
 
@@ -21,7 +23,7 @@ const now = new Date();
 
 const Page = () => {
   const [studentData, setStudentData] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -33,7 +35,7 @@ const Page = () => {
         console.error("Error fetching students:", error);
       }
     };
-  
+
     fetchStudents();
   }, []);
 
@@ -42,12 +44,13 @@ const Page = () => {
   const useStudents = (page, rowsPerPage) => {
     return useMemo(() => {
       const filteredData = searchTerm
-        ? studentData.filter((student) => 
-            student.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            student.email?.toLowerCase().includes(searchTerm.toLowerCase())
+        ? studentData.filter(
+            (student) =>
+              student.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              student.email?.toLowerCase().includes(searchTerm.toLowerCase())
           )
         : studentData;
-  
+
       return applyPagination(filteredData, page, rowsPerPage);
     }, [studentData, page, rowsPerPage, searchTerm]);
   };
@@ -80,15 +83,19 @@ const Page = () => {
     alert("Add");
   }, []);
 
+  const handleAddStudent = (newStudent) => {
+    setStudentData((prevStudents) => [...prevStudents, newStudent]);
+  };
+
   const handleExport = useCallback(() => {
     // Define a workbook and a worksheet
     const wb = XLSX.utils.book_new();
-    const wsName = 'StudentsData';
-    
+    const wsName = "StudentsData";
+
     // Convert your student data into a format suitable for a worksheet
     const wsData = [
-      ['Name', 'Email', 'Instrument', 'Grade', 'Points'], // Header row
-      ...studentData.map(student => [
+      ["Name", "Email", "Instrument", "Grade", "Points"], // Header row
+      ...studentData.map((student) => [
         student.name,
         student.email,
         student.instrument,
@@ -96,17 +103,16 @@ const Page = () => {
         student.pointsCounter,
       ]),
     ];
-  
+
     // Create a worksheet
     const ws = XLSX.utils.aoa_to_sheet(wsData);
-  
+
     // Add the worksheet to the workbook
     XLSX.utils.book_append_sheet(wb, ws, wsName);
-  
-    // Generate XLSX file and trigger download
-    XLSX.writeFile(wb, 'StudentsData.xlsx');
-  }, [studentData]);
 
+    // Generate XLSX file and trigger download
+    XLSX.writeFile(wb, "StudentsData.xlsx");
+  }, [studentData]);
 
   return (
     <>
@@ -125,35 +131,41 @@ const Page = () => {
             <Stack direction="row" justifyContent="space-between" spacing={4}>
               <Stack spacing={1}>
                 <Typography variant="h4">Students</Typography>
-                <Stack alignItems="center" direction="row" spacing={1}>
-                  {/* <Button
-                    color="inherit"
-                    startIcon={
-                      <SvgIcon fontSize="small">
-                        <ArrowUpOnSquareIcon />
-                      </SvgIcon>
-                    }
-                  >
-                    Import
-                  </Button> */}
-                  <Button
-                    color="inherit"
-                    startIcon={
-                      <SvgIcon fontSize="small">
-                        <ArrowDownOnSquareIcon />
-                      </SvgIcon>
-                    }
-                    onClick={handleExport}
-                  >
-                    Export
-                  </Button>
-                </Stack>
+                <Stack alignItems="center" direction="row" spacing={1}></Stack>
               </Stack>
               <div>
-                <StudentsModal />
+                <StudentsModal onAddStudent={handleAddStudent}/>
               </div>
             </Stack>
-            <StudentsSearch handleSearchChange={handleSearchChange} />
+
+            <Card sx={{ p: 2, display: "flex", width: "100%" }}>
+              <StudentsSearch handleSearchChange={handleSearchChange} />
+              <Button
+                color="inherit"
+                startIcon={
+                  <SvgIcon fontSize="small">
+                    <ArrowDownOnSquareIcon />
+                  </SvgIcon>
+                }
+                onClick={handleExport}
+                style={{ marginLeft: "15px" }}
+              >
+                Export
+              </Button>
+              <Button
+                color="inherit"
+                startIcon={
+                  <SvgIcon fontSize="small">
+                    <TrashIcon />
+                  </SvgIcon>
+                }
+                onClick={handleExport}
+                style={{ marginLeft: "15px" }}
+              >
+                Delete
+              </Button>
+            </Card>
+
             <StudentsTable
               count={studentData.length}
               items={students}
