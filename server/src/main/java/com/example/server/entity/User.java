@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Document(collection = "users")
-public class User {
+public class User implements UserType{
 
     @Id
     private String id;

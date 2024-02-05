@@ -13,6 +13,7 @@ import com.example.server.dao.UserRepository;
 import com.example.server.entity.Student;
 import com.example.server.entity.Teacher;
 import com.example.server.entity.User;
+import com.example.server.entity.UserType;
 import com.mongodb.lang.NonNull;
 import com.example.server.models.CreateUserDTO;
 import com.example.server.models.FirebaseToken;
@@ -56,7 +57,7 @@ public class UserService {
                 // break;
             case "Teacher":
                 return createTeacher(id, name, email, userDTO);
-                break;
+                // break;
             default:
                 return newUser;
         }
@@ -85,16 +86,20 @@ public class UserService {
         return signInResponseDTO;
     }
 
-    private void createStudent(String id, String name, String email, CreateUserDTO userDTO) {
+    private Student createStudent(String id, String name, String email, CreateUserDTO userDTO) {
         String instrument = userDTO.getInfo().get("instrument");
         String grade = userDTO.getInfo().get("grade");
-        Student newStudent = new Student(id, 0, null, name, new ArrayList<>(), instrument, grade, null, email,null);
+        // Student newStudent = new Student(0, null, new ArrayList<>(), instrument, grade, null, null);
+        Student newStudent = new Student(id, name, email, 0, null, new ArrayList<>(), instrument, grade, null,null);
         studentRepository.save(newStudent);
+        return newStudent;
     }
 
-    private void createTeacher(String id, String name, String email, CreateUserDTO userDTO) {
-        Teacher newTeacher = new Teacher(id, name, email, null, new ArrayList<>(), null);
+    private Teacher createTeacher(String id, String name, String email, CreateUserDTO userDTO) {
+        String instrument = userDTO.getInfo().get("instrument");
+        Teacher newTeacher = new Teacher(id, name, email, null, new ArrayList<>(), null, instrument);
         teacherRepository.save(newTeacher);
+        return newTeacher;
     }
 
     public List<User> getAllUsers() {
