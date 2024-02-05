@@ -93,7 +93,7 @@ public class UserService {
 
     private void createTeacher(String id, String name, String email, CreateUserDTO userDTO) {
         String avatar = userDTO.getInfo().get("avatar");
-        Teacher newTeacher = new Teacher(id, name, email, avatar, new ArrayList<>(), phone);
+        Teacher newTeacher = new Teacher(id, name, email, avatar, new ArrayList<>(), null);
         teacherRepository.save(newTeacher);
     }
 
