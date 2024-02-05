@@ -19,6 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.server.entity.Assignment;
 import com.example.server.models.CreateAssignmentDTO;
 import com.example.server.service.AssignmentService;
+
+import io.swagger.v3.oas.annotations.Operation;
+
 import com.example.server.exception.ErrorResponse;
 
 @RestController
@@ -28,7 +31,9 @@ public class AssignmentController {
 
     @Autowired
     private AssignmentService assignmentService;
-
+    
+    
+    @Operation(summary = "Create assignments")
     @PostMapping(path = "/create", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> createAssignment(
             @RequestPart("assignment") CreateAssignmentDTO assignmentDTO,
@@ -43,6 +48,7 @@ public class AssignmentController {
         }
     }
     
+    @Operation(summary = "Get assignments by student ID")    
     @GetMapping("/{studentId}")
     public ResponseEntity<?> getAssignmentByStudentId(@PathVariable String studentId) {
          try {

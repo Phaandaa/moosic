@@ -21,6 +21,8 @@ import com.example.server.exception.ErrorResponse;
 import com.example.server.models.CreatePracticeDTO;
 import com.example.server.service.PracticeService;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/practices")
@@ -29,6 +31,7 @@ public class PracticeController {
     @Autowired
     private PracticeService practiceService;
     
+    @Operation(summary = "Create practice")
     @PostMapping(path = "/create", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> createAssignment(
             @RequestPart("practice") CreatePracticeDTO practiceDTO,
@@ -44,6 +47,7 @@ public class PracticeController {
     }
 
     // Get practice logs by student ID
+    @Operation(summary = "Get practice logs by student ID")
     @GetMapping("/student/{studentId}")
     public ResponseEntity<?> getPracticeByStudentId(@PathVariable String studentId) {
         try {
@@ -58,6 +62,7 @@ public class PracticeController {
     }
     
     // Get practice logs by teacher ID
+    @Operation(summary = "Get practice logs by teacher ID")
     @GetMapping("/teacher/{teacherId}")
     public ResponseEntity<?> getPracticeByTeacherId(@PathVariable String teacherId) {
         try {
