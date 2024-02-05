@@ -107,6 +107,14 @@ export default function StudentsModal({ onAddStudent }) {
         setSnackbarSeverity("error");
         setSnackbarOpen(true);
         // Handle submission errors (e.g., display error message)
+      } finally {
+        // Perform any cleanup tasks here
+        setStudentName("");
+        setStudentEmail("");
+        setInstrument("");
+        setGradeLevel("");
+        setPassword("");
+        setPasswordCfm("");
       }
     };
 
