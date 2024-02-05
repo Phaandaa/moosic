@@ -92,8 +92,7 @@ public class UserService {
     }
 
     private void createTeacher(String id, String name, String email, CreateUserDTO userDTO) {
-        String avatar = userDTO.getInfo().get("avatar");
-        Teacher newTeacher = new Teacher(id, name, email, avatar, new ArrayList<>(), null);
+        Teacher newTeacher = new Teacher(id, name, email, null, new ArrayList<>(), null);
         teacherRepository.save(newTeacher);
     }
 
