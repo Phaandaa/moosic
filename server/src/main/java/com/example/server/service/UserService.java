@@ -37,7 +37,7 @@ public class UserService {
     private TeacherRepository teacherRepository;
 
     @Transactional
-    public User createUser(CreateUserDTO userDTO) {
+    public UserType createUser(CreateUserDTO userDTO) {
         if (userDTO == null) {
             throw new IllegalArgumentException();
         }
@@ -49,17 +49,18 @@ public class UserService {
         String role = userDTO.getRole();
         User newUser = new User(id, name, email, role);
         userRepository.save(newUser);
+
         switch (role) {
             case "Student":
-                createStudent(id, name, email, userDTO);
-                break;
+                return createStudent(id, name, email, userDTO);
+                // break;
             case "Teacher":
-                createTeacher(id, name, email, userDTO);
+                return createTeacher(id, name, email, userDTO);
                 break;
             default:
-                break;
+                return newUser;
         }
-        return newUser;
+        // return newUser;
     }
 
     @Transactional

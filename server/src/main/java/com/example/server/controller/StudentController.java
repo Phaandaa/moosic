@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.server.entity.Practice;
 import com.example.server.entity.Student;
-import com.example.server.exception.ErrorResponse;
 import com.example.server.service.StudentService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,12 +36,8 @@ public class StudentController {
     @Operation(summary = "Get a student by student id")
     @GetMapping("/{studentId}")
     public ResponseEntity<Student> getStudentById(@PathVariable String studentId) {
-        try {
-            Student student = studentService.getStudentById(studentId);
-            return ResponseEntity.ok(student);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.notFound().build();
-        }
+        Student student = studentService.getStudentById(studentId);
+        return ResponseEntity.ok(student);
     }
 
     @Operation(summary = "Get a student by student id")
@@ -63,15 +57,8 @@ public class StudentController {
     @Operation(summary = "Get students by teacher id")
     @GetMapping("teacher/{teacherId}/")
     public ResponseEntity<?> getStudentsByTeacherId(@PathVariable String teacherId) {
-        try {
-            List<Student> students = studentService.findStudentsByTeacherId(teacherId);
-            return ResponseEntity.ok(students);
-        } catch (Exception e) {
-            ErrorResponse error = new ErrorResponse();
-            error.setMessage("Error fetching all practice logs by teacher id");
-            error.setDetails(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-        }
+        List<Student> students = studentService.findStudentsByTeacherId(teacherId);
+        return ResponseEntity.ok(students);
     }
 
     // Change student's teacher - priority 2

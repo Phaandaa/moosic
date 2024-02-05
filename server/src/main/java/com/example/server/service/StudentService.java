@@ -1,5 +1,6 @@
 package com.example.server.service;
 
+import java.rmi.StubNotFoundException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import com.example.server.dao.StudentRepository;
 import com.example.server.entity.Practice;
 import com.example.server.entity.Student;
 import com.example.server.entity.Teacher;
+import com.example.server.exception.StudentNotFoundException;
 
 import java.util.Optional;
 
@@ -27,15 +29,19 @@ public class StudentService {
     }
 
     public Student getStudentById(String id) {
-        return studentRepository.findById(id).orElse(null);
+        return studentRepository.findById(id).orElseThrow(()->
+                new StudentNotFoundException("Student not found with the given ID."));
     }
 
+    @Transactional
     public void updateStudentGrade(String studentId, String grade){
         Optional<Student> selectedStudent = studentRepository.findById(studentId);
         if (selectedStudent.isPresent()) {
             Student student = selectedStudent.get();
             student.setGrade(grade);
             studentRepository.save(student);
+        } else {
+            throw new StudentNotFoundException("Student not found with the given ID.");
         }
     }
 
@@ -51,6 +57,8 @@ public class StudentService {
 
             teacherService.addStudent(teacherId, studentId);
             studentRepository.save(student);
+        } else {
+            throw new StudentNotFoundException("Student not found with the given ID.");
         }
     }
 
@@ -61,6 +69,8 @@ public class StudentService {
             Student student = selectedStudent.get();
             student.setAvatar(avatar);
             studentRepository.save(student);
+        } else {
+            throw new StudentNotFoundException("Student not found with the given ID.");
         }
     }
     
