@@ -1,14 +1,18 @@
 package com.example.server.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.server.entity.Student;
@@ -57,5 +61,35 @@ public class TeacherController {
         teacherService.deleteStudent(teacherId, studentId);
         return new ResponseEntity<>("Student deleted successfully.", HttpStatus.OK);
     }
+
+    @Operation(summary = "Update teacher's avatar")
+    @PutMapping("/{teacherId}/update-avatar")
+    public ResponseEntity<String> updateTeacherAvatar(
+            @PathVariable String teacherId,
+            @RequestParam String avatar) {
+
+        try {
+            teacherService.updateTeacherAvatar(teacherId, avatar);
+            return new ResponseEntity<>("Teacher's avatar updated successfully.", HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("Failed to update teacher's avatar: "+e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Operation(summary = "Update teacher's phone")
+    @PutMapping("/{teacherId}/update-phone")
+    public ResponseEntity<String> updateTeacherPhone(
+            @PathVariable String teacherId,
+            @RequestParam String phone) {
+
+        try {
+            teacherService.updateTeacherPhone(teacherId, phone);
+            return new ResponseEntity<>("Teacher's phone updated successfully.", HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("Failed to update teacher's phone: "+e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 }
 

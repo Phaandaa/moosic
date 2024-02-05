@@ -13,6 +13,7 @@ import com.example.server.dao.UserRepository;
 import com.example.server.entity.Student;
 import com.example.server.entity.Teacher;
 import com.example.server.entity.User;
+import com.example.server.entity.UserType;
 import com.mongodb.lang.NonNull;
 import com.example.server.models.CreateUserDTO;
 import com.example.server.models.FirebaseToken;
@@ -37,7 +38,7 @@ public class UserService {
     private TeacherRepository teacherRepository;
 
     @Transactional
-    public User createUser(CreateUserDTO userDTO) {
+    public UserType createUser(CreateUserDTO userDTO) {
         if (userDTO == null) {
             throw new IllegalArgumentException();
         }
@@ -49,17 +50,18 @@ public class UserService {
         String role = userDTO.getRole();
         User newUser = new User(id, name, email, role);
         userRepository.save(newUser);
+
         switch (role) {
             case "Student":
-                createStudent(id, name, email, userDTO);
-                break;
+                return createStudent(id, name, email, userDTO);
+                // break;
             case "Teacher":
-                createTeacher(id, name, email, userDTO);
-                break;
+                return createTeacher(id, name, email, userDTO);
+                // break;
             default:
-                break;
+                return newUser;
         }
-        return newUser;
+        // return newUser;
     }
 
     @Transactional
@@ -84,26 +86,20 @@ public class UserService {
         return signInResponseDTO;
     }
 
-    private void createStudent(String id, String name, String email, CreateUserDTO userDTO) {
-        String teacherId = userDTO.getInfo().get("teacher_id");
-        String teacherName = userDTO.getInfo().get("teacher_name");
+    private Student createStudent(String id, String name, String email, CreateUserDTO userDTO) {
         String instrument = userDTO.getInfo().get("instrument");
         String grade = userDTO.getInfo().get("grade");
-        String avatar = userDTO.getInfo().get("avatar");
-        Student newStudent = new Student(id, 0, teacherId, name, new ArrayList<>(), instrument, grade, avatar, email,teacherName);
-        Optional<Teacher> selectedTeacher = teacherRepository.findById(teacherId);
-        if (selectedTeacher.isPresent()) {
-            Teacher teacher = selectedTeacher.get();
-            teacher.addStudent(id);
-            teacherRepository.save(teacher);
-        }
+        // Student newStudent = new Student(0, null, new ArrayList<>(), instrument, grade, null, null);
+        Student newStudent = new Student(id, name, email, 0, null, new ArrayList<>(), instrument, grade, null,null);
         studentRepository.save(newStudent);
+        return newStudent;
     }
 
-    private void createTeacher(String id, String name, String email, CreateUserDTO userDTO) {
-        String avatar = userDTO.getInfo().get("avatar");
-        Teacher newTeacher = new Teacher(id, name, email, avatar, new ArrayList<>());
+    private Teacher createTeacher(String id, String name, String email, CreateUserDTO userDTO) {
+        String instrument = userDTO.getInfo().get("instrument");
+        Teacher newTeacher = new Teacher(id, name, email, null, new ArrayList<>(), null, instrument);
         teacherRepository.save(newTeacher);
+        return newTeacher;
     }
 
     public List<User> getAllUsers() {

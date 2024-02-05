@@ -1,6 +1,6 @@
 package com.example.server.controller;
 
-import com.example.server.models.FirebaseToken;
+
 import com.example.server.models.SignInResponseDTO;
 import com.example.server.service.FirebaseAuthService;
 import com.example.server.service.UserService;
@@ -28,11 +28,6 @@ public class AuthController {
     public AuthController(FirebaseAuthService firebaseAuthService) {
         this.firebaseAuthService = firebaseAuthService;
     }
-
-    // @PostMapping("/signup")
-    // public FirebaseToken signUpWithEmailAndPassword(@RequestBody AuthRequest authRequest) {
-    //     return firebaseAuthService.signUpWithEmailAndPassword(authRequest.getEmail(), authRequest.getPassword());
-    // }
 
     @Operation(summary = "User sign in with email and password")
     @PostMapping("/signin")

@@ -11,24 +11,23 @@ import lombok.Setter;
 @Getter
 @Setter
 @Document(collection = "teachers")
-public class Teacher {
-    @Id
-    private String id;
-    private String name;
-    private String email;
+public class Teacher extends User{
     private ArrayList<String> studentIds; // References to Students' User IDs
     private String avatar;
+    private String phone;
+    private String instrument;
 
     public Teacher() {
 
     }
 
-    public Teacher(String id, String name, String email, String avatar, ArrayList<String> studentIds) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
+    public Teacher(String id, String name, String email, String avatar, ArrayList<String> studentIds, String phone, String instrument) {
+        super(id, name, email, "Teacher");
         this.studentIds = studentIds;
         this.avatar = avatar;
+        this.phone = phone;
+        this.instrument = instrument;
+
     }
 
     public void addStudent(String string) {

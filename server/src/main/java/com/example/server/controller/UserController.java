@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.server.entity.User;
+import com.example.server.entity.UserType;
 import com.example.server.models.CreateUserDTO;
 import com.example.server.service.StudentService;
 import com.example.server.service.UserService;
@@ -35,7 +36,7 @@ public class UserController {
 
     @Operation(summary = "Create a new user")
     @PostMapping("/create")
-    public ResponseEntity<User> createUser(@RequestBody CreateUserDTO userDTO) {
+    public ResponseEntity<UserType> createUser(@RequestBody CreateUserDTO userDTO) {
         return ResponseEntity.ok(userService.createUser(userDTO));
     }
     
