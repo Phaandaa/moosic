@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.server.dao.TeacherRepository;
+import com.example.server.dao.UserRepository;
 import com.example.server.entity.Student;
 import com.example.server.entity.Teacher;
 
@@ -15,6 +16,9 @@ import com.example.server.entity.Teacher;
 public class TeacherService {
     @Autowired
     private TeacherRepository teacherRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public List < Teacher > getAllTeachers() {
         return teacherRepository.findAll();
@@ -60,4 +64,8 @@ public class TeacherService {
         }
     }
 
+    public void deleteTeacher(String teacherId) {
+        teacherRepository.deleteById(teacherId);
+        userRepository.deleteById(teacherId);
+    }
 }

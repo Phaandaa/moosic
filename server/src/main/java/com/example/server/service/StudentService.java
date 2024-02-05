@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.server.dao.StudentRepository;
+import com.example.server.dao.UserRepository;
 import com.example.server.entity.Practice;
 import com.example.server.entity.Student;
 import com.example.server.entity.Teacher;
@@ -23,6 +24,9 @@ public class StudentService {
 
     @Autowired
     private TeacherService teacherService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public List<Student> getAllStudents() {
         return studentRepository.findAll();
@@ -83,6 +87,20 @@ public class StudentService {
             throw new RuntimeException(
                     "Error fetching students for teacher ID: " + teacherId + " " + e.getMessage(), e);
         }
+    }
+
+    public void deleteTeacherIdForAllStudent(String teacherId) {
+        List <Student> students = findStudentsByTeacherId(teacherId);
+        for (Student student : students) {
+            student.setTeacherId(null);
+            student.setTeacherName(null);
+            studentRepository.save(student);
+        }
+    }
+
+    public void deleteStudentById(String studentId) {
+        studentRepository.deleteById(studentId);
+        userRepository.deleteById(studentId);
     }
     
 }
