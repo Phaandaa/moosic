@@ -10,27 +10,11 @@ import {
   TextField,
   Unstable_Grid2 as Grid
 } from '@mui/material';
-
-const states = [
-  {
-    value: 'alabama',
-    label: 'Alabama'
-  },
-  {
-    value: 'new-york',
-    label: 'New York'
-  },
-  {
-    value: 'san-francisco',
-    label: 'San Francisco'
-  },
-  {
-    value: 'los-angeles',
-    label: 'Los Angeles'
-  }
-];
+import { useAuth } from 'src/hooks/use-auth';
 
 export const AccountProfileDetails = () => {
+  const { user } = useAuth();
+
   const [values, setValues] = useState({
     firstName: 'Anika',
     lastName: 'Visser',
@@ -80,25 +64,12 @@ export const AccountProfileDetails = () => {
               >
                 <TextField
                   fullWidth
-                  helperText="Please specify the first name"
-                  label="First name"
+                  helperText="Please specify full name"
+                  label="Full name"
                   name="firstName"
                   onChange={handleChange}
                   required
-                  value={values.firstName}
-                />
-              </Grid>
-              <Grid
-                xs={12}
-                md={6}
-              >
-                <TextField
-                  fullWidth
-                  label="Last name"
-                  name="lastName"
-                  onChange={handleChange}
-                  required
-                  value={values.lastName}
+                  value={user.name ? user.name : "Loading..."}
                 />
               </Grid>
               <Grid
@@ -111,59 +82,30 @@ export const AccountProfileDetails = () => {
                   name="email"
                   onChange={handleChange}
                   required
-                  value={values.email}
+                  value={user.email ? user.email : "Loading..."}
                 />
+              </Grid>
+              {/* <Grid
+                xs={12}
+                md={6}
+              >
+                
               </Grid>
               <Grid
                 xs={12}
                 md={6}
               >
-                <TextField
-                  fullWidth
-                  label="Phone Number"
-                  name="phone"
-                  onChange={handleChange}
-                  type="number"
-                  value={values.phone}
-                />
               </Grid>
               <Grid
                 xs={12}
                 md={6}
               >
-                <TextField
-                  fullWidth
-                  label="Country"
-                  name="country"
-                  onChange={handleChange}
-                  required
-                  value={values.country}
-                />
               </Grid>
               <Grid
                 xs={12}
                 md={6}
               >
-                <TextField
-                  fullWidth
-                  label="Select State"
-                  name="state"
-                  onChange={handleChange}
-                  required
-                  select
-                  SelectProps={{ native: true }}
-                  value={values.state}
-                >
-                  {states.map((option) => (
-                    <option
-                      key={option.value}
-                      value={option.value}
-                    >
-                      {option.label}
-                    </option>
-                  ))}
-                </TextField>
-              </Grid>
+              </Grid> */}
             </Grid>
           </Box>
         </CardContent>
