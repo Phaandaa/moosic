@@ -79,12 +79,16 @@ const Page = () => {
     setSearchTerm(event.target.value);
   };
 
-  const handleAdd = useCallback(() => {
-    alert("Add");
-  }, []);
-
   const handleAddStudent = (newStudent) => {
     setStudentData((prevStudents) => [...prevStudents, newStudent]);
+  };
+
+  const handleEditStudent = (updatedStudent) => {
+    setStudentData((prevStudents) =>
+      prevStudents.map((student) =>
+        student.id === updatedStudent.id ? updatedStudent : student
+      )
+    );
   };
 
   const handleExport = useCallback(() => {
@@ -178,6 +182,7 @@ const Page = () => {
               page={page}
               rowsPerPage={rowsPerPage}
               selected={studentsSelection.selected}
+              onEditStudent={handleEditStudent}
             />
           </Stack>
         </Container>

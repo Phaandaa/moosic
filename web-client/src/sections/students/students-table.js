@@ -31,6 +31,7 @@ export const StudentsTable = (props) => {
     page = 0,
     rowsPerPage = 0,
     selected = [],
+    onEditStudent,
   } = props;
 
   const selectedSome = selected.length > 0 && selected.length < items.length;
@@ -105,7 +106,7 @@ export const StudentsTable = (props) => {
                       {createdAt}
                     </TableCell> */}
                     <TableCell>
-                      <StudentsEditModal customer={customer} />
+                      <StudentsEditModal student={customer} onEditStudent={onEditStudent}/>
                     </TableCell>
                   </TableRow>
                 );
