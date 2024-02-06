@@ -52,30 +52,6 @@ public class TeacherService {
         
     }
 
-    @Transactional
-    public void addStudent(String teacherId, String studentId) {
-        try {
-            Teacher teacher = teacherRepository.findById(teacherId).orElseThrow(()->
-                    new NoSuchElementException("No teacher found with ID " + teacherId)
-                    );
-            teacher.addStudent(studentId);
-            teacherRepository.save(teacher);
-
-            Student student = studentRepository.findById(studentId).orElseThrow(() ->
-                    new NoSuchElementException("No student found with ID " + studentId)
-                    );
-            student.setTeacherId(teacherId);
-            student.setTeacherName(teacher.getName());
-            studentRepository.save(student);
-            
-        } catch (NoSuchElementException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException("Error adding student to teacher");
-        }
-        
-    }
-
     // TODO: just delete in student service
     public void deleteStudent(String teacherId, String studentId) {
         Teacher teacher = teacherRepository.findById(teacherId).orElseThrow(()->

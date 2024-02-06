@@ -47,13 +47,6 @@ public class TeacherController {
         return new ResponseEntity<>(teacherService.getTeacherById(teacherId), HttpStatus.OK);
     }
 
-    @Operation(summary = "Add a student to a teacher")
-    @PostMapping("/{teacherId}/add-student")
-    public ResponseEntity<String> addStudent(String teacherId, String studentId) {
-        teacherService.addStudent(teacherId, studentId);
-        return new ResponseEntity<>("Student added successfully.", HttpStatus.OK);
-    }
-
     @Operation(summary = "Delete a student from a teacher")
     @PostMapping("/{teacherId}/delete-student")
     public ResponseEntity<String> deleteStudent(String teacherId, String studentId) {
