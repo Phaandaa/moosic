@@ -13,8 +13,8 @@ import {
   Unstable_Grid2 as Grid
 } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { CompanyCard } from 'src/sections/companies/company-card';
-import { CompaniesSearch } from 'src/sections/companies/companies-search';
+import { ShopCard } from 'src/sections/shop/shop-card';
+import { ShopSearch } from 'src/sections/shop/shop-search';
 
 const companies = [
   {
@@ -71,7 +71,7 @@ const Page = () => (
   <>
     <Head>
       <title>
-        Companies
+        Shop
       </title>
     </Head>
     <Box
@@ -90,7 +90,7 @@ const Page = () => (
           >
             <Stack spacing={1}>
               <Typography variant="h4">
-                Companies
+                Shop
               </Typography>
               <Stack
                 alignItems="center"
@@ -132,7 +132,7 @@ const Page = () => (
               </Button>
             </div>
           </Stack>
-          <CompaniesSearch />
+          <ShopSearch />
           <Grid
             container
             spacing={3}
@@ -144,7 +144,7 @@ const Page = () => (
                 lg={4}
                 key={company.id}
               >
-                <CompanyCard company={company} />
+                <ShopCard company={company} />
               </Grid>
             ))}
           </Grid>
