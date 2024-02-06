@@ -10,4 +10,6 @@ import com.example.server.entity.User;
 public interface UserRepository extends MongoRepository<User, String> {
     
     public List<User> findByRole(String role);
+
+    public User findByEmail(String email);
 }

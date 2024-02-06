@@ -13,8 +13,6 @@ import com.example.server.models.FirebaseToken;
 
 import jakarta.annotation.PostConstruct;
 
-import javax.management.RuntimeErrorException;
-
 import org.springframework.beans.factory.annotation.Value;
 
 
@@ -73,7 +71,6 @@ public class FirebaseAuthService {
                 url, HttpMethod.POST, entity, FirebaseToken.class);
 
             return responseEntity.getBody();
-
        } catch (Exception e) {
            throw new RuntimeException("Error occurred while signing in. Please try again later" + e.getMessage());
         }

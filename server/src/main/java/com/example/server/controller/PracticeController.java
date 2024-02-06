@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.server.entity.Practice;
-import com.example.server.exception.ErrorResponse;
 import com.example.server.models.CreatePracticeDTO;
 import com.example.server.service.PracticeService;
 
@@ -37,43 +36,24 @@ public class PracticeController {
             @RequestPart("practice") CreatePracticeDTO practiceDTO,
             @RequestPart("video") MultipartFile video) {
 
-        try {
-            return ResponseEntity.ok(practiceService.createPractice(practiceDTO, video));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An error occurred creating practice log. Please try again later.");
-        }
+        return ResponseEntity.ok(practiceService.createPractice(practiceDTO, video));
+        
     }
 
     // Get practice logs by student ID
     @Operation(summary = "Get practice logs by student ID")
     @GetMapping("/student/{studentId}")
     public ResponseEntity<?> getPracticeByStudentId(@PathVariable String studentId) {
-        try {
-            List<Practice> practices = practiceService.findPracticeByStudentId(studentId);
-            return ResponseEntity.ok(practices);
-        } catch (Exception e) {
-            ErrorResponse error = new ErrorResponse();
-            error.setMessage("Error fetching all practice logs by student id");
-            error.setDetails(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-        }
+        List<Practice> practices = practiceService.findPracticeByStudentId(studentId);
+        return ResponseEntity.ok(practices);
     }
     
     // Get practice logs by teacher ID
     @Operation(summary = "Get practice logs by teacher ID")
     @GetMapping("/teacher/{teacherId}")
     public ResponseEntity<?> getPracticeByTeacherId(@PathVariable String teacherId) {
-        try {
-            List<Practice> practices = practiceService.findPracticeByTeacherId(teacherId);
-            return ResponseEntity.ok(practices);
-        } catch (Exception e) {
-            ErrorResponse error = new ErrorResponse();
-            error.setMessage("Error fetching all practice logs by teacher id");
-            error.setDetails(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-        }
+        List<Practice> practices = practiceService.findPracticeByTeacherId(teacherId);
+        return ResponseEntity.ok(practices);
     }
 
 }

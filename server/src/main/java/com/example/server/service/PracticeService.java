@@ -1,7 +1,7 @@
 package com.example.server.service;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,40 +24,59 @@ public class PracticeService {
     // TODO: do we auto rename the video name when we upload to cloud storage?
 
     @Transactional
-    public Practice createPractice(CreatePracticeDTO practiceDTO, MultipartFile video) throws IOException {
-        String videoURL = cloudStorageService.uploadFileToGCS(video);
-        String studentId = practiceDTO.getStudentId();
-        String studentName = practiceDTO.getStudentName();
-        String teacherId = practiceDTO.getTeacherId();
-        String teacherName = practiceDTO.getTeacherName();
-        String title = practiceDTO.getTitle();
-        String comment = practiceDTO.getComment();
-        Practice createdPractice = new Practice(studentId, studentName, teacherId, teacherName, videoURL, title,
-                comment,
-                null);
-        practiceRepository.save(createdPractice);
-        return createdPractice;
+    public Practice createPractice(CreatePracticeDTO practiceDTO, MultipartFile video) {
+        try {
+            String videoURL = cloudStorageService.uploadFileToGCS(video);
+            String studentId = practiceDTO.getStudentId();
+            String studentName = practiceDTO.getStudentName();
+            String teacherId = practiceDTO.getTeacherId();
+            String teacherName = practiceDTO.getTeacherName();
+            String title = practiceDTO.getTitle();
+            String comment = practiceDTO.getComment();
+            Practice createdPractice = new Practice(studentId, studentName, teacherId, teacherName, videoURL, title,
+                    comment,
+                    null);
+            practiceRepository.save(createdPractice);
+            return createdPractice;
+        } catch (RuntimeException e) {
+            if (e.getMessage() != null || e.getMessage() != "") {
+                throw new RuntimeException("Error creating new practice: " + e.getMessage());
+            }
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create practice: " + e.getMessage());
+        }
+        
     }
     
     public List<Practice> findPracticeByStudentId(String studentId) {
         try {
-            return practiceRepository.findByStudentId(studentId);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Illegal argument", e);
+            List<Practice> practices = practiceRepository.findByStudentId(studentId);
+            if (practices.isEmpty() || practices == null) {
+                throw new NoSuchElementException("No practice logs found for student ID " + studentId);
+            }
+            return practices;
+        } catch (NoSuchElementException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(
-                    "Error fetching practice logs for student ID: " + studentId + " " + e.getMessage(), e);
+                    "Error fetching practice logs for student ID: " + studentId + " " + e.getMessage());
         }
     }
     
     public List<Practice> findPracticeByTeacherId(String teacherId) {
         try {
-            return practiceRepository.findByTeacherId(teacherId);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Illegal argument", e);
+            List<Practice> practices = practiceRepository.findByTeacherId(teacherId);
+            System.out.println(practices);
+            if (practices.isEmpty() || practices == null) {
+                throw new NoSuchElementException("No practice logs found for teacher ID " + teacherId);
+            }
+            return practices;
+        } catch (NoSuchElementException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(
-                    "Error fetching practice logs for teacher ID: " + teacherId + " " + e.getMessage(), e);
+                    "Error fetching practice logs for teacher ID: " + teacherId + " " + e.getMessage());
         }
     }
 }
