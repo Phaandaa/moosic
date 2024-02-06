@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.server.dao.StudentRepository;
 import com.example.server.dao.TeacherRepository;
 import com.example.server.dao.UserRepository;
 import com.example.server.entity.Student;
@@ -19,6 +20,9 @@ public class TeacherService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
 
     public List < Teacher > getAllTeachers() {
         return teacherRepository.findAll();
@@ -33,6 +37,12 @@ public class TeacherService {
         if (teacher != null) {
             teacher.addStudent(studentId);
             teacherRepository.save(teacher);
+
+            studentRepository.findById(studentId).ifPresent(student -> {
+                student.setTeacherId(teacherId);
+                student.setTeacherName(teacher.getName());
+                studentRepository.save(student);
+            });
         }
     }
 
