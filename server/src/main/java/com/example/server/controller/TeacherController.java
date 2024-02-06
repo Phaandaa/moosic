@@ -66,33 +66,33 @@ public class TeacherController {
         return new ResponseEntity<>("Student deleted successfully.", HttpStatus.OK);
     }
 
-    // @Operation(summary = "Update teacher's avatar")
-    // @PutMapping("/{teacherId}/update-avatar")
-    // public ResponseEntity<String> updateTeacherAvatar(
-    //         @PathVariable String teacherId,
-    //         @RequestParam String avatar) {
+    @Operation(summary = "Update teacher's avatar")
+    @PutMapping("/{teacherId}/update-avatar")
+    public ResponseEntity<String> updateTeacherAvatar(
+            @PathVariable String teacherId,
+            @RequestParam String avatar) {
 
-    //     try {
-    //         teacherService.updateTeacherAvatar(teacherId, avatar);
-    //         return new ResponseEntity<>("Teacher's avatar updated successfully.", HttpStatus.OK);
-    //     } catch (NoSuchElementException e) {
-    //         return new ResponseEntity<>("Failed to update teacher's avatar: "+e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-    //     }
-    // }
+        try {
+            teacherService.updateTeacherAvatar(teacherId, avatar);
+            return new ResponseEntity<>("Teacher's avatar updated successfully.", HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("Failed to update teacher's avatar: "+e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
-    // @Operation(summary = "Update teacher's phone")
-    // @PutMapping("/{teacherId}/update-phone")
-    // public ResponseEntity<String> updateTeacherPhone(
-    //         @PathVariable String teacherId,
-    //         @RequestParam String phone) {
+    @Operation(summary = "Update teacher's phone")
+    @PutMapping("/{teacherId}/update-phone")
+    public ResponseEntity<String> updateTeacherPhone(
+            @PathVariable String teacherId,
+            @RequestParam String phone) {
 
-    //     try {
-    //         teacherService.updateTeacherPhone(teacherId, phone);
-    //         return new ResponseEntity<>("Teacher's phone updated successfully.", HttpStatus.OK);
-    //     } catch (NoSuchElementException e) {
-    //         return new ResponseEntity<>("Failed to update teacher's phone: "+e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-    //     }
-    // }
+        try {
+            teacherService.updateTeacherPhone(teacherId, phone);
+            return new ResponseEntity<>("Teacher's phone updated successfully.", HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("Failed to update teacher's phone: "+e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @Operation(summary = "Update teacher information (avatar and phone)")
     @PutMapping("/{teacherId}/update-info")
