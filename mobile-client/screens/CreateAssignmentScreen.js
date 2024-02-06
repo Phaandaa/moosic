@@ -4,7 +4,7 @@ import theme from './styles/theme';
 import AnimatedPlaceholderInput from '../components/ui/animateTextInput';
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
-import StudentDropdown from '../components/StudentDropdown';
+import StudentDropdown from '../components/ui/StudentDropdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { useSelector, useDispatch } from 'react-redux';
