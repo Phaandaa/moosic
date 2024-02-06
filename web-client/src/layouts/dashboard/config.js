@@ -39,8 +39,8 @@ export const items = [
     )
   },
   {
-    title: 'Companies',
-    path: '/companies',
+    title: 'Shop',
+    path: '/shop',
     icon: (
       <SvgIcon fontSize="small">
         <ShoppingBagIcon />
