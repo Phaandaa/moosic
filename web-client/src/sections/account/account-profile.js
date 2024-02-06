@@ -8,15 +8,18 @@ import {
   Divider,
   Typography
 } from '@mui/material';
+import { useAuth } from 'src/hooks/use-auth';
 
-const user = {
-  avatar: '/assets/avatars/avatar-anika-visser.png',
-  city: 'Los Angeles',
-  country: 'USA',
-  jobTitle: 'Senior Developer',
-  name: 'Anika Visser',
-  timezone: 'GTM-7'
-};
+// const user = {
+//   avatar: '/assets/avatars/avatar-anika-visser.png',
+//   city: 'Los Angeles',
+//   country: 'USA',
+//   jobTitle: 'Senior Developer',
+//   name: 'Anika Visser',
+//   timezone: 'GTM-7'
+// };
+
+const { user } = useAuth();
 
 export const AccountProfile = () => (
   <Card>
