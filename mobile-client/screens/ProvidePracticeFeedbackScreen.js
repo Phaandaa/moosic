@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert} from 'react-native';
 import theme from './styles/theme';
 import AnimatedPlaceholderInput from '../components/ui/animateTextInput';
-import PracticeListTeacherScreen from './PracticeListTeacherScreen';
+// import PracticeListTeacherScreen from './PracticeListTeacherScreen';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCache, clearCache } from '../cacheSlice';
 import InputBox from '../components/ui/inputBox';
