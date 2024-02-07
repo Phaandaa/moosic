@@ -12,7 +12,7 @@ const LOGIN_ERROR = 'LOGIN_ERROR';
 const LOGOUT = 'LOGOUT';
 const STORE_USER_DATA = 'STORE_USER_DATA';
 
-const IP_ADDRESS = 'http://172.20.10.3:8080'; // Replace with your own IP address
+const IP_ADDRESS = 'http://192.168.1.47:8080'; // Replace with your own IP address
 
 const authReducer = (state, action) => {
   switch (action.type) {

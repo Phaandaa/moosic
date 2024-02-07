@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import { MultipleSelectList } from 'react-native-dropdown-select-list';
+import axios from 'axios';
 
 const StudentDropdown = ({ onSelectionChange }) => {
     const [selected, setSelected] = useState([]);
     const [students, setStudents] = useState([]);
-    const teacherID = 'ybnXMjuEBoMcYVY9gBv8NqpTmuc2';
+    // const teacherID = 'WA2G3fxLzNSdKWwerstzG7siTfu1';
     
 
     useEffect(() => {
@@ -17,17 +18,15 @@ const StudentDropdown = ({ onSelectionChange }) => {
 
     }, [selected, onSelectionChange]); 
 
+    // const teacherID = 
+
     const fetchStudents = async() => {
         try {
-            const response = await fetch(`http://localhost:8080/teacher/${teacherID}`);
-            if (!response.ok) {
-                throw new Error('Failed to fetch students');
-            }
-            const data = await response.json();
-            // Assuming the response data is an array of students
-            const formattedData = data.map((student) => ({
-                key: student.id, // Adjust according to your response data structure
-                value: student.name, // Adjust according to your response data structure
+            const response = await axios.get(`http://192.168.1.47:8080/students/teacher/WA2G3fxLzNSdKWwerstzG7siTfu1/`);
+            const data = response.data;
+            const formattedData = data.map(student => ({
+                key: student.id,
+                value: student.name,
             }));
             setStudents(formattedData);
         } catch (error) {
