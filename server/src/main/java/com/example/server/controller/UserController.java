@@ -22,10 +22,6 @@ import com.example.server.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 
-// TODO: make return into Response Entity and add status codes
-// TODO: Validation before processing
-// TODO: Throw error if there is duplicate user 
-
 @RestController
 @CrossOrigin
 @RequestMapping("/users")
@@ -55,12 +51,8 @@ public class UserController {
     @Operation(summary = "Get user by user_id")
     @GetMapping("/{userId}")
     public ResponseEntity<User> getUserById(@PathVariable String userId) {
-        try {
-            User user = userService.getUserById(userId);
-            return ResponseEntity.ok(user);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.notFound().build();
-        }
+        User user = userService.getUserById(userId);
+        return ResponseEntity.ok(user);
     }
 
     @Operation(summary = "Delete user by user_id")

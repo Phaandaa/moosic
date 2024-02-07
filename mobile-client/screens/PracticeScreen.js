@@ -7,11 +7,11 @@ import * as ImagePicker from "expo-image-picker";
 import { Audio, Video, ResizeMode} from 'expo-av';
 import LottieView from 'lottie-react-native';
 
-import { useSelector, useDispatch } from 'react-redux';
-import { setCache, clearCache } from '../cacheSlice';
+// import { useSelector, useDispatch } from 'react-redux';
+// import { setCache, clearCache } from '../cacheSlice';
 
 function PracticeScreen({navigation}){
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
     const [title, setTitle] = useState('');
     const [comment, setComment] = useState('');
     const cancelIcon = require('../assets/cancel.png');
@@ -29,7 +29,7 @@ function PracticeScreen({navigation}){
 
     const openVideo = (uri) => {
         setSelectedVideo(uri);
-        toggleModal(); 
+        // toggleModal(); 
     }
 
     const submitHandler = () => {
@@ -53,8 +53,8 @@ function PracticeScreen({navigation}){
         }
         else{
             alert('Success!')
-            dispatch(setCache({ key: 'practiceData', value: practiceData })); 
-            navigation.navigate('PracticeListTeacherScreen');
+            // dispatch(setCache({ key: 'practiceData', value: practiceData })); 
+            // navigation.navigate('PracticeListTeacherScreen');
         }
     }
 
@@ -78,7 +78,7 @@ function PracticeScreen({navigation}){
         } catch (error){
             alert("error uploading video:"+ error.message
             );
-            setModalVisible(false);
+            // setModalVisible(false);
 
         }
     };
@@ -120,7 +120,7 @@ function PracticeScreen({navigation}){
             </View>
 
             {/* Modal for viewing the video */}
-            <Modal
+            {/* <Modal
                     isVisible={isModalVisible}
                     animationType="slide"
                     transparent={true}
@@ -138,7 +138,7 @@ function PracticeScreen({navigation}){
                             <Button title="Close" onPress={() => setModalVisible(!isModalVisible)} />
                         </View>
                     </View>
-                </Modal>
+                </Modal> */}
 
             {/* Render each image with a remove button next to it */}
             <ScrollView horizontal>

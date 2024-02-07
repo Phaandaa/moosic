@@ -74,8 +74,7 @@ export default function TeachersModal({ onAddTeacher }) {
           role: "Teacher",
           password: password, // Make sure your API expects this structure
           info: {
-            instrument: instrument,
-  
+            instrument: instrument
           },
         });
         if (!response.ok) {

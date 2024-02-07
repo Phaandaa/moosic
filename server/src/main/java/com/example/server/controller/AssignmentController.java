@@ -1,10 +1,8 @@
 package com.example.server.controller;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,7 +20,6 @@ import com.example.server.service.AssignmentService;
 
 import io.swagger.v3.oas.annotations.Operation;
 
-import com.example.server.exception.ErrorResponse;
 
 @RestController
 @CrossOrigin
@@ -39,26 +36,14 @@ public class AssignmentController {
             @RequestPart("assignment") CreateAssignmentDTO assignmentDTO,
             @RequestPart("files") List<MultipartFile> files) {
 
-        try {
-            return ResponseEntity.ok(assignmentService.createAssignment(assignmentDTO, files));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An error occurred while processing the files. Please try again later.");
-        }
+        return ResponseEntity.ok(assignmentService.createAssignment(assignmentDTO, files));
+        
     }
     
     @Operation(summary = "Get assignments by student ID")    
     @GetMapping("/{studentId}")
     public ResponseEntity<?> getAssignmentByStudentId(@PathVariable String studentId) {
-         try {
-            List<Assignment> assignments = assignmentService.findAssignmentByStudentId(studentId);
-            return ResponseEntity.ok(assignments);
-        } catch (Exception e) {
-            ErrorResponse error = new ErrorResponse();
-            error.setMessage("Error fetching all portfolios by user id");
-            error.setDetails(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-        }
+        List<Assignment> assignments = assignmentService.findAssignmentByStudentId(studentId);
+        return ResponseEntity.ok(assignments);
     }
 }

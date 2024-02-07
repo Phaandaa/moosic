@@ -1,5 +1,7 @@
 import * as React from "react";
 import Button from "@mui/material/Button";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -8,27 +10,115 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import PencilSquareIcon from "@heroicons/react/24/outline/PencilSquareIcon";
 import { SvgIcon } from "@mui/material";
+import { getAsync, putAsync } from "src/utils/utils"; // Assuming getAsync is a utility for making GET requests
+import { useEffect } from "react";
+import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { set } from "nprogress";
 
-export default function StudentsEditModal(props) {
+export default function StudentsEditModal({ student, onEditStudent }) {
   const [open, setOpen] = React.useState(false);
-  const [step, setStep] = React.useState(1); // New state for tracking the step
+  const [teachers, setTeachers] = React.useState([]);
+  const [selectedTeacher, setSelectedTeacher] = React.useState({});
+  const [grade, setGrade] = React.useState("");
+
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+  const [snackbarMessage, setSnackbarMessage] = React.useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = React.useState("success"); // can be 'error', 'warning', 'info', 'success'
+
 
   const handleClickOpen = () => {
     setOpen(true);
-    setStep(1); // Reset to step 1 when opening the modal
   };
 
   const handleClose = () => {
     setOpen(false);
+    setSelectedTeacher({});
+    setGrade("");
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const formJson = Object.fromEntries(formData.entries());
-    console.log(formJson);
+    const submitData = async () => {
+      try {
+        if (Object.keys(selectedTeacher).length > 0) {
+          const responseTeacher = await putAsync(`students/${student.id}/update-teacher?teacherId=${selectedTeacher.id}`);
+          if (!responseTeacher.ok) {
+            console.error(
+              "Server error when updating teacherId:",
+              responseTeacher.status,
+              responseTeacher.statusText
+            );
+            throw new Error("Server error");
+          }
+        }
+        if (grade !== "") {
+          const responseGrade = await putAsync(`students/${student.id}/update-grade?grade=${grade}`);
+          if (!responseGrade.ok) {
+            console.error(
+              "Server error when updating grade:",
+              responseGrade.status,
+              responseGrade.statusText
+            );
+            throw new Error("Server error");
+          }
+        }
+
+        const updatedStudent = {
+          ...student, // Copy all existing student data
+          teacherId: Object.keys(selectedTeacher).length != 0 ? selectedTeacher.id : student.teacherId, // Update with the new teacher ID
+          teacherName: Object.keys(selectedTeacher).length != 0 ? selectedTeacher.name : student.teacherName, // Update with the new teacher name
+          grade: grade != "" ? grade : student.grade, // Update with the new grade
+        };
+
+        console.log("Form submitted successfully");
+        setSnackbarMessage("Information updated successfully!");
+        setSnackbarSeverity("success");
+        setSnackbarOpen(true);
+
+        onEditStudent(updatedStudent); // Perform any action on successful submission here
+
+        // Perform any action on successful submission here
+        setOpen(false); // Close the modal on successful submission
+        // Reset form fields or perform other cleanup tasks here
+      } catch (error) {
+        console.error("Form submission error:", error);
+        setSnackbarMessage("Failed to update student information. Please try again.");
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
+      } finally {
+        // Perform any cleanup tasks here
+        setSelectedTeacher({});
+        setGrade("");
+      }
+    };
+
+    submitData();
+
     handleClose();
   };
+
+  const handleChangeTeacher = (event) => {
+    const selectedTeacher = teachers.find((teacher) => teacher.id === event.target.value);
+    setSelectedTeacher(selectedTeacher || {}); // Store the entire teacher object or an empty object if not found
+  };
+
+  const handleChangeGrade = (event) => {
+    setGrade(event.target.value);
+  };
+
+  useEffect(() => {
+    const fetchTeachers = async () => {
+      try {
+        const response = await getAsync("teachers");
+        const data = await response.json();
+        setTeachers(data);
+      } catch (error) {
+        console.error("Error fetching teachers:", error);
+      }
+    };
+
+    fetchTeachers();
+  }, []);
 
   return (
     <React.Fragment>
@@ -51,166 +141,58 @@ export default function StudentsEditModal(props) {
           onSubmit: handleSubmit,
         }}
       >
-        <DialogTitle>{step === 1 ? "Student Details" : "Parent Details"}</DialogTitle>
+        <DialogTitle>Student Details</DialogTitle>
         <DialogContent>
-          {step === 1 && (
-            // Step 1: Student Details
-            <>
-              <DialogContentText>
-                Edit the student's details below.
-              </DialogContentText>
-              {/* Student Details Form Fields */}
-              <TextField
+          <>
+            <DialogContentText>Edit the student's details below.</DialogContentText>
+            {/* Student Details Form Fields */}
+            <FormControl fullWidth margin="dense" variant="standard">
+              <InputLabel id="teacher-select-label">Teacher</InputLabel>
+              <Select
+                labelId="teacher-select-label"
+                id="teacher"
+                value={selectedTeacher.id || ""}
+                label="Teacher"
+                onChange={handleChangeTeacher}
                 autoFocus
-                required
-                margin="dense"
-                id="name"
-                name="name"
-                label="Student Full Name"
-                type="text"
-                fullWidth
-                variant="standard"
-              />
-              <TextField
-                autoFocus
-                required
-                margin="dense"
-                id="age"
-                name="age"
-                label="Student Age"
-                type="number"
-                fullWidth
-                variant="standard"
-              />
-              <TextField
-                autoFocus
-                // required
-                margin="dense"
-                id="stu-phone"
-                name="stu-phone"
-                label="Student Phone Number"
-                type="number"
-                fullWidth
-                variant="standard"
-              />
-              <TextField
-                autoFocus
-                // required
-                margin="dense"
-                id="stu-email"
-                name="stu-email"
-                label="Student Email Address"
-                type="number"
-                fullWidth
-                variant="standard"
-              />
-            </>
-          )}
-          {step === 2 && (
-            // Step 2: Parent Details
-            <>
-              <DialogContentText>Edit the parent's details below.</DialogContentText>
-              {/* Parent Details Form Fields */}
-              <TextField
-                autoFocus
-                // required
-                margin="dense"
-                id="parent-name"
-                name="parent-name"
-                label="Parent Full Name"
-                type="text"
-                fullWidth
-                variant="standard"
-              />
-              <TextField
-                autoFocus
-                // required
-                margin="dense"
-                id="parent-phone"
-                name="parent-phone"
-                label="Parent Phone Number"
-                type="number"
-                fullWidth
-                variant="standard"
-              />
-              <TextField
-                autoFocus
-                // required
-                margin="dense"
-                id="parent-email"
-                name="parent-email"
-                label="Parent Email Address"
-                type="email"
-                fullWidth
-                variant="standard"
-              />
-            </>
-          )}
-
-          {step === 3 && (
-            // Step 2: Parent Details
-            <>
-              <DialogContentText>Edit login details below.</DialogContentText>
-              {/* Parent Details Form Fields */}
-              <TextField
-                autoFocus
-                required
-                margin="dense"
-                id="username"
-                name="username"
-                label="Username"
-                type="text"
-                fullWidth
-                variant="standard"
-              />
-              <TextField
-                autoFocus
-                required
-                margin="dense"
-                id="password"
-                name="password"
-                label="Password"
-                type="password"
-                fullWidth
-                variant="standard"
-              />
-              <TextField
-                autoFocus
-                required
-                margin="dense"
-                id="password-cfm"
-                name="password-cfm"
-                label="Confirm Password"
-                type="password"
-                fullWidth
-                variant="standard"
-              />
-            </>
-          )}
+              >
+                {teachers.map((teacher) => (
+                  <MenuItem key={teacher.id} value={teacher.id}>
+                    {teacher.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <TextField
+              margin="dense"
+              id="grade"
+              name="grade"
+              label="Student's Grade"
+              type="text"
+              fullWidth
+              variant="standard"
+              onChange={handleChangeGrade}
+              value={grade}
+            />
+          </>
         </DialogContent>
         <DialogActions>
-          {step === 1 && (
-            <>
-              <Button onClick={handleClose}>Cancel</Button>
-              <Button onClick={() => setStep(2)}>Next</Button>
-            </>
-          )}
-
-          {step === 2 && (
-            <>
-              <Button onClick={() => setStep(1)}>Back</Button>
-              <Button onClick={() => setStep(3)}>Next</Button>
-            </>
-          )}
-
-          {step === 3 && (
-            <>
-              <Button onClick={() => setStep(2)}>Back</Button>
-              <Button type="submit">Create</Button>
-            </>
-          )}
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button 
+            type="submit"
+            disabled={Object.keys(selectedTeacher).length === 0 && grade === ""}
+          >Submit</Button>
         </DialogActions>
       </Dialog>
+      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </React.Fragment>
   );
 }

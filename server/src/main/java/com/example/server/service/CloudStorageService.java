@@ -21,26 +21,58 @@ public class CloudStorageService {
     
     private Dotenv dotenv = Dotenv.load();
 
-    public Storage getStorage() throws IOException {
-        String projectId = dotenv.get("GCP_PROJECT_ID");
-        GoogleCredentials credentials = GoogleCredentials
-                .fromStream(getClass().getClassLoader().getResourceAsStream("serviceAccountKey.json"));
-        Storage storage = StorageOptions.newBuilder()
-                .setProjectId(projectId)
-                .setCredentials(credentials)
-                .build()
-                .getService();
-        
-        return storage;
+    public Storage getStorage() {
+        try {
+            String projectId = dotenv.get("GCP_PROJECT_ID");
+            GoogleCredentials credentials = GoogleCredentials
+                    .fromStream(getClass().getClassLoader().getResourceAsStream("serviceAccountKey.json"));
+            Storage storage = StorageOptions.newBuilder()
+                    .setProjectId(projectId)
+                    .setCredentials(credentials)
+                    .build()
+                    .getService();
+
+            return storage;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load service account key.json");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to connect to Google Cloud Storage");
+        }
+       
     }
 
-    public List<String> uploadFilesToGCS(List<MultipartFile> files) throws IOException {
-        List<String> publicUrls = new ArrayList<>();
-        String bucketName = dotenv.get("GCS_BUCKET_NAME");
+    public List<String> uploadFilesToGCS(List<MultipartFile> files) {
+        try {
+            List<String> publicUrls = new ArrayList<>();
+            String bucketName = dotenv.get("GCS_BUCKET_NAME");
 
-        Storage storage = getStorage();
-        for (MultipartFile file : files) {
-            String objectName = "assignments/" + file.getOriginalFilename();
+            Storage storage = getStorage();
+            for (MultipartFile file : files) {
+                String objectName = "assignments/" + file.getOriginalFilename();
+                BlobId blobId = BlobId.of(bucketName, objectName);
+                BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
+                        .setContentType(file.getContentType())
+                        .build();
+
+                byte[] content = file.getBytes();
+                storage.createFrom(blobInfo, new ByteArrayInputStream(content));
+
+                String publicUrl = "https://storage.googleapis.com/" + bucketName + "/" + objectName;
+                publicUrls.add(publicUrl);
+            }
+            return publicUrls;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to upload files to Google Cloud Storage");
+        }
+        
+    }
+    
+    public String uploadFileToGCS(MultipartFile file) {
+        try {
+            String bucketName = dotenv.get("GCS_BUCKET_NAME");
+
+            Storage storage = getStorage();
+            String objectName = "practice/" + file.getOriginalFilename();
             BlobId blobId = BlobId.of(bucketName, objectName);
             BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
                     .setContentType(file.getContentType())
@@ -50,26 +82,12 @@ public class CloudStorageService {
             storage.createFrom(blobInfo, new ByteArrayInputStream(content));
 
             String publicUrl = "https://storage.googleapis.com/" + bucketName + "/" + objectName;
-            publicUrls.add(publicUrl);
+            return publicUrl;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to get bucket name for Google Cloud Storage");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to upload file to Google Cloud Storage");
         }
-        return publicUrls;
-    }
-    
-    public String uploadFileToGCS(MultipartFile file) throws IOException {
-        String bucketName = dotenv.get("GCS_BUCKET_NAME");
-
-        Storage storage = getStorage();
-        String objectName = "practice/" + file.getOriginalFilename();
-        BlobId blobId = BlobId.of(bucketName, objectName);
-        BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
-                .setContentType(file.getContentType())
-                .build();
-
-        byte[] content = file.getBytes();
-        storage.createFrom(blobInfo, new ByteArrayInputStream(content));
-
-        String publicUrl = "https://storage.googleapis.com/" + bucketName + "/" + objectName;
         
-        return publicUrl;
     }
 } 

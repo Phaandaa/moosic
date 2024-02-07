@@ -1,20 +1,17 @@
 package com.example.server.service;
 
-import java.rmi.StubNotFoundException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.server.dao.StudentRepository;
+import com.example.server.dao.TeacherRepository;
 import com.example.server.dao.UserRepository;
-import com.example.server.entity.Practice;
 import com.example.server.entity.Student;
 import com.example.server.entity.Teacher;
-import com.example.server.exception.StudentNotFoundException;
-
-import java.util.Optional;
 
 @Service
 public class StudentService {
@@ -23,84 +20,146 @@ public class StudentService {
     private StudentRepository studentRepository;
 
     @Autowired
-    private TeacherService teacherService;
+    private TeacherRepository teacherRepository;
 
     @Autowired
     private UserRepository userRepository;
 
     public List<Student> getAllStudents() {
-        return studentRepository.findAll();
+        try {
+            List<Student> students = studentRepository.findAll();
+            if (students == null || students.isEmpty()) {
+                throw new NoSuchElementException("No students found");
+            }
+            return students;
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error fetching all students " + ": " + e.getMessage());
+        }
+        
     }
 
     public Student getStudentById(String id) {
-        return studentRepository.findById(id).orElseThrow(()->
-                new StudentNotFoundException("Student not found with the given ID."));
+        try {
+            return studentRepository.findById(id).orElseThrow(()->
+                new NoSuchElementException("Student not found with the ID " + id));
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error fetching student ID " + id + ": " + e.getMessage());
+        }
+       
     }
 
     @Transactional
     public void updateStudentGrade(String studentId, String grade){
-        Optional<Student> selectedStudent = studentRepository.findById(studentId);
-        if (selectedStudent.isPresent()) {
-            Student student = selectedStudent.get();
-            student.setGrade(grade);
+        try {
+            Student student = studentRepository.findById(studentId).orElseThrow(()->
+                new NoSuchElementException("Student not found with the ID " + studentId));
+            String gradeString = "" + Integer.parseInt(grade);
+            student.setGrade(gradeString);
             studentRepository.save(student);
-        } else {
-            throw new StudentNotFoundException("Student not found with the given ID.");
-        }
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Grade should be a number");
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating frade for student ID " + studentId + ": " + e.getMessage());
+        } 
     }
 
     @Transactional
     public void updateStudentTeacher(String studentId, String teacherId){
-        Optional<Student> selectedStudent = studentRepository.findById(studentId);
-        if (selectedStudent.isPresent()) {
-            Student student = selectedStudent.get();
+        try {
+            Student student = studentRepository.findById(studentId).orElseThrow(()->
+                    new NoSuchElementException("Student not found with the ID " + studentId));
+            Teacher teacher = teacherRepository.findById(teacherId).orElseThrow(()->
+                    new NoSuchElementException("Teacher not found with the ID " + teacherId));
             student.setTeacherId(teacherId);
-            Teacher teacher = teacherService.getTeacherById(teacherId);
+            teacher.addStudent(studentId);
             String teacherName = teacher.getName();
             student.setTeacherName(teacherName);
-
-            teacherService.addStudent(teacherId, studentId);
             studentRepository.save(student);
-        } else {
-            throw new StudentNotFoundException("Student not found with the given ID.");
+            teacherRepository.save(teacher);
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating teacher ID " + teacherId + " with student ID " + studentId + ": " + e.getMessage());
         }
-    }
-
+        
+    } 
+    
     @Transactional
     public void updateStudentAvatar(String studentId, String avatar) {
-        Optional<Student> selectedStudent = studentRepository.findById(studentId);
-        if (selectedStudent.isPresent()) {
-            Student student = selectedStudent.get();
+        try {
+            Student student = studentRepository.findById(studentId).orElseThrow(()->
+                new NoSuchElementException("Student not found with the ID " + studentId));
             student.setAvatar(avatar);
             studentRepository.save(student);
-        } else {
-            throw new StudentNotFoundException("Student not found with the given ID.");
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating student avatar for student ID: " + studentId + ": " + e.getMessage());
         }
+        
     }
     
     public List<Student> findStudentsByTeacherId(String teacherId) {
         try {
-            return studentRepository.findAllByTeacherId(teacherId);
+            teacherRepository.findById(teacherId).orElseThrow(()->
+                new IllegalArgumentException("Teacher not found with the ID " + teacherId));
+            List<Student> students = studentRepository.findAllByTeacherId(teacherId);
+            if (students == null || students.isEmpty()) {
+                throw new NoSuchElementException("No students found for teacher ID " + teacherId);
+            }
+            return students;
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Illegal argument", e);
+            throw e;
+        } catch (NoSuchElementException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(
-                    "Error fetching students for teacher ID: " + teacherId + " " + e.getMessage(), e);
+                    "Error fetching students for teacher ID: " + teacherId + " " + e.getMessage());
         }
     }
 
     public void deleteTeacherIdForAllStudent(String teacherId) {
-        List <Student> students = findStudentsByTeacherId(teacherId);
-        for (Student student : students) {
-            student.setTeacherId(null);
-            student.setTeacherName(null);
-            studentRepository.save(student);
+        try {
+            List<Student> students = findStudentsByTeacherId(teacherId);
+            if (students == null || students.isEmpty()) {
+                throw new NoSuchElementException("No students found for teacher ID " + teacherId);
+            }
+            for (Student student : students) {
+                student.setTeacherId(null);
+                student.setTeacherName(null);
+                studentRepository.save(student);
+            }
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Error fetching students for teacher ID: " + teacherId + " " + e.getMessage());
         }
+        
     }
 
+    @Transactional
     public void deleteStudentById(String studentId) {
-        studentRepository.deleteById(studentId);
-        userRepository.deleteById(studentId);
+        try {
+            studentRepository.findById(studentId).orElseThrow(()->
+                new NoSuchElementException("Student not found with the ID " + studentId));
+            studentRepository.findById(studentId).orElseThrow(()->
+                    new NoSuchElementException("User not found with the ID " + studentId));
+            studentRepository.deleteById(studentId);
+            userRepository.deleteById(studentId);
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Error deleting student for student ID: " + studentId + " " + e.getMessage());
+        }
+        
     }
     
 }
