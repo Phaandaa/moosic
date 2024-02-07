@@ -221,9 +221,10 @@ function CreateAssignmentScreen({navigation}){
             <ScrollView horizontal>
                 {images.map((image, index) => (
                     <View key={index} style={theme.imageContainer}>
-                        <TouchableOpacity onPress={() => removeImage(index)}>
-                            <Image source={{ uri: image.uri }} style={theme.assignmentImage} />
-                            <Text>{image.fileName}</Text>
+                        <Image source={{ uri: image.uri }} style={theme.assignmentImage} />
+                        <TouchableOpacity onPress={() => removeImage(index)} style={theme.removeButton}>
+                            <Image source={cancelIcon} style={theme.cancelIcon} /> 
+                            {/* <Text>{image.fileName}</Text> */}
                         </TouchableOpacity>
                     </View>
                 ))}
