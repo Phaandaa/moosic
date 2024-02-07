@@ -63,8 +63,14 @@ function CreateAssignmentScreen({navigation}){
                 })
             } 
             if(!result.canceled){
-                console.log('result not cancelled')
-                await saveImage(result.assets[0].uri);
+                console.log('result not cancelled',result.assets[0])
+                // await saveImage(result.assets[0].uri);
+
+                const imageInfo = {
+                    uri: result.assets[0].uri,
+                    fileName: result.assets[0].fileName || 'Unnamed Image', // Fallback name
+                };
+                await saveImage(imageInfo);
             }
         } catch (error){
             alert("error uploading image:"+ error.message
@@ -79,7 +85,7 @@ function CreateAssignmentScreen({navigation}){
     };
 
     const saveImage = (newImage) => {
-        setImages((currentImages) => [...currentImages, newImage]);
+        setImages((currentImages) => [...currentImages, { uri: newImage.uri, name: newImage.fileName }]);
     };
 
     const uploadDocument = async () => {
@@ -213,12 +219,11 @@ function CreateAssignmentScreen({navigation}){
 
             {/* Render each image with a remove button next to it */}
             <ScrollView horizontal>
-                {images.map((uri, index) => (
-                    <View key={uri} style={theme.imageContainer}>
-                        <Image source={{ uri }} style={theme.assignmentImage} />
-                        <TouchableOpacity onPress={() => removeImage(index)} style={theme.removeButton}>
-                            {/* <Text style={theme.buttonText}>x</Text> */}
-                            <Image source={cancelIcon} style={theme.cancelIcon} /> 
+                {images.map((image, index) => (
+                    <View key={index} style={theme.imageContainer}>
+                        <TouchableOpacity onPress={() => removeImage(index)}>
+                            <Image source={{ uri: image.uri }} style={theme.assignmentImage} />
+                            <Text>{image.fileName}</Text>
                         </TouchableOpacity>
                     </View>
                 ))}

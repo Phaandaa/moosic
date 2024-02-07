@@ -5,7 +5,9 @@ import Modal from 'react-native-modal';
 import { useSelector } from 'react-redux';
 function ViewCreatedAssignmentsScreen({route}){
     const assignmentData = useSelector(state => state.cache.assignmentData);
+    const imageLogo = require('../assets/imagethumbnail.png')
     const documentLogo = require('../assets/filelogo.png')
+
     const [isModalVisible, setModalVisible] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
 
@@ -39,14 +41,16 @@ function ViewCreatedAssignmentsScreen({route}){
                     ))} */}
 
                     <ScrollView horizontal>
-                        {assignmentData.images && assignmentData.images.map((uri, index) => (
-                            <TouchableOpacity key={uri} onPress={() => openImage(uri)} style={theme.imageContainer}>
-                                <Image
-                                    key={index}
-                                    source={{ uri }}
-                                    style={theme.assignmentImage} // Add your image style here
-                                />
-                            </TouchableOpacity>
+                        {assignmentData.images && assignmentData.images.map((image, index) => (
+                            <View key={index} style={theme.imageContainer}>
+                                <TouchableOpacity onPress={() => openImage(image.uri)} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <Image
+                                        source={imageLogo}
+                                        style={theme.documentThumbnail}
+                                    />
+                                    <Text style={theme.documentName}>{image.name}</Text>
+                                </TouchableOpacity>
+                            </View>
                         ))}
                     </ScrollView>
 
