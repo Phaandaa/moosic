@@ -6,12 +6,11 @@ import { StyleSheet } from 'react-native';
 const theme = StyleSheet.create({
   container: {
     padding: 20,
-    marginTop: 30,
+    // marginTop: 30,
     marginBottom: 20,
     backgroundColor: '#ffffff',
     width: '100%',
-    height : '100%',
-    
+    height : '100%',    
   },
   textThin: {
     fontSize: 24,
@@ -165,6 +164,7 @@ const theme = StyleSheet.create({
   },
   contentContainer:{
     flexGrow: 1, // Makes sure all content will be scrolled
+    paddingBottom: 30
   },
   innerContainer:{
       padding: 20,
