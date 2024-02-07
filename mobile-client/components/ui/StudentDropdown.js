@@ -7,6 +7,11 @@ const StudentDropdown = ({ onSelectionChange }) => {
     const [selected, setSelected] = useState([]);
     const [students, setStudents] = useState([]);
     // const teacherID = 'WA2G3fxLzNSdKWwerstzG7siTfu1';
+
+    useEffect(() => {
+        // Call the passed callback function whenever 'selected' changes
+        onSelectionChange(selected);
+    }, [selected]);
     
 
     useEffect(() => {
@@ -14,9 +19,9 @@ const StudentDropdown = ({ onSelectionChange }) => {
         // onSelectionChange(selected); // This will call the function passed as a prop with the new selected values
     }, []);
 
-    useEffect(() => {
+    // useEffect(() => {
 
-    }, [selected, onSelectionChange]); 
+    // }, [selected, onSelectionChange]); 
 
     // const teacherID = 
 
@@ -51,7 +56,7 @@ const StudentDropdown = ({ onSelectionChange }) => {
                 data={students}
                 label='Students'
                 onSelect={() => console.log(selected)}
-                save="value"
+                save="key"
                 // fontFamily='regular'
                 // labelStyles={{fontWeight: '900', color:'red'}}
                 notFoundText='Student does not exist.'
