@@ -1,43 +1,64 @@
-import React from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, TouchableOpacity, Text, ScrollView, Alert } from 'react-native';
 import theme from './styles/theme';
+import axios from 'axios';
 
-function MyStudentsScreen({navigation}){
+function MyStudentsScreen({ navigation }) {
+    const [students, setStudents] = useState([]);
+
+    useEffect(() => {
+        fetchStudents();
+    }, []);
+
+    const fetchStudents = async() => {
+        try {
+            const response = await axios.get(`http://192.168.1.47:8080/students/teacher/WA2G3fxLzNSdKWwerstzG7siTfu1/`);
+            const data = response.data;
+            // const formattedData = data.map(student => ({
+            //     key: student.id,
+            //     value: student.name,
+            // }));
+            setStudents(data);
+        } catch (error) {
+            console.error('Error fetching students:', error);
+        }
+    }
+
+
+    // const fetchStudents = async () => {
+    //     try {
+    //         const response = await fetch('http://192.168.1.47:8080/students'); // Use your actual API URL here
+    //         const data = await response.json();
+    //         setStudents(data);
+    //     } catch (error) {
+    //         Alert.alert("Error", "Could not fetch students");
+    //         console.error(error);
+    //     }
+    // };
+
     return (
-        <View style={theme.container}> 
-        {/* Student 1  */}
-            <TouchableOpacity style={theme.card}>
-                <View style={theme.cardTextContainer}>
-                    <Text style={theme.cardTextBold}>Tiara Himawan</Text>
-                </View>
-                <View style={theme.buttonContainer}>
-                    <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText} onPress={() => navigation.navigate('PracticeListTeacherScreen')}>Practice</Text>
+        <ScrollView style={theme.container}>
+            {students.map((student, index) => (
+                student.name ? (
+                    <TouchableOpacity key={index} style={theme.card}>
+                        <View style={theme.cardTextContainer}>
+                            <Text style={theme.cardTextBold}>{student.name || "Unnamed Student"}</Text>
+                        </View>
+                        <View style={theme.buttonContainer}>
+                            <TouchableOpacity style={theme.smallButton}>
+                                <Text style={theme.smallButtonText}>Practice</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={theme.smallButton}>
+                                <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ViewCreatedAssignmentsScreen', { studentId: student.id })}>Assignments</Text>
+                            </TouchableOpacity>
+                        </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ViewCreatedAssignmentsScreen')}>Assignments</Text>
-                    </TouchableOpacity>
-                </View>
-            </TouchableOpacity>
-
-        {/* Student 2 */}
-            <TouchableOpacity style={theme.card}>
-                <View style={theme.cardTextContainer}>
-                    <Text style={theme.cardTextBold}>Lee Min Hui</Text>
-                </View>
-                <View style={theme.buttonContainer}>
-                    <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText}>Practice</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText}>Assignments</Text>
-                    </TouchableOpacity>
-                </View>
-            </TouchableOpacity>
-
-        </View>
-    )
+                ) : null
+            ))}
+        </ScrollView>
+    );
 }
+
 export default MyStudentsScreen;
 
 const styles = StyleSheet.create({
