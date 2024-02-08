@@ -7,11 +7,11 @@ import * as ImagePicker from "expo-image-picker";
 import { Audio, Video, ResizeMode} from 'expo-av';
 import LottieView from 'lottie-react-native';
 
-// import { useSelector, useDispatch } from 'react-redux';
-// import { setCache, clearCache } from '../cacheSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { setCache, clearCache } from '../cacheSlice';
 
 function PracticeScreen({navigation}){
-    // const dispatch = useDispatch();
+    const dispatch = useDispatch();
     const [title, setTitle] = useState('');
     const [comment, setComment] = useState('');
     const cancelIcon = require('../assets/cancel.png');
@@ -53,8 +53,8 @@ function PracticeScreen({navigation}){
         else{
             alert('Success!')
             console.log('submitted')
-            // dispatch(setCache({ key: 'practiceData', value: practiceData })); 
-            // navigation.navigate('ViewAssignmentsScreen');
+            dispatch(setCache({ key: 'practiceData', value: practiceData })); 
+            navigation.navigate('PracticeListStudentScreen');
         }
     }
 
