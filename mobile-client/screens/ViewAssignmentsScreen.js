@@ -1,21 +1,21 @@
 import React, {useState} from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Button } from 'react-native';
 import theme from './styles/theme';
 import Modal from 'react-native-modal';
 import { useSelector } from 'react-redux';
 
 function ViewAssignmentsScreen(){
-    const assignmentData = useSelector(state => state.cache.assignmentData);
-    // const assignmentData = {
-    //     name: 'Music Theory Grade 2',
-    //     description: 'Pages 2-5',
-    //     deadline: '14 Feb 2024',
-    //     images: images,
-    //     documents: uploadedDocuments,
-    //     students: selectedStudents,
-    //     submissionDate: submissionDate.toString()
-    // }      
-
+    // const assignmentData = useSelector(state => state.cache.assignmentData);
+    const assignmentData = {
+        name: 'Music Theory Grade 2',
+        description: 'Pages 2-5',
+        deadline: 'Wed Feb 14 2024',
+        images: 'NA',
+        documents: 'NA',
+        students: ["5C4Q6ZILqoTBi9YnESwpKQuhMcN2"],
+        submissionDate: 'Thu Feb 08 2024 20:26:21 GMT+0700'
+    }      
+    const imageLogo = require('../assets/imagethumbnail.png')
     const documentLogo = require('../assets/filelogo.png')
     const [isModalVisible, setModalVisible] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
@@ -40,32 +40,46 @@ function ViewAssignmentsScreen(){
                     <Text style={theme.cardText}>Created on: {assignmentData.submissionDate}</Text>
                     <Text style={theme.cardText}>Attachments:</Text>
                     
-                    {/* Map over the images array to display each image */}
-                    {/* {assignmentData.images && assignmentData.images.map((uri, index) => (
-                        <Image
-                            key={index}
-                            source={{ uri }}
-                            style={theme.assignmentImage} // Add your image style here
-                        />
+                    {/* {assignmentData.images && assignmentData.images.map((image, index) => (
+                        <View key={index} style={theme.imageContainer}>
+                            <TouchableOpacity onPress={() => openImage(image.uri)} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Image
+                                    source={imageLogo}
+                                    style={theme.documentThumbnail}
+                                />
+                                <Text style={theme.documentName}>{image.name}</Text>
+                            </TouchableOpacity>
+                        </View>
                     ))} */}
-
-                    {assignmentData.images && assignmentData.images.map((uri, index) => (
-                        <TouchableOpacity key={uri} onPress={() => openImage(uri)} style={theme.imageContainer}>
+                    <View style={theme.imageContainer}>
+                        <TouchableOpacity onPress={() => openImage(require('../assets/dummyimage1.jpeg'))} style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Image
-                                key={index}
-                                source={{ uri }}
-                                style={theme.assignmentImage} // Add your image style here
+                                source={imageLogo}
+                                style={theme.documentThumbnail}
                             />
+                            <Text style={theme.documentName}>dummyimage1.jpeg</Text>
                         </TouchableOpacity>
-                    ))}
+                    </View>
+                    <View style={theme.imageContainer}>
+                        <TouchableOpacity onPress={() => openImage(require('../assets/dummyimage2.jpeg'))} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Image
+                                source={imageLogo}
+                                style={theme.documentThumbnail}
+                            />
+                            <Text style={theme.documentName}>dummyimage2.jpeg</Text>
+                        </TouchableOpacity>
+                    </View>
 
-                    <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
+                    <Modal isVisible={isModalVisible} 
+                    // onBackdropPress={toggleModal}
+                    >
                         <View style={theme.modalContent}>
-                            <Image source={{uri:selectedImage}} style={theme.fullSizeImage} />
+                            <Image source={require('../assets/dummyimage1.jpeg')} style={theme.fullSizeImage} />
+                            <Button title="Close" onPress={toggleModal} />
                         </View>
                     </Modal>
                     
-                    {assignmentData.documents.map((doc, index) => (
+                    {/* {assignmentData.documents.map((doc, index) => (
                         <View key={index.toString()} style={theme.documentItemContainer}>
                             <Image
                             source={documentLogo}
@@ -73,7 +87,22 @@ function ViewAssignmentsScreen(){
                             />
                             <Text style={theme.documentName}>{doc.name}</Text>
                         </View>
-                    ))}
+                    ))} */}
+
+                    <View style={theme.documentItemContainer}>
+                        <Image
+                        source={documentLogo}
+                        style={theme.documentThumbnail}
+                        />
+                        <Text style={theme.documentName}>dummydoc1.pdf</Text>
+                    </View>
+                    <View style={theme.documentItemContainer}>
+                        <Image
+                        source={documentLogo}
+                        style={theme.documentThumbnail}
+                        />
+                        <Text style={theme.documentName}>dummydoc2.pdf</Text>
+                    </View>
 
                 </View>
                 <View style={theme.buttonContainer2}> 
