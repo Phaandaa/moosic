@@ -18,7 +18,6 @@ function PracticeScreen({navigation}){
     const [videos, setVideos] = useState([]);
     const [loadingStates, setLoadingStates] = useState({});
 
-    // const [modalVisible, setModalVisible] = useState(false);
     const [selectedVideo, setSelectedVideo] = useState(null);
 
     const [isModalVisible, setModalVisible] = useState(false);
@@ -29,7 +28,7 @@ function PracticeScreen({navigation}){
 
     const openVideo = (uri) => {
         setSelectedVideo(uri);
-        // toggleModal(); 
+        toggleModal(); 
     }
 
     const submitHandler = () => {
@@ -53,8 +52,9 @@ function PracticeScreen({navigation}){
         }
         else{
             alert('Success!')
+            console.log('submitted')
             // dispatch(setCache({ key: 'practiceData', value: practiceData })); 
-            // navigation.navigate('PracticeListTeacherScreen');
+            // navigation.navigate('ViewAssignmentsScreen');
         }
     }
 
@@ -78,7 +78,7 @@ function PracticeScreen({navigation}){
         } catch (error){
             alert("error uploading video:"+ error.message
             );
-            // setModalVisible(false);
+            setModalVisible(false);
 
         }
     };
@@ -120,7 +120,7 @@ function PracticeScreen({navigation}){
             </View>
 
             {/* Modal for viewing the video */}
-            {/* <Modal
+            <Modal
                     isVisible={isModalVisible}
                     animationType="slide"
                     transparent={true}
@@ -132,39 +132,41 @@ function PracticeScreen({navigation}){
                                 source={{ uri: selectedVideo }}
                                 style={styles.modalVideo}
                                 resizeMode={ResizeMode.CONTAIN}
-                                useNativeControls
+                                // useNativeControls
                                 shouldPlay
                             />
                             <Button title="Close" onPress={() => setModalVisible(!isModalVisible)} />
                         </View>
                     </View>
-                </Modal> */}
+                </Modal>
 
             {/* Render each image with a remove button next to it */}
             <ScrollView horizontal>
                 {videos.map((uri, index) => (
                     <View key={uri} style={styles.imageContainer}>
-                        {loadingStates[uri] && (
+                        {/* {loadingStates[uri] && (
                             <LottieView
                                 source={require('../assets/loading_fyp.json')} // Update with your Lottie file path
                                 autoPlay
                                 loop
                                 style={styles.lottie}
                             />
-                        )}
+                        )} */}
                         <TouchableOpacity onPress={() => openVideo(uri)}>
                             <Video
                                 source={{ uri }}
                                 style={styles.video}
                                 resizeMode={ResizeMode.COVER}
-                                useNativeControls
-                                onLoadStart={() => setLoadingStates({ ...loadingStates, [uri]: true })}
-                                onLoad={() => setLoadingStates({ ...loadingStates, [uri]: false })}
+                                // useNativeControls
+                                // onLoadStart={() => setLoadingStates({ ...loadingStates, [uri]: true })}
+                                // onLoad={() => setLoadingStates({ ...loadingStates, [uri]: false })}
                             />
                             <TouchableOpacity onPress={() => removeVideo(index)} style={styles.removeButton}>
                                 {/* <Text style={theme.buttonText}>x</Text> */}
                                 <Image source={cancelIcon} style={styles.cancelIcon} /> 
                             </TouchableOpacity>
+                            <View style={styles.buttons}>
+                        </View>
                         </TouchableOpacity>
                     </View>
                 ))}
