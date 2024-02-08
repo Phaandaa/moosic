@@ -3,8 +3,18 @@ import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Button} fr
 import theme from './styles/theme';
 import Modal from 'react-native-modal';
 import { useSelector } from 'react-redux';
-function ViewCreatedAssignmentsScreen({route}){
+function ViewCreatedAssignmentsScreen(){
     const assignmentData = useSelector(state => state.cache.assignmentData);
+    // assignmentData = {
+    //     name: 'Music Theory Grade 2',
+    //     description: 'Pages 2-5',
+    //     deadline: '14 Feb 2024',
+    //     images: images,
+    //     documents: uploadedDocuments,
+    //     students: selectedStudents,
+    //     submissionDate: submissionDate.toString()
+    // }      
+
     const imageLogo = require('../assets/imagethumbnail.png')
     const documentLogo = require('../assets/filelogo.png')
 
@@ -40,19 +50,18 @@ function ViewCreatedAssignmentsScreen({route}){
                         />
                     ))} */}
 
-                    <ScrollView horizontal>
-                        {assignmentData.images && assignmentData.images.map((image, index) => (
-                            <View key={index} style={theme.imageContainer}>
-                                <TouchableOpacity onPress={() => openImage(image.uri)} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Image
-                                        source={imageLogo}
-                                        style={theme.documentThumbnail}
-                                    />
-                                    <Text style={theme.documentName}>{image.name}</Text>
-                                </TouchableOpacity>
-                            </View>
-                        ))}
-                    </ScrollView>
+                    
+                    {assignmentData.images && assignmentData.images.map((image, index) => (
+                        <View key={index} style={theme.imageContainer}>
+                            <TouchableOpacity onPress={() => openImage(image.uri)} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Image
+                                    source={imageLogo}
+                                    style={theme.documentThumbnail}
+                                />
+                                <Text style={theme.documentName}>{image.name}</Text>
+                            </TouchableOpacity>
+                        </View>
+                    ))}
 
                     <Modal isVisible={isModalVisible} 
                     // onBackdropPress={toggleModal}
