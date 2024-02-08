@@ -13,6 +13,7 @@ import ViewAssignmentsScreen from './screens/ViewAssignmentsScreen';
 import PracticeScreen from './screens/PracticeScreen';
 import PracticeListTeacherScreen from './screens/PracticeListTeacherScreen';
 import ProvidePracticeFeedbackScreen from './screens/ProvidePracticeFeedbackScreen';
+import PracticeListStudentScreen from './screens/PracticeListStudentScreen';
 
 // Cache and Context
 import { Provider } from 'react-redux';
@@ -58,6 +59,8 @@ const AuthNavigation = () => {
                 <Stack.Screen name="ViewAssignmentsScreen" component={ViewAssignmentsScreen} options={{ title: 'My Assignments' }}/>
                 <Stack.Screen name="PracticeListTeacherScreen" component={PracticeListTeacherScreen} options={{ title: 'Practice Log' }}/>
                 <Stack.Screen name="ProvidePracticeFeedbackScreen" component={ProvidePracticeFeedbackScreen} options={{ title: 'Provide Feedback' }}/>
+                <Stack.Screen name="PracticeListStudentScreen" component={PracticeListStudentScreen} options={{ title: 'My Practice Log' }}/>
+
               </>
             ) : (
               // User is not logged in, show the login screen
