@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert, Dimensions, Button} from 'react-native';
 import Modal from 'react-native-modal';
 import theme from './styles/theme';
-import ProvidePracticeFeedbackScreen from './ProvidePracticeFeedbackScreen';
 import { Audio, Video, ResizeMode} from 'expo-av';
 import { useSelector } from 'react-redux';
 
@@ -33,7 +32,7 @@ function PracticeListStudentScreen({navigation}){
                         <Text style={theme.smallButtonText} onPress={() => openVideo(practiceData.videos[0])}>Recording</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ProvidePracticeFeedbackScreen')}>Feedback</Text>
+                        <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ViewPracticeFeedbackScreen')}>Feedback</Text>
                     </TouchableOpacity>
                 </View>
             </TouchableOpacity>
