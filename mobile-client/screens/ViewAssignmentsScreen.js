@@ -4,8 +4,18 @@ import theme from './styles/theme';
 import Modal from 'react-native-modal';
 import { useSelector } from 'react-redux';
 
-function ViewAssignmentsScreen({route}){
+function ViewAssignmentsScreen(){
     const assignmentData = useSelector(state => state.cache.assignmentData);
+    // const assignmentData = {
+    //     name: 'Music Theory Grade 2',
+    //     description: 'Pages 2-5',
+    //     deadline: '14 Feb 2024',
+    //     images: images,
+    //     documents: uploadedDocuments,
+    //     students: selectedStudents,
+    //     submissionDate: submissionDate.toString()
+    // }      
+
     const documentLogo = require('../assets/filelogo.png')
     const [isModalVisible, setModalVisible] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
@@ -39,17 +49,15 @@ function ViewAssignmentsScreen({route}){
                         />
                     ))} */}
 
-                    <ScrollView horizontal>
-                        {assignmentData.images && assignmentData.images.map((uri, index) => (
-                            <TouchableOpacity key={uri} onPress={() => openImage(uri)} style={theme.imageContainer}>
-                                <Image
-                                    key={index}
-                                    source={{ uri }}
-                                    style={theme.assignmentImage} // Add your image style here
-                                />
-                            </TouchableOpacity>
-                        ))}
-                    </ScrollView>
+                    {assignmentData.images && assignmentData.images.map((uri, index) => (
+                        <TouchableOpacity key={uri} onPress={() => openImage(uri)} style={theme.imageContainer}>
+                            <Image
+                                key={index}
+                                source={{ uri }}
+                                style={theme.assignmentImage} // Add your image style here
+                            />
+                        </TouchableOpacity>
+                    ))}
 
                     <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
                         <View style={theme.modalContent}>
