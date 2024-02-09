@@ -32,7 +32,7 @@ function PracticeListTeacherScreen({navigation}){
                         <Text style={theme.smallButtonText} onPress={() => openVideo(require('../assets/dummyvid.mp4'))}>Recording</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText} onPress={() => navigation.navigate(ProvidePracticeFeedbackScreen)}>Feedback</Text>
+                        <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ProvidePracticeFeedbackScreen')}>Feedback</Text>
                     </TouchableOpacity>
                 </View>
             </TouchableOpacity>
