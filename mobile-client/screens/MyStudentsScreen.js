@@ -46,7 +46,7 @@ function MyStudentsScreen({ navigation }) {
                         </View>
                         <View style={theme.buttonContainer}>
                             <TouchableOpacity style={theme.smallButton}>
-                                <Text style={theme.smallButtonText}>Practice</Text>
+                                <Text style={theme.smallButtonText} onPress={() => navigation.navigate('PracticeListTeacherScreen')}>Practice</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={theme.smallButton}>
                                 <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ViewCreatedAssignmentsScreen', { studentId: student.id })}>Assignments</Text>
