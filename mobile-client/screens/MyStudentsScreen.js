@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, ScrollView, Alert } from 'react-native';
-import theme from './styles/theme';
+import theme from '../styles/theme';
 import axios from 'axios';
 import IP_ADDRESS from '../constants/IP_ADDRESS.JS';
 

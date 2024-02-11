@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert} from 'react-native';
-import theme from './styles/theme';
+import theme from '../styles/theme';
 import AnimatedPlaceholderInput from '../components/ui/animateTextInput';
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";

@@ -1,10 +1,10 @@
 // LoginPage.js
 import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
-import theme from './styles/theme';
+import theme from '../styles/theme';
 import AnimatedPlaceholderInput from '../components/ui/animateTextInput';
-import { useAuth} from './context/Authcontext';
-import IP_ADDRESS from '../constants/IP_ADDRESS.JS';
+import { useAuth } from '../context/Authcontext';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 

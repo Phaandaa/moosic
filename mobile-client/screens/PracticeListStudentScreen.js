@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert, Dimensions, Button} from 'react-native';
 import Modal from 'react-native-modal';
-import theme from './styles/theme';
+import theme from '../styles/theme';
 import { Audio, Video, ResizeMode} from 'expo-av';
 import { useSelector } from 'react-redux';
 

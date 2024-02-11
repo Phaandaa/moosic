@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert, Modal, Button, Dimensions} from 'react-native';
-import theme from './styles/theme';
+import theme from '../styles/theme';
 import ProvidePracticeFeedbackScreen from './ProvidePracticeFeedbackScreen';
 import { useSelector } from 'react-redux';
 import { Audio, Video, ResizeMode} from 'expo-av';
