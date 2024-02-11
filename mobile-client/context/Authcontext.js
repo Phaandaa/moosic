@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import IP_ADDRESS from '../constants/IP_ADDRESS.JS';
+import IP_ADDRESS from '../constants/ip_address_temp';
 
 const AuthContext = createContext({
   state: { isLoggedIn: false, user: null, error: null },

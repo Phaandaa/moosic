@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import { MultipleSelectList } from 'react-native-dropdown-select-list';
 import axios from 'axios';
-import IP_ADDRESS from '../constants/IP_ADDRESS.JS';
+import IP_ADDRESS from '../../constants/ip_address_temp';
 
 const StudentDropdown = ({ onSelectionChange }) => {
     const [selected, setSelected] = useState([]);
