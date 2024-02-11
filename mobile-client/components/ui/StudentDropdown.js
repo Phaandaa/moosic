@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import { MultipleSelectList } from 'react-native-dropdown-select-list';
 import axios from 'axios';
+import IP_ADDRESS from '../../constants/IP_ADDRESS.JS';
 
 const StudentDropdown = ({ onSelectionChange }) => {
     const [selected, setSelected] = useState([]);
@@ -27,7 +28,7 @@ const StudentDropdown = ({ onSelectionChange }) => {
 
     const fetchStudents = async() => {
         try {
-            const response = await axios.get(`http://192.168.1.47:8080/students/teacher/WA2G3fxLzNSdKWwerstzG7siTfu1/`);
+            const response = await axios.get(`${IP_ADDRESS}/students/teacher/WA2G3fxLzNSdKWwerstzG7siTfu1/`);
             const data = response.data;
             const formattedData = data.map(student => ({
                 key: student.id,
