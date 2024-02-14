@@ -1,10 +1,7 @@
 import { useCallback, useMemo, useState, useEffect } from "react";
-import Head from "next/head";
-import { subDays, subHours } from "date-fns";
+import Head from "next/head";;
 import ArrowDownOnSquareIcon from "@heroicons/react/24/solid/ArrowDownOnSquareIcon";
-import ArrowUpOnSquareIcon from "@heroicons/react/24/solid/ArrowUpOnSquareIcon";
-import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
-import { Box, Button, Container, Stack, SvgIcon, Typography } from "@mui/material";
+import { Box, Button, Container, Stack, SvgIcon, Typography, Card } from "@mui/material";
 import { useSelection } from "src/hooks/use-selection";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
 import { TeachersTable } from "src/sections/teachers/teachers-table";
@@ -12,10 +9,8 @@ import { TeachersSearch } from "src/sections/teachers/teachers-search";
 import { applyPagination } from "src/utils/apply-pagination";
 import TeachersModal from "src/sections/teachers/teachers-modal";
 import { getAsync } from "src/utils/utils";
-
-const now = new Date();
-
-// const { userData } = useAuth();
+import * as XLSX from "xlsx";
+import TrashIcon from "@heroicons/react/24/solid/TrashIcon";
 
 const Page = () => {
   const [teacherData, setTeacherData] = useState([]);
@@ -83,6 +78,30 @@ const Page = () => {
     setTeacherData((prevTeachers) => [...prevTeachers, newTeacher]);
   };
 
+  const handleExport = useCallback(() => {
+    // Define a workbook and a worksheet
+    const wb = XLSX.utils.book_new();
+    const wsName = "TeachersData";
+
+    // Convert your student data into a format suitable for a worksheet
+    const wsData = [
+      ["Name", "Email"], // Header row
+      ...teacherData.map((teacher) => [
+        teacher.name,
+        teacher.email,
+      ]),
+    ];
+
+    // Create a worksheet
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+    // Add the worksheet to the workbook
+    XLSX.utils.book_append_sheet(wb, ws, wsName);
+
+    // Generate XLSX file and trigger download
+    XLSX.writeFile(wb, "TeachersData.xlsx");
+  }, [teacherData]);
+
 
   return (
     <>
@@ -101,34 +120,39 @@ const Page = () => {
             <Stack direction="row" justifyContent="space-between" spacing={4}>
               <Stack spacing={1}>
                 <Typography variant="h4">Teachers</Typography>
-                <Stack alignItems="center" direction="row" spacing={1}>
-                  <Button
-                    color="inherit"
-                    startIcon={
-                      <SvgIcon fontSize="small">
-                        <ArrowUpOnSquareIcon />
-                      </SvgIcon>
-                    }
-                  >
-                    Import
-                  </Button>
-                  <Button
-                    color="inherit"
-                    startIcon={
-                      <SvgIcon fontSize="small">
-                        <ArrowDownOnSquareIcon />
-                      </SvgIcon>
-                    }
-                  >
-                    Export
-                  </Button>
-                </Stack>
               </Stack>
               <div>
                 <TeachersModal onAddTeacher={handleAddTeacher}/>
               </div>
             </Stack>
-            <TeachersSearch handleSearchChange={handleSearchChange}/>
+            <Card sx={{ p: 2, display: "flex", width: "100%" }}>
+              <TeachersSearch handleSearchChange={handleSearchChange}/>
+              <Button
+                  color="inherit"
+                  startIcon={
+                    <SvgIcon fontSize="small">
+                      <ArrowDownOnSquareIcon />
+                    </SvgIcon>
+                  }
+                  onClick={handleExport}
+                  style={{ marginLeft: "15px" }}
+                >
+                  Export
+                </Button>
+                <Button
+                color="inherit"
+                startIcon={
+                  <SvgIcon fontSize="small">
+                    <TrashIcon />
+                  </SvgIcon>
+                }
+                // onClick={handleDelete}
+                style={{ marginLeft: "15px" }}
+              >
+                Delete
+              </Button>
+            </Card>
+            
             <TeachersTable
               count={teacherData.length}
               items={teachers}

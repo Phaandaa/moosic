@@ -1,10 +1,7 @@
 import { useCallback, useMemo, useState, useEffect } from "react";
 import Head from "next/head";
-import { subDays, subHours } from "date-fns";
 import ArrowDownOnSquareIcon from "@heroicons/react/24/solid/ArrowDownOnSquareIcon";
-import ArrowUpOnSquareIcon from "@heroicons/react/24/solid/ArrowUpOnSquareIcon";
 import TrashIcon from "@heroicons/react/24/solid/TrashIcon";
-import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import { Box, Button, Container, Stack, SvgIcon, Typography } from "@mui/material";
 import { useSelection } from "src/hooks/use-selection";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
@@ -15,11 +12,6 @@ import StudentsModal from "src/sections/students/students-modal";
 import { getAsync } from "src/utils/utils";
 import * as XLSX from "xlsx";
 import { Card } from "@mui/material";
-
-const now = new Date();
-
-// const { userData } = useAuth();
-// const [students, setStudents] = useState([]);
 
 const Page = () => {
   const [studentData, setStudentData] = useState([]);
