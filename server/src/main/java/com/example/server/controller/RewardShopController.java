@@ -23,7 +23,7 @@ import com.example.server.models.RewardShopItemDTO;
 import com.example.server.service.RewardShopService;
 
 import io.swagger.v3.oas.annotations.Operation;
-
+// TODO: Student transactions, consisting of purchase history rewards shop amnd inventory entity
 @RestController
 @CrossOrigin
 @RequestMapping("/reward-shop")
