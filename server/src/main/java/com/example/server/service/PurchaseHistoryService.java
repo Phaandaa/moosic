@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.example.server.dao.PurchaseHistoryRepository;
 import com.example.server.entity.PurchaseHistory;
 
+@Service
 public class PurchaseHistoryService {
     
     @Autowired
