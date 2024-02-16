@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, ScrollView, Alert } from 'react-native';
-import theme from './styles/theme';
+import theme from '../styles/theme';
 import axios from 'axios';
+import  IP_ADDRESS  from '../constants/ip_address_temp';
+
 
 function MyStudentsScreen({ navigation }) {
     const [students, setStudents] = useState([]);
@@ -12,7 +14,7 @@ function MyStudentsScreen({ navigation }) {
 
     const fetchStudents = async() => {
         try {
-            const response = await axios.get(`http://192.168.1.47:8080/students/teacher/WA2G3fxLzNSdKWwerstzG7siTfu1/`);
+            const response = await axios.get(`${IP_ADDRESS}/students/teacher/WA2G3fxLzNSdKWwerstzG7siTfu1/`);
             const data = response.data;
             // const formattedData = data.map(student => ({
             //     key: student.id,
@@ -46,7 +48,7 @@ function MyStudentsScreen({ navigation }) {
                         </View>
                         <View style={theme.buttonContainer}>
                             <TouchableOpacity style={theme.smallButton}>
-                                <Text style={theme.smallButtonText}>Practice</Text>
+                                <Text style={theme.smallButtonText} onPress={() => navigation.navigate('PracticeListTeacherScreen')}>Practice</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={theme.smallButton}>
                                 <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ViewCreatedAssignmentsScreen', { studentId: student.id })}>Assignments</Text>

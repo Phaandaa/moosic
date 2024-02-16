@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
-import theme from '../../screens/styles/theme';
+import theme from '../../styles/theme'
 
 const BoxComponent = ({
   color,
