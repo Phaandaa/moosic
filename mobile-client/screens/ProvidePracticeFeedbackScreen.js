@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert} from 'react-native';
-import theme from './styles/theme';
+import theme from '../styles/theme';
 import AnimatedPlaceholderInput from '../components/ui/animateTextInput';
 // import PracticeListTeacherScreen from './PracticeListTeacherScreen';
 import { useDispatch, useSelector } from 'react-redux';
@@ -51,12 +51,12 @@ function ProvidePracticeFeedbackScreen({navigation}){
                 <View>
                 <View style={theme.card2}>
                     <View style={theme.cardTextContainer}>
-                        <Text style={theme.cardTitle}>{practiceData.title}</Text>
-                        <Text style={theme.cardText}>Comment: {practiceData.comment}</Text>
-                        <Text style={theme.cardText}>Created on:</Text>
+                        <Text style={theme.cardTitle}>Dummy Song</Text>
+                        <Text style={theme.cardText}>Comment: dummy comment</Text>
+                        <Text style={theme.cardText}>Created on: Wed Feb 14 2024</Text>
                         
                         {toggleFeedback && ( 
-                        <Text style={theme.cardText}>Feedback: {practiceData.feedback}</Text>
+                        <Text style={theme.cardText}>Feedback: {feedback}</Text>
                         )}
                     </View>
                 </View>

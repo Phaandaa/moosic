@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
-import theme from '../../screens/styles/theme';
+import theme from '../../styles/theme'
 
 function InputBox({label, placeholder, value, onChangeText, textInputConfig = {}}){
     return (

@@ -19,7 +19,7 @@ import ViewPracticeFeedbackScreen from './screens/ViewPracticeFeedbackScreen';
 // Cache and Context
 import { Provider } from 'react-redux';
 import store from './store';
-import { AuthProvider, useAuth } from './screens/context/Authcontext';
+import { AuthProvider, useAuth } from './context/Authcontext';
 
 const Stack = createNativeStackNavigator();
 

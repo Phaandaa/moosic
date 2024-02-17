@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList } from 'react-native';
 import BoxComponent from '../components/ui/homepageModuleBoxes';
-import theme from './styles/theme';
+import theme from '../styles/theme';
 import HomepageSearchBar from '../components/ui/homepageSearchbar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 

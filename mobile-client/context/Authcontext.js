@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import IP_ADDRESS from '../constants/ip_address_temp';
 
 const AuthContext = createContext({
   state: { isLoggedIn: false, user: null, error: null },
@@ -12,7 +13,7 @@ const LOGIN_ERROR = 'LOGIN_ERROR';
 const LOGOUT = 'LOGOUT';
 const STORE_USER_DATA = 'STORE_USER_DATA';
 
-const IP_ADDRESS = 'http://192.168.1.47:8080'; // Replace with your own IP address
+
 
 const authReducer = (state, action) => {
   switch (action.type) {
