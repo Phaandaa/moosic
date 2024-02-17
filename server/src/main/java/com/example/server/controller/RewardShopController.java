@@ -80,7 +80,7 @@ public class RewardShopController {
     public ResponseEntity<String> updateRewardShopItemImage(
         @PathVariable String itemId,
         @RequestParam("image") MultipartFile file) {
-            return ResponseEntity.ok(rewardShopService.updateRewardShopItemImage(stringId, file));
+            return ResponseEntity.ok(rewardShopService.updateRewardShopItemImage(itemId, file));
     }
 
 }
