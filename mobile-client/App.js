@@ -6,15 +6,19 @@ import LoadingScreen from './components/ui/loadingstate';
 
 // Pages
 import LoginPage from './screens/login';
-import CreateAssignmentScreen from './screens/CreateAssignmentScreen';
-import MyStudentsScreen from './screens/MyStudentsScreen';
-import ViewCreatedAssignmentsScreen from './screens/ViewCreatedAssignmentsScreen';
-import ViewAssignmentsScreen from './screens/ViewAssignmentsScreen';
-import PracticeScreen from './screens/PracticeScreen';
-import PracticeListTeacherScreen from './screens/PracticeListTeacherScreen';
-import ProvidePracticeFeedbackScreen from './screens/ProvidePracticeFeedbackScreen';
-import PracticeListStudentScreen from './screens/PracticeListStudentScreen';
-import ViewPracticeFeedbackScreen from './screens/ViewPracticeFeedbackScreen';
+
+//Student Pages
+import ViewAssignmentsScreen from './screens/studentsScreens/ViewAssignmentsScreen';
+import PracticeScreen from './screens/studentsScreens/PracticeScreen';
+import PracticeListStudentScreen from './screens/studentsScreens/PracticeListStudentScreen';
+import ViewPracticeFeedbackScreen from './screens/studentsScreens/ViewPracticeFeedbackScreen';
+
+//Teacher Pages
+import CreateAssignmentScreen from './screens/teachersScreens/CreateAssignmentScreen';
+import MyStudentsScreen from './screens/teachersScreens/MyStudentsScreen';
+import ViewCreatedAssignmentsScreen from './screens/teachersScreens/ViewCreatedAssignmentsScreen';
+import PracticeListTeacherScreen from './screens/teachersScreens/PracticeListTeacherScreen';
+import ProvidePracticeFeedbackScreen from './screens/teachersScreens/ProvidePracticeFeedbackScreen';
 
 // Cache and Context
 import { Provider } from 'react-redux';

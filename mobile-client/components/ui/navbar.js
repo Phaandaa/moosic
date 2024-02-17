@@ -6,10 +6,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // Import screen components
 import HomeScreen from '../../screens/home';
 import ProfileScreen from '../../screens/profilepage';
-import GoalsScreen from '../../screens/goalsScreen';
 import NotificationsScreen from '../../screens/notificationspage';
-import MyStudentsScreen from '../../screens/MyStudentsScreen';
-import ViewCreatedAssignmentsScreen from '../../screens/ViewCreatedAssignmentsScreen';
+
+import GoalsScreen from '../../screens/studentsScreens/goalsScreen';
+
+import MyStudentsScreen from '../../screens/teachersScreens/MyStudentsScreen';
+import ViewCreatedAssignmentsScreen from '../../screens/teachersScreens/ViewCreatedAssignmentsScreen';
 
 const Tab = createBottomTabNavigator();
 
