@@ -197,7 +197,6 @@ export default function StudentsModal({ onAddStudent }) {
 
               <TextField
                 autoFocus
-                required
                 margin="dense"
                 id="age"
                 name="age"
@@ -253,7 +252,7 @@ export default function StudentsModal({ onAddStudent }) {
               <Button onClick={handleClose}>Cancel</Button>
               <Button
                 onClick={() => setStep(2)}
-                disabled={!studentName || !studentEmail || !instrument || !gradeLevel}
+                disabled={!studentName || !studentEmail || !instrument}
               >
                 Next
               </Button>
