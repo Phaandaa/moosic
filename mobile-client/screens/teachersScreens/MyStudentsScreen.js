@@ -1,67 +1,119 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, ScrollView, Alert } from 'react-native';
-import theme from '../../styles/theme';
+import { ScrollView, TouchableOpacity, Text, Alert, StyleSheet,View } from 'react-native';
 import axios from 'axios';
-import  IP_ADDRESS  from '../../constants/ip_address_temp';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import HomepageSearchBar from '../../components/ui/homepageSearchbar';
+import theme from '../../styles/theme';
+import IP_ADDRESS from '../../constants/ip_address_temp';
 
 function MyStudentsScreen({ navigation }) {
     const [students, setStudents] = useState([]);
+    const [filteredStudents, setFilteredStudents] = useState([]);
+    const [teacherID, setTeacherID] = useState('');
+    const [fetchError, setFetchError] = useState(false);
 
+    
+
+    // Check stored data for teacherID
+    const checkStoredData = async () => {
+        try {
+            const storedData = await AsyncStorage.getItem('authData');
+            if (storedData !== null) {
+                const parsedData = JSON.parse(storedData);
+                return parsedData.userId;
+            }
+        } catch (error) {
+            console.error('Error retrieving data from AsyncStorage', error);
+        }
+        return '';
+    };
+
+    // Fetch teacherID on component mount
     useEffect(() => {
-        fetchStudents();
+        const fetchData = async () => {
+            try {
+                const id = await checkStoredData();
+                setTeacherID(id);
+            } catch (error) {
+                console.error('Error processing stored data', error);
+            }
+        };
+        fetchData();
     }, []);
 
-    const fetchStudents = async() => {
-        try {
-            const response = await axios.get(`${IP_ADDRESS}/students/teacher/WA2G3fxLzNSdKWwerstzG7siTfu1/`);
-            const data = response.data;
-            // const formattedData = data.map(student => ({
-            //     key: student.id,
-            //     value: student.name,
-            // }));
-            setStudents(data);
-        } catch (error) {
-            console.error('Error fetching students:', error);
+    // Fetch students using teacherID
+    useEffect(() => {
+        const fetchStudentsApi = `${IP_ADDRESS}/students/teacher/${teacherID}/`;
+        const fetchStudents = async() => {
+            try {
+                const response = await axios.get(fetchStudentsApi);
+                const data = response.data;
+                
+                if (data.length > 0) {
+                    setStudents(data);
+                    setFilteredStudents(data);
+                } else {
+                    // If the response is successful but contains no data
+                    setFetchError(true);
+                }
+            } catch (error) {
+                console.error('Error fetching students:', error);
+                setFetchError(true);
+            }
+        };
+        if(teacherID){
+            fetchStudents();
         }
-    }
+    }, [teacherID]);
 
-
-    // const fetchStudents = async () => {
-    //     try {
-    //         const response = await fetch('http://192.168.1.47:8080/students'); // Use your actual API URL here
-    //         const data = await response.json();
-    //         setStudents(data);
-    //     } catch (error) {
-    //         Alert.alert("Error", "Could not fetch students");
-    //         console.error(error);
-    //     }
-    // };
+    // Handle search functionality
+    const handleSearch = (query) => {
+        if (!query.trim()) {
+            setFilteredStudents(students);
+        } else {
+            const filtered = students.filter(student =>
+                student.name.toLowerCase().includes(query.toLowerCase())
+            );
+            setFilteredStudents(filtered);
+        }
+    };
 
     return (
         <ScrollView style={theme.container}>
-            {students.map((student, index) => (
-                student.name ? (
-                    <TouchableOpacity key={index} style={theme.card}>
-                        <View style={theme.cardTextContainer}>
-                            <Text style={theme.cardTextBold}>{student.name || "Unnamed Student"}</Text>
-                        </View>
-                        <View style={theme.buttonContainer}>
-                            <TouchableOpacity style={theme.smallButton}>
-                                <Text style={theme.smallButtonText} onPress={() => navigation.navigate('PracticeListTeacherScreen')}>Practice</Text>
+            <HomepageSearchBar onSearch={handleSearch} />
+            
+            {fetchError ? (
+                <Text style={[theme.textTitle, {marginTop: 10}]}>You have no students.</Text>
+            ) : (
+                <>
+                    <Text style={[theme.textTitle, {marginTop: 10}]}>My Students</Text>
+                    {filteredStudents.map((student, index) => (
+                        student.name ? (
+                            <TouchableOpacity key={index} style={styles.card}>
+                                <View style={styles.cardTextContainer}>
+                                    <Text style={theme.cardTextBold}>{student.name || "Unnamed Student"}</Text>
+                                </View>
+                                <View style={theme.buttonContainer}>
+                                    <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('PracticeListTeacherScreen')}>
+                                        <Text style={theme.smallButtonText}>Practice</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('ViewCreatedAssignmentsScreen', { studentId: student.id })}>
+                                        <Text style={theme.smallButtonText}>Assignments</Text>
+                                    </TouchableOpacity>
+                                </View>
                             </TouchableOpacity>
-                            <TouchableOpacity style={theme.smallButton}>
-                                <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ViewCreatedAssignmentsScreen', { studentId: student.id })}>Assignments</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </TouchableOpacity>
-                ) : null
-            ))}
+                        ) : null
+                    ))}
+                </>
+            )}
         </ScrollView>
-    );
+    );    
 }
 
 export default MyStudentsScreen;
+
+// Styles remain the same
+
 
 const styles = StyleSheet.create({
     card: {
@@ -72,6 +124,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between', // Align items on both ends
         alignItems: 'center', // Center items vertically
+        
     },
     cardTextContainer: {
         flex: 1, // Take up as much space as possible

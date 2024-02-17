@@ -1,25 +1,15 @@
-import React, {useState} from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Button} from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Button } from 'react-native';
 import theme from '../../styles/theme';
 import Modal from 'react-native-modal';
 import { useSelector } from 'react-redux';
-function ViewCreatedAssignmentsScreen(){
-    const assignmentData = useSelector(state => state.cache.assignmentData);
-    // assignmentData = {
-    //     name: 'Music Theory Grade 2',
-    //     description: 'Pages 2-5',
-    //     deadline: '14 Feb 2024',
-    //     images: images,
-    //     documents: uploadedDocuments,
-    //     students: selectedStudents,
-    //     submissionDate: submissionDate.toString()
-    // }      
+import { Ionicons } from '@expo/vector-icons';
 
-    const imageLogo = require('../assets/imagethumbnail.png')
-    const documentLogo = require('../assets/filelogo.png')
+function ViewCreatedAssignmentsScreen() {
+    const assignmentData = useSelector(state => state.cache.assignmentData) || { images: [], documents: [], name: '', description: '', deadline: '', submissionDate: '' };
 
     const [isModalVisible, setModalVisible] = useState(false);
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedImage, setSelectedImage] = useState('');
 
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
@@ -30,70 +20,56 @@ function ViewCreatedAssignmentsScreen(){
         toggleModal(); 
     }
 
+    // Check if there are any assignments created
+    const hasAssignments = assignmentData.name || assignmentData.description || assignmentData.images.length > 0 || assignmentData.documents.length > 0;
+
     return (
         <ScrollView style={theme.container}>
-        <View> 
-            <View style={theme.card2}>
-                <View style={theme.cardTextContainer}>
-                <Text style={theme.cardTitle}>{assignmentData.name}</Text>
-                    <Text style={theme.cardText}>Description: {assignmentData.description}</Text>
-                    <Text style={theme.cardText}>Deadline: {assignmentData.deadline}</Text>
-                    <Text style={theme.cardText}>Created on: {assignmentData.submissionDate}</Text>
-                    <Text style={theme.cardText}>Attachments:</Text>
-                    
-                    {/* Map over the images array to display each image */}
-                    {/* {assignmentData.images && assignmentData.images.map((uri, index) => (
-                        <Image
-                            key={index}
-                            source={{ uri }}
-                            style={theme.assignmentImage} // Add your image style here
-                        />
-                    ))} */}
+            <View> 
+                {!hasAssignments ? (
+                    <Text style={[theme.textTitle, {marginTop: 20, verticalAlign: 'center'}]}>You have no created assignments.</Text>
+                ) : (
+                    <View style={theme.card2}>
+                        <View style={theme.cardTextContainer}>
+                            <Text style={theme.cardTitle}>{assignmentData.name}</Text>
+                            <Text style={theme.cardText}>Description: {assignmentData.description}</Text>
+                            <Text style={theme.cardText}>Deadline: {assignmentData.deadline}</Text>
+                            <Text style={theme.cardText}>Created on: {assignmentData.submissionDate}</Text>
+                            <Text style={theme.cardText}>Attachments:</Text>
+                            
+                            {assignmentData.images.map((image, index) => (
+                                <View key={index} style={theme.imageContainer}>
+                                    <TouchableOpacity onPress={() => openImage(image.uri)} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        <Ionicons name="image" size={24} color="black" />
+                                        <Text style={theme.documentName}>{image.name}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            ))}
 
-                    
-                    {assignmentData.images && assignmentData.images.map((image, index) => (
-                        <View key={index} style={theme.imageContainer}>
-                            <TouchableOpacity onPress={() => openImage(image.uri)} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Image
-                                    source={imageLogo}
-                                    style={theme.documentThumbnail}
-                                />
-                                <Text style={theme.documentName}>{image.name}</Text>
+                            <Modal isVisible={isModalVisible}>
+                                <View style={theme.modalContent}>
+                                    <Image source={{ uri: selectedImage }} style={theme.fullSizeImage} />
+                                    <Button title="Close" onPress={toggleModal} />
+                                </View>
+                            </Modal>
+                            
+                            {assignmentData.documents.map((doc, index) => (
+                                <View key={index.toString()} style={theme.documentItemContainer}>
+                                    <Ionicons name="document-attach" size={24} color="black" />
+                                    <Text style={theme.documentName}>{doc.name}</Text>
+                                </View>
+                            ))}
+                        </View>
+                        <View style={theme.buttonContainer2}> 
+                            <TouchableOpacity style={theme.smallButton}>
+                                <Text style={theme.smallButtonText}>View Submission</Text>
                             </TouchableOpacity>
                         </View>
-                    ))}
-
-                    <Modal isVisible={isModalVisible} 
-                    // onBackdropPress={toggleModal}
-                    >
-                        <View style={theme.modalContent}>
-                            <Image source={{uri:selectedImage}} style={theme.fullSizeImage} />
-                            <Button title="Close" onPress={toggleModal} />
-                        </View>
-                    </Modal>
-                    
-                    {assignmentData.documents.map((doc, index) => (
-                        <View key={index.toString()} style={theme.documentItemContainer}>
-                            <Image
-                            source={documentLogo}
-                            style={theme.documentThumbnail}
-                            />
-                            <Text style={theme.documentName}>{doc.name}</Text>
-                        </View>
-                    ))}
-
-                </View>
-                <View style={theme.buttonContainer2}> 
-                    <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText}>View Submission</Text>
-                    </TouchableOpacity>
-                    {/* <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText}>Give Feedback</Text>
-                    </TouchableOpacity> */}
-                </View>
+                    </View>
+                )}
             </View>
-        </View>
         </ScrollView>
-    )
-}; 
+    );
+}
+
 export default ViewCreatedAssignmentsScreen;
