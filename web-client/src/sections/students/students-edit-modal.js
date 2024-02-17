@@ -110,7 +110,7 @@ export default function StudentsEditModal({ student, onEditStudent }) {
       try {
         const response = await getAsync("teachers");
         const data = await response.json();
-        setTeachers(data);
+        setTeachers(data.filter((teacher) => teacher.instrument === student.instrument));
       } catch (error) {
         console.error("Error fetching teachers:", error);
       }
