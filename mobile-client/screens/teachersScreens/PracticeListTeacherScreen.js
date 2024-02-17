@@ -29,7 +29,7 @@ function PracticeListTeacherScreen({navigation}){
                 </View>
                 <View style={theme.buttonContainer}>
                     <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText} onPress={() => openVideo(require('../assets/dummyvid.mp4'))}>Recording</Text>
+                        <Text style={theme.smallButtonText} onPress={() => openVideo(require('../../assets/dummyvid.mp4'))}>Recording</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={theme.smallButton}>
                         <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ProvidePracticeFeedbackScreen')}>Feedback</Text>
@@ -47,7 +47,7 @@ function PracticeListTeacherScreen({navigation}){
                         <View style={styles.modalView}>
                             {/* {selectedVideo && ( */}
                                 <Video
-                                source={require('../assets/dummyvid.mp4')}
+                                source={require('../../assets/dummyvid.mp4')}
                                 style={styles.modalVideo}
                                 resizeMode={ResizeMode.CONTAIN}
                                 shouldPlay

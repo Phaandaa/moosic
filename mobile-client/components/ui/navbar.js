@@ -8,8 +8,10 @@ import HomeScreen from '../../screens/home';
 import ProfileScreen from '../../screens/profilepage';
 import NotificationsScreen from '../../screens/notificationspage';
 
+//Students Screen
 import GoalsScreen from '../../screens/studentsScreens/goalsScreen';
 
+//Teachers Screens
 import MyStudentsScreen from '../../screens/teachersScreens/MyStudentsScreen';
 import ViewCreatedAssignmentsScreen from '../../screens/teachersScreens/ViewCreatedAssignmentsScreen';
 
@@ -64,7 +66,7 @@ const BottomTabNavigator = () => {
         },
         tabBarActiveTintColor: '#4664EA',
         tabBarInactiveTintColor: 'gray',
-        tabBarStyle: { paddingBottom: 20, paddingTop: 10, height: 65 },
+        tabBarStyle: { paddingBottom: 20, paddingTop: 10, height: 70 },
       })}
     >
       {/* Common screens */}

@@ -21,7 +21,7 @@ function PracticeListStudentScreen({navigation}){
 
 
     return (
-        <View style={theme.container}> 
+        <View style={[theme.container]}> 
             <TouchableOpacity style={theme.card}>
                 <View style={theme.cardTextContainer}>
                     <Text style={theme.cardTextBold}>{practiceData.title}</Text>
