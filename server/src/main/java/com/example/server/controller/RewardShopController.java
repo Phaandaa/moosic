@@ -51,12 +51,18 @@ public class RewardShopController {
     }
 
     // add new item
-    @Operation(summary = "Create new reward shop item")
+    @Operation(summary = "Create new reward shop item with image")
     @PostMapping(path = "/create", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> createRewardShopItem(
-            @RequestPart("assignment") RewardShopItemDTO rewardShopItemDTO,
+            @RequestPart("assignment/with-image") RewardShopItemDTO rewardShopItemDTO,
             @RequestPart("files") MultipartFile file) {
         return ResponseEntity.ok(rewardShopService.addNewRewardShopItem(rewardShopItemDTO, file));
+    }
+
+    @Operation(summary = "Create new reward shop item without image")
+    @PostMapping("/create/without-image")
+    public ResponseEntity<?> createRewardShopItemWithoutPic(@RequestBody RewardShopItemDTO rewardShopItemDTO) {
+        return ResponseEntity.ok(rewardShopService.addNewRewardShopItemWithoutPic(rewardShopItemDTO));
     }
 
     // update item

@@ -78,6 +78,23 @@ public class RewardShopService {
         }
     }
 
+    public String addNewRewardShopItemWithoutPic(RewardShopItemDTO rewardShopItemDTO) {
+        try {
+            String description = rewardShopItemDTO.getDescription();
+            Integer points = rewardShopItemDTO.getPoints();
+            Integer stock = rewardShopItemDTO.getStock();
+            Integer limiation = rewardShopItemDTO.getLimitation();
+            String type = rewardShopItemDTO.getType();
+            RewardShop createdRewardShopItem = new RewardShop(description, points, stock, limiation, imageURL, type);
+            rewardShopRepository.save(createdRewardShopItem);
+            return "Create new item in reward shop successfully";
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error creating item in reward shop: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create item in reward shop: " + e.getMessage());
+        }
+    }
+
     public String updateRewardShopItemById(String id, RewardShopItemDTO rewardShopItemDTO) {
         try {
             RewardShop rewardShopItem = rewardShopRepository.findById(id).orElseThrow(()->
