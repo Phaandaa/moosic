@@ -26,7 +26,7 @@ public class PracticeService {
     @Transactional
     public Practice createPractice(CreatePracticeDTO practiceDTO, MultipartFile video) {
         try {
-            String videoURL = cloudStorageService.uploadFileToGCS(video);
+            String videoURL = cloudStorageService.uploadFileToGCS(video, "preactice");
             String studentId = practiceDTO.getStudentId();
             String studentName = practiceDTO.getStudentName();
             String teacherId = practiceDTO.getTeacherId();

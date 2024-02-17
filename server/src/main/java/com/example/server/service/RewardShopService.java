@@ -62,7 +62,7 @@ public class RewardShopService {
 
     public String addNewRewardShopItem(RewardShopItemDTO rewardShopItemDTO, MultipartFile file) {
         try {
-            String imageURL = cloudStorageService.uploadFileToGCS(file);
+            String imageURL = cloudStorageService.uploadFileToGCS(file, "shop");
             String description = rewardShopItemDTO.getDescription();
             Integer points = rewardShopItemDTO.getPoints();
             Integer stock = rewardShopItemDTO.getStock();
@@ -123,7 +123,7 @@ public class RewardShopService {
         try {
             RewardShop rewardShopItem = rewardShopRepository.findById(id).orElseThrow(()->
                 new NoSuchElementException("Reward Shop item not found with the ID " + id));
-            String newImageURL = cloudStorageService.uploadFileToGCS(file);
+            String newImageURL = cloudStorageService.uploadFileToGCS(file, "shop");
             rewardShopItem.setImageLink(newImageURL);
             rewardShopRepository.save(rewardShopItem);
             return "Update Reward Shop item image successfully";
