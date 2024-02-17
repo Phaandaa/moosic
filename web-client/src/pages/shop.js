@@ -17,6 +17,7 @@ import { ShopCard } from "src/sections/shop/shop-card";
 import { ShopSearch } from "src/sections/shop/shop-search";
 import { useEffect, useState } from "react";
 import { getAsync } from "src/utils/utils";
+import SnackbarAlert from "src/components/alert";
 
 const Page = () => {
   const [items, setItems] = useState([]);
@@ -24,6 +25,10 @@ const Page = () => {
   const itemsPerPage = 6; // Adjust this value as needed
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredItems, setFilteredItems] = useState([]);
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -62,6 +67,23 @@ const Page = () => {
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
+
+  const onTriggerSnackbar = (message, severity) => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
+
+  const handleDeleteItem = (itemId) => {
+    setItems(currentItems => currentItems.filter(item => item.id !== itemId));
+    setFilteredItems(currentFilteredItems => currentFilteredItems.filter(item => item.id !== itemId));
+  };
+
+  console.log(items)
 
   return (
     <>
@@ -120,7 +142,7 @@ const Page = () => {
             <Grid container spacing={3}>
               {currentItems.map((item) => (
                 <Grid xs={12} md={6} lg={4} key={item.id}>
-                  <ShopCard item={item} />
+                  <ShopCard item={item} onDeleteItem={handleDeleteItem} triggerSnackbar={onTriggerSnackbar}/>
                 </Grid>
               ))}
             </Grid>
@@ -140,6 +162,12 @@ const Page = () => {
           </Stack>
         </Container>
       </Box>
+      <SnackbarAlert
+        open={snackbarOpen}
+        severity={snackbarSeverity}
+        message={snackbarMessage}
+        handleClose={handleCloseSnackbar}
+      />
     </>
   );
 };
