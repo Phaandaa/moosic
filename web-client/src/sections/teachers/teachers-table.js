@@ -31,7 +31,8 @@ export const TeachersTable = (props) => {
     onSelectOne,
     page = 0,
     rowsPerPage = 0,
-    selected = []
+    selected = [],
+    onEditTeacher,
   } = props;
 
   const selectedSome = (selected.length > 0) && (selected.length < items.length);
@@ -63,15 +64,12 @@ export const TeachersTable = (props) => {
                 <TableCell>
                   Email
                 </TableCell>
-                {/* <TableCell>
-                  Location
+                <TableCell>
+                  Instrument
                 </TableCell>
                 <TableCell>
-                  Phone
+                  Phone Number
                 </TableCell>
-                <TableCell>
-                  Signed Up
-                </TableCell> */}
                 <TableCell>
                   Actions
                 </TableCell>
@@ -117,17 +115,14 @@ export const TeachersTable = (props) => {
                     <TableCell>
                       {customer.email}
                     </TableCell>
-                    {/* <TableCell>
-                      {customer.address.city}, {customer.address.state}, {customer.address.country}
+                    <TableCell>
+                      {customer.instrument}
                     </TableCell>
                     <TableCell>
                       {customer.phone}
                     </TableCell>
                     <TableCell>
-                      {createdAt}
-                    </TableCell> */}
-                    <TableCell>
-                      <TeachersEditModal customer={customer} />
+                      <TeachersEditModal teacher={customer} onEditTeacher={onEditTeacher}/>
                     </TableCell>
                   </TableRow>
                 );

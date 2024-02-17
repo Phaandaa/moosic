@@ -273,11 +273,16 @@ export default function StudentsModal({ onAddStudent }) {
           )}
         </DialogActions>
       </Dialog>
-      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
         <Alert
           onClose={() => setSnackbarOpen(false)}
           severity={snackbarSeverity}
-          sx={{ width: "100%" }}
+          sx= {{ width: "100%" }}
         >
           {snackbarMessage}
         </Alert>

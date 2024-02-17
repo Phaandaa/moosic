@@ -19,9 +19,9 @@ const Page = () => {
   useEffect(() => {
     const fetchTeachers = async () => {
       try {
-        const response = await getAsync(`users`);
+        const response = await getAsync(`teachers`);
         const data = await response.json();
-        setTeacherData(data.filter((user) => user.role === "Teacher"));
+        setTeacherData(data);
       } catch (error) {
         console.error("Error fetching teachers:", error);
       }
@@ -70,12 +70,16 @@ const Page = () => {
   };
   
 
-  const handleAdd = useCallback(() => {
-    alert("Add");
-  }, []);
-
   const handleAddTeacher = (newTeacher) => {
     setTeacherData((prevTeachers) => [...prevTeachers, newTeacher]);
+  };
+
+  const handleEditTeacher = (updatedTeacher) => {
+    setTeacherData((prevTeachers) =>
+      prevTeachers.map((teacher) =>
+        teacher.id === updatedTeacher.id ? updatedTeacher : teacher
+      )
+    );
   };
 
   const handleExport = useCallback(() => {
@@ -165,6 +169,7 @@ const Page = () => {
               page={page}
               rowsPerPage={rowsPerPage}
               selected={teachersSelection.selected}
+              onEditTeacher={handleEditTeacher}
             />
           </Stack>
         </Container>

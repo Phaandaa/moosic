@@ -13,7 +13,6 @@ import { SvgIcon } from "@mui/material";
 import { getAsync, putAsync } from "src/utils/utils"; // Assuming getAsync is a utility for making GET requests
 import { useEffect } from "react";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
-import { set } from "nprogress";
 
 export default function StudentsEditModal({ student, onEditStudent }) {
   const [open, setOpen] = React.useState(false);
@@ -184,11 +183,16 @@ export default function StudentsEditModal({ student, onEditStudent }) {
           >Submit</Button>
         </DialogActions>
       </Dialog>
-      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
         <Alert
           onClose={() => setSnackbarOpen(false)}
           severity={snackbarSeverity}
-          sx={{ width: "100%" }}
+          sx= {{ width: "100%" }}
         >
           {snackbarMessage}
         </Alert>

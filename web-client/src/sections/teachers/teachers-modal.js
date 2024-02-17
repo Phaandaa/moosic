@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Snackbar from "@mui/material/Snackbar";
@@ -18,12 +18,13 @@ export default function TeachersModal({ onAddTeacher }) {
   const [teacherName, setTeacherName] = React.useState("");
   const [teacherEmail, setTeacherEmail] = React.useState("");
   const [instrument, setInstrument] = React.useState("");
+  const [teacherPhone, setTeacherPhone] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [passwordCfm, setPasswordCfm] = React.useState("");
 
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = React.useState("success"); 
+  const [snackbarSeverity, setSnackbarSeverity] = React.useState("success");
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -44,6 +45,11 @@ export default function TeachersModal({ onAddTeacher }) {
 
   const handleInstrumentChange = (event) => {
     setInstrument(event.target.value);
+  };
+
+  const handlePhoneChange = (event) => {
+    setTeacherPhone(event.target.value);
+    console.log("Phone:", event.target.value);
   };
 
   const handlePasswordChange = (event) => {
@@ -68,13 +74,15 @@ export default function TeachersModal({ onAddTeacher }) {
     // Assuming postAsync is correctly defined elsewhere and handles the asynchronous POST request
     const submitData = async () => {
       try {
+        console.log(teacherPhone);
         const response = await postAsync("users/create", {
           name: teacherName,
           email: teacherEmail,
           role: "Teacher",
           password: password, // Make sure your API expects this structure
           info: {
-            instrument: instrument
+            instrument: instrument,
+            phone: teacherPhone.toString(),
           },
         });
         if (!response.ok) {
@@ -93,8 +101,6 @@ export default function TeachersModal({ onAddTeacher }) {
         // Perform any action on successful submission here
         setOpen(false); // Close the modal on successful submission
         // Reset form fields or perform other cleanup tasks here
-
-
       } catch (error) {
         console.error("Form submission error:", error);
         setSnackbarMessage("Failed to add Teacher. Please try again.");
@@ -106,6 +112,7 @@ export default function TeachersModal({ onAddTeacher }) {
         setTeacherName("");
         setTeacherEmail("");
         setInstrument("");
+        setTeacherPhone("");
         setPassword("");
         setPasswordCfm("");
       }
@@ -114,8 +121,6 @@ export default function TeachersModal({ onAddTeacher }) {
     submitData();
     handleClose();
   };
-
-  
 
   return (
     <React.Fragment>
@@ -187,13 +192,25 @@ export default function TeachersModal({ onAddTeacher }) {
                   <MenuItem value="Violin">Violin</MenuItem>
                 </Select>
               </FormControl>
+              <TextField
+                margin="dense"
+                id="tchr-phone"
+                name="tchr-phone"
+                label="Phone Number"
+                type="tel"
+                fullWidth
+                variant="standard"
+                onChange={handlePhoneChange}
+                value={teacherPhone}
+                required
+              />
             </>
           )}
           {step === 2 && (
             // Step 2: Login Details
             <>
               <DialogContentText>Please enter the password details.</DialogContentText>
-              
+
               <TextField
                 autoFocus
                 required
@@ -227,15 +244,15 @@ export default function TeachersModal({ onAddTeacher }) {
         </DialogContent>
         <DialogActions>
           {step === 1 && (
-             <>
-             <Button onClick={handleClose}>Cancel</Button>
-             <Button
-               onClick={() => setStep(2)}
-               disabled={!teacherName || !teacherEmail || !instrument }
-             >
-               Next
-             </Button>
-           </>
+            <>
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button
+                onClick={() => setStep(2)}
+                disabled={!teacherName || !teacherEmail || !instrument || !teacherPhone}
+              >
+                Next
+              </Button>
+            </>
           )}
           {step === 2 && (
             <>
@@ -250,11 +267,16 @@ export default function TeachersModal({ onAddTeacher }) {
           )}
         </DialogActions>
       </Dialog>
-      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
         <Alert
           onClose={() => setSnackbarOpen(false)}
           severity={snackbarSeverity}
-          sx={{ width: "100%" }}
+          sx= {{ width: "100%" }}
         >
           {snackbarMessage}
         </Alert>
