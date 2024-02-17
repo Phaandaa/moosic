@@ -85,7 +85,7 @@ public class RewardShopService {
             Integer stock = rewardShopItemDTO.getStock();
             Integer limiation = rewardShopItemDTO.getLimitation();
             String type = rewardShopItemDTO.getType();
-            RewardShop createdRewardShopItem = new RewardShop(description, points, stock, limiation, imageURL, type);
+            RewardShop createdRewardShopItem = new RewardShop(description, points, stock, limiation, null, type);
             rewardShopRepository.save(createdRewardShopItem);
             return "Create new item in reward shop successfully";
         } catch (RuntimeException e) {
