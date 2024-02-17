@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
 import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
-import ClockIcon from '@heroicons/react/24/solid/ClockIcon';
+import TrophyIcon from '@heroicons/react/24/solid/TrophyIcon';
+import InboxStackIcon from '@heroicons/react/24/solid/InboxStackIcon';
 import { Avatar, Box, Card, CardContent, Divider, Stack, SvgIcon, Typography } from '@mui/material';
 
 export const ShopCard = (props) => {
-  const { company } = props;
+  const { item } = props;
 
   return (
     <Card
@@ -23,7 +24,7 @@ export const ShopCard = (props) => {
           }}
         >
           <Avatar
-            src={company.logo}
+            src={item?.imageLink ? item.imageLink : ''}
             variant="square"
           />
         </Box>
@@ -32,13 +33,13 @@ export const ShopCard = (props) => {
           gutterBottom
           variant="h5"
         >
-          {company.title}
+          {item?.description ? item.description : ''}
         </Typography>
         <Typography
           align="center"
           variant="body1"
         >
-          {company.description}
+          {item?.type ? item.type : ''}
         </Typography>
       </CardContent>
       <Box sx={{ flexGrow: 1 }} />
@@ -59,14 +60,14 @@ export const ShopCard = (props) => {
             color="action"
             fontSize="small"
           >
-            <ClockIcon />
+            <TrophyIcon />
           </SvgIcon>
           <Typography
             color="text.secondary"
             display="inline"
             variant="body2"
           >
-            Updated 2hr ago
+            {item.points} Pts
           </Typography>
         </Stack>
         <Stack
@@ -78,14 +79,14 @@ export const ShopCard = (props) => {
             color="action"
             fontSize="small"
           >
-            <ArrowDownOnSquareIcon />
+            <InboxStackIcon />
           </SvgIcon>
           <Typography
             color="text.secondary"
             display="inline"
             variant="body2"
           >
-            {company.downloads} Downloads
+            {item.stock} in stock
           </Typography>
         </Stack>
       </Stack>
@@ -94,5 +95,5 @@ export const ShopCard = (props) => {
 };
 
 ShopCard.propTypes = {
-  company: PropTypes.object.isRequired
+  item: PropTypes.object.isRequired
 };
