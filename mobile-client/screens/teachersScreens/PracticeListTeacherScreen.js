@@ -1,14 +1,14 @@
 import React, {useState} from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert, Dimensions, Button} from 'react-native';
-import Modal from 'react-native-modal';
-import theme from '../styles/theme';
-import { Audio, Video, ResizeMode} from 'expo-av';
+import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert, Modal, Button, Dimensions} from 'react-native';
+import theme from '../../styles/theme';
+import ProvidePracticeFeedbackScreen from './ProvidePracticeFeedbackScreen';
 import { useSelector } from 'react-redux';
-
-function PracticeListStudentScreen({navigation}){
-    const practiceData = useSelector(state => state.cache.practiceData);
+import { Audio, Video, ResizeMode} from 'expo-av';
+function PracticeListTeacherScreen({navigation}){
+    // const practiceData = useSelector(state => state.cache.practiceData);
     const [isModalVisible, setModalVisible] = useState(false);
     const [selectedVideo, setSelectedVideo] = useState(null);
+
 
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
@@ -19,24 +19,23 @@ function PracticeListStudentScreen({navigation}){
         toggleModal(); 
     }
 
-
     return (
         <View style={theme.container}> 
+        {/* Student 1  */}
             <TouchableOpacity style={theme.card}>
                 <View style={theme.cardTextContainer}>
-                    <Text style={theme.cardTextBold}>{practiceData.title}</Text>
-                    <Text style={theme.cardText}>{practiceData.comment}</Text>
+                    <Text style={theme.cardTextBold}>Dummy Song</Text>
+                    <Text style={theme.cardText}>Dummy comment</Text>
                 </View>
                 <View style={theme.buttonContainer}>
                     <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText} onPress={() => openVideo(practiceData.videos[0])}>Recording</Text>
+                        <Text style={theme.smallButtonText} onPress={() => openVideo(require('../assets/dummyvid.mp4'))}>Recording</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ViewPracticeFeedbackScreen')}>Feedback</Text>
+                        <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ProvidePracticeFeedbackScreen')}>Feedback</Text>
                     </TouchableOpacity>
                 </View>
             </TouchableOpacity>
-
             {/* Modal for viewing the video */}
             <Modal
                     isVisible={isModalVisible}
@@ -46,22 +45,23 @@ function PracticeListStudentScreen({navigation}){
                 >
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
-                            {selectedVideo && (
+                            {/* {selectedVideo && ( */}
                                 <Video
-                                source={{ uri: selectedVideo }}
+                                source={require('../assets/dummyvid.mp4')}
                                 style={styles.modalVideo}
                                 resizeMode={ResizeMode.CONTAIN}
                                 shouldPlay
                             />
-                            )}
+                            {/* )} */}
                             <Button title="Close" onPress={toggleModal} />
                         </View>
                     </View>
                 </Modal>
         </View>
+
     )
 }
-export default PracticeListStudentScreen;
+export default PracticeListTeacherScreen;
 
 const styles = StyleSheet.create({
     card: {

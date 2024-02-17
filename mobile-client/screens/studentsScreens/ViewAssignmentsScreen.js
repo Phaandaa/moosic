@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Button } from 'react-native';
-import theme from '../styles/theme';
+import theme from '../../styles/theme';
 import Modal from 'react-native-modal';
 import { useSelector } from 'react-redux';
 
