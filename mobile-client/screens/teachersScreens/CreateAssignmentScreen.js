@@ -191,30 +191,38 @@ function CreateAssignmentScreen({ navigation }) {
           </View>
         </View>
 
-        {/* Display Images */}
-        <View style={styles.imageContainer}>
-          {images.map((image, index) => (
-            <View key={index} style={styles.imageWrapper}>
-              <Image source={{ uri: image.uri }} style={styles.image} />
-              <TouchableOpacity onPress={() => removeImage(index)} style={styles.removeButton}>
-                <Ionicons name="close-circle" size={24} color="red" />
-              </TouchableOpacity>
+        {/* Display Images and Document Names */}
+        {images.length === 0 && uploadedDocuments.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <Ionicons name="cloud-upload-outline" size={50} color="#cccccc" />
+            <Text style={styles.emptyText}>Upload images or documents to your assignment</Text>
+          </View>
+        ) : (
+          <>
+            <View style={styles.imageContainer}>
+              {images.map((image, index) => (
+                <View key={index} style={styles.imageWrapper}>
+                  <Image source={{ uri: image.uri }} style={styles.image} />
+                  <TouchableOpacity onPress={() => removeImage(index)} style={styles.removeButton}>
+                    <Ionicons name="close-circle" size={24} color="red" />
+                  </TouchableOpacity>
+                </View>
+              ))}
             </View>
-          ))}
-        </View>
 
-        {/* Display Document Names */}
-        <View style={styles.documentContainer}>
-          {uploadedDocuments.map((doc, index) => (
-            <View key={index} style={styles.documentItem}>
-              <Ionicons name="document-attach" size={24} color="#4F8EF7" />
-              <Text style={styles.documentName}>{doc.name}</Text>
-              <TouchableOpacity onPress={() => removeDocument(index)} style={styles.removeButton}>
-                <Ionicons name="close-circle" size={24} color="red" />
-              </TouchableOpacity>
+            <View style={styles.documentContainer}>
+              {uploadedDocuments.map((doc, index) => (
+                <View key={index} style={styles.documentItem}>
+                  <Ionicons name="document-attach" size={24} color="#4F8EF7" />
+                  <Text style={styles.documentName}>{doc.name}</Text>
+                  <TouchableOpacity onPress={() => removeDocument(index)} style={styles.removeButton}>
+                    <Ionicons name="close-circle" size={24} color="red" />
+                  </TouchableOpacity>
+                </View>
+              ))}
             </View>
-          ))}
-        </View>
+          </>
+        )}
 
 
         <StudentDropdown onSelectionChange={setSelectedStudents} style={styles.dropdown} />
@@ -231,6 +239,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffffff',
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  emptyText: {
+    color: '#cccccc',
+    textAlign: 'center',
+    marginTop: 10,
   },
   formContainer: {
     padding: 20,
@@ -327,7 +345,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: 'red',
-    marginBottom: 10,
+    margin: 10
   },
   dateText: {
     fontSize: 16,
