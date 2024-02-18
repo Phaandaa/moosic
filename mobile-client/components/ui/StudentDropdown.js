@@ -8,49 +8,42 @@ import IP_ADDRESS from '../../constants/ip_address_temp';
 const StudentDropdown = ({ onSelectionChange }) => {
     const [selected, setSelected] = useState([]);
     const [students, setStudents] = useState([]);
-    const [isFetching, setIsFetching] = useState(false);
+    const [isFetching, setIsFetching] = useState(true);
 
     useEffect(() => {
         const fetchUserDataAndStudents = async () => {
           setIsFetching(true);
           try {
             const storedData = await AsyncStorage.getItem('authData');
-            if (!storedData) throw new Error('No user data found.');
-      
+            if (!storedData) {
+              throw new Error('No user data found.');
+            }
             const parsedData = JSON.parse(storedData);
-            const teacherId = parsedData.userId; // Assuming the logged-in user is a teacher.
-            console.log('Teacher ID:', teacherId);
-
-            const response = await axios.get(`${IP_ADDRESS}/students/teacher/${teacherId}/`);
-            console.log('Response:', response.data); // Log the response data
-      
-            const data = response.data;
-            if (!data.length) throw new Error('No students found.');
-      
-            // Map over the array of student objects to create the formattedData for the dropdown
-            const formattedData = data.map(student => ({
-              key: student.id, // Assuming 'id' is the unique identifier for the dropdown
-              value: student.name, // The name that will be displayed in the dropdown
+            const userId = parsedData.userId; // Make sure this is the correct key for userId
+            const response = await axios.get(`${IP_ADDRESS}/students/teacher/${userId}/`);
+            const formattedData = response.data.map(student => ({
+              key: student.id, // Ensure the key is a string
+              value: student.name,
             }));
-            setStudents(formattedData);
+            setStudents(formattedData); // Update the students state with formatted data
           } catch (error) {
-            console.error('Error fetching data:', error);
-            Alert.alert('Error', error.message);
+            Alert.alert('Error', error.toString());
+          } finally {
+            setIsFetching(false);
           }
-          setIsFetching(false);
         };
       
         fetchUserDataAndStudents();
       }, []);
       
+
+      useEffect(() => {
+        if (onSelectionChange && Array.isArray(selected)) {
+          onSelectionChange(selected);
+        }
+      }, [selected, onSelectionChange]);
       
 
-    useEffect(() => {
-        // Call the passed callback function whenever 'selected' changes
-        if (onSelectionChange) {
-            onSelectionChange(selected);
-        }
-    }, [selected, onSelectionChange]);
 
     return (
         <View style={styles.dropdownBox}>
@@ -67,7 +60,7 @@ const StudentDropdown = ({ onSelectionChange }) => {
                     notFoundText='Student does not exist.'
                     listParentLabelStyle={styles.listParentLabelStyle}
                     dropDownContainer={styles.dropDownContainer}
-                    // You may need additional props here depending on the structure of MultipleSelectList
+                    
                 />
             )}
         </View>  

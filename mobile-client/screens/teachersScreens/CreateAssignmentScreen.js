@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { TextInput, View, ScrollView, TouchableOpacity, Text, Button, Image, Alert, StyleSheet, Platform } from 'react-native';
-import theme from '../../styles/theme';
-import AnimatedPlaceholderInput from '../../components/ui/animateTextInput';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import StudentDropdown from '../../components/ui/StudentDropdown';
@@ -9,6 +7,9 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
 import { useDispatch } from 'react-redux';
 import { setCache } from '../../cacheSlice';
+import IP_ADDRESS from '../../constants/ip_address_temp';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 function CreateAssignmentScreen({ navigation }) {
   const dispatch = useDispatch();
@@ -49,9 +50,13 @@ function CreateAssignmentScreen({ navigation }) {
         aspect: [4, 3],
         quality: 1,
       });
-      if (!result.canceled) { // Note the use of 'canceled' instead of 'cancelled'
-        result.assets.forEach(asset => {
-          setImages(currentImages => [...currentImages, { uri: asset.uri, name: asset.fileName || 'Unnamed Image' }]);
+      if (!result.canceled) {
+        result.assets.forEach((asset, index) => {
+          setImages(currentImages => [...currentImages, {
+            uri: asset.uri,
+            type: asset.type || 'image/jpeg', // Use the type from asset or a default
+            name: asset.fileName || `image_${index}.jpg`
+          }]);
         });
       }
     }
@@ -61,21 +66,17 @@ function CreateAssignmentScreen({ navigation }) {
     try {
       const result = await DocumentPicker.getDocumentAsync({
         type: '*/*',
-        multiple: true, // Set to true if you want to allow multiple selections
+        multiple: true,
       });
-      
-      // Check if the operation was not canceled and assets are available
       if (!result.canceled && result.assets) {
-        const newDocs = result.assets.map(doc => ({
+        const newDocs = result.assets.map((doc, index) => ({
           uri: doc.uri,
-          name: doc.name || 'Unnamed Document', // Provide a fallback name
+          type: doc.mimeType || 'application/octet-stream', // Use the mimeType from doc or a default
+          name: doc.name || `document_${index}.pdf`
         }));
-  
-        // Update the state with the new documents
         setUploadedDocuments(currentDocs => [...currentDocs, ...newDocs]);
       }
     } catch (error) {
-      console.error('Error picking document:', error);
       Alert.alert('Error picking document:', error.message);
     }
   };
@@ -110,25 +111,66 @@ function CreateAssignmentScreen({ navigation }) {
     return isValid;
   };
 
-  const submitHandler = () => {
+  const submitHandler = async () => {
     if (!validateForm()) {
       Alert.alert('Error', 'Please fill in all required fields.');
       return;
     }
-    const assignmentData = {
-      name: assignmentName,
-      description: assignmentDesc,
-      deadline: assignmentDeadline,
-      images: images,
-      documents: uploadedDocuments,
-      students: selectedStudents,
-      submissionDate: submissionDate.toString(),
-    };
-    dispatch(setCache({ key: 'assignmentData', value: assignmentData }));
-    navigation.navigate('ViewCreatedAssignmentsScreen', { assignmentData });
-    Alert.alert('Success', 'Assignment created successfully!');
+  
+    const storedData = await AsyncStorage.getItem('authData');
+    if (!storedData) {
+      Alert.alert('Error', 'Authentication data is not available. Please login again.');
+      return;
+    }
+  
+    const parsedData = JSON.parse(storedData);
+    if (!parsedData.userId || !parsedData.name) {
+      Alert.alert('Error', 'Incomplete authentication data. Please login again.');
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append('assignment', JSON.stringify({
+      teacher_id: parsedData.userId,
+      teacher_name: parsedData.name,
+      assignment_title: assignmentName,
+      assignment_desc: assignmentDesc,
+      assignment_deadline: assignmentDeadline,
+      selected_students: selectedStudents.map(student => ({ id: student.key })),
+      points: 0
+    }));
+    
+  
+    images.forEach((image, index) => {
+      formData.append(`file${index}`, {
+        uri: image.uri,
+        type: image.type,
+        name: image.name
+      });
+    });
+  
+    uploadedDocuments.forEach((doc, index) => {
+      formData.append(`document${index}`, {
+        uri: doc.uri,
+        type: doc.type,
+        name: doc.name
+      });
+    });
+    try {
+      const response = await axios.post(`${IP_ADDRESS}/assignments/create`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      console.log(response.data);
+      dispatch(setCache({ key: 'assignmentData', value: assignmentData }));
+      navigation.navigate('ViewCreatedAssignmentsScreen', { assignmentData });
+      Alert.alert('Success', 'Assignment created successfully!');
+    } catch (error) {
+      console.error('Error creating assignment:', error);
+      Alert.alert('Error', `Failed to create assignment. ${error.response?.data?.message || 'Please try again.'}`);
+    }
   };
-
 
 
   return (
@@ -225,7 +267,8 @@ function CreateAssignmentScreen({ navigation }) {
         )}
 
 
-        <StudentDropdown onSelectionChange={setSelectedStudents} style={styles.dropdown} />
+<StudentDropdown onSelectionChange={(selected) => setSelectedStudents(selected)} style={styles.dropdown} />
+  
 
         <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={submitHandler}>
           <Text style={styles.buttonText}>Create Assignment</Text>
