@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import HomepageSearchBar from '../../components/ui/homepageSearchbar';
 import theme from '../../styles/theme';
 import IP_ADDRESS from '../../constants/ip_address_temp';
-
+import BottomTabNavigator from '../../components/ui/navbar';
 function MyStudentsScreen({ navigation }) {
     const [students, setStudents] = useState([]);
     const [filteredStudents, setFilteredStudents] = useState([]);
@@ -104,8 +104,10 @@ function MyStudentsScreen({ navigation }) {
                             </TouchableOpacity>
                         ) : null
                     ))}
+                    
                 </>
             )}
+            
         </ScrollView>
     );    
 }

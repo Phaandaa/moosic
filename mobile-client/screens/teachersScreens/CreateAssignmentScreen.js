@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, TouchableOpacity, Text, Button, Image, Alert, StyleSheet, Platform } from 'react-native';
+import { TextInput, View, ScrollView, TouchableOpacity, Text, Button, Image, Alert, StyleSheet, Platform } from 'react-native';
 import theme from '../../styles/theme';
 import AnimatedPlaceholderInput from '../../components/ui/animateTextInput';
 import * as ImagePicker from 'expo-image-picker';
@@ -59,16 +59,29 @@ function CreateAssignmentScreen({ navigation }) {
 
   const uploadDocument = async () => {
     try {
-      const result = await DocumentPicker.getDocumentAsync({ type: '*/*', multiple: true });
-      if (result.type === 'success') {
-        result.assets.forEach(asset => {
-          setUploadedDocuments(currentDocs => [...currentDocs, { uri: asset.uri, name: asset.name }]);
-        });
+      const result = await DocumentPicker.getDocumentAsync({
+        type: '*/*',
+        multiple: true, // Set to true if you want to allow multiple selections
+      });
+      
+      // Check if the operation was not canceled and assets are available
+      if (!result.canceled && result.assets) {
+        const newDocs = result.assets.map(doc => ({
+          uri: doc.uri,
+          name: doc.name || 'Unnamed Document', // Provide a fallback name
+        }));
+  
+        // Update the state with the new documents
+        setUploadedDocuments(currentDocs => [...currentDocs, ...newDocs]);
       }
     } catch (error) {
+      console.error('Error picking document:', error);
       Alert.alert('Error picking document:', error.message);
     }
   };
+  
+  
+  
 
   const removeImage = (index) => {
     setImages(currentImages => currentImages.filter((_, i) => i !== index));
@@ -119,132 +132,254 @@ function CreateAssignmentScreen({ navigation }) {
 
 
   return (
-    <ScrollView style={theme.container} contentContainerStyle={theme.contentContainer}>
-      <View>
-        <AnimatedPlaceholderInput
-          placeholder="Assignment Name"
-          value={assignmentName}
-          onChangeText={setAssignmentName}
-        />
-        {errors.assignmentName && <Text style={{ color: 'red' }}>{errors.assignmentName}</Text>}
+    <ScrollView style={styles.container}>
+      <View style={styles.formContainer}>
+        <Text style={styles.header}>Create New Assignment</Text>
 
-        <AnimatedPlaceholderInput
-          placeholder="Description"
-          value={assignmentDesc}
-          onChangeText={setAssignmentDesc}
-          multiline
-        />
-        {errors.assignmentDesc && <Text style={{ color: 'red' }}>{errors.assignmentDesc}</Text>}
+        <View style={styles.inputContainer}>
+          <TextInput
+            placeholder="Add a Title"
+            value={assignmentName}
+            onChangeText={setAssignmentName}
+            style={styles.input}
+          />
+          {errors.assignmentName && <Text style={styles.errorText}>{errors.assignmentName}</Text>}
+        </View>
 
-        <TouchableOpacity onPress={toggleDatepicker} style={theme.button}>
-          <Text style={theme.buttonText}>Select Deadline</Text>
-        </TouchableOpacity>
-        <Text>{assignmentDeadline}</Text>
-        {errors.assignmentDeadline && <Text style={{ color: 'red' }}>{errors.assignmentDeadline}</Text>}
+        <View style={styles.inputContainer}>
+          <TextInput
+            placeholder="Description"
+            value={assignmentDesc}
+            onChangeText={setAssignmentDesc}
+            multiline
+            style={[styles.input, styles.textArea]}
+          />
+          {errors.assignmentDesc && <Text style={styles.errorText}>{errors.assignmentDesc}</Text>}
+        </View>
+        
+        <View style={styles.deadlineContainer}>
+          <Text style={styles.dueDateLabel}>Due date</Text>
+          <TouchableOpacity onPress={toggleDatepicker} style={styles.dateDisplay}>
+            <Text style={styles.dateText}>{assignmentDeadline || 'Select date'}</Text>
+            <Ionicons name="calendar" size={24} color="#4664EA" />
+          </TouchableOpacity>
+        </View>
 
         {showPicker && (
-          <DateTimePicker value={date} mode="date" display="default" onChange={onChange} />
+          <DateTimePicker
+            value={date}
+            mode="date"
+            display="default"
+            onChange={onChange}
+          />
         )}
 
-        <TouchableOpacity style={theme.button} onPress={() => uploadImage('gallery')}>
-          <Text style={theme.buttonText}>Upload Image</Text>
-        </TouchableOpacity>
 
-        <TouchableOpacity style={theme.button} onPress={uploadDocument}>
-          <Text style={theme.buttonText}>Upload Document</Text>
-        </TouchableOpacity>
+        <View style={styles.uploadButtons}>
+        <View style={styles.attachFilesSection}>
+          <TouchableOpacity style={styles.attachButton} onPress={() => uploadImage('gallery')}>
+            <Ionicons name="images" size={24} color="#4664EA" />
+            <Text style={styles.attachText}>Upload Image</Text>
+          </TouchableOpacity>
+        </View>
 
-        {images.map((image, index) => (
-          <View key={index} style={theme.imageContainer}>
-            <Image source={{ uri: image.uri }} style={theme.assignmentImage} />
-            <TouchableOpacity onPress={() => removeImage(index)} style={theme.removeButton}>
-              <Ionicons name="close-circle" size={24} color="red" />
+          <View style={styles.attachFilesSection}>
+            <TouchableOpacity style={styles.attachButton} onPress={uploadDocument}>
+              <Ionicons name="attach" size={24} color="#4664EA" />
+              <Text style={styles.attachText}>Attach Files</Text>
             </TouchableOpacity>
           </View>
-        ))}
+        </View>
 
-        {uploadedDocuments.map((doc, index) => (
-          <View key={index} style={theme.documentItemContainer}>
-            <Ionicons name="document-attach" size={24} color="black" />
-            <Text style={theme.documentName}>{doc.name}</Text>
-            <TouchableOpacity onPress={() => removeDocument(index)} style={theme.removeButton}>
-              <Ionicons name="close-circle" size={24} color="red" />
-            </TouchableOpacity>
-          </View>
-        ))}
+        {/* Display Images */}
+        <View style={styles.imageContainer}>
+          {images.map((image, index) => (
+            <View key={index} style={styles.imageWrapper}>
+              <Image source={{ uri: image.uri }} style={styles.image} />
+              <TouchableOpacity onPress={() => removeImage(index)} style={styles.removeButton}>
+                <Ionicons name="close-circle" size={24} color="red" />
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
 
-        <StudentDropdown onSelectionChange={setSelectedStudents} />
+        {/* Display Document Names */}
+        <View style={styles.documentContainer}>
+          {uploadedDocuments.map((doc, index) => (
+            <View key={index} style={styles.documentItem}>
+              <Ionicons name="document-attach" size={24} color="#4F8EF7" />
+              <Text style={styles.documentName}>{doc.name}</Text>
+              <TouchableOpacity onPress={() => removeDocument(index)} style={styles.removeButton}>
+                <Ionicons name="close-circle" size={24} color="red" />
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
 
-        <TouchableOpacity style={theme.button} onPress={submitHandler}>
-          <Text style={theme.buttonText}>Create Assignment</Text>
+
+        <StudentDropdown onSelectionChange={setSelectedStudents} style={styles.dropdown} />
+
+        <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={submitHandler}>
+          <Text style={styles.buttonText}>Create Assignment</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
   );
 }
 
-export default CreateAssignmentScreen;
-
-
-const assignmentStyles = StyleSheet.create({
-    contentContainer:{
-        flexGrow: 1, // Makes sure all content will be scrolled
-    },
-    innerContainer:{
-        padding: 20,
-    },
-    image: {
-        width: 150,
-        height: 150
-    }, 
-    removeButton: {
-        position: 'absolute',
-        right: 0,
-        top: 0,
-        // backgroundColor: '#4664EA',
-        // padding: 5,
-        // borderRadius: 10,
-    },
-    cancelIcon: {
-        width: 30,
-        height: 30
-    },
-    label:{
-        marginTop: 20,
-        marginLeft: 20,
-        fontSize: 16,
-        color: '#6e6e6e',
-    }, 
-    documentItemContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        marginTop: 20,
-        marginLeft: 10,
-    },
-    documentThumbnail: {
-        width: 30,
-        height: 30,
-        marginRight: 10,
-    },
-    documentName: {
-        flexGrow: 1,
-        flexShrink: 1,
-        marginRight: 10,
-    },
-    buttonsContainer:{
-        flexDirection: 'row',
-        justifyContent: 'space-between', // This will space out the buttons evenly
-        marginTop: 20,
-        paddingHorizontal: 10, // Add some padding on the sides
-    },
-    datePicker:{
-        height: 120,
-        marginTop: -10,
-    },
-    placeholder: {
-        position: 'absolute',
-        bottom: 40, // Adjusted to align with the bottom of the TextInput
-        color: '#A1B2CF',
-      },
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+  },
+  formContainer: {
+    padding: 20,
+  },
+  header: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#525F7F',
+  },
+  inputContainer: {
+    backgroundColor: '#F7F7F7',
+    borderRadius: 5,
+    marginBottom: 15,
+  },
+  input: {
+    padding: 15,
+    fontSize: 16,
+  },
+  textArea: {
+    minHeight: 100,
+    textAlignVertical: 'top',
+  },
+  attachFilesSection: {
+    backgroundColor: '#F7F7F7',
+    borderRadius: 5,
+    marginBottom: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 15,
+  },
+  attachButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  attachText: {
+    marginLeft: 10,
+    fontSize: 16,
+    color: '#4664EA',
+  },
+  textArea: {
+    minHeight: 100,
+    textAlignVertical: 'top',
+  },
+  button: {
+    backgroundColor: '#4664EA',
+    padding: 15,
+    borderRadius: 15,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  uploadButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  imageContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
+  },
+  imageWrapper: {
+    position: 'relative',
+    marginRight: 10,
+    marginBottom: 10,
+  },
+  image: {
+    width: 100,
+    height: 100,
+    borderRadius: 5,
+  },
+  removeButton: {
+    position: 'absolute',
+    top: -10,
+    right: -10,
+  },
+  documentContainer: {
+    marginBottom: 20,
+    width: '80%',
+  },
+  documentItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  documentName: {
+    marginLeft: 10,
+    fontSize: 16,
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
+  },
+  dateText: {
+    fontSize: 16,
+    marginBottom: 10,
+    
+  },
+  dropdown: {
+    marginBottom: 20,
+  },
+  submitButton: {
+    marginTop: 20,
+  },
+  deadlineContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+    padding: 10,
+    backgroundColor: '#F7F7F7', // Light gray background
+    borderRadius: 8,
+  },
+  dueDateLabel: {
+    fontSize: 16,
+    color: '#8E8E93', // Light gray text
+  },
+  dateDisplay: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginLeft: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: '#FFFFFF', // White background for date display
+    borderRadius: 8,
+  },
+  dateText: {
+    fontSize: 16,
+    color: '#000000', // Black text for the date
+  },
+  // Update existing button styles if necessary
+  button: {
+    backgroundColor: '#4664EA',
+    padding: 15,
+    borderRadius: 15,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
+
+export default CreateAssignmentScreen;
