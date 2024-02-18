@@ -32,8 +32,29 @@ export const ItemDetailModal = ({
   const [disabled, setDisabled] = React.useState(true);
   const [selectedFile, setSelectedFile] = useState(null);
 
+  const [points, setPoints] = useState(item?.points || 0);
+  const [limitation, setLimitation] = useState(item?.limitation || 0);
+  const [stock, setStock] = useState(item?.stock || 0);
+  const [type, setType] = useState(item?.type || "");
+
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
+  };
+
+  const handleTypeChange = (event) => {
+    setType(event.target.value);
+  };
+
+  const handlePointsChange = (event) => {
+    setPoints(event.target.value);
+  };
+  
+  const handleStockChange = (event) => {
+    setStock(event.target.value);
+  };
+  
+  const handleLimitationChange = (event) => {
+    setLimitation(event.target.value);
   };
 
   const handleUploadImage = async () => {
@@ -80,6 +101,43 @@ export const ItemDetailModal = ({
     } catch (error) {
       triggerSnackbar("Error deleting item", "error");
       console.error("Error deleting item:", error);
+    }
+  };
+
+  const handleEditDetails = async () => {
+    const updatedItem = {
+      ...item,
+      type,
+      points: Number(points),
+      stock: Number(stock),
+      limitation: Number(limitation),
+      description: item.description,
+    };
+
+    try {
+      // Assuming you have an endpoint that accepts item updates and returns the updated item
+      const response = await putAsync(
+        `reward-shop/${item.id}`,
+        {
+          type: type,
+          points: Number(points),
+          stock: Number(stock),
+          limitation: Number(limitation),
+        },
+        null,
+        false
+      );
+
+      if (response.ok) {
+        onEditItem(updatedItem); // Notify the parent component about the update
+        triggerSnackbar("Item updated successfully!", "success");
+        handleClose(); // Close the modal
+      } else {
+        triggerSnackbar("Failed to update item.", "error");
+      }
+    } catch (error) {
+      triggerSnackbar("Error updating item.", "error");
+      console.error("Error updating item:", error);
     }
   };
 
@@ -159,7 +217,8 @@ export const ItemDetailModal = ({
                 sx={{ width: "26ch" }}
                 variant="filled"
                 disabled={disabled}
-                value={item?.type || "N/A"}
+                value={type}
+                onChange={handleTypeChange}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -172,7 +231,8 @@ export const ItemDetailModal = ({
                 }}
                 variant="filled"
                 disabled={disabled}
-                value={item?.points || 0}
+                value={points}
+                onChange={handlePointsChange}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -185,7 +245,8 @@ export const ItemDetailModal = ({
                 }}
                 variant="filled"
                 disabled={disabled}
-                value={item?.stock || 0}
+                value={stock}
+                onChange={handleStockChange}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -198,7 +259,8 @@ export const ItemDetailModal = ({
                 }}
                 variant="filled"
                 disabled={disabled}
-                value={item?.limitation || 0}
+                value={limitation}
+                onChange={handleLimitationChange}
               />
             </Grid>
           </Grid>
@@ -218,8 +280,20 @@ export const ItemDetailModal = ({
           {/* Placeholder for buttons */}
         </DialogContent>
         <DialogActions sx={{ padding: "20px" }}>
-          <Button variant="contained" color="primary">
-            Edit Details
+          <Button
+            variant={disabled ? "contained" : "outlined"}
+            color="primary"
+            onClick={() => setDisabled(!disabled)}
+          >
+            {disabled ? "Edit Details" : "Cancel Edit"}
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleEditDetails}
+            sx={{ display: disabled ? "none" : "" }}
+          >
+            Submit Edit
           </Button>
           <Button variant="contained" color="error" onClick={handleDeleteItem}>
             Delete Item
