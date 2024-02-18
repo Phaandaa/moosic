@@ -1,7 +1,6 @@
 import Head from "next/head";
 import ArrowUpOnSquareIcon from "@heroicons/react/24/solid/ArrowUpOnSquareIcon";
 import ArrowDownOnSquareIcon from "@heroicons/react/24/solid/ArrowDownOnSquareIcon";
-import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import {
   Box,
   Button,
@@ -17,6 +16,9 @@ import { ShopCard } from "src/sections/shop/shop-card";
 import { ShopSearch } from "src/sections/shop/shop-search";
 import { useEffect, useState } from "react";
 import { getAsync } from "src/utils/utils";
+import SnackbarAlert from "src/components/alert";
+import AddItem from "src/sections/shop/shop-add";
+
 
 const Page = () => {
   const [items, setItems] = useState([]);
@@ -24,6 +26,10 @@ const Page = () => {
   const itemsPerPage = 6; // Adjust this value as needed
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredItems, setFilteredItems] = useState([]);
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -62,6 +68,33 @@ const Page = () => {
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
+
+  const onTriggerSnackbar = (message, severity) => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
+
+  const handleDeleteItem = (itemId) => {
+    setItems((currentItems) => currentItems.filter((item) => item.id !== itemId));
+    setFilteredItems((currentFilteredItems) =>
+      currentFilteredItems.filter((item) => item.id !== itemId)
+    );
+  };
+
+  const handleEditItem = (updatedItem) => {
+    setItems(items.map((item) => (item.id === updatedItem.id ? updatedItem : item)));
+  };
+
+  const handleAddItem = (newItem) => {
+    setItems((currentItems) => [newItem, ...currentItems]);
+  }
+
+  console.log(items);
 
   return (
     <>
@@ -104,23 +137,19 @@ const Page = () => {
                 </Stack>
               </Stack>
               <div>
-                <Button
-                  startIcon={
-                    <SvgIcon fontSize="small">
-                      <PlusIcon />
-                    </SvgIcon>
-                  }
-                  variant="contained"
-                >
-                  Add
-                </Button>
+                <AddItem onAddItem={handleAddItem} />
               </div>
             </Stack>
             <ShopSearch handleSearchChange={handleSearchChange} />
             <Grid container spacing={3}>
               {currentItems.map((item) => (
                 <Grid xs={12} md={6} lg={4} key={item.id}>
-                  <ShopCard item={item} />
+                  <ShopCard
+                    item={item}
+                    onDeleteItem={handleDeleteItem}
+                    triggerSnackbar={onTriggerSnackbar}
+                    onEditItem={handleEditItem}
+                  />
                 </Grid>
               ))}
             </Grid>
@@ -140,6 +169,12 @@ const Page = () => {
           </Stack>
         </Container>
       </Box>
+      <SnackbarAlert
+        open={snackbarOpen}
+        severity={snackbarSeverity}
+        message={snackbarMessage}
+        handleClose={handleCloseSnackbar}
+      />
     </>
   );
 };
