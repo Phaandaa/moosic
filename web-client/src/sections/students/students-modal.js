@@ -197,7 +197,6 @@ export default function StudentsModal({ onAddStudent }) {
 
               <TextField
                 autoFocus
-                required
                 margin="dense"
                 id="age"
                 name="age"
@@ -253,7 +252,7 @@ export default function StudentsModal({ onAddStudent }) {
               <Button onClick={handleClose}>Cancel</Button>
               <Button
                 onClick={() => setStep(2)}
-                disabled={!studentName || !studentEmail || !instrument || !gradeLevel}
+                disabled={!studentName || !studentEmail || !instrument}
               >
                 Next
               </Button>
@@ -273,11 +272,16 @@ export default function StudentsModal({ onAddStudent }) {
           )}
         </DialogActions>
       </Dialog>
-      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
         <Alert
           onClose={() => setSnackbarOpen(false)}
           severity={snackbarSeverity}
-          sx={{ width: "100%" }}
+          sx= {{ width: "100%" }}
         >
           {snackbarMessage}
         </Alert>

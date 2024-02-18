@@ -11,12 +11,41 @@ import { OverviewTotalCustomers } from 'src/sections/overview/overview-total-cus
 import { OverviewTotalProfit } from 'src/sections/overview/overview-total-profit';
 import { OverviewTraffic } from 'src/sections/overview/overview-traffic';
 import { useAuth } from 'src/hooks/use-auth';
+import { useEffect, useState } from 'react';
+import { getAsync } from 'src/utils/utils';
 
 const now = new Date();
 
 const Page = () => {
   const { user } = useAuth();
-  console.log(user);
+  const [students, setStudents] = useState([]);
+  const [teachers, setTeachers] = useState([]);
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const response = await getAsync(`students`);
+        const data = await response.json();
+        setStudents(data);
+      } catch (error) {
+        console.error("Error fetching students:", error);
+      }
+    };
+
+    const fetchTeachers = async () => {
+      try {
+        const response = await getAsync(`teachers`);
+        const data = await response.json();
+        setTeachers(data);
+      } catch (error) {
+        console.error("Error fetching teachers:", error);
+      }
+    };
+
+    fetchStudents();
+    fetchTeachers();
+  }, []);
+
   return (
   <>
     <Head>
@@ -37,7 +66,7 @@ const Page = () => {
           spacing={3}
         >
           
-          <Grid
+          {/* <Grid
             xs={12}
             sm={6}
             lg={3}
@@ -48,6 +77,19 @@ const Page = () => {
               sx={{ height: '100%' }}
               value="$24k"
             />
+          </Grid> */}
+          <Grid
+            xs={12}
+            sm={6}
+            lg={3}
+          >
+            <OverviewTotalCustomers
+              // difference={16}
+              // positive={false}
+              sx={{ height: '100%' }}
+              value={students?.length ? students.length : 0}
+              title="Students"
+            />
           </Grid>
           <Grid
             xs={12}
@@ -55,10 +97,11 @@ const Page = () => {
             lg={3}
           >
             <OverviewTotalCustomers
-              difference={16}
-              positive={false}
+              // difference={16}
+              // positive={false}
               sx={{ height: '100%' }}
-              value="1.6k"
+              value={teachers?.length ? teachers.length : 0}
+              title="Teachers"
             />
           </Grid>
           <Grid

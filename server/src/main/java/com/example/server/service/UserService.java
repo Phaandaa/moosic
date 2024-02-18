@@ -152,7 +152,8 @@ public class UserService {
     private Teacher createTeacher(String id, String name, String email, CreateUserDTO userDTO) {
         try {
             String instrument = userDTO.getInfo().get("instrument");
-            Teacher newTeacher = new Teacher(id, name, email, null, new ArrayList<>(), null, instrument);
+            String phoneNumber = userDTO.getInfo().get("phone");
+            Teacher newTeacher = new Teacher(id, name, email, null, new ArrayList<>(), phoneNumber, instrument);
             teacherRepository.save(newTeacher);
             return newTeacher;
         } catch (IllegalArgumentException e) {

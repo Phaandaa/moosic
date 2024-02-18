@@ -2,27 +2,15 @@ import PropTypes from 'prop-types';
 import ArrowDownIcon from '@heroicons/react/24/solid/ArrowDownIcon';
 import ArrowUpIcon from '@heroicons/react/24/solid/ArrowUpIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
+import AcademicCapIcon from '@heroicons/react/24/solid/AcademicCapIcon';
 import { Avatar, Card, CardContent, Stack, SvgIcon, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { getAsync } from 'src/utils/utils';
 
 export const OverviewTotalCustomers = (props) => {
-  const { difference, positive = false, sx, value } = props;
-  const [students, setStudents] = useState([]);
+  const { difference, positive = false, sx, value, title } = props;
 
-  useEffect(() => {
-    const fetchStudents = async () => {
-      try {
-        const response = await getAsync(`students`);
-        const data = await response.json();
-        setStudents(data);
-      } catch (error) {
-        console.error("Error fetching students:", error);
-      }
-    };
-
-    fetchStudents();
-  }, []);
+  
 
   return (
     <Card sx={sx}>
@@ -38,10 +26,10 @@ export const OverviewTotalCustomers = (props) => {
               color="text.secondary"
               variant="overline"
             >
-              Total Students
+              Total {title}
             </Typography>
             <Typography variant="h4">
-              {students.length}
+              {value}
             </Typography>
           </Stack>
           <Avatar
@@ -52,11 +40,11 @@ export const OverviewTotalCustomers = (props) => {
             }}
           >
             <SvgIcon>
-              <UsersIcon />
+              {title === 'Students' ? <UsersIcon /> : <AcademicCapIcon />}
             </SvgIcon>
           </Avatar>
         </Stack>
-        {difference && (
+        {/* {difference && (
           <Stack
             alignItems="center"
             direction="row"
@@ -88,7 +76,7 @@ export const OverviewTotalCustomers = (props) => {
               Since last month
             </Typography>
           </Stack>
-        )}
+        )} */}
       </CardContent>
     </Card>
   );
