@@ -119,14 +119,14 @@ public class RewardShopService {
     }
 
     // update image of reward item
-    public String updateRewardShopItemImage(String id, MultipartFile file){
+    public RewardShop updateRewardShopItemImage(String id, MultipartFile file){
         try {
             RewardShop rewardShopItem = rewardShopRepository.findById(id).orElseThrow(()->
                 new NoSuchElementException("Reward Shop item not found with the ID " + id));
             String newImageURL = cloudStorageService.uploadFileToGCS(file, "shop");
             rewardShopItem.setImageLink(newImageURL);
             rewardShopRepository.save(rewardShopItem);
-            return "Update Reward Shop item image successfully";
+            return rewardShopItem;
         } catch (NoSuchElementException e) {
             throw e;
         } catch (RuntimeException e) {

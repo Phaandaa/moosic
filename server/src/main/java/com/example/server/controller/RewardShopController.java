@@ -77,7 +77,7 @@ public class RewardShopController {
     // update image of item
     @Operation(summary = "Update image for reward shop item")
     @PutMapping(path = "/image-update/{itemId}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-    public ResponseEntity<String> updateRewardShopItemImage(
+    public ResponseEntity<RewardShop> updateRewardShopItemImage(
         @PathVariable String itemId,
         @RequestParam("image") MultipartFile file) {
             return ResponseEntity.ok(rewardShopService.updateRewardShopItemImage(itemId, file));
