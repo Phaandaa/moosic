@@ -71,7 +71,9 @@ export const ItemDetailModal = ({
 
       if (response.ok) {
         triggerSnackbar("Image updated successfully!", "success");
-        const updatedItem = { ...item }; // Construct the updated item
+        const data = await response.json();
+        console.log("data", data); 
+        const updatedItem = { ...item, imageLink: data.imageLink }; // Construct the updated item
         onEditItem(updatedItem); // Update the item in the parent state
         // You may want to update the state to reflect the new image, if necessary
       } else {

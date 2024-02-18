@@ -91,7 +91,7 @@ const Page = () => {
   };
 
   const handleAddItem = (newItem) => {
-    setItems((currentItems) => [newItem, ...currentItems]);
+    setItems((currentItems) => [ ...currentItems, newItem]);
   }
 
   console.log(items);
