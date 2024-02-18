@@ -36,6 +36,7 @@ export const ItemDetailModal = ({
   const [limitation, setLimitation] = useState(item?.limitation || 0);
   const [stock, setStock] = useState(item?.stock || 0);
   const [type, setType] = useState(item?.type || "");
+  const [description, setDescription] = useState(item?.description || "");
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -48,13 +49,17 @@ export const ItemDetailModal = ({
   const handlePointsChange = (event) => {
     setPoints(event.target.value);
   };
-  
+
   const handleStockChange = (event) => {
     setStock(event.target.value);
   };
-  
+
   const handleLimitationChange = (event) => {
     setLimitation(event.target.value);
+  };
+
+  const handleDescriptionChange = (event) => {
+    setDescription(event.target.value);
   };
 
   const handleUploadImage = async () => {
@@ -72,7 +77,7 @@ export const ItemDetailModal = ({
       if (response.ok) {
         triggerSnackbar("Image updated successfully!", "success");
         const data = await response.json();
-        console.log("data", data); 
+        console.log("data", data);
         const updatedItem = { ...item, imageLink: data.imageLink }; // Construct the updated item
         onEditItem(updatedItem); // Update the item in the parent state
         // You may want to update the state to reflect the new image, if necessary
@@ -113,27 +118,18 @@ export const ItemDetailModal = ({
       points: Number(points),
       stock: Number(stock),
       limitation: Number(limitation),
-      description: item.description,
+      description: description,
     };
 
     try {
       // Assuming you have an endpoint that accepts item updates and returns the updated item
-      const response = await putAsync(
-        `reward-shop/${item.id}`,
-        {
-          type: type,
-          points: Number(points),
-          stock: Number(stock),
-          limitation: Number(limitation),
-        },
-        null,
-        false
-      );
+      const response = await putAsync(`reward-shop/${item.id}`, updatedItem, null, false);
 
       if (response.ok) {
         onEditItem(updatedItem); // Notify the parent component about the update
         triggerSnackbar("Item updated successfully!", "success");
-        handleClose(); // Close the modal
+        // handleClose(); // Close the modal
+        setDisabled(true);
       } else {
         triggerSnackbar("Failed to update item.", "error");
       }
@@ -181,9 +177,6 @@ export const ItemDetailModal = ({
                 sx={{ flexGrow: 1, mr: 2 }}
                 disabled
               />
-              {/* <Button variant="contained" color="success" onClick={handleChooseImage}>
-                Choose Image
-              </Button> */}
               <input
                 accept="image/*"
                 type="file"
@@ -211,7 +204,20 @@ export const ItemDetailModal = ({
           <Box display={"flex"} justifyContent={"space-between"} alignItems={"center"} mt={2}>
             <DialogContentText>Item Details</DialogContentText>
           </Box>
-          <Grid container spacing={2} sx={{ my: 2, justifyContent: "center" }}>
+          <Grid container spacing={1} sx={{ my: 2, justifyContent: "center" }}>
+            <Grid item xs={12} md={12} lg={12}>
+              <TextField
+                label="Name/Description"
+                id="desc"
+                fullWidth
+                variant="filled"
+                disabled={disabled}
+                value={description}
+                onChange={handleDescriptionChange}
+              />
+            </Grid>
+          </Grid>
+          <Grid container spacing={2} sx={{ mb: 2, justifyContent: "center" }}>
             <Grid item xs={12} md={6}>
               <TextField
                 label="Type"

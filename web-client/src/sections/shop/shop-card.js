@@ -56,10 +56,10 @@ export const ShopCard = (props) => {
               )}
           </Box>
           <Typography align="center" gutterBottom variant="h5">
-            {item?.description ? item.description : ""}
+            {item?.description ? item.description : "N/A"}
           </Typography>
           <Typography align="center" variant="body1">
-            {item?.type ? item.type : ""}
+            {item?.type ? item.type : "-"}
           </Typography>
         </CardContent>
         <Box sx={{ flexGrow: 1 }} />
@@ -76,7 +76,7 @@ export const ShopCard = (props) => {
               <TrophyIcon />
             </SvgIcon>
             <Typography color="text.secondary" display="inline" variant="body2">
-              {item.points} Pts
+              {item.points ? item.points : 0} Pts
             </Typography>
           </Stack>
           <Stack alignItems="center" direction="row" spacing={1}>
@@ -84,7 +84,7 @@ export const ShopCard = (props) => {
               <InboxStackIcon />
             </SvgIcon>
             <Typography color="text.secondary" display="inline" variant="body2">
-              {item.stock} in stock
+              {item.stock ? item.stock : 0} in stock
             </Typography>
           </Stack>
         </Stack>
