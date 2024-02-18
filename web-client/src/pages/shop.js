@@ -1,7 +1,6 @@
 import Head from "next/head";
 import ArrowUpOnSquareIcon from "@heroicons/react/24/solid/ArrowUpOnSquareIcon";
 import ArrowDownOnSquareIcon from "@heroicons/react/24/solid/ArrowDownOnSquareIcon";
-import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import {
   Box,
   Button,
@@ -18,6 +17,7 @@ import { ShopSearch } from "src/sections/shop/shop-search";
 import { useEffect, useState } from "react";
 import { getAsync } from "src/utils/utils";
 import SnackbarAlert from "src/components/alert";
+import AddItem from "src/sections/shop/shop-add";
 
 
 const Page = () => {
@@ -90,6 +90,10 @@ const Page = () => {
     setItems(items.map((item) => (item.id === updatedItem.id ? updatedItem : item)));
   };
 
+  const handleAddItem = (newItem) => {
+    setItems((currentItems) => [newItem, ...currentItems]);
+  }
+
   console.log(items);
 
   return (
@@ -133,16 +137,7 @@ const Page = () => {
                 </Stack>
               </Stack>
               <div>
-                <Button
-                  startIcon={
-                    <SvgIcon fontSize="small">
-                      <PlusIcon />
-                    </SvgIcon>
-                  }
-                  variant="contained"
-                >
-                  Add
-                </Button>
+                <AddItem onAddItem={handleAddItem} />
               </div>
             </Stack>
             <ShopSearch handleSearchChange={handleSearchChange} />
