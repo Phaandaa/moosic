@@ -19,6 +19,7 @@ import { useEffect, useState } from "react";
 import { getAsync } from "src/utils/utils";
 import SnackbarAlert from "src/components/alert";
 
+
 const Page = () => {
   const [items, setItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -79,11 +80,17 @@ const Page = () => {
   };
 
   const handleDeleteItem = (itemId) => {
-    setItems(currentItems => currentItems.filter(item => item.id !== itemId));
-    setFilteredItems(currentFilteredItems => currentFilteredItems.filter(item => item.id !== itemId));
+    setItems((currentItems) => currentItems.filter((item) => item.id !== itemId));
+    setFilteredItems((currentFilteredItems) =>
+      currentFilteredItems.filter((item) => item.id !== itemId)
+    );
   };
 
-  console.log(items)
+  const handleEditItem = (updatedItem) => {
+    setItems(items.map((item) => (item.id === updatedItem.id ? updatedItem : item)));
+  };
+
+  console.log(items);
 
   return (
     <>
@@ -142,7 +149,12 @@ const Page = () => {
             <Grid container spacing={3}>
               {currentItems.map((item) => (
                 <Grid xs={12} md={6} lg={4} key={item.id}>
-                  <ShopCard item={item} onDeleteItem={handleDeleteItem} triggerSnackbar={onTriggerSnackbar}/>
+                  <ShopCard
+                    item={item}
+                    onDeleteItem={handleDeleteItem}
+                    triggerSnackbar={onTriggerSnackbar}
+                    onEditItem={handleEditItem}
+                  />
                 </Grid>
               ))}
             </Grid>

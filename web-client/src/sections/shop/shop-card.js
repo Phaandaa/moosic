@@ -1,13 +1,14 @@
 import PropTypes from "prop-types";
-import ArrowDownOnSquareIcon from "@heroicons/react/24/solid/ArrowDownOnSquareIcon";
 import TrophyIcon from "@heroicons/react/24/solid/TrophyIcon";
 import InboxStackIcon from "@heroicons/react/24/solid/InboxStackIcon";
-import { Avatar, Box, Card, CardContent, Divider, Stack, SvgIcon, Typography } from "@mui/material";
+import { Box, Card, CardContent, Divider, Stack, SvgIcon, Typography } from "@mui/material";
 import { ItemDetailModal } from "./shop-modal"; // Adjust the import path as needed
 import { useState } from "react";
+import Lottie from "react-lottie";
+import noImage from "public/assets/noImage.json";
 
 export const ShopCard = (props) => {
-  const { item, onDeleteItem, triggerSnackbar } = props;
+  const { item, onDeleteItem, triggerSnackbar, onEditItem } = props;
   const [modalOpen, setModalOpen] = useState(false);
 
   const handleOpenModal = () => setModalOpen(true);
@@ -30,9 +31,29 @@ export const ShopCard = (props) => {
               display: "flex",
               justifyContent: "center",
               pb: 3,
+              height: 300,
             }}
           >
-            <Avatar src={item?.imageLink ? item.imageLink : ""} variant="square" />
+            {item.imageLink ? (
+                <img
+                  src={item?.imageLink || ""}
+                  alt={item?.description || "N/A"}
+                  style={{ maxHeight: "300px", maxWidth: "100%", height: "auto", width: "auto" }}
+                />
+              ) : (
+                <Lottie
+                  options={{
+                    loop: true,
+                    autoplay: true,
+                    animationData: noImage,
+                    rendererSettings: {
+                      preserveAspectRatio: "xMidYMid slice",
+                    },
+                  }}
+                  height={300}
+                  width={300}
+                />
+              )}
           </Box>
           <Typography align="center" gutterBottom variant="h5">
             {item?.description ? item.description : ""}
@@ -68,7 +89,14 @@ export const ShopCard = (props) => {
           </Stack>
         </Stack>
       </Card>
-      <ItemDetailModal open={modalOpen} handleClose={handleCloseModal} item={item} onDeleteItem={onDeleteItem} triggerSnackbar={triggerSnackbar}/>
+      <ItemDetailModal
+        open={modalOpen}
+        handleClose={handleCloseModal}
+        item={item}
+        onDeleteItem={onDeleteItem}
+        triggerSnackbar={triggerSnackbar}
+        onEditItem={onEditItem}
+      />
     </>
   );
 };
