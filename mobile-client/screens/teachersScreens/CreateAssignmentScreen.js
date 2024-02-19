@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { TextInput, View, ScrollView, TouchableOpacity, Text, Button, Image, Alert, StyleSheet, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
@@ -51,13 +51,16 @@ function CreateAssignmentScreen({ navigation }) {
         quality: 1,
       });
       if (!result.canceled) {
-        result.assets.forEach((asset, index) => {
-          setImages(currentImages => [...currentImages, {
-            uri: asset.uri,
-            type: asset.type || 'image/jpeg', // Use the type from asset or a default
-            name: asset.fileName || `image_${index}.jpg`
-          }]);
-        });
+        // result.assets.forEach((asset, index) => {
+        //   setImages(currentImages => [...currentImages, {
+        //     uri: asset.uri,
+        //     type: asset.type || 'image/jpeg', // Use the type from asset or a default
+        //     name: asset.fileName || `image_${index}.jpg`
+        //   }]);
+        // });
+        console.log('result.assets[0]:', result.assets[0])
+        saveImage(result.assets[0].uri); 
+        console.log(images);
       }
     }
   };
@@ -69,11 +72,11 @@ function CreateAssignmentScreen({ navigation }) {
         multiple: true,
       });
       if (!result.canceled && result.assets) {
-        const newDocs = result.assets.map((doc, index) => ({
-          uri: doc.uri,
-          type: doc.mimeType || 'application/octet-stream', // Use the mimeType from doc or a default
-          name: doc.name || `document_${index}.pdf`
-        }));
+        // const newDocs = result.assets.map((doc, index) => ({
+        //   uri: doc.uri,
+        //   type: doc.mimeType || 'application/octet-stream', // Use the mimeType from doc or a default
+        //   name: doc.name || `document_${index}.pdf`
+        // }));
         setUploadedDocuments(currentDocs => [...currentDocs, ...newDocs]);
       }
     } catch (error) {
@@ -82,7 +85,9 @@ function CreateAssignmentScreen({ navigation }) {
   };
   
   
-  
+  const saveImage = (newImage) => {
+    setImages((currentImages) => [...currentImages, newImage]);
+  };
 
   const removeImage = (index) => {
     setImages(currentImages => currentImages.filter((_, i) => i !== index));
@@ -111,6 +116,12 @@ function CreateAssignmentScreen({ navigation }) {
     return isValid;
   };
 
+  // Handler to update state with selected student IDs in the desired format
+  const handleStudentSelectionChange = useCallback((selectedIds) => {
+    const formattedSelectedStudents = selectedIds.map(id => ({ student_id: id }));
+    setSelectedStudents(formattedSelectedStudents);
+  }, [setSelectedStudents]); // Assuming setSelectedStudents doesn't change, this function is now stable
+
   const submitHandler = async () => {
     if (!validateForm()) {
       Alert.alert('Error', 'Please fill in all required fields.');
@@ -130,41 +141,82 @@ function CreateAssignmentScreen({ navigation }) {
     }
   
     const formData = new FormData();
-    formData.append('assignment', JSON.stringify({
+    // formData.append('assignment', JSON.stringify({
+    //   teacher_id: parsedData.userId,
+    //   teacher_name: parsedData.name,
+    //   assignment_title: assignmentName,
+    //   assignment_desc: assignmentDesc,
+    //   assignment_deadline: assignmentDeadline,
+    //   selected_students: selectedStudents.map(student => ({ id: student.key })),
+    //   points: 0
+    // }));
+    const assignmentData ={
       teacher_id: parsedData.userId,
       teacher_name: parsedData.name,
       assignment_title: assignmentName,
       assignment_desc: assignmentDesc,
       assignment_deadline: assignmentDeadline,
-      selected_students: selectedStudents.map(student => ({ id: student.key })),
+      selected_students: selectedStudents,
+      // selected_students: [{student_id: '5C4Q6ZILqoTBi9YnESwpKQuhMcN2'}],
       points: 0
-    }));
+    };
+    console.log('assignmentData:', assignmentData)
     
   
-    images.forEach((image, index) => {
-      formData.append(`file${index}`, {
-        uri: image.uri,
-        type: image.type,
-        name: image.name
-      });
+    images.forEach((imageUri, index) => {
+      // formData.append(`file${index}`, {
+      //   uri: image.uri,
+      //   type: image.type,
+      //   name: image.name
+      // });
+      if (typeof imageUri === 'string') { // Check if imageUri is a string
+        const uriParts = imageUri.split('.');
+        const fileType = uriParts[uriParts.length - 1];
+
+        console.log('Appending file:', imageUri);
+        formData.append('files', {
+            uri: imageUri,
+            name: `photo${index}.${fileType}`,
+            type: `image/${fileType}`,
+        });
+    } else {
+        console.warn('Invalid image URI:', imageUri);
+    }
     });
-  
-    uploadedDocuments.forEach((doc, index) => {
-      formData.append(`document${index}`, {
-        uri: doc.uri,
-        type: doc.type,
-        name: doc.name
-      });
-    });
+    console.log(formData)
+    formData.append("assignment", {"string" : JSON.stringify(assignmentData), type: 'application/json'});
+
+  //  bookmark 
+
+    // uploadedDocuments.forEach((doc, index) => {
+    //   formData.append(`document${index}`, {
+    //     uri: doc.uri,
+    //     type: doc.type,
+    //     name: doc.name
+    //   });
+    // });
+
     try {
-      const response = await axios.post(`${IP_ADDRESS}/assignments/create`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+      // const response = await axios.post(`${IP_ADDRESS}/assignments/create`, formData, {
+      //   // headers: {
+      //   //   'Content-Type': 'multipart/form-data'
+      //   // }
+      // });
+      const response = await fetch(`${IP_ADDRESS}/assignments/create`, {
+          method: 'POST',
+          body: formData,
       });
-      console.log(response.data);
-      dispatch(setCache({ key: 'assignmentData', value: assignmentData }));
-      navigation.navigate('ViewCreatedAssignmentsScreen', { assignmentData });
+        
+      if (!response.ok) {
+          throw new Error('Something went wrong with the upload');
+      }
+      const responseData = await response.json();
+      console.log(responseData);
+      alert('Assignment created successfully!');
+
+
+      // dispatch(setCache({ key: 'assignmentData', value: assignmentData }));
+      // navigation.navigate('ViewCreatedAssignmentsScreen', { assignmentData });
       Alert.alert('Success', 'Assignment created successfully!');
     } catch (error) {
       console.error('Error creating assignment:', error);
@@ -242,14 +294,23 @@ function CreateAssignmentScreen({ navigation }) {
         ) : (
           <>
             <View style={styles.imageContainer}>
-              {images.map((image, index) => (
+              {/* {images.map((image, index) => (
                 <View key={index} style={styles.imageWrapper}>
                   <Image source={{ uri: image.uri }} style={styles.image} />
                   <TouchableOpacity onPress={() => removeImage(index)} style={styles.removeButton}>
                     <Ionicons name="close-circle" size={24} color="red" />
                   </TouchableOpacity>
                 </View>
-              ))}
+              ))} */}
+                {images.map((uri, index) => (
+                      <View key={uri} style={styles.imageWrapper}>
+                          <Image source={{ uri }} style={styles.image} />
+                          <TouchableOpacity onPress={() => removeImage(index)} style={styles.removeButton}>
+                              {/* <Text style={theme.buttonText}>x</Text> */}
+                              <Ionicons name="close-circle" size={24} color="red" />
+                          </TouchableOpacity>
+                      </View>
+                ))}
             </View>
 
             <View style={styles.documentContainer}>
@@ -267,7 +328,7 @@ function CreateAssignmentScreen({ navigation }) {
         )}
 
 
-<StudentDropdown onSelectionChange={(selected) => setSelectedStudents(selected)} style={styles.dropdown} />
+<StudentDropdown onSelectionChange={handleStudentSelectionChange} style={styles.dropdown} />
   
 
         <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={submitHandler}>

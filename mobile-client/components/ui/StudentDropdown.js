@@ -41,7 +41,7 @@ const StudentDropdown = ({ onSelectionChange }) => {
         if (onSelectionChange && Array.isArray(selected)) {
           onSelectionChange(selected);
         }
-      }, [selected, onSelectionChange]);
+      }, [selected]);
       
 
 
@@ -52,7 +52,7 @@ const StudentDropdown = ({ onSelectionChange }) => {
                 <Text style={styles.loadingText}>Loading students...</Text>
             ) : (
                 <MultipleSelectList
-                    setSelected={setSelected}
+                    setSelected={(val) => setSelected(val)}
                     data={students}
                     label='Students'
                     badgeStyles={styles.badgeStyles}
@@ -60,7 +60,8 @@ const StudentDropdown = ({ onSelectionChange }) => {
                     notFoundText='Student does not exist.'
                     listParentLabelStyle={styles.listParentLabelStyle}
                     dropDownContainer={styles.dropDownContainer}
-                    
+                    save="key"
+                    onSelect={() => console.log('selectedstudent: ',selected)}
                 />
             )}
         </View>  
