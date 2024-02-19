@@ -59,7 +59,7 @@ function CreateAssignmentScreen({ navigation }) {
         //   }]);
         // });
         console.log('result.assets[0]:', result.assets[0])
-        saveImage(result.assets[0].uri); 
+        saveImage(result.assets[0]); 
         console.log(images);
       }
     }
@@ -163,24 +163,26 @@ function CreateAssignmentScreen({ navigation }) {
     console.log('assignmentData:', assignmentData)
     
   
-    images.forEach((imageUri, index) => {
+    images.forEach((image, index) => {
       // formData.append(`file${index}`, {
       //   uri: image.uri,
       //   type: image.type,
       //   name: image.name
       // });
-      if (typeof imageUri === 'string') { // Check if imageUri is a string
-        const uriParts = imageUri.split('.');
+      const { uri, fileName } = image
+
+      if (typeof image.uri === 'string') { // Check if image.uri is a string
+        const uriParts = image.uri.split('.');
         const fileType = uriParts[uriParts.length - 1];
 
-        console.log('Appending file:', imageUri);
+        console.log('Appending file:', image.uri);
         formData.append('files', {
-            uri: imageUri,
-            name: `photo${index}.${fileType}`,
+            uri: uri,
+            name: fileName,
             type: `image/${fileType}`,
         });
     } else {
-        console.warn('Invalid image URI:', imageUri);
+        console.warn('Invalid image URI:', image.uri);
     }
     });
     console.log(formData)
@@ -302,9 +304,9 @@ function CreateAssignmentScreen({ navigation }) {
                   </TouchableOpacity>
                 </View>
               ))} */}
-                {images.map((uri, index) => (
-                      <View key={uri} style={styles.imageWrapper}>
-                          <Image source={{ uri }} style={styles.image} />
+                {images.map((image, index) => (
+                      <View key={image.uri} style={styles.imageWrapper}>
+                          <Image source={{ uri: image.uri }} style={styles.image} />
                           <TouchableOpacity onPress={() => removeImage(index)} style={styles.removeButton}>
                               {/* <Text style={theme.buttonText}>x</Text> */}
                               <Ionicons name="close-circle" size={24} color="red" />
