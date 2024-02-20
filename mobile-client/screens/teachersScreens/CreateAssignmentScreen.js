@@ -77,7 +77,8 @@ function CreateAssignmentScreen({ navigation }) {
         //   type: doc.mimeType || 'application/octet-stream', // Use the mimeType from doc or a default
         //   name: doc.name || `document_${index}.pdf`
         // }));
-        setUploadedDocuments(currentDocs => [...currentDocs, ...newDocs]);
+        setUploadedDocuments(currentDocs => [...currentDocs, ...result.assets]);
+        console.log('uploadedDocuments',uploadedDocuments);
       }
     } catch (error) {
       Alert.alert('Error picking document:', error.message);
@@ -181,22 +182,22 @@ function CreateAssignmentScreen({ navigation }) {
             name: fileName,
             type: `image/${fileType}`,
         });
-    } else {
+      } else {
         console.warn('Invalid image URI:', image.uri);
-    }
+      }
     });
+
+    uploadedDocuments.forEach((doc, index) => {
+      formData.append(`files`, {
+        uri: doc.uri,
+        type: doc.mimeType,
+        name: doc.name
+      });
+    });
+
     console.log(formData)
     formData.append("assignment", {"string" : JSON.stringify(assignmentData), type: 'application/json'});
 
-  //  bookmark 
-
-    // uploadedDocuments.forEach((doc, index) => {
-    //   formData.append(`document${index}`, {
-    //     uri: doc.uri,
-    //     type: doc.type,
-    //     name: doc.name
-    //   });
-    // });
 
     try {
       // const response = await axios.post(`${IP_ADDRESS}/assignments/create`, formData, {
