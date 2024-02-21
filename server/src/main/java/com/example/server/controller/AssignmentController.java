@@ -41,9 +41,17 @@ public class AssignmentController {
     }
     
     @Operation(summary = "Get assignments by student ID")    
-    @GetMapping("/{studentId}")
+    @GetMapping("/student/{studentId}")
     public ResponseEntity<?> getAssignmentByStudentId(@PathVariable String studentId) {
         List<Assignment> assignments = assignmentService.findAssignmentByStudentId(studentId);
         return ResponseEntity.ok(assignments);
     }
+
+    @Operation(summary = "Get assignments by teacher ID")
+    @GetMapping("/teacher/{teacherId}")
+    public ResponseEntity<?> getAssignmentByTeacherId(@PathVariable String teacherId) {
+        List<Assignment> assignments = assignmentService.findAssignmentByTeacherId(teacherId);
+        return ResponseEntity.ok(assignments);
+    }
+
 }
