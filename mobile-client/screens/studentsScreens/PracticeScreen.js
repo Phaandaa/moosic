@@ -1,20 +1,20 @@
 import React, {useState} from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert, Button, Dimensions } from 'react-native';
 import Modal from 'react-native-modal';
-import theme from '../styles/theme';
-import AnimatedPlaceholderInput from '../components/ui/animateTextInput';
+import theme from '../../styles/theme';
+import AnimatedPlaceholderInput from '../../components/ui/animateTextInput';
 import * as ImagePicker from "expo-image-picker";
 import { Audio, Video, ResizeMode} from 'expo-av';
 import LottieView from 'lottie-react-native';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { setCache, clearCache } from '../cacheSlice';
+import { setCache, clearCache } from '../../cacheSlice';
 
 function PracticeScreen({navigation}){
     const dispatch = useDispatch();
     const [title, setTitle] = useState('');
     const [comment, setComment] = useState('');
-    const cancelIcon = require('../assets/cancel.png');
+    const cancelIcon = require('../../assets/cancel.png');
     const [videos, setVideos] = useState([]);
     const [loadingStates, setLoadingStates] = useState({});
 

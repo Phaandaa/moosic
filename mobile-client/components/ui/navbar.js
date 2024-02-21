@@ -6,10 +6,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // Import screen components
 import HomeScreen from '../../screens/home';
 import ProfileScreen from '../../screens/profilepage';
-import GoalsScreen from '../../screens/goalsScreen';
 import NotificationsScreen from '../../screens/notificationspage';
-import MyStudentsScreen from '../../screens/MyStudentsScreen';
-import ViewCreatedAssignmentsScreen from '../../screens/ViewCreatedAssignmentsScreen';
+
+//Students Screen
+import GoalsScreen from '../../screens/studentsScreens/goalsScreen';
+
+//Teachers Screens
+import MyStudentsScreen from '../../screens/teachersScreens/MyStudentsScreen';
+import ViewCreatedAssignmentsScreen from '../../screens/teachersScreens/ViewCreatedAssignmentsScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -62,7 +66,7 @@ const BottomTabNavigator = () => {
         },
         tabBarActiveTintColor: '#4664EA',
         tabBarInactiveTintColor: 'gray',
-        tabBarStyle: { paddingBottom: 20, paddingTop: 10, height: 65 },
+        tabBarStyle: { paddingBottom: 20, paddingTop: 10, height: 70 },
       })}
     >
       {/* Common screens */}

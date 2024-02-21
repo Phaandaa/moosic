@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert, Modal, Button, Dimensions} from 'react-native';
-import theme from '../styles/theme';
+import theme from '../../styles/theme';
 import ProvidePracticeFeedbackScreen from './ProvidePracticeFeedbackScreen';
 import { useSelector } from 'react-redux';
 import { Audio, Video, ResizeMode} from 'expo-av';
@@ -29,7 +29,7 @@ function PracticeListTeacherScreen({navigation}){
                 </View>
                 <View style={theme.buttonContainer}>
                     <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText} onPress={() => openVideo(require('../assets/dummyvid.mp4'))}>Recording</Text>
+                        <Text style={theme.smallButtonText} onPress={() => openVideo(require('../../assets/dummyvid.mp4'))}>Recording</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={theme.smallButton}>
                         <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ProvidePracticeFeedbackScreen')}>Feedback</Text>
@@ -47,7 +47,7 @@ function PracticeListTeacherScreen({navigation}){
                         <View style={styles.modalView}>
                             {/* {selectedVideo && ( */}
                                 <Video
-                                source={require('../assets/dummyvid.mp4')}
+                                source={require('../../assets/dummyvid.mp4')}
                                 style={styles.modalVideo}
                                 resizeMode={ResizeMode.CONTAIN}
                                 shouldPlay
