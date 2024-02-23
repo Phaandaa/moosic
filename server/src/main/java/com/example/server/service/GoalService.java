@@ -22,7 +22,7 @@ public class GoalService {
             String studentName = goalDTO.getStudentName();
             String teacherId = goalDTO.getTeacherId();
             String title = goalDTO.getTitle();
-            Goal createdGoal = new Goal(title, studentId, studentName, teacherId, new ArrayList<>());
+            Goal createdGoal = new Goal(title, studentId, studentName, teacherId, new ArrayList<>(), "Not done");
             goalRepository.save(createdGoal);
             return createdGoal;
         } catch (RuntimeException e) {
