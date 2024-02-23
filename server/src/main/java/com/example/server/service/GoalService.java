@@ -55,7 +55,7 @@ public class GoalService {
     }
 
     // add goal item to goal
-    public String createGoalItem(String goalId, GoalItemDTO goalItemDTO) {
+    public Goal createGoalItem(String goalId, GoalItemDTO goalItemDTO) {
         try {
             Goal goal = goalRepository.findById(goalId).orElseThrow(()->
                 new NoSuchElementException("Goal not found with the ID " + goalId));
@@ -64,7 +64,7 @@ public class GoalService {
             GoalChecklistItem newGoalItem = new GoalChecklistItem(goalChecklistItemKey, description, "Not done");
             goal.addGoalChecklistItem(newGoalItem);
             goalRepository.save(goal);
-            return "Successfully added item goal";
+            return goal;
         } catch (NoSuchElementException e) {
             throw e;
         } catch (Exception e) {
@@ -73,13 +73,13 @@ public class GoalService {
     }
     
     // remove goal item in goal
-    public String deleteGoalItem(String goalId, String goalItemKey) {
+    public Goal deleteGoalItem(String goalId, String goalItemKey) {
         try {
             Goal goal = goalRepository.findById(goalId).orElseThrow(()->
                 new NoSuchElementException("Goal not found with the ID " + goalId));
             goal.removeGoalChecklistItem(goalItemKey);
             goalRepository.save(goal);
-            return "Successfully removed item goal";
+            return goal;
         } catch (NoSuchElementException e) {
             throw e;
         } catch (Exception e) {
@@ -89,7 +89,7 @@ public class GoalService {
 
     // mark goal as completed
     @Transactional
-    public String markGoalAsDone(String goalId) {
+    public Goal markGoalAsDone(String goalId) {
         try {
             Goal goal = goalRepository.findById(goalId).orElseThrow(()->
                 new NoSuchElementException("Goal not found with the ID " + goalId));
@@ -116,7 +116,7 @@ public class GoalService {
             pointsLogRepository.save(newPointsLog);
             
             goalRepository.save(goal);
-            return "Successfully marked goal as done";
+            return goal;
         } catch (NoSuchElementException e) {
             throw e;
         } catch (IllegalArgumentException e) {
@@ -127,13 +127,13 @@ public class GoalService {
     }
 
     // change status for goal item
-    public String changeGoalItemStatus(String goalId, String goalItemKey) {
+    public Goal changeGoalItemStatus(String goalId, String goalItemKey) {
         try {
             Goal goal = goalRepository.findById(goalId).orElseThrow(()->
                 new NoSuchElementException("Goal not found with the ID " + goalId));
             goal.changeGoalChecklistStatus(goalItemKey);
             goalRepository.save(goal);
-            return "Successfully changed goal item status";
+            return goal;
         } catch (NoSuchElementException e) {
             throw e;
         } catch (Exception e) {
