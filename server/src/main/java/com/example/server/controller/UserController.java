@@ -1,7 +1,6 @@
 package com.example.server.controller;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.server.entity.User;
 import com.example.server.entity.UserType;
 import com.example.server.models.CreateUserDTO;
-import com.example.server.service.StudentService;
 import com.example.server.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
