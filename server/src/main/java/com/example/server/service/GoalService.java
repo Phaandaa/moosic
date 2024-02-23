@@ -1,6 +1,7 @@
 package com.example.server.service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.server.dao.GoalRepository;
+import com.example.server.entity.Assignment;
 import com.example.server.entity.Goal;
 import com.example.server.entity.GoalChecklistItem;
 import com.example.server.models.CreateGoalDTO;
@@ -72,8 +74,6 @@ public class GoalService {
         }
     }
 
-    // edit goal item in goal
-
     // mark goal as completed
     public String markGoalAsDone(String goalId) {
         try {
@@ -104,8 +104,41 @@ public class GoalService {
         }
     }
 
+    // edit goal item in goal
+
     // get goal by student id 
+    public Goal getOngoingGoalByStudentId(String studentId) {
+        try {
+            List<Goal> goals = goalRepository.findAllByStudentId(studentId);
+            if (goals.isEmpty() || goals == null) {
+                throw new NoSuchElementException("No goals found for student ID " + studentId);
+            }
+            for (Goal goal : goals) {
+                if ("Not done".equals(goal.getStatus())) {
+                    return goal;
+                }
+            }
+            throw new NoSuchElementException("No ongoing goals found for student ID " + studentId);          
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding goals by student ID " + studentId + ": " + e.getMessage());
+        }
+    }
 
     // get goal by teacher id
+    public List<Goal> getGoalByTeacherId(String teacherId) {
+        try {
+            List<Goal> goals = goalRepository.findAllByTeacherId(teacherId);
+            if (goals.isEmpty() || goals == null) {
+                throw new NoSuchElementException("No goals found for teacher ID " + teacherId);
+            }
+            return goals;       
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding goals by teacher ID " + teacherId + ": " + e.getMessage());
+        }
+    }
 
 }
