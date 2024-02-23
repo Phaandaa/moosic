@@ -18,7 +18,6 @@ import lombok.Setter;
 @AllArgsConstructor
 class GoalChecklistItem {
     private Integer goalChecklistItemKey;
-    private String title;
     private String description;
     private String status;
 }
@@ -32,6 +31,9 @@ public class Goal {
     @Id
     private String id;
 
+    @Id
+    private String title;
+
     @Field(name = "student_id")
     private String studentId;
 
@@ -41,7 +43,8 @@ public class Goal {
     @Field(name = "goal_checklist")
     private List<GoalChecklistItem> goalChecklist;
 
-    public Goal(String studentId, String teacherId, List<GoalChecklistItem> goalChecklist) {
+    public Goal(String title, String studentId, String teacherId, List<GoalChecklistItem> goalChecklist) {
+        this.title = title;
         this.studentId = studentId;
         this.teacherId = teacherId;
         this.goalChecklist = goalChecklist;
