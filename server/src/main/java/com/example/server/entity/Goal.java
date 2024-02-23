@@ -40,14 +40,18 @@ public class Goal {
     @Field(name = "status")
     private String status;
 
+    @Field(name = "points")
+    private Integer points;
+
     public Goal(String title, String studentId, String studentName, String teacherId,
-            List<GoalChecklistItem> goalChecklist, String status) {
+            List<GoalChecklistItem> goalChecklist, String status, Integer points) {
         this.title = title;
         this.studentId = studentId;
         this.studentName = studentName;
         this.teacherId = teacherId;
         this.goalChecklist = goalChecklist;
         this.status = status;
+        this.points = points;
     }
 
     public void addGoalChecklistItem(GoalChecklistItem goalChecklistItem) {

@@ -24,4 +24,6 @@ public class CreateGoalDTO {
 
     private String title;
 
+    private Integer points;
+
 }
