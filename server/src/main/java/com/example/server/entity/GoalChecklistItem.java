@@ -1,14 +1,16 @@
-package com.example.server.models;
+package com.example.server.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GoalItemDTO {
+public class GoalChecklistItem {
+    private String goalChecklistItemKey;
     private String description;
+    private String status;
 }

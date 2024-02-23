@@ -12,16 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-class GoalChecklistItem {
-    private Integer goalChecklistItemKey;
-    private String description;
-    private String status;
-}
-
 @Document(collection = "goals")
 @Getter
 @Setter
@@ -59,11 +49,11 @@ public class Goal {
         this.status = status;
     }
 
-    private void addGoalChecklistItem(GoalChecklistItem goalChecklistItem) {
+    public void addGoalChecklistItem(GoalChecklistItem goalChecklistItem) {
         goalChecklist.add(goalChecklistItem);
     }
 
-    private void removeGoalChecklistItem(Integer selectedKey) {
+    private void removeGoalChecklistItem(String selectedKey) {
         for (Iterator<GoalChecklistItem> iterator = goalChecklist.iterator(); iterator.hasNext();) {
             GoalChecklistItem goalItem = iterator.next();
             if (goalItem.getGoalChecklistItemKey().equals(selectedKey)) {
