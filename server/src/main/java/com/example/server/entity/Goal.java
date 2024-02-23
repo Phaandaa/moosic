@@ -69,5 +69,29 @@ public class Goal {
             throw new NoSuchElementException("Goal Item with key '" + selectedKey + "' not found.");
         }
     }    
+
+    public void changeGoalChecklistStatus(String selectedKey) {
+        boolean found = false;
+        for (GoalChecklistItem goalItem : goalChecklist) {
+            if (goalItem.getGoalChecklistItemKey().equals(selectedKey)) {
+                switch (goalItem.getStatus()) {
+                    case "Done":
+                        goalItem.setStatus("Not done");
+                        break;
+                    case "Not done":
+                        goalItem.setStatus("Done");
+                        break;
+                    default:
+                        break;
+                }
+                found = true;
+                break;
+            }
+        }
+    
+        if (!found) {
+            throw new NoSuchElementException("Goal Item with key '" + selectedKey + "' not found.");
+        }
+    }
     
 }

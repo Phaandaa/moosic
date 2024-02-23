@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,5 +41,18 @@ public class GoalController {
     @DeleteMapping("/remove-goal-item/{goalId}/{goalItemKey}")
     public ResponseEntity<?> removeGoalItemByKey(@PathVariable String goalId, @PathVariable String goalItemKey) {
         return ResponseEntity.ok(goalService.deleteGoalItem(goalId, goalItemKey));
+    }
+
+    @Operation(summary = "Mark goal item as completed")
+    @PutMapping("/change-goal-item-status/{goalId}/{goalItemKey}")
+    public ResponseEntity<?> changeGoalItemStatus(@PathVariable String goalId, @PathVariable String goalItemKey) {
+        return ResponseEntity.ok(goalService.changeGoalItemStatus(goalId, goalItemKey));
+    }
+
+    // Can only be done after all goal item is marked complete
+    @Operation(summary = "Mark whole goal as completed")
+    @PutMapping("/mark-goal-done/{goalId}")
+    public ResponseEntity<?> markGoalAsDone(@PathVariable String goalId) {
+        return ResponseEntity.ok(goalService.markGoalAsDone(goalId));
     }
 }

@@ -74,9 +74,35 @@ public class GoalService {
 
     // edit goal item in goal
 
-    // change status for goal item
-
     // mark goal as completed
+    public String markGoalAsDone(String goalId) {
+        try {
+            Goal goal = goalRepository.findById(goalId).orElseThrow(()->
+                new NoSuchElementException("Goal not found with the ID " + goalId));
+            goal.setStatus("Done");
+            goalRepository.save(goal);
+            return "Successfully marked goal as done";
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error marking goal as complete for goal ID: " + goalId + ": " + e.getMessage());
+        }
+    }
+
+    // change status for goal item
+    public String changeGoalItemStatus(String goalId, String goalItemKey) {
+        try {
+            Goal goal = goalRepository.findById(goalId).orElseThrow(()->
+                new NoSuchElementException("Goal not found with the ID " + goalId));
+            goal.changeGoalChecklistStatus(goalItemKey);
+            goalRepository.save(goal);
+            return "Successfully changed goal item status";
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error changing goal item status for goal ID: " + goalId + ": " + e.getMessage());
+        }
+    }
 
     // get goal by student id 
 
