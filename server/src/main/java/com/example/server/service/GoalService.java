@@ -7,11 +7,13 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.server.dao.GoalRepository;
-import com.example.server.entity.Assignment;
+import com.example.server.dao.StudentRepository;
 import com.example.server.entity.Goal;
 import com.example.server.entity.GoalChecklistItem;
+import com.example.server.entity.Student;
 import com.example.server.models.CreateGoalDTO;
 import com.example.server.models.GoalItemDTO;
 
@@ -20,6 +22,9 @@ public class GoalService {
 
     @Autowired
     private GoalRepository goalRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
 
     // create goal
     public Goal createGoal(CreateGoalDTO goalDTO) {
@@ -76,6 +81,7 @@ public class GoalService {
     }
 
     // mark goal as completed
+    @Transactional
     public String markGoalAsDone(String goalId) {
         try {
             Goal goal = goalRepository.findById(goalId).orElseThrow(()->
@@ -87,6 +93,12 @@ public class GoalService {
                 }
             }
             goal.setStatus("Done");
+            String studentId = goal.getStudentId();
+            Student student = studentRepository.findById(studentId).orElseThrow(()->
+                new NoSuchElementException("Student not found with the ID " + studentId));
+            Integer points = goal.getPoints();
+            student.addPoints(points);
+            studentRepository.save(student);
             goalRepository.save(goal);
             return "Successfully marked goal as done";
         } catch (NoSuchElementException e) {

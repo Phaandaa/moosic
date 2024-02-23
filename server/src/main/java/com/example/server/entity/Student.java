@@ -34,4 +34,21 @@ public class Student extends User{
         this.teacherName = teacherName;
     }
 
+    public void deductPoints(Integer pointAmount) {
+        if (pointAmount < 0) {
+            throw new IllegalArgumentException("Point amount cannot be negative");
+        }
+        if (pointAmount > pointsCounter) {
+            throw new IllegalArgumentException("Point deduction cannot be more than point counter");
+        }
+        pointsCounter = pointsCounter - pointAmount;
+    }
+
+    public void addPoints(Integer pointAmount) {
+        if (pointAmount < 0) {
+            throw new IllegalArgumentException("Point amount cannot be negative");
+        }
+        pointsCounter = pointsCounter + pointAmount;
+    }
+
 }
