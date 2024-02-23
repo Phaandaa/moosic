@@ -80,10 +80,18 @@ public class GoalService {
         try {
             Goal goal = goalRepository.findById(goalId).orElseThrow(()->
                 new NoSuchElementException("Goal not found with the ID " + goalId));
+            
+            for (GoalChecklistItem goalItem : goal.getGoalChecklist()) {
+                if ("Not done".equals(goalItem.getStatus())) {
+                    throw new IllegalArgumentException("All goal items inside must be complete before goal is marked as complete");
+                }
+            }
             goal.setStatus("Done");
             goalRepository.save(goal);
             return "Successfully marked goal as done";
         } catch (NoSuchElementException e) {
+            throw e;
+        } catch (IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Error marking goal as complete for goal ID: " + goalId + ": " + e.getMessage());
