@@ -110,7 +110,7 @@ public class GoalService {
 
             String pointsLogDescription = "Finished " + goal.getTitle() + " goal";
             Date currentDate = new Date();
-            SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd yyyy");
+            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy");
             String formattedDate = sdf.format(currentDate);
             PointsLog newPointsLog = new PointsLog(studentId, pointsLogDescription, points, formattedDate);
             pointsLogRepository.save(newPointsLog);
