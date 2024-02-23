@@ -31,7 +31,7 @@ public class Goal {
     @Id
     private String id;
 
-    @Id
+    @Field(name = "title")
     private String title;
 
     @Field(name = "student_id")
