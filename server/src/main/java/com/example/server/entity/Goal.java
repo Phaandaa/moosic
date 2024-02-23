@@ -37,15 +37,20 @@ public class Goal {
     @Field(name = "student_id")
     private String studentId;
 
+    @Field(name = "student_name")
+    private String studentName;
+
     @Field(name = "teacher_id")
     private String teacherId;
 
     @Field(name = "goal_checklist")
     private List<GoalChecklistItem> goalChecklist;
 
-    public Goal(String title, String studentId, String teacherId, List<GoalChecklistItem> goalChecklist) {
+    public Goal(String title, String studentId, String studentName, String teacherId,
+            List<GoalChecklistItem> goalChecklist) {
         this.title = title;
         this.studentId = studentId;
+        this.studentName = studentName;
         this.teacherId = teacherId;
         this.goalChecklist = goalChecklist;
     }
