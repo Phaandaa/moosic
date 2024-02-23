@@ -4,15 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.server.dao.GoalRepository;
+import com.example.server.dao.PointsLogRepository;
 import com.example.server.dao.StudentRepository;
 import com.example.server.entity.Goal;
 import com.example.server.entity.GoalChecklistItem;
+import com.example.server.entity.PointsLog;
 import com.example.server.entity.Student;
 import com.example.server.models.CreateGoalDTO;
 import com.example.server.models.GoalItemDTO;
@@ -25,6 +29,9 @@ public class GoalService {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private PointsLogRepository pointsLogRepository;
 
     // create goal
     public Goal createGoal(CreateGoalDTO goalDTO) {
@@ -93,12 +100,21 @@ public class GoalService {
                 }
             }
             goal.setStatus("Done");
+
             String studentId = goal.getStudentId();
             Student student = studentRepository.findById(studentId).orElseThrow(()->
                 new NoSuchElementException("Student not found with the ID " + studentId));
             Integer points = goal.getPoints();
             student.addPoints(points);
             studentRepository.save(student);
+
+            String pointsLogDescription = "Finished " + goal.getTitle() + " goal";
+            Date currentDate = new Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd yyyy");
+            String formattedDate = sdf.format(currentDate);
+            PointsLog newPointsLog = new PointsLog(studentId, pointsLogDescription, points, formattedDate);
+            pointsLogRepository.save(newPointsLog);
+            
             goalRepository.save(goal);
             return "Successfully marked goal as done";
         } catch (NoSuchElementException e) {
