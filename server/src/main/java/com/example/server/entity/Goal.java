@@ -2,6 +2,7 @@ package com.example.server.entity;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -53,13 +54,19 @@ public class Goal {
         goalChecklist.add(goalChecklistItem);
     }
 
-    private void removeGoalChecklistItem(String selectedKey) {
+    public void removeGoalChecklistItem(String selectedKey) {
+        boolean found = false;
         for (Iterator<GoalChecklistItem> iterator = goalChecklist.iterator(); iterator.hasNext();) {
             GoalChecklistItem goalItem = iterator.next();
             if (goalItem.getGoalChecklistItemKey().equals(selectedKey)) {
                 iterator.remove();
+                found = true;
                 break;
             }
+        }
+    
+        if (!found) {
+            throw new NoSuchElementException("Goal Item with key '" + selectedKey + "' not found.");
         }
     }    
     

@@ -56,9 +56,21 @@ public class GoalService {
             throw new RuntimeException("Error adding goal item for goal ID: " + goalId + ": " + e.getMessage());
         }
     }
-
     
     // remove goal item in goal
+    public String deleteGoalItem(String goalId, String goalItemKey) {
+        try {
+            Goal goal = goalRepository.findById(goalId).orElseThrow(()->
+                new NoSuchElementException("Goal not found with the ID " + goalId));
+            goal.removeGoalChecklistItem(goalItemKey);
+            goalRepository.save(goal);
+            return "Successfully removed item goal";
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error removing goal item for goal ID: " + goalId + ": " + e.getMessage());
+        }
+    }
 
     // edit goal item in goal
 
