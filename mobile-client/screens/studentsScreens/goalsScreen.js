@@ -114,41 +114,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    marginTop: 24,
   },
   activeTab: {
     borderBottomWidth: 4,
-    borderBottomColor: '#FFD700', // Gold color for the active tab underline
+    borderBottomColor: '#FFD700',
   },
   activeTabText: {
-    color: '#FFD700', // Gold color for the active tab text
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#007AFF',
-    padding: 16,
-  },
-  headerTitle: {
-    color: 'white',
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginLeft: 16,
+    color: '#FFD700',
   },
   balanceContainer: {
     backgroundColor: '#686BFF',
     borderRadius: 8,
     marginHorizontal: 20,
-    marginVertical: 40,
+    marginTop: 50,
+    marginBottom: 20,
     paddingHorizontal: 20,
     paddingVertical: 60,
-    height: 200,
     
   },
   balanceText: {
     color: 'white',
     fontSize: 20,
-    
   },
   pointsIndicator: {
     color: 'white',
@@ -160,9 +146,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     backgroundColor: '#686BFF',
-    paddingVertical: 1,
+    paddingVertical: 10,
     borderRadius: 20,
     marginHorizontal: 20,
+    marginBottom: 20, // Add some space below the tab container
   },
   tab: {
     padding: 8,
@@ -172,80 +159,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
-  itemContainer: {
-    backgroundColor: '#fff',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderColor: '#E7E7E7',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  itemDescription: {
-    fontSize: 16,
-  },
-  itemPointsEarned: {
-    color: '#4CAF50', // Green color for earned points
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  itemPointsRedeemed: {
-    color: '#F44336', // Red color for redeemed points
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  itemDate: {
-    color: '#757575', // Grey color for the date
-    fontSize: 14,
-  },
-  itemPoints: {
-    color: '#4CAF50', // Or any other color you prefer
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  itemStatus: {
-    color: '#757575', // Or any other color you prefer
-    fontSize: 14,
-  },
-  emptyContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#757575',
-  },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 16,
     backgroundColor: '#686BFF',
-    marginTop: 24,
     marginHorizontal: 20,
+    borderRadius: 10, // Rounded corners for the header
   },
   headerItem: {
     color: 'white',
     fontSize: 16,
     fontWeight: '700',
   },
-  // Assuming these are the styles applied to cells in GoalItem
-  title: {
-    flex: 2, // Adjust according to your layout
-    textAlign: 'left', // Ensure text alignment matches GoalItem
-  },
-  points: {
-    flex: 1, // Adjust according to your layout
-    textAlign: 'center', // Ensure text alignment matches GoalItem
-  },
-  status: {
-    flex: 1, // Adjust according to your layout
-    textAlign: 'right', // Ensure text alignment matches GoalItem
-  },
-  
-  
 });
+
 
 export default GoalsScreen;
 
