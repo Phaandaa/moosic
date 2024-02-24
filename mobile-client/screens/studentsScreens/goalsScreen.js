@@ -85,11 +85,13 @@ const GoalsScreen = () => {
 
   return (
     <View style={styles.container}>
+    <Text style={[theme.textTitle, {marginTop: 50, marginHorizontal: 15}]}> Your Goals </Text>  
     <View style={[styles.balanceContainer, { backgroundColor: '#007AFF', overflow: 'hidden', position: 'relative'}]}>
       <Ionicons name="trophy" size={170} color='#FFFFFF' style={{ position: 'absolute', bottom: 0, right: 0 }} />
       <Text style={styles.balanceText}>Your Points</Text>
       <Text style={styles.pointsIndicator}>{studentData.pointsCounter}</Text>
     </View>
+    
     <View style={styles.tabContainer}>
       {['All', 'In Progress', 'Completed'].map((tab) => (
         <TouchableOpacity
@@ -126,7 +128,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#686BFF',
     borderRadius: 8,
     marginHorizontal: 20,
-    marginTop: 50,
+    marginTop: 10,
     marginBottom: 20,
     paddingHorizontal: 20,
     paddingVertical: 60,
