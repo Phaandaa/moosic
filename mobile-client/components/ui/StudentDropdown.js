@@ -21,6 +21,8 @@ const StudentDropdown = ({ onSelectionChange }) => {
             const parsedData = JSON.parse(storedData);
             const userId = parsedData.userId; // Make sure this is the correct key for userId
             const response = await axios.get(`${IP_ADDRESS}/students/teacher/${userId}/`);
+            console.log('response', response);
+
             const formattedData = response.data.map(student => ({
               key: student.id, // Ensure the key is a string
               value: student.name,

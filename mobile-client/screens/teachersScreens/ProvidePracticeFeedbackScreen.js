@@ -10,8 +10,10 @@ import InputBox from '../../components/ui/inputBox';
 function ProvidePracticeFeedbackScreen({navigation}){
     const dispatch = useDispatch();
     const practiceData = useSelector(state => state.cache.practiceData);
+    const [AssignmentData, setAssignmentData] = useState([]);
     const [feedback, setFeedback] = useState('')
     const [showFeedback, setShowFeedback] = useState(false);
+
 
     const toggleFeedback = () => {
         {!feedback &&
