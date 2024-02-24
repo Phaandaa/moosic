@@ -3,31 +3,82 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native
 import { Ionicons } from '@expo/vector-icons';
 import theme from '../../styles/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import IP_ADDRESS from '../../constants/ip_address_temp';
+import axios from 'axios';
 
-const mockData = [
-  { id: '1', description: 'You have earned', points: '+78 Points', date: '10 May 2022' },
-  { id: '2', description: 'You have redeemed', points: '-25 Points', date: '08 May 2022' },
-  // Add more mock data here
-];
+
 
 const GoalsScreen = () => {
   const [activeTab, setActiveTab] = useState('all');
+  const [goals, setGoals] = useState([]);
+  const [studentData, setStudentData] = useState({ pointsCounter: 0 });
+  const [fetchError, setFetchError] = useState(false);
+
+  
+     // Fetch goals using studentID
+     useEffect(() => {
+      const fetchGoalsAndStudentData = async () => {
+        try {
+          const storedData = await AsyncStorage.getItem('authData');
+          if (!storedData) {
+            throw new Error('No user data found.');
+          }
+          const parsedData = JSON.parse(storedData);
+          const userId = parsedData.userId;
+          
+          // Fetch student data
+          const fetchStudentDataUrl = `${IP_ADDRESS}/students/${userId}`;
+          const studentResponse = await axios.get(fetchStudentDataUrl);
+          if (studentResponse.data) {
+            setStudentData(studentResponse.data); // Update student data
+          } else {
+            setStudentData({ pointsCounter: 0 }); // Set default if no student data found
+          }
+    
+          // Fetch student's goals
+          const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/student/ongoing/${userId}`;
+          const goalsResponse = await axios.get(fetchStudentsGoalsUrl);
+          if (goalsResponse.data) {
+            // Since the data is an object, we wrap it in an array
+            setGoals([goalsResponse.data]); // Wrap the object in an array and update goals
+            console.log(goalsResponse.data);
+          } else {
+            setGoals([]); // Set goals to an empty array if no goals were fetched
+          }
+        } catch (error) {
+          console.error('Error fetching data:', error);
+          setFetchError(true); // Set fetch error to true to indicate there was an error
+        }
+      };
+    
+      fetchGoalsAndStudentData();
+    }, []);
+    
+
 
   // Function to filter data based on the active tab
-  const filteredData = mockData.filter((item) => {
+  const filteredData = goals.filter((item) => {
     if (activeTab === 'all') return true;
-    return activeTab === 'earned' ? item.points.startsWith('+') : item.points.startsWith('-');
+    return activeTab === 'in progress' ? item.status == "Not done" : item.status == "Done";
   });
+  
 
   const renderItem = ({ item }) => (
     <View style={styles.itemContainer}>
-      <Text style={styles.itemDescription}>{item.description}</Text>
-      <Text style={item.points.startsWith('+') ? styles.itemPointsEarned : styles.itemPointsRedeemed}>
-        {item.points}
-      </Text>
-      <Text style={styles.itemDate}>{item.date}</Text>
+      <Text style={styles.itemDescription}>{item.title}</Text>
+      <Text style={styles.itemPoints}>{item.points} Points</Text>
+      <Text style={styles.itemStatus}>{item.status}</Text>
     </View>
   );
+  const renderHeader = () => {
+    return (
+      <View style={styles.tableHeader}>
+        <Text style={styles.headerTitle}>Title</Text>
+        <Text style={styles.headerTitle}>Points</Text>
+        <Text style={styles.headerTitle}>Status</Text>
+      </View>
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -42,11 +93,11 @@ const GoalsScreen = () => {
         />
       
         <Text style={styles.balanceText}>Your Points</Text>
-        <Text style={styles.points}>428 Points</Text>
+        <Text style={styles.points}>{studentData.pointsCounter}</Text>
         
       </View>
       <View style={styles.tabContainer}>
-        {['All', 'Earned', 'Redeemed'].map((tab) => (
+        {['All', 'In Progress', 'Completed'].map((tab) => (
           <TouchableOpacity
             key={tab}
             style={[
@@ -64,11 +115,17 @@ const GoalsScreen = () => {
           </TouchableOpacity>
         ))}
       </View>
+
       
-      <FlatList
-        data={filteredData}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
+      
+      <FlatList style={{ marginTop: 10 }}
+        data={filteredData.length > 0 ? filteredData : ['empty']} // If no goals, pass an array with 'empty'
+        renderItem={filteredData.length > 0 ? renderItem : () => (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>You have no goals yet.</Text>
+          </View>
+        )}
+        keyExtractor={item => item.id || 'empty'} // If no goals, use 'empty' as the key
       />
     </View>
   );
@@ -160,6 +217,25 @@ const styles = StyleSheet.create({
   itemDate: {
     color: '#757575', // Grey color for the date
     fontSize: 14,
+  },
+  itemPoints: {
+    color: '#4CAF50', // Or any other color you prefer
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  itemStatus: {
+    color: '#757575', // Or any other color you prefer
+    fontSize: 14,
+  },
+  emptyContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#757575',
   },
 });
 
