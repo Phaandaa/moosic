@@ -14,6 +14,7 @@ function PracticeScreen({navigation}){
     const dispatch = useDispatch();
     const [title, setTitle] = useState('');
     const [comment, setComment] = useState('');
+    const [userData, setUserData] = useState('');
     const cancelIcon = require('../../assets/cancel.png');
     const [videos, setVideos] = useState([]);
     const [loadingStates, setLoadingStates] = useState({});

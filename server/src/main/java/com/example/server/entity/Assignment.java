@@ -36,7 +36,7 @@ public class Assignment {
     
     public Assignment(String title, List<String> assignmentDocumentLinks, String description, String deadline,
             String studentId, String studentName, String submission, String teacherId, String teacherName,
-            String teacherFeedback, Integer points, String feedbackDocumentLink, String createdAtDate) {
+            String teacherFeedback, Integer points, String feedbackDocumentLink) {
         this.title = title;
         this.assignmentDocumentLinks = assignmentDocumentLinks;
         this.description = description;
@@ -59,7 +59,7 @@ public class Assignment {
                 + assignmentDocumentLinks + ", description=" + description + ", deadline=" + deadline + ", studentId="
                 + studentId + ", studentName=" + studentName + ", submission=" + submission + ", teacherId=" + teacherId
                 + ", teacherName=" + teacherName + ", teacherFeedback=" + teacherFeedback + ", points=" + points
-                + ", feedbackDocumentLink=" + feedbackDocumentLink + ", createdAt=" + createdAt + "]";
+                + ", feedbackDocumentLink=" + feedbackDocumentLink + ", createdAt=" + createdAtDate + "]";
     }
 
     

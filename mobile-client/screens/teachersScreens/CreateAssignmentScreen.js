@@ -200,18 +200,15 @@ function CreateAssignmentScreen({ navigation }) {
 
 
     try {
-      // const response = await axios.post(`${IP_ADDRESS}/assignments/create`, formData, {
-      //   // headers: {
-      //   //   'Content-Type': 'multipart/form-data'
-      //   // }
-      // });
+     
       const response = await fetch(`${IP_ADDRESS}/assignments/create`, {
           method: 'POST',
           body: formData,
       });
         
       if (!response.ok) {
-          throw new Error('Something went wrong with the upload');
+        const errorText = response.statusText || 'Unknown error occurred';
+        throw new Error(`Request failed with status ${response.status}: ${errorText}`);
       }
       const responseData = await response.json();
       console.log(responseData);
@@ -294,19 +291,12 @@ function CreateAssignmentScreen({ navigation }) {
         ) : (
           <>
             <View style={styles.imageContainer}>
-              {/* {images.map((image, index) => (
-                <View key={index} style={styles.imageWrapper}>
-                  <Image source={{ uri: image.uri }} style={styles.image} />
-                  <TouchableOpacity onPress={() => removeImage(index)} style={styles.removeButton}>
-                    <Ionicons name="close-circle" size={24} color="red" />
-                  </TouchableOpacity>
-                </View>
-              ))} */}
+              
                 {images.map((image, index) => (
                       <View key={image.uri} style={styles.imageWrapper}>
                           <Image source={{ uri: image.uri }} style={styles.image} />
                           <TouchableOpacity onPress={() => removeImage(index)} style={styles.removeButton}>
-                              {/* <Text style={theme.buttonText}>x</Text> */}
+                              
                               <Ionicons name="close-circle" size={24} color="red" />
                           </TouchableOpacity>
                       </View>
