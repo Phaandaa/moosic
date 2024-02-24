@@ -5,6 +5,7 @@ import theme from '../../styles/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import axios from 'axios';
+import GoalItem from '../../components/ui/goalItem';
 
 
 
@@ -13,6 +14,7 @@ const GoalsScreen = () => {
   const [goals, setGoals] = useState([]);
   const [studentData, setStudentData] = useState({ pointsCounter: 0 });
   const [fetchError, setFetchError] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   
      // Fetch goals using studentID
@@ -63,22 +65,17 @@ const GoalsScreen = () => {
   });
   
 
-  const renderItem = ({ item }) => (
-    <View style={styles.itemContainer}>
-      <Text style={styles.itemDescription}>{item.title}</Text>
-      <Text style={styles.itemPoints}>{item.points} Points</Text>
-      <Text style={styles.itemStatus}>{item.status}</Text>
-    </View>
-  );
+  // Function to render the header
   const renderHeader = () => {
     return (
-      <View style={styles.tableHeader}>
-        <Text style={styles.headerTitle}>Title</Text>
-        <Text style={styles.headerTitle}>Points</Text>
-        <Text style={styles.headerTitle}>Status</Text>
+      <View style={styles.headerRow}>
+        <Text style={[styles.headerItem, { flex: 2 }]}>Title</Text>
+        <Text style={[styles.headerItem, { flex: 1 }]}>Points</Text>
+        <Text style={[styles.headerItem, { flex: 1 }]}>Status</Text>
       </View>
     );
   };
+  
 
   return (
     <View style={styles.container}>
@@ -118,15 +115,12 @@ const GoalsScreen = () => {
 
       
       
-      <FlatList style={{ marginTop: 10 }}
-        data={filteredData.length > 0 ? filteredData : ['empty']} // If no goals, pass an array with 'empty'
-        renderItem={filteredData.length > 0 ? renderItem : () => (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>You have no goals yet.</Text>
-          </View>
-        )}
-        keyExtractor={item => item.id || 'empty'} // If no goals, use 'empty' as the key
-      />
+      <FlatList
+      data={filteredData.length > 0 ? filteredData : ['empty']} // If no goals, pass an array with 'empty'
+      renderItem={({ item }) => <GoalItem item={item} />}
+      keyExtractor={item => item.id || 'empty'} // If no goals, use 'empty' as the key
+      ListHeaderComponent={renderHeader}
+    />
     </View>
   );
 };
@@ -236,6 +230,35 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     color: '#757575',
+  },
+  itemContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderColor: '#E7E7E7',
+    backgroundColor: '#fff',
+  },
+  cell: {
+    flex: 1, // each cell will take up an equal amount of space
+    paddingHorizontal: 5, // add padding for some spacing
+  },
+  title: {
+    flex: 2, // title may need more space
+  },
+  points: {
+    // styles specific to points cell
+  },
+  status: {
+    // styles specific to status cell
+  },
+  checklistContainer: {
+    padding: 16,
+    backgroundColor: '#F0F0F0', // slightly different background for the dropdown
+  },
+  checklistItem: {
+    fontSize: 14,
+    color: '#333', // dark text for checklist items
   },
 });
 
