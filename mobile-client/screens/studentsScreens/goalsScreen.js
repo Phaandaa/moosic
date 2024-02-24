@@ -67,6 +67,11 @@ const GoalsScreen = () => {
 
   // Function to render the header
   const renderHeader = () => {
+    // Check if there are actual goals (not just the 'empty' placeholder)
+    if (filteredData.length === 0 || (filteredData.length === 1 && filteredData[0] === 'empty')) {
+      return null;
+    }
+  
     return (
       <View style={styles.headerRow}>
         <Text style={[styles.headerItem, { flex: 2 }]}>Title</Text>
@@ -76,52 +81,32 @@ const GoalsScreen = () => {
     );
   };
   
+  
 
   return (
     <View style={styles.container}>
-      
-      <View style={[styles.balanceContainer, { backgroundColor: '#007AFF', overflow: 'hidden', position: 'relative'}]}>
-      
-        <Ionicons
-          name="trophy"
-          size={170}
-          color='#FFFFFF'
-          style={{ position: 'absolute', bottom: 0, right: 0 }}
-        />
-      
-        <Text style={styles.balanceText}>Your Points</Text>
-        <Text style={styles.points}>{studentData.pointsCounter}</Text>
-        
-      </View>
-      <View style={styles.tabContainer}>
-        {['All', 'In Progress', 'Completed'].map((tab) => (
-          <TouchableOpacity
-            key={tab}
-            style={[
-              styles.tab,
-              activeTab === tab.toLowerCase() && styles.activeTab
-            ]}
-            onPress={() => setActiveTab(tab.toLowerCase())}
-          >
-            <Text style={[
-              styles.tabText,
-              activeTab === tab.toLowerCase() && styles.activeTabText
-            ]}>
-              {tab}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      
-      
-      <FlatList
-      data={filteredData.length > 0 ? filteredData : ['empty']} // If no goals, pass an array with 'empty'
-      renderItem={({ item }) => <GoalItem item={item} />}
-      keyExtractor={item => item.id || 'empty'} // If no goals, use 'empty' as the key
-      ListHeaderComponent={renderHeader}
-    />
+    <View style={[styles.balanceContainer, { backgroundColor: '#007AFF', overflow: 'hidden', position: 'relative'}]}>
+      <Ionicons name="trophy" size={170} color='#FFFFFF' style={{ position: 'absolute', bottom: 0, right: 0 }} />
+      <Text style={styles.balanceText}>Your Points</Text>
+      <Text style={styles.pointsIndicator}>{studentData.pointsCounter}</Text>
     </View>
+    <View style={styles.tabContainer}>
+      {['All', 'In Progress', 'Completed'].map((tab) => (
+        <TouchableOpacity
+          key={tab}
+          style={[styles.tab, activeTab === tab.toLowerCase() && styles.activeTab]}
+          onPress={() => setActiveTab(tab.toLowerCase())}>
+          <Text style={[styles.tabText, activeTab === tab.toLowerCase() && styles.activeTabText]}>{tab}</Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+    <FlatList
+      data={filteredData.length > 0 ? filteredData : ['empty']}
+      renderItem={({ item }) => <GoalItem item={item} />}
+      keyExtractor={item => item.id || 'empty'}
+      ListHeaderComponent={renderHeader()}
+    />
+  </View>
   );
 };
 
@@ -157,14 +142,15 @@ const styles = StyleSheet.create({
     marginVertical: 40,
     paddingHorizontal: 20,
     paddingVertical: 60,
+    height: 200,
     
   },
   balanceText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 20,
     
   },
-  points: {
+  pointsIndicator: {
     color: 'white',
     fontSize: 36,
     fontWeight: 'bold',
@@ -231,35 +217,34 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#757575',
   },
-  itemContainer: {
+  headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 16,
-    borderBottomWidth: 1,
-    borderColor: '#E7E7E7',
-    backgroundColor: '#fff',
+    backgroundColor: '#686BFF',
+    marginTop: 24,
+    marginHorizontal: 20,
   },
-  cell: {
-    flex: 1, // each cell will take up an equal amount of space
-    paddingHorizontal: 5, // add padding for some spacing
+  headerItem: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '700',
   },
+  // Assuming these are the styles applied to cells in GoalItem
   title: {
-    flex: 2, // title may need more space
+    flex: 2, // Adjust according to your layout
+    textAlign: 'left', // Ensure text alignment matches GoalItem
   },
   points: {
-    // styles specific to points cell
+    flex: 1, // Adjust according to your layout
+    textAlign: 'center', // Ensure text alignment matches GoalItem
   },
   status: {
-    // styles specific to status cell
+    flex: 1, // Adjust according to your layout
+    textAlign: 'right', // Ensure text alignment matches GoalItem
   },
-  checklistContainer: {
-    padding: 16,
-    backgroundColor: '#F0F0F0', // slightly different background for the dropdown
-  },
-  checklistItem: {
-    fontSize: 14,
-    color: '#333', // dark text for checklist items
-  },
+  
+  
 });
 
 export default GoalsScreen;
