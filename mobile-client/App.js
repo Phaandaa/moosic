@@ -20,7 +20,7 @@ import ViewCreatedAssignmentsScreen from './screens/teachersScreens/ViewCreatedA
 import PracticeListTeacherScreen from './screens/teachersScreens/PracticeListTeacherScreen';
 import ProvidePracticeFeedbackScreen from './screens/teachersScreens/ProvidePracticeFeedbackScreen';
 import ViewCreatedGoalsForStudents from './screens/teachersScreens/ViewCreatedGoalsForStudents';
-
+import CreateGoalsForStudents from './screens/teachersScreens/CreateGoalsforStudents';
 // Cache and Context
 import { Provider } from 'react-redux';
 import store from './store';
@@ -53,7 +53,9 @@ const RootNavigator = () => {
         // User is logged in
         <>
           <Stack.Screen name="MainApp" component={BottomTabNavigator} options={{ headerShown: false }} /><Stack.Screen name="CreateAssignmentScreen" component={CreateAssignmentScreen} options={{ title: 'Create Assignment' }} /><Stack.Screen name="PracticeScreen" component={PracticeScreen} options={{ title: 'Start Practice' }} /><Stack.Screen name="MyStudentsScreen" component={MyStudentsScreen} options={{ title: 'My Students', headerShown: false }} /><Stack.Screen name="ViewCreatedAssignmentsScreen" component={ViewCreatedAssignmentsScreen} options={{ title: 'Created Assignments' }} /><Stack.Screen name="ViewAssignmentsScreen" component={ViewAssignmentsScreen} options={{ title: 'My Assignments' }} /><Stack.Screen name="PracticeListTeacherScreen" component={PracticeListTeacherScreen} options={{ title: 'Practice Log' }} /><Stack.Screen name="ProvidePracticeFeedbackScreen" component={ProvidePracticeFeedbackScreen} options={{ title: 'Provide Feedback' }} /><Stack.Screen name="PracticeListStudentScreen" component={PracticeListStudentScreen} options={{ title: 'My Practice Log' }} /><Stack.Screen name="ViewPracticeFeedbackScreen" component={ViewPracticeFeedbackScreen} options={{ title: 'View Feedback' }} />
-          <Stack.Screen name="ViewCreatedGoalsForStudents" component={ViewCreatedGoalsForStudents} options={{ title: 'View Feedback' }} /></>
+          <Stack.Screen name="ViewCreatedGoalsForStudents" component={ViewCreatedGoalsForStudents} options={{ title: 'View Feedback' }} />
+          <Stack.Screen name="CreateGoalsForStudents" component={CreateGoalsForStudents} options={{ title: 'View Feedback' }} /></>
+
               
       ) : (
         // User is not logged in

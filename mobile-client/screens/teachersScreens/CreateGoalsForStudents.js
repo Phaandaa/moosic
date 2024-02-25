@@ -8,7 +8,7 @@ import axios from 'axios';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 
 
-const ViewCreatedGoalsForStudents = ({ navigation }) => {
+const CreateGoalsForStudents = ({ navigation }) => {
     const [search, setSearch] = useState('');
     const [studentData, setStudentData] = useState([]);
     const [filteredStudents, setFilteredStudents] = useState([]);
@@ -70,32 +70,9 @@ const ViewCreatedGoalsForStudents = ({ navigation }) => {
 
 
     return (
-      <ScrollView style={theme.container}>
-            <HomepageSearchBar onSearch={handleSearch} />
-            {fetchError ? (
-                <Text style={[theme.textTitle, {marginTop: 10}]}>You have no students.</Text>
-            ) : (
-                <>
-                    <Text style={[theme.textTitle, {marginTop: 10}]}>My Students</Text>
-                    {filteredStudents.map((student, index) => (
-                        student.name ? (
-                            <TouchableOpacity key={index} style={styles.card}>
-                                <View style={styles.cardTextContainer}>
-                                    <Text style={theme.cardTextBold}>{student.name || "Unnamed Student"}</Text>
-                                </View>
-                                <View style={theme.buttonContainer}>
-                                    <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('CreateGoalsForStudents')}>
-                                        <Text style={theme.smallButtonText}>Create Goals</Text>
-                                    </TouchableOpacity>
-                          
-                                </View>
-                            </TouchableOpacity>
-                        ) : null
-                    ))}
-                    
-                </>
-            )}
-            </ScrollView>
+        <View style={theme.container}>
+            <Text> fak u </Text>
+            </View>
     );
 }
 
@@ -137,4 +114,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default ViewCreatedGoalsForStudents;
+export default CreateGoalsForStudents;
