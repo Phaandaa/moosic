@@ -132,6 +132,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     paddingHorizontal: 20,
     paddingVertical: 60,
+    verticalAlign: 'center',
     
   },
   balanceText: {
@@ -151,7 +152,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 20,
     marginHorizontal: 20,
-    marginBottom: 20, // Add some space below the tab container
+    marginBottom: 20,
+    
   },
   tab: {
     padding: 8,

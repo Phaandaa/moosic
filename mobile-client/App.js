@@ -19,6 +19,7 @@ import MyStudentsScreen from './screens/teachersScreens/MyStudentsScreen';
 import ViewCreatedAssignmentsScreen from './screens/teachersScreens/ViewCreatedAssignmentsScreen';
 import PracticeListTeacherScreen from './screens/teachersScreens/PracticeListTeacherScreen';
 import ProvidePracticeFeedbackScreen from './screens/teachersScreens/ProvidePracticeFeedbackScreen';
+import CreateGoalsforStudents from './screens/teachersScreens/CreateGoalsforStudents';
 
 // Cache and Context
 import { Provider } from 'react-redux';
