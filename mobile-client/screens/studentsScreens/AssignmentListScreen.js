@@ -6,10 +6,12 @@ import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import IP_ADDRESS from '../../constants/ip_address_temp';
+import AssignmentSearchBar from '../../components/ui/assignmentSearchBar';
 
 function AssignmentListScreen({navigation}){
     const [studentID, setStudentID] = useState('');
     const [assignmentData, setAssignmentData] = useState([]);
+    const [searchResults, setSearchResults] = useState([]);
 
     // Check stored data for teacherID
     const checkStoredData = async () => {
@@ -53,6 +55,7 @@ function AssignmentListScreen({navigation}){
                 }
                 const responseData = await response.json();
                 setAssignmentData(responseData); // Set the state with the response data
+                setSearchResults(responseData);
                 console.log(assignmentData)
             } catch (error) {
                 console.error('Error fetching assignments:', error);
@@ -63,11 +66,27 @@ function AssignmentListScreen({navigation}){
         }
     }, [studentID]);
 
+    const handleSearch = (searchText) => {
+        // Filter the assignmentData based on whether the assignment title includes the searchText
+        if (searchText) {
+            // Filter the assignmentData based on whether the assignment title includes the searchText
+            const results = assignmentData.filter(assignment => 
+              assignment.title.toLowerCase().includes(searchText.toLowerCase())
+            );
+            setSearchResults(results);
+          } else {
+            // If the search text is empty, reset the search results to the full assignment data
+            setSearchResults(assignmentData);
+          }
+    };
+    
     return (
         <ScrollView style={theme.container}>
             {/* <Text style={[theme.textTitle, { marginTop: 50, verticalAlign: 'middle' }]}>Your Assignments</Text> */}
-            {assignmentData.length > 0 ? (
-                assignmentData.map((assignment, index) => (
+                    {/* Search bar */}
+            <AssignmentSearchBar onSearch={handleSearch} />
+            {searchResults.length > 0 ? ( // Use searchResults here
+                searchResults.map((assignment, index) => (
                     <TouchableOpacity key={index} style={theme.card2} onPress={() => navigation.navigate('ViewAssignmentsScreen', { assignment: assignment })}>
                         <View style={theme.cardTextContainer}>
                             <Text style={theme.cardTitle}>{assignment.title}</Text>
@@ -80,9 +99,9 @@ function AssignmentListScreen({navigation}){
                 ))
             ) : (
                 <View style={theme.card2}>
-                    <Text>No assignments created yet.</Text>
+                  <Text>No assignments found.</Text>
                 </View>
-            )}
+              )}
         </ScrollView>
     );
 }
