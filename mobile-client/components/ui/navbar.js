@@ -66,7 +66,7 @@ const BottomTabNavigator = () => {
         },
         tabBarActiveTintColor: '#4664EA',
         tabBarInactiveTintColor: 'gray',
-        tabBarStyle: { paddingBottom: 20, paddingTop: 10, height: 70 },
+        tabBarStyle: { paddingBottom: 15, paddingTop: 15, height: 75 },
       })}
     >
       {/* Common screens */}
