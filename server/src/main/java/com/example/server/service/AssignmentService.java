@@ -45,18 +45,18 @@ public class AssignmentService {
             Integer points = createAssignmentDTO.getPoints();
 
             List<Assignment> newAssignments = new ArrayList<>();
+
             for (HashMap<String, String> student : students) {
                 String studentId = student.get("student_id");
                 studentRepository.findById(studentId).orElseThrow(()->
                     new StudentNotFoundException("Student not found with the ID " + studentId));
                 String studentName = student.get("student_name");
                 Assignment newAssignment = new Assignment(title, publicUrls, description, deadline, studentId,
-                        studentName,
-                        null, teacherId, teacherName, null, points, null);
+                        studentName, null, teacherId, teacherName, null, points, null, null);
                 newAssignments.add(newAssignment);
             }
             return assignmentRepository.saveAll(newAssignments);
-        } catch (NoSuchElementException e) {
+        } catch (NoSuchElementException e) { 
             throw e;
         } catch (RuntimeException e) {
             if (e.getMessage() != null || e.getMessage() != "") {

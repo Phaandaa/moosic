@@ -13,5 +13,5 @@ public interface AssignmentRepository extends MongoRepository<Assignment, String
 
     List<Assignment> findByStudentIdAndTeacherId(String studentId, String teacherId);
 
-    List<Assignment> findBySubmissionIsNotNull();
+    List<Assignment> findBySubmissionLinksIsNotNull();
 }
