@@ -105,14 +105,30 @@ const theme = StyleSheet.create({
       borderRadius: 15,
       marginTop: 10,
       marginBottom: 10,
-      flexDirection: 'col',
+      flexDirection: 'row', // Change this to 'row'
+      alignItems: 'center', // Add this to align items vertically in the center
+      justifyContent: 'space-between', // Add this to space out the title/deadline and the button  }
   },
+  card3:{
+    backgroundColor: '#FFFFFF',
+    padding: 20,
+    borderRadius: 15,
+    marginTop: 10,
+    marginBottom: 10,
+    flexDirection: 'col'
+},
   cardTextContainer: {
       flex: 1, // Take up as much space as possible
       marginRight: 8, // Add some margin to the right of the text
   },
   cardTitle:{
     color: '#4664EA',
+    fontWeight: 'bold',
+    fontSize: 20,
+    paddingVertical: 5
+  },
+  cardTitlePink:{
+    color: '#EE97BC',
     fontWeight: 'bold',
     fontSize: 20,
     paddingVertical: 5
@@ -150,7 +166,13 @@ const theme = StyleSheet.create({
       backgroundColor: '#4664EA',
       padding: 10,
       borderRadius: 15,
-      marginLeft: 8, // Add some margin to separate the buttons
+      // marginLeft: 8, // Add some margin to separate the buttons
+  },
+  smallPinkButton: {
+    backgroundColor: '#EE97BC',
+    padding: 10,
+    borderRadius: 15,
+    marginLeft: 8, // Add some margin to separate the buttons
   },
   smallButtonText: {
       color: 'white',
@@ -158,6 +180,11 @@ const theme = StyleSheet.create({
       fontSize: 14,
       textAlign: 'center',
   }, 
+  oneRow:{
+    flexDirection:'row',
+    flex:1,
+    justifyContent: "space-between"
+  },
   assignmentImage: {
     width: 150,
     height: 150

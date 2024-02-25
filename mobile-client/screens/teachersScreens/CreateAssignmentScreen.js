@@ -51,13 +51,6 @@ function CreateAssignmentScreen({ navigation }) {
         quality: 1,
       });
       if (!result.canceled) {
-        // result.assets.forEach((asset, index) => {
-        //   setImages(currentImages => [...currentImages, {
-        //     uri: asset.uri,
-        //     type: asset.type || 'image/jpeg', // Use the type from asset or a default
-        //     name: asset.fileName || `image_${index}.jpg`
-        //   }]);
-        // });
         console.log('result.assets[0]:', result.assets[0])
         saveImage(result.assets[0]); 
         console.log(images);
@@ -72,11 +65,6 @@ function CreateAssignmentScreen({ navigation }) {
         multiple: true,
       });
       if (!result.canceled && result.assets) {
-        // const newDocs = result.assets.map((doc, index) => ({
-        //   uri: doc.uri,
-        //   type: doc.mimeType || 'application/octet-stream', // Use the mimeType from doc or a default
-        //   name: doc.name || `document_${index}.pdf`
-        // }));
         setUploadedDocuments(currentDocs => [...currentDocs, ...result.assets]);
         console.log('uploadedDocuments',uploadedDocuments);
       }
@@ -142,15 +130,7 @@ function CreateAssignmentScreen({ navigation }) {
     }
   
     const formData = new FormData();
-    // formData.append('assignment', JSON.stringify({
-    //   teacher_id: parsedData.userId,
-    //   teacher_name: parsedData.name,
-    //   assignment_title: assignmentName,
-    //   assignment_desc: assignmentDesc,
-    //   assignment_deadline: assignmentDeadline,
-    //   selected_students: selectedStudents.map(student => ({ id: student.key })),
-    //   points: 0
-    // }));
+
     const assignmentData ={
       teacher_id: parsedData.userId,
       teacher_name: parsedData.name,
@@ -165,11 +145,6 @@ function CreateAssignmentScreen({ navigation }) {
     
   
     images.forEach((image, index) => {
-      // formData.append(`file${index}`, {
-      //   uri: image.uri,
-      //   type: image.type,
-      //   name: image.name
-      // });
       const { uri, fileName } = image
 
       if (typeof image.uri === 'string') { // Check if image.uri is a string
