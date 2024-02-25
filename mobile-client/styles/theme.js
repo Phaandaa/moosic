@@ -7,7 +7,7 @@ const theme = StyleSheet.create({
   container: {
     padding: 20,
     marginBottom: 20,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#eeeeee',
     width: '100%',
     height : '100%',    
   },
@@ -100,7 +100,7 @@ const theme = StyleSheet.create({
     alignItems: 'center', // Center items vertically
   },
   card2:{
-      backgroundColor: '#EE97BC',
+      backgroundColor: '#FFFFFF',
       padding: 20,
       borderRadius: 15,
       marginTop: 10,
@@ -112,30 +112,37 @@ const theme = StyleSheet.create({
       marginRight: 8, // Add some margin to the right of the text
   },
   cardTitle:{
-    color: 'white',
+    color: '#4664EA',
     fontWeight: 'bold',
     fontSize: 20,
     paddingVertical: 5
   },
   cardTextBold:{
-    color: 'white',
+    color: '#525F7F',
     fontWeight: 'bold',
     fontSize: 16,
     paddingVertical: 5
   },
   cardText: {
-      color: 'white',
+      color: '#525F7F',
       fontWeight: '300',
       fontSize: 16,
       paddingVertical: 5
   },
   buttonContainer: {
       flexDirection: 'row',
-      // If you need space between buttons add justifyContent: 'space-between',
+      // justifyContent: 'space-between',
+      marginTop:10
   },
   buttonContainer2: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
+    // justifyContent: 'space-between', // This will space out the buttons evenly
+    marginTop: 10, // Add some margin to the top of the button container
+  },
+  buttonContainerLeft:{
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
     // justifyContent: 'space-between', // This will space out the buttons evenly
     marginTop: 10, // Add some margin to the top of the button container
   },
@@ -192,7 +199,7 @@ const theme = StyleSheet.create({
   }, 
   documentItemContainer: {
       flexDirection: 'row',
-      alignItems: 'center',
+      alignItems: 'center', 
       justifyContent: 'flex-start',
       marginTop: 20,
       marginLeft: 10,
@@ -206,6 +213,7 @@ const theme = StyleSheet.create({
       flexGrow: 1,
       flexShrink: 1,
       marginRight: 10,
+      color: '#525F7F'
   },
   buttonsContainer:{
       flexDirection: 'row',

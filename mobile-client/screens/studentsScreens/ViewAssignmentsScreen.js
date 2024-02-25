@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, TouchableOpacity, Text, Button, Image, Alert } from 'react-native';
+import { View, ScrollView, TouchableOpacity, Text, Button, Image, Alert, Linking } from 'react-native';
 import theme from '../../styles/theme';
 import Modal from 'react-native-modal';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,99 +7,119 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 
+const getFileNameFromUrl = (url) => {
+    return url.split('/').pop();
+  };
 function ViewAssignmentsScreen() {
+    // const assignmentDataAll = useSelector(state => state.cache.assignmentDataAll) || []; 
+    // Added a fallback to an empty array to ensure assignmentDataAll is always an array
+     
+    // console.log('assignmentDataAll', assignmentDataAll)
     const [isModalVisible, setModalVisible] = useState(false);
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedImage, setSelectedImage] = useState('');
     const [studentID, setStudentID] = useState('');
-    const [assignmentData, setAssignmentData] = useState({
-      images: [],
-      documents: [],
-    }); // Initialize with empty arrays for images and documents
-
-    const checkStoredData = async () => {
-        try {
-            const storedData = await AsyncStorage.getItem('authData');
-            if (storedData) {
-                const parsedData = JSON.parse(storedData);
-                setStudentID(parsedData.userId); // Directly set the studentID here
-            }
-        } catch (error) {
-            console.error('Error retrieving data from AsyncStorage', error);
-            Alert.alert('Error', 'Failed to load user data');
-        }
-    };
-
-    useEffect(() => {
-        checkStoredData();
-    }, []);
-
-    useEffect(() => {
-        const fetchAssignments = async () => {
-            if (studentID) {
-                try {
-                    const response = await axios.get(`${IP_ADDRESS}/assignments/${studentID}/`);
-                    setAssignmentData(response.data || {}); // Use default empty object if data is falsy
-                } catch (error) {
-                    console.error('Error fetching assignments:', error);
-                    Alert.alert('Error', 'Could not fetch assignments');
-                }
-            }
-        };
-        fetchAssignments();
-    }, [studentID]);
+    const [fetchError, setFetchError] = useState(false);
+    const [assignmentData, setAssignmentData] = useState([]);
+    const [filteredAssignments, setFilteredAssignments] = useState([]);
 
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
     };
 
-    const openImage = (uri) => {
-        setSelectedImage(uri);
-        toggleModal();
+     // Check stored data for teacherID
+     const checkStoredData = async () => {
+        try {
+            const storedData = await AsyncStorage.getItem('authData');
+            if (storedData !== null) {
+                const parsedData = JSON.parse(storedData);
+                console.log('studentID:', parsedData.userId);
+                return parsedData.userId;
+            }
+        } catch (error) {
+            console.error('Error retrieving data from AsyncStorage', error);
+        }
+        return '';
     };
 
-    // No need to separately check hasImages and hasDocuments since they're initialized as empty arrays
+    // Fetch studentID on component mount
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const id = await checkStoredData();
+                setStudentID(id);
+                console.log(studentID)
+            } catch (error) {
+                console.error('Error processing stored data', error);
+            }
+        };
+        fetchData();
+    }, []);
+
+    // Fetch assignments using studentID
+    useEffect(() => {
+        const fetchAssignments = async() => {
+            try {
+                const response = await fetch(`${IP_ADDRESS}/assignments/student/${studentID}`, {
+                    method: 'GET'
+                });
+                
+                if (!response.ok) {
+                    const errorText = response.statusText || 'Unknown error occurred';
+                    throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+                }
+                const responseData = await response.json();
+                setAssignmentData(responseData); // Set the state with the response data
+                setFilteredAssignments(responseData); // Assuming you also want to filter
+                setFetchError(false); // Set fetch error as false since the fetch was successful
+            } catch (error) {
+                console.error('Error fetching assignments:', error);
+                setFetchError(true);
+            }
+        };
+        if(studentID){
+            fetchAssignments();
+        }
+    }, [studentID]);
+
     return (
         <ScrollView style={theme.container}>
-            <View style={theme.card2}>
-                <View style={theme.cardTextContainer}>
-                    <Text style={theme.cardTitle}>{assignmentData.name || 'No Name Provided'}</Text>
-                    <Text style={theme.cardText}>Description: {assignmentData.description || 'No Description Provided'}</Text>
-                    <Text style={theme.cardText}>Deadline: {assignmentData.deadline || 'No Deadline'}</Text>
-                    <Text style={theme.cardText}>Created on: {assignmentData.submissionDate || 'No Creation Date'}</Text>
-                    <Text style={theme.cardText}>Attachments:</Text>
-                    
-                    {assignmentData.images.map((image, index) => (
-                        <View key={index} style={theme.imageContainer}>
-                            <TouchableOpacity onPress={() => openImage(image)} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Ionicons name="image" size={24} color="black" />
-                                <Text style={theme.documentName}>{`Image ${index + 1}`}</Text>
+            {/* <Text style={[theme.textTitle, { marginTop: 50, verticalAlign: 'middle' }]}>Your Assignments</Text> */}
+            {assignmentData.length > 0 ? (
+                assignmentData.map((assignment, index) => (
+                    <View key={index} style={theme.card2}>
+                        <View style={theme.cardTextContainer}>
+                            <Text style={theme.cardTitle}>{assignment.title}</Text>
+                            <Text style={theme.cardText}>Description: {assignment.description}</Text>
+                            <Text style={theme.cardText}>Deadline: {assignment.deadline}</Text>
+                            <Text style={theme.cardText}>Attachments:</Text>
+                            {assignment.assignmentDocumentLinks.map((link, linkIndex) => (
+                                <TouchableOpacity key={linkIndex} onPress={() => Linking.openURL(link)} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <Ionicons name="link" size={24} color="#525F7F" />
+                                    <Text style={theme.documentName}> {getFileNameFromUrl(link)}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                        <View style={theme.buttonContainer2}>
+                            <TouchableOpacity style={theme.smallButton}>
+                                <Text style={theme.smallButtonText}>Submit Assignment</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={theme.smallButton}>
+                                <Text style={theme.smallButtonText}>View Feedback</Text>
                             </TouchableOpacity>
                         </View>
-                    ))}
-                    
-                    {assignmentData.documents.map((doc, index) => (
-                        <View key={index} style={theme.documentItemContainer}>
-                            <Ionicons name="document-attach" size={24} color="black" />
-                            <Text style={theme.documentName}>{doc}</Text>
-                        </View>
-                    ))}
-
-                    <Modal isVisible={isModalVisible}>
-                        <View style={theme.modalContent}>
-                            <Image source={{ uri: selectedImage }} style={theme.fullSizeImage} />
-                            <Button title="Close" onPress={toggleModal} />
-                        </View>
-                    </Modal>
+                    </View>
+                ))
+            ) : (
+                <View style={theme.card2}>
+                    <Text>No assignments created yet.</Text>
                 </View>
-                <View style={theme.buttonContainer2}>
-                    <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText}>Submit Assignment</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText}>View Feedback</Text>
-                    </TouchableOpacity>
+            )}
+            <Modal isVisible={isModalVisible}>
+                <View style={theme.modalContent}>
+                    <Image source={{ uri: selectedImage }} style={theme.fullSizeImage} />
+                    <Button title="Close" onPress={toggleModal} />
                 </View>
-            </View>
+            </Modal>
         </ScrollView>
     );
 }
