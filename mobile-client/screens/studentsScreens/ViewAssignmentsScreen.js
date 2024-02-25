@@ -10,7 +10,7 @@ import IP_ADDRESS from '../../constants/ip_address_temp';
 const getFileNameFromUrl = (url) => {
     return url.split('/').pop();
   };
-function ViewAssignmentsScreen() {
+function ViewAssignmentsScreen({navigation}) {
     // const assignmentDataAll = useSelector(state => state.cache.assignmentDataAll) || []; 
     // Added a fallback to an empty array to ensure assignmentDataAll is always an array
      
@@ -69,6 +69,7 @@ function ViewAssignmentsScreen() {
                 }
                 const responseData = await response.json();
                 setAssignmentData(responseData); // Set the state with the response data
+                console.log(assignmentData)
                 setFilteredAssignments(responseData); // Assuming you also want to filter
                 setFetchError(false); // Set fetch error as false since the fetch was successful
             } catch (error) {
@@ -100,7 +101,7 @@ function ViewAssignmentsScreen() {
                             ))}
                         </View>
                         <View style={theme.buttonContainer2}>
-                            <TouchableOpacity style={theme.smallButton}>
+                            <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('SubmitAssignmentScreen')}>
                                 <Text style={theme.smallButtonText}>Submit Assignment</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={theme.smallButton}>

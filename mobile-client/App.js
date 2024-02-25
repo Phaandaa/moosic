@@ -12,6 +12,7 @@ import ViewAssignmentsScreen from './screens/studentsScreens/ViewAssignmentsScre
 import PracticeScreen from './screens/studentsScreens/PracticeScreen';
 import PracticeListStudentScreen from './screens/studentsScreens/PracticeListStudentScreen';
 import ViewPracticeFeedbackScreen from './screens/studentsScreens/ViewPracticeFeedbackScreen';
+import SubmitAssignmentScreen from './screens/studentsScreens/SubmitAssignmentScreen';
 
 //Teacher Pages
 import CreateAssignmentScreen from './screens/teachersScreens/CreateAssignmentScreen';
@@ -51,7 +52,18 @@ const RootNavigator = () => {
       {state.isLoggedIn ? (
         // User is logged in
         <>
-          <Stack.Screen name="MainApp" component={BottomTabNavigator} options={{ headerShown: false }} /><Stack.Screen name="CreateAssignmentScreen" component={CreateAssignmentScreen} options={{ title: 'Create Assignment' }} /><Stack.Screen name="PracticeScreen" component={PracticeScreen} options={{ title: 'Start Practice' }} /><Stack.Screen name="MyStudentsScreen" component={MyStudentsScreen} options={{ title: 'My Students', headerShown: false }} /><Stack.Screen name="ViewCreatedAssignmentsScreen" component={ViewCreatedAssignmentsScreen} options={{ title: 'Created Assignments' }} /><Stack.Screen name="ViewAssignmentsScreen" component={ViewAssignmentsScreen} options={{ title: 'My Assignments' }} /><Stack.Screen name="PracticeListTeacherScreen" component={PracticeListTeacherScreen} options={{ title: 'Practice Log' }} /><Stack.Screen name="ProvidePracticeFeedbackScreen" component={ProvidePracticeFeedbackScreen} options={{ title: 'Provide Feedback' }} /><Stack.Screen name="PracticeListStudentScreen" component={PracticeListStudentScreen} options={{ title: 'My Practice Log' }} /><Stack.Screen name="ViewPracticeFeedbackScreen" component={ViewPracticeFeedbackScreen} options={{ title: 'View Feedback' }} /></>
+          <Stack.Screen name="MainApp" component={BottomTabNavigator} options={{ headerShown: false }} />
+          <Stack.Screen name="CreateAssignmentScreen" component={CreateAssignmentScreen} options={{ title: 'Create Assignment' }} />
+          <Stack.Screen name="PracticeScreen" component={PracticeScreen} options={{ title: 'Start Practice' }} />
+          <Stack.Screen name="MyStudentsScreen" component={MyStudentsScreen} options={{ title: 'My Students', headerShown: false }} />
+          <Stack.Screen name="ViewCreatedAssignmentsScreen" component={ViewCreatedAssignmentsScreen} options={{ title: 'Created Assignments' }} />
+          <Stack.Screen name="ViewAssignmentsScreen" component={ViewAssignmentsScreen} options={{ title: 'My Assignments' }} />
+          <Stack.Screen name="PracticeListTeacherScreen" component={PracticeListTeacherScreen} options={{ title: 'Practice Log' }} />
+          <Stack.Screen name="ProvidePracticeFeedbackScreen" component={ProvidePracticeFeedbackScreen} options={{ title: 'Provide Feedback' }} />
+          <Stack.Screen name="PracticeListStudentScreen" component={PracticeListStudentScreen} options={{ title: 'My Practice Log' }} />
+          <Stack.Screen name="ViewPracticeFeedbackScreen" component={ViewPracticeFeedbackScreen} options={{ title: 'View Feedback' }} />
+          <Stack.Screen name="SubmitAssignmentScreen" component={SubmitAssignmentScreen} options={{ title: 'Submit Assignment' }} />
+        </>
               
       ) : (
         // User is not logged in
