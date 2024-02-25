@@ -8,7 +8,7 @@ import axios from 'axios';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 
 
-const CreateGoalsForStudents = ({ navigation }) => {
+function CreateGoalsForStudents({ navigation }) {
     const [search, setSearch] = useState('');
     const [studentData, setStudentData] = useState([]);
     const [filteredStudents, setFilteredStudents] = useState([]);
@@ -71,10 +71,13 @@ const CreateGoalsForStudents = ({ navigation }) => {
 
     return (
         <View style={theme.container}>
+            <HomepageSearchBar onSearch={handleSearch} />
             <Text> fak u </Text>
             </View>
     );
 }
+
+
 
 const styles = StyleSheet.create({
   card: {

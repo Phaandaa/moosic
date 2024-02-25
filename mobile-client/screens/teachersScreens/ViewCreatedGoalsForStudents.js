@@ -8,7 +8,7 @@ import axios from 'axios';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 
 
-const ViewCreatedGoalsForStudents = ({ navigation }) => {
+function ViewCreatedGoalsForStudents ({ navigation }) {
     const [search, setSearch] = useState('');
     const [studentData, setStudentData] = useState([]);
     const [filteredStudents, setFilteredStudents] = useState([]);
