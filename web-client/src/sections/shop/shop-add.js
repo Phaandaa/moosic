@@ -13,6 +13,11 @@ import { SvgIcon } from "@mui/material";
 import { Box } from "@mui/material";
 import { postAsync } from "src/utils/utils";
 import SnackbarAlert from "src/components/alert";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+
 
 export default function AddItem({ onAddItem }) {
   const [open, setOpen] = React.useState(false);
@@ -22,6 +27,8 @@ export default function AddItem({ onAddItem }) {
   const [points, setPoints] = React.useState(0);
   const [limit, setLimit] = React.useState(0);
   const [stock, setStock] = React.useState(0);
+  // You can define the options for the select dropdown
+  const itemTypeOptions = ["physical", "digital"];
 
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState("");
@@ -145,16 +152,22 @@ export default function AddItem({ onAddItem }) {
               placeholder="e.g. Capo, Guitar Strings, etc."
               onChange={handleDescriptionChange}
             />
-            <TextField
-              label="Item Type"
-              id="type"
-              variant="filled"
-              fullWidth
-              sx={{ mb: 2 }}
-              value={type}
-              placeholder="physical/digital"
-              onChange={handleTypeChange}
-            />
+            <FormControl variant="filled" sx={{ mb: 2 }} fullWidth>
+              <InputLabel id="type-label">Item Type</InputLabel>
+              <Select
+                labelId="type-label"
+                id="type"
+                value={type}
+                onChange={handleTypeChange}
+                label="Item Type"
+              >
+                {itemTypeOptions.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option.charAt(0).toUpperCase() + option.slice(1)} {/* Capitalize the first letter */}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <TextField
               label="Points Required"
               id="points"

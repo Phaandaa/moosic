@@ -13,6 +13,10 @@ import {
   Divider,
   InputAdornment,
   Grid,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
 import { deleteAsync } from "src/utils/utils";
 import { putAsync } from "src/utils/utils";
@@ -37,6 +41,8 @@ export const ItemDetailModal = ({
   const [stock, setStock] = useState(item?.stock || 0);
   const [type, setType] = useState(item?.type || "");
   const [description, setDescription] = useState(item?.description || "");
+
+  const itemTypeOptions = ["physical", "digital"];
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -219,15 +225,23 @@ export const ItemDetailModal = ({
           </Grid>
           <Grid container spacing={2} sx={{ mb: 2, justifyContent: "center" }}>
             <Grid item xs={12} md={6}>
-              <TextField
-                label="Type"
-                id="type"
-                sx={{ width: "26ch" }}
-                variant="filled"
-                disabled={disabled}
-                value={type}
-                onChange={handleTypeChange}
-              />
+              <FormControl variant="filled" fullWidth>
+                <InputLabel id="type-select-label">Type</InputLabel>
+                <Select
+                  labelId="type-select-label"
+                  id="type-select"
+                  value={type}
+                  onChange={handleTypeChange}
+                  disabled={disabled}
+                >
+                  {itemTypeOptions.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option.charAt(0).toUpperCase() + option.slice(1)}{" "}
+                      {/* Capitalize the first letter */}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
             <Grid item xs={12} md={6}>
               <TextField
