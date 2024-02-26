@@ -14,7 +14,6 @@ function ViewAssignmentsScreen({route, navigation}) {
     const { assignment } = route.params;
 
     // const assignmentDataAll = useSelector(state => state.cache.assignmentDataAll) || []; 
-    // Added a fallback to an empty array to ensure assignmentDataAll is always an array
      
     // console.log('assignmentDataAll', assignmentDataAll)
     const [isModalVisible, setModalVisible] = useState(false);
@@ -23,62 +22,6 @@ function ViewAssignmentsScreen({route, navigation}) {
     const [fetchError, setFetchError] = useState(false);
     const [assignmentData, setAssignmentData] = useState([]);
     const [filteredAssignments, setFilteredAssignments] = useState([]);
-
-     // Check stored data for studentID
-     const checkStoredData = async () => {
-        try {
-            const storedData = await AsyncStorage.getItem('authData');
-            if (storedData !== null) {
-                const parsedData = JSON.parse(storedData);
-                console.log('studentID:', parsedData.userId);
-                return parsedData.userId;
-            }
-        } catch (error) {
-            console.error('Error retrieving data from AsyncStorage', error);
-        }
-        return '';
-    };
-
-    // Fetch studentID on component mount
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const id = await checkStoredData();
-                setStudentID(id);
-                console.log(studentID)
-            } catch (error) {
-                console.error('Error processing stored data', error);
-            }
-        };
-        fetchData();
-    }, []);
-
-    // Fetch assignments using studentID
-    useEffect(() => {
-        const fetchAssignments = async() => {
-            try {
-                const response = await fetch(`${IP_ADDRESS}/assignments/student/${studentID}`, {
-                    method: 'GET'
-                });
-                
-                if (!response.ok) {
-                    const errorText = response.statusText || 'Unknown error occurred';
-                    throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-                }
-                const responseData = await response.json();
-                setAssignmentData(responseData); // Set the state with the response data
-                console.log(assignmentData)
-                setFilteredAssignments(responseData); // Assuming you also want to filter
-                setFetchError(false); // Set fetch error as false since the fetch was successful
-            } catch (error) {
-                console.error('Error fetching assignments:', error);
-                setFetchError(true);
-            }
-        };
-        if(studentID){
-            fetchAssignments();
-        }
-    }, [studentID]);
 
     return (
         <ScrollView style={theme.container}>
