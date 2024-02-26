@@ -287,18 +287,23 @@ export const ItemDetailModal = ({
             </Grid>
           </Grid>
           <Divider />
-          <DialogContentText sx={{ my: 2 }}>Redeem Points</DialogContentText>
-          <Box display={"flex"} justifyContent={"space-between"}>
-            <TextField
-              id="stu-id"
-              label="Student ID"
-              value={studentId}
-              sx={{ flexGrow: 1, mr: 2 }}
-            />
-            <Button variant="contained" color="success">
-              Redeem Points
-            </Button>
-          </Box>
+          {type == "physical" && (
+            <>
+              <DialogContentText sx={{ my: 2 }}>Redeem Points</DialogContentText>
+              <Box display={"flex"} justifyContent={"space-between"}>
+                <TextField
+                  id="stu-id"
+                  label="Student ID"
+                  value={studentId}
+                  sx={{ flexGrow: 1, mr: 2 }}
+                />
+                <Button variant="contained" color="success">
+                  Redeem Points
+                </Button>
+              </Box>
+            </>
+          )}
+
           {/* Placeholder for buttons */}
         </DialogContent>
         <DialogActions sx={{ padding: "20px" }}>
