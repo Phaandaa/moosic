@@ -53,6 +53,7 @@ const Page = () => {
         item.description.toLowerCase().includes(lowercasedQuery)
     );
     setFilteredItems(filtered);
+    setCurrentPage(1);
   }, [searchQuery, items]);
 
   const totalItems = filteredItems.length;
