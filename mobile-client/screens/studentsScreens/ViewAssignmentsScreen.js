@@ -9,7 +9,7 @@ import IP_ADDRESS from '../../constants/ip_address_temp';
 
 const getFileNameFromUrl = (url) => {
     return url.split('/').pop();
-  };
+};
 function ViewAssignmentsScreen({route, navigation}) {
     const { assignment } = route.params;
 
@@ -24,7 +24,7 @@ function ViewAssignmentsScreen({route, navigation}) {
     const [assignmentData, setAssignmentData] = useState([]);
     const [filteredAssignments, setFilteredAssignments] = useState([]);
 
-     // Check stored data for teacherID
+     // Check stored data for studentID
      const checkStoredData = async () => {
         try {
             const storedData = await AsyncStorage.getItem('authData');
@@ -127,7 +127,7 @@ function ViewAssignmentsScreen({route, navigation}) {
                                 <Text style={theme.cardTitlePink}>Feedback</Text>
                                 {/* <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text> */}
                                 {/* <Text style={theme.cardText}>Attachments:</Text> */}
-                                    <View style={theme.smallPinkButton} onPress={() => navigation.navigate('SubmitAssignmentScreen')}>
+                                    <View style={theme.smallPinkButton}>
                                         <Text style={theme.smallButtonText}>10 Points</Text>
                                     </View>
                             </View>

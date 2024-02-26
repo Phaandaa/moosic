@@ -13,7 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCache, clearCache } from '../../cacheSlice';
 
-function PracticeScreen({navigation}){
+function CreatePracticeScreen({navigation}){
     // const dispatch = useDispatch();
     const [title, setTitle] = useState('');
     const [comment, setComment] = useState('');
@@ -235,7 +235,7 @@ function PracticeScreen({navigation}){
     </ScrollView> 
     )
 };
-export default PracticeScreen;
+export default CreatePracticeScreen;
 
 const styles = StyleSheet.create({
     contentContainer:{
