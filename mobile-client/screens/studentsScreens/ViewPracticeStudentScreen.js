@@ -23,72 +23,6 @@ function ViewPracticeStudentScreen({route, navigation}){
     const [practiceData, setPracticeData] = useState([]);
     const [fetchError, setFetchError] = useState(false);
 
-
-    const toggleModal = () => {
-        setModalVisible(!isModalVisible);
-    };
-
-    const openVideo = (uri) => {
-        setSelectedVideo(uri);
-        // toggleModal(); 
-    };
-
-    // Check stored data for studentID
-    const checkStoredData = async () => {
-    try {
-        const storedData = await AsyncStorage.getItem('authData');
-        if (storedData !== null) {
-            const parsedData = JSON.parse(storedData);
-            console.log('studentID:', parsedData.userId);
-            return parsedData.userId;
-        }
-    } catch (error) {
-        console.error('Error retrieving data from AsyncStorage', error);
-    }
-    return '';
-    };
-
-    // Fetch studentID on component mount
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const id = await checkStoredData();
-                setStudentID(id);
-                console.log(studentID)
-            } catch (error) {
-                console.error('Error processing stored data', error);
-            }
-        };
-        fetchData();
-    }, []);
-
-    // // Fetch practices using studentID
-    // useEffect(() => {
-    //     const fetchAssignments = async() => {
-    //         try {
-    //             const response = await fetch(`${IP_ADDRESS}/practices/student/${studentID}`, {
-    //                 method: 'GET'
-    //             });
-                
-    //             if (!response.ok) {
-    //                 const errorText = response.statusText || 'Unknown error occurred';
-    //                 throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-    //             }
-    //             const responseData = await response.json();
-    //             setPracticeData(responseData); // Set the state with the response data
-    //             console.log(practiceData)
-    //             setFetchError(false); // Set fetch error as false since the fetch was successful
-    //         } catch (error) {
-    //             console.error('Error fetching assignments:', error);
-    //             setFetchError(true);
-    //         }
-    //     };
-    //     if(studentID){
-    //         fetchAssignments();
-    //     }
-    // }, [studentID]);
-
-
     return (
         <ScrollView style={theme.container}>
             {/* <Text style={[theme.textTitle, { marginTop: 50, verticalAlign: 'middle' }]}>Your Assignments</Text> */}
@@ -102,7 +36,7 @@ function ViewPracticeStudentScreen({route, navigation}){
                             {/* {practice.videoLink.map((link, linkIndex) => ( */}
                                 <TouchableOpacity onPress={() => Linking.openURL(practice.videoLink)} style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <Ionicons name="link" size={24} color="#525F7F" />
-                                    <Text style={theme.documentName}> {getFileNameFromUrl(practice.videoLink)}</Text>
+                                    <Text style={theme.documentName}>Video Link</Text>
                                 </TouchableOpacity>
                             {/* ))} */}
                         </View>

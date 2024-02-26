@@ -80,7 +80,7 @@ function CreatePracticeScreen({navigation}){
             formData.append("video", {
               uri: video.uri,
               name: video.fileName, // Use the filename from the video object
-              type: 'video/mov' // You can hardcode the type or derive it from the fileName
+            //   type: 'video/mov' // You can hardcode the type or derive it from the fileName
             });
             console.log('videouri: ', video.uri)
             console.log('vidfilename: ', video.fileName)
