@@ -2,40 +2,58 @@ package com.example.server.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Document(collection = "rewards_shop")
 public class RewardShop {
     @Id
-    private String rewardId;
+    private String id;
+
+    @Field(name = "description")
     private String description;
-    private int points;
-    private int availability;
-    private String adminPassword;
-    private int limitation;
+
+    @Field(name = "points")
+    private Integer points;
+
+    @Field(name = "stock")
+    private Integer stock;
+
+    // just use their login password because if each item has their own password, not v effective
+    // @Field(name = "admin_password")
+    // private String adminPassword; 
+
+    @Field(name = "limitation")
+    private Integer limitation;
+
+    @Field(name = "image_link")
     private String imageLink;
 
-    public RewardShop(String description, int points, int availability, String adminPassword, int limitation,
-            String imageLink) {
+    @Field(name = "type")
+    private String type;
+
+    public RewardShop(String description, Integer points, Integer stock, Integer limitation, String imageLink,
+            String type) {
         this.description = description;
         this.points = points;
-        this.availability = availability;
-        this.adminPassword = adminPassword;
+        this.stock = stock;
         this.limitation = limitation;
         this.imageLink = imageLink;
-
-    
+        this.type = type;
     }
 
     @Override
     public String toString() {
-        return "RewardShop [rewardId=" + rewardId + ", description=" + description + ", points=" + points
-                + ", availability=" + availability + ", adminPassword=" + adminPassword + ", limitation=" + limitation
-                + ", imageLink=" + imageLink + "]";
+        return "RewardShop [id=" + id + ", description=" + description + ", points=" + points + ", stock=" + stock
+                + ", limitation=" + limitation + ", imageLink=" + imageLink + ", type=" + type + "]";
     }
 
 }
