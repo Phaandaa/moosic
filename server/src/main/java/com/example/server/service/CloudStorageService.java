@@ -12,6 +12,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,7 +55,10 @@ public class CloudStorageService {
 
             Storage storage = getStorage();
             for (MultipartFile file : files) {
-                String objectName = "assignments/" + file.getOriginalFilename();
+                String uniqueID = UUID.randomUUID().toString();
+
+                // Append the unique identifier to the file name
+                String objectName = "assignments/" + uniqueID + "_" + file.getOriginalFilename();
                 BlobId blobId = BlobId.of(bucketName, objectName);
                 BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
                         .setContentType(file.getContentType())
@@ -75,12 +79,15 @@ public class CloudStorageService {
         
     }
     
-    public String uploadFileToGCS(MultipartFile file) {
+    public String uploadFileToGCS(MultipartFile file, String bucketSegment) {
         try {
             String bucketName = dotenv.get("GCS_BUCKET_NAME");
 
             Storage storage = getStorage();
-            String objectName = "practice/" + file.getOriginalFilename();
+            String uniqueID = UUID.randomUUID().toString();
+
+            // Append the unique identifier to the file name
+            String objectName = bucketSegment + "/" + uniqueID + "_" + file.getOriginalFilename();
             BlobId blobId = BlobId.of(bucketName, objectName);
             BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
                     .setContentType(file.getContentType())
