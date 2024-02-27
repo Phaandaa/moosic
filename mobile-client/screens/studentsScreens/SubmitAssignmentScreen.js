@@ -11,8 +11,8 @@ import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-function SubmitAssignmentScreen({ navigation }) {
-  const dispatch = useDispatch();
+function SubmitAssignmentScreen({ navigation, route }) {
+  const {assignmentID} = route.params;
   const [assignmentName, setAssignmentName] = useState('');
   const [studentComments, setStudentComments] = useState('');
   const [errors, setErrors] = useState({});
@@ -108,16 +108,10 @@ function SubmitAssignmentScreen({ navigation }) {
   
     const formData = new FormData();
 
-    const assignmentData ={
-      teacher_id: parsedData.userId,
-      teacher_name: parsedData.name,
-      assignment_title: assignmentName,
-      assignment_desc: assignmentDesc,
-      assignment_deadline: assignmentDeadline,
-      selected_students: selectedStudents,
-      points: 0
+    const assignmentUpdateData ={
+      studentComment: 'abc' 
     };
-    console.log('assignmentData:', assignmentData)
+    console.log('assignmentUpdateData:', assignmentUpdateData)
     
   
     images.forEach((image, index) => {
@@ -146,30 +140,31 @@ function SubmitAssignmentScreen({ navigation }) {
       });
     });
 
+    formData.append("assignment", {"string" : JSON.stringify(assignmentUpdateData), type: 'application/json'});
     console.log(formData)
-    formData.append("assignment", {"string" : JSON.stringify(assignmentData), type: 'application/json'});
 
-
-  //   try {
+    try {
+      // const url = new URL();
+      // url.searchParams.append('studentComment', studentComment);
      
-  //     const response = await fetch(`${IP_ADDRESS}/assignments/create`, {
-  //         method: 'POST',
-  //         body: formData,
-  //     });
+      const response = await fetch(`${IP_ADDRESS}/assignments/student/${assignmentID}/update`, {
+          method: 'PUT',
+          body: formData,
+      });
         
-  //     if (!response.ok) {
-  //       const errorText = response.statusText || 'Unknown error occurred';
-  //       throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-  //     }
-  //     const responseData = await response.json();
-  //     console.log(responseData);
-  //     dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
-  //     navigation.navigate('ViewCreatedAssignmentsScreen', { responseData });
-  //     Alert.alert('Success', 'Assignment created successfully!');
-  //   } catch (error) {
-  //     console.error('Error creating assignment:', error);
-  //     Alert.alert('Error', `Failed to create assignment. ${error.response?.data?.message || 'Please try again.'}`);
-  //   }
+      if (!response.ok) {
+        const errorText = response.statusText || 'Unknown error occurred';
+        throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+      }
+      const responseData = await response.json();
+      console.log(responseData);
+      // dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
+      // navigation.navigate('ViewCreatedAssignmentsScreen', { responseData });
+      Alert.alert('Success', 'Assignment created successfully!');
+    } catch (error) {
+      console.error('Error creating assignment:', error);
+      Alert.alert('Error', `Failed to create assignment. ${error.response?.data?.message || 'Please try again.'}`);
+    }
   };
 
 

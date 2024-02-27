@@ -12,6 +12,7 @@ const getFileNameFromUrl = (url) => {
 };
 function ViewAssignmentsScreen({route, navigation}) {
     const { assignment } = route.params;
+    console.log('assignment:', assignment)
 
     // const assignmentDataAll = useSelector(state => state.cache.assignmentDataAll) || []; 
      
@@ -41,7 +42,7 @@ function ViewAssignmentsScreen({route, navigation}) {
                             ))}
                         </View>
                         <View style={theme.buttonContainer2}>
-                            <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('SubmitAssignmentScreen')}>
+                            <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('SubmitAssignmentScreen', {assignmentID: assignment.assignmentId})}>
                                 <Text style={theme.smallButtonText}>Submit Assignment</Text>
                             </TouchableOpacity>
                         </View>
