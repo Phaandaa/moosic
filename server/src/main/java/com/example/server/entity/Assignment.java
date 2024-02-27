@@ -4,7 +4,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 import lombok.Getter;
@@ -31,14 +30,14 @@ public class Assignment {
     private String teacherName;
     private String teacherFeedback;
     private Integer points;
-    private String feedbackDocumentLink;
+    private List<String> feedbackDocumentLinks;
     private String createdAtDate;
     private String studentComment;
 
     
     public Assignment(String title, List<String> assignmentDocumentLinks, String description, String deadline,
             String studentId, String studentName, List<String> submissionLinks, String teacherId, String teacherName,
-            String teacherFeedback, Integer points, String feedbackDocumentLink, String studentComment) {
+            String teacherFeedback, Integer points, List<String> feedbackDocumentLinks, String studentComment) {
         this.title = title;
         this.assignmentDocumentLinks = assignmentDocumentLinks;
         this.description = description;
@@ -50,7 +49,7 @@ public class Assignment {
         this.teacherName = teacherName;
         this.teacherFeedback = teacherFeedback;
         this.points = points;
-        this.feedbackDocumentLink = feedbackDocumentLink;
+        this.feedbackDocumentLinks = feedbackDocumentLinks;
         this.createdAtDate = LocalDateTime.now().toString();
         this.studentComment = studentComment;
     }
@@ -62,7 +61,7 @@ public class Assignment {
                 + assignmentDocumentLinks + ", description=" + description + ", deadline=" + deadline + ", studentId="
                 + studentId + ", studentName=" + studentName + ", submissionList=" + submissionLinks + ", teacherId="
                 + teacherId + ", teacherName=" + teacherName + ", teacherFeedback=" + teacherFeedback + ", points="
-                + points + ", feedbackDocumentLink=" + feedbackDocumentLink + ", createdAtDate=" + createdAtDate
+                + points + ", feedbackDocumentLink=" + feedbackDocumentLinks + ", createdAtDate=" + createdAtDate
                 + ", studentComment=" + studentComment + "]";
     }
 }

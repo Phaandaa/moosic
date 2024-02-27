@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.server.dao.AssignmentRepository;
 import com.example.server.dao.StudentRepository;
 import com.example.server.entity.Assignment;
+import com.example.server.entity.Student;
 import com.example.server.exception.StudentNotFoundException;
 import com.example.server.models.CreateAssignmentDTO;
 
@@ -48,9 +49,14 @@ public class AssignmentService {
 
             for (HashMap<String, String> student : students) {
                 String studentId = student.get("student_id");
-                studentRepository.findById(studentId).orElseThrow(()->
+
+                // Fetch the student entity from the repository
+                Student studentEntity = studentRepository.findById(studentId).orElseThrow(()->
                     new StudentNotFoundException("Student not found with the ID " + studentId));
-                String studentName = student.get("student_name");
+
+                // Retrieve student name
+                String studentName = studentEntity.getName();
+
                 Assignment newAssignment = new Assignment(title, publicUrls, description, deadline, studentId,
                         studentName, null, teacherId, teacherName, null, points, null, null);
                 newAssignments.add(newAssignment);
@@ -94,6 +100,73 @@ public class AssignmentService {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Error finding assignment by teacher ID " + teacherId + ": " + e.getMessage());
+        }
+    }
+
+    public List<Assignment> findAssignmentByStudentIdAndTeacherId(String studentId, String teacherId) {
+        try {
+            List<Assignment> assignments = assignmentRepository.findByStudentIdAndTeacherId(studentId, teacherId);
+            if (assignments.isEmpty() || assignments == null) {
+                throw new NoSuchElementException("No assignments found for student ID " + studentId + " and teacher ID " + teacherId);
+            }
+            return assignments;            
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding assignment by student ID " + studentId + " and teacher ID " + teacherId + ": " + e.getMessage());
+        }
+    }
+
+    public Assignment updateStudentCommentAndSubmissionLinks(String assignmentId, List<MultipartFile> files, String studentComment) {
+        try {
+            Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(()->
+                new NoSuchElementException("No assignment found with the ID " + assignmentId));
+
+            if (files != null && !files.isEmpty()) {
+                List<String> publicUrls = cloudStorageService.uploadFilesToGCS(files);
+                assignment.setSubmissionLinks(publicUrls);
+            } else {
+                throw new IllegalArgumentException("Please updload files to submit assignment");
+            }
+
+            if (studentComment != null) {
+                assignment.setStudentComment(studentComment);
+            }
+
+            return assignmentRepository.save(assignment);
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating student comment and submission links for assignment ID " + assignmentId + ": " + e.getMessage());
+        }
+    }
+
+    public Assignment updateAssignmentStudentPointsAndComments(String assignmentId, List<MultipartFile> feedbackDocuments, int points, String teacherFeedback){
+        try {
+            Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(()->
+                new NoSuchElementException("No assignment found with the ID " + assignmentId));
+
+            if (points <= 0) {
+                throw new IllegalArgumentException("Points should be greater than zero");
+            }
+
+            assignment.setPoints(points);
+
+            if (teacherFeedback != null && !teacherFeedback.isEmpty()) {
+                assignment.setTeacherFeedback(teacherFeedback);
+            }
+
+            // Update feedback document links
+            if (feedbackDocuments != null && !feedbackDocuments.isEmpty()) {
+                List<String> feedbackDocumentLinks = cloudStorageService.uploadFilesToGCS(feedbackDocuments);
+                assignment.setFeedbackDocumentLinks(feedbackDocumentLinks);
+            }
+    
+            return assignmentRepository.save(assignment);
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating student points and teacher feedback for assignment ID " + assignmentId + ": " + e.getMessage());
         }
     }
 }
