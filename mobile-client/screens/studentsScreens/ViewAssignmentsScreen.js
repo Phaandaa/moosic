@@ -55,13 +55,13 @@ function ViewAssignmentsScreen({route, navigation}) {
                                 {/* <Text style={theme.cardText}>Attachments:</Text> */}
 
                             </View>
-                            {assignment.assignmentDocumentLinks.map((link, linkIndex) => (
+                            {assignment.submissionLinks.map((link, linkIndex) => (
                                 <TouchableOpacity key={linkIndex} onPress={() => Linking.openURL(link)} style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <Ionicons name="link" size={24} color="#525F7F" />
                                     <Text style={theme.documentName}> {getFileNameFromUrl(link)}</Text>
                                 </TouchableOpacity>
                             ))}
-                            <Text style={theme.cardText}>This is the student's comment.</Text>
+                            <Text style={theme.cardText}>{assignment.studentComment}</Text>
                         </View>
                     </View>
 
