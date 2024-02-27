@@ -23,6 +23,7 @@ import MyStudentsScreen from './screens/teachersScreens/MyStudentsScreen';
 import CreatedAssignmentsListScreen from './screens/teachersScreens/CreatedAssignmentsListScreen';
 import PracticeListTeacherScreen from './screens/teachersScreens/PracticeListTeacherScreen';
 import ProvidePracticeFeedbackScreen from './screens/teachersScreens/ProvidePracticeFeedbackScreen';
+import ProvideAssignmentFeedbackScreen from './screens/teachersScreens/ProvideAssignmentFeedbackScreen';
 
 // Cache and Context
 import { Provider } from 'react-redux';
@@ -69,6 +70,8 @@ const RootNavigator = () => {
           <Stack.Screen name="SubmitAssignmentScreen" component={SubmitAssignmentScreen} options={{ title: 'Submit Assignment' }} />
           <Stack.Screen name="AssignmentListScreen" component={AssignmentListScreen} options={{ title: 'Assignment List' }} />
           <Stack.Screen name="CreatedAssignmentDetailsScreen" component={CreatedAssignmentDetailsScreen} options={{ title: 'Created Assignment' }} />
+          <Stack.Screen name="ProvideAssignmentFeedbackScreen" component={ProvideAssignmentFeedbackScreen} options={{ title: 'Provide Feedback' }} />
+
         </>
               
       ) : (

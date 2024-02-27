@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, TouchableOpacity, Text, Button, Image, Alert, Linking } from 'react-native';
 import theme from '../../styles/theme';
-import Modal from 'react-native-modal';
 import { Ionicons } from '@expo/vector-icons';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import IP_ADDRESS from '../../constants/ip_address_temp';
 
 const getFileNameFromUrl = (url) => {
     return url.split('/').pop();
 };
 function CreatedAssignmentDetailsScreen({route, navigation}) {
     const { assignment } = route.params;
+    console.log('createdassignment', assignment)
 
     return (
         <ScrollView style={theme.container}>
@@ -38,15 +35,15 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
                                 {/* <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text> */}
                                 {/* <Text style={theme.cardText}>Attachments:</Text> */}
                             </View>
-                            {assignment.assignmentDocumentLinks.map((link, linkIndex) => (
+                            {assignment.submissionLinks.map((link, linkIndex) => (
                                 <TouchableOpacity key={linkIndex} onPress={() => Linking.openURL(link)} style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <Ionicons name="link" size={24} color="#525F7F" />
                                     <Text style={theme.documentName}> {getFileNameFromUrl(link)}</Text>
                                 </TouchableOpacity>
                             ))}
-                            <Text style={theme.cardText}>This is the student's comment.</Text>
+                            <Text style={theme.cardText}>{assignment.studentComment}</Text>
                             <View style={theme.buttonContainer2}>
-                            <TouchableOpacity style={theme.smallPinkButton} onPress={() => navigation.navigate('SubmitAssignmentScreen')}>
+                            <TouchableOpacity style={theme.smallPinkButton} onPress={() => navigation.navigate('ProvideAssignmentFeedbackScreen', {assignmentID : assignment.assignmentId})}>
                                 <Text style={theme.smallButtonText}>Give Feedback</Text>
                             </TouchableOpacity>
                         </View>
@@ -60,16 +57,16 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
                                 {/* <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text> */}
                                 {/* <Text style={theme.cardText}>Attachments:</Text> */}
                                     <View style={theme.smallPinkButton}>
-                                        <Text style={theme.smallButtonText}>10 Points</Text>
+                                        <Text style={theme.smallButtonText}>{assignment.points} Points</Text>
                                     </View>
                             </View>
-                            {assignment.assignmentDocumentLinks.map((link, linkIndex) => (
+                            {assignment.feedbackDocumentLinks.map((link, linkIndex) => (
                                 <TouchableOpacity key={linkIndex} onPress={() => Linking.openURL(link)} style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <Ionicons name="link" size={24} color="#525F7F" />
                                     <Text style={theme.documentName}> {getFileNameFromUrl(link)}</Text>
                                 </TouchableOpacity>
                             ))}
-                            <Text style={theme.cardText}>This is the teacher's feedback.</Text>
+                            <Text style={theme.cardText}>{assignment.teacherFeedback}</Text>
                         </View>
                     </View>
         </ScrollView>
