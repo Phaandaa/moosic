@@ -106,13 +106,7 @@ function SubmitAssignmentScreen({ navigation, route }) {
       return;
     }
   
-    const formData = new FormData();
-
-    const assignmentUpdateData ={
-      studentComment: 'abc' 
-    };
-    console.log('assignmentUpdateData:', assignmentUpdateData)
-    
+    const formData = new FormData();    
   
     images.forEach((image, index) => {
       const { uri, fileName } = image
@@ -140,14 +134,14 @@ function SubmitAssignmentScreen({ navigation, route }) {
       });
     });
 
-    formData.append("assignment", {"string" : JSON.stringify(assignmentUpdateData), type: 'application/json'});
+
+    formData.append("studentComment", studentComments);
+
     console.log(formData)
 
     try {
-      // const url = new URL();
-      // url.searchParams.append('studentComment', studentComment);
-     
-      const response = await fetch(`${IP_ADDRESS}/assignments/student/${assignmentID}/update`, {
+
+      const response = await fetch(`${IP_ADDRESS}/assignments/student/${assignmentID}/update?`, {
           method: 'PUT',
           body: formData,
       });

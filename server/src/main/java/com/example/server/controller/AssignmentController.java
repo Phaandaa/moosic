@@ -64,7 +64,7 @@ public class AssignmentController {
     }
 
     @Operation(summary = "Update student comment and submission links for an assignment")
-    @PutMapping(path = "/student/{assignmentId}/udpate", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    @PutMapping(path = "/student/{assignmentId}/update", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> submitAssignment(@PathVariable String assignmentId, 
             @RequestPart("files") List<MultipartFile> files, 
             @RequestParam(value = "studentComment", required = false) String studentComment){
