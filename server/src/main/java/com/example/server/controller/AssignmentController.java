@@ -56,6 +56,13 @@ public class AssignmentController {
         return ResponseEntity.ok(assignments);
     }
 
+    @Operation(summary = "Get assignments by student ID and teacher ID")
+    @GetMapping("/{studentId}/{teacherId}")
+    public ResponseEntity<?> getAssignmentByStudentIdAndTeacherId(@PathVariable String studentId, @PathVariable String teacherId) {
+        List<Assignment> assignments = assignmentService.findAssignmentByStudentIdAndTeacherId(studentId, teacherId);
+        return ResponseEntity.ok(assignments);
+    }
+
     @Operation(summary = "Update student comment and submission links for an assignment")
     @PutMapping(path = "/student/{assignmentId}/udpate", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> submitAssignment(@PathVariable String assignmentId, 
