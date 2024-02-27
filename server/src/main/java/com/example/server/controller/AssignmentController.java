@@ -8,8 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,4 +56,25 @@ public class AssignmentController {
         return ResponseEntity.ok(assignments);
     }
 
+    @Operation(summary = "Update student comment and submission links for an assignment")
+    @PutMapping(path = "/student/{assignmentId}/udpate", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<?> submitAssignment(@PathVariable String assignmentId, 
+            @RequestPart("files") List<MultipartFile> files, 
+            @RequestParam(value = "studentComment", required = false) String studentComment){
+                
+        Assignment updatedAssignment = assignmentService.updateStudentCommentAndSubmissionLinks(assignmentId, files, studentComment);
+        return ResponseEntity.ok(updatedAssignment);
+    }
+
+    @Operation(summary = "Update teacher feedback, points, feedback links for an assignment")
+    @PutMapping(path = "/teacher/{assignmentId}/update", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<?> updateAssignment(@PathVariable String assignmentId,
+            @RequestParam(value = "points") Integer points, 
+            @RequestPart("files") List<MultipartFile> files, 
+            @RequestParam(value = "teacherFeedback", required = false) String teacherFeedback){
+                
+        Assignment updatedAssignment = assignmentService.updateAssignmentStudentPointsAndComments(assignmentId, files, points, teacherFeedback);
+
+        return ResponseEntity.ok(updatedAssignment);
+    }
 }
