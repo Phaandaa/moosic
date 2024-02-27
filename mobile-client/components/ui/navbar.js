@@ -13,7 +13,7 @@ import GoalsScreen from '../../screens/studentsScreens/goalsScreen';
 
 //Teachers Screens
 import MyStudentsScreen from '../../screens/teachersScreens/MyStudentsScreen';
-import ViewCreatedAssignmentsScreen from '../../screens/teachersScreens/ViewCreatedAssignmentsScreen';
+import CreatedAssignmentsListScreen from '../../screens/teachersScreens/CreatedAssignmentsListScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -77,7 +77,7 @@ const BottomTabNavigator = () => {
       {userRole === 'Teacher' && (
         <>
           <Tab.Screen name="My Students" component={MyStudentsScreen} options={{ headerShown: false }} />
-          <Tab.Screen name="View Assignments" component={ViewCreatedAssignmentsScreen} options={{ headerShown: false }} />
+          {/* <Tab.Screen name="View Assignments" component={CreatedAssignmentsListScreen} options={{ headerShown: false }} /> */}
         </>
       )}
 

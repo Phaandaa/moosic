@@ -1,25 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { View, ScrollView, TouchableOpacity, Text, Button, Image, Alert, Linking } from 'react-native';
+import React, { useState,useEffect } from 'react';
+import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Button, Linking } from 'react-native';
 import theme from '../../styles/theme';
 import Modal from 'react-native-modal';
+import { useSelector } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import AssignmentSearchBar from '../../components/ui/assignmentSearchBar';
 
-function AssignmentListScreen({navigation}){
-    const [studentID, setStudentID] = useState('');
+function CreatedAssignmentsListScreen ({route, navigation}) {
+    const {studentID} = route.params
+    // const assignmentDataAll = useSelector(state => state.cache.assignmentDataAll) || []; 
+     
+
+    const [teacherID, setTeacherID] = useState('');
+    
     const [assignmentData, setAssignmentData] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
 
-    // Check stored data for studentID
-    const checkStoredData = async () => {
+     // Check stored data for teacherID
+     const checkStoredData = async () => {
         try {
             const storedData = await AsyncStorage.getItem('authData');
             if (storedData !== null) {
                 const parsedData = JSON.parse(storedData);
-                console.log('studentID:', parsedData.userId);
+                console.log('teacherID:', parsedData.userId);
                 return parsedData.userId;
             }
         } catch (error) {
@@ -27,13 +32,14 @@ function AssignmentListScreen({navigation}){
         }
         return '';
     };
-    // Fetch studentID on component mount
+
+    // Fetch teacherID on component mount
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const id = await checkStoredData();
-                setStudentID(id);
-                console.log(studentID)
+                setTeacherID(id);
+                console.log(teacherID)
             } catch (error) {
                 console.error('Error processing stored data', error);
             }
@@ -41,11 +47,12 @@ function AssignmentListScreen({navigation}){
         fetchData();
     }, []);
 
-    // Fetch assignments using studentID
+    // Fetch assignments using teacherID
     useEffect(() => {
-        const fetchAssignments = async() => {
+        const fetchCreatedAssignments = async() => {
+            console.group('studentID', studentID)
             try {
-                const response = await fetch(`${IP_ADDRESS}/assignments/student/${studentID}`, {
+                const response = await fetch(`${IP_ADDRESS}/assignments/${studentID}/${teacherID}`, {
                     method: 'GET'
                 });
                 
@@ -55,16 +62,15 @@ function AssignmentListScreen({navigation}){
                 }
                 const responseData = await response.json();
                 setAssignmentData(responseData); // Set the state with the response data
-                setSearchResults(responseData);
-                console.log(assignmentData)
+                setSearchResults(responseData); // Assuming you also want to filter
             } catch (error) {
                 console.error('Error fetching assignments:', error);
             }
         };
-        if(studentID){
-            fetchAssignments();
+        if(teacherID){
+            fetchCreatedAssignments();
         }
-    }, [studentID]);
+    }, [studentID, teacherID]);
 
     const handleSearch = (searchText) => {
         // Filter the assignmentData based on whether the assignment title includes the searchText
@@ -87,13 +93,13 @@ function AssignmentListScreen({navigation}){
             <AssignmentSearchBar onSearch={handleSearch} />
             {searchResults.length > 0 ? ( // Use searchResults here
                 searchResults.map((assignment, index) => (
-                    <TouchableOpacity key={index} style={theme.card2} onPress={() => navigation.navigate('ViewAssignmentsScreen', { assignment: assignment })}>
+                    <TouchableOpacity key={index} style={theme.card2} onPress={() => navigation.navigate('CreatedAssignmentDetailsScreen', { assignment: assignment })}>
                         <View style={theme.cardTextContainer}>
                             <Text style={theme.cardTitle}>{assignment.title}</Text>
                             <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text>
                         </View>
                         <TouchableOpacity style={theme.smallButton}>
-                            <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ViewAssignmentsScreen', { assignment: assignment })}>View</Text>
+                            <Text style={theme.smallButtonText} onPress={() => navigation.navigate('CreatedAssignmentDetailsScreen', { assignment: assignment })}>View</Text>
                         </TouchableOpacity>
                     </TouchableOpacity>
                 ))
@@ -105,4 +111,5 @@ function AssignmentListScreen({navigation}){
         </ScrollView>
     );
 }
-export default AssignmentListScreen;
+
+export default CreatedAssignmentsListScreen;
