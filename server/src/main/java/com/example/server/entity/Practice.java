@@ -39,6 +39,9 @@ public class Practice {
     @Field(name = "feedback")
     private String feedback;
 
+    @Field(name = "points")
+    private Integer points;
+
     public Practice() {
 
     }
@@ -53,6 +56,7 @@ public class Practice {
         this.title = title;
         this.comment = comment;
         this.feedback = feedback;
+        this.points = 0;
     }
 
 }
