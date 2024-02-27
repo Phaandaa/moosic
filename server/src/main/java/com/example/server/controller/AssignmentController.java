@@ -74,6 +74,7 @@ public class AssignmentController {
             @RequestParam(value = "teacherFeedback", required = false) String teacherFeedback){
                 
         Assignment updatedAssignment = assignmentService.updateAssignmentStudentPointsAndComments(assignmentId, files, points, teacherFeedback);
+
         return ResponseEntity.ok(updatedAssignment);
     }
 }

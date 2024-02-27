@@ -151,6 +151,10 @@ public class AssignmentService {
             }
 
             assignment.setPoints(points);
+            studentRepository.findById(assignment.getStudentId()).ifPresent(student -> {
+                student.addPoints(points);
+                studentRepository.save(student);
+            });
 
             if (teacherFeedback != null && !teacherFeedback.isEmpty()) {
                 assignment.setTeacherFeedback(teacherFeedback);
