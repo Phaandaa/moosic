@@ -101,10 +101,17 @@ public class PracticeService {
         }
     }
 
-    public Practice updatePractice(String practiceId, String teacherFeedback, Integer points) {
+    public Practice updatePractice(String practiceId, String teacherFeedback, Integer points, List<MultipartFile> files) {
         try {
             Practice practice = practiceRepository.findById(practiceId).orElseThrow(()->
                 new NoSuchElementException("No practice log found with the ID " + practiceId));
+
+            if (files != null && !files.isEmpty()) {
+                List<String> publicUrls = cloudStorageService.uploadFilesToGCS(files);
+                practice.setFeedbackLinks(publicUrls);
+            } else {
+                throw new IllegalArgumentException("Please updload files to submit assignment");
+            }
             
             if (teacherFeedback == null || teacherFeedback == "") {
                 throw new IllegalArgumentException("Teacher feedback cannot be empty");
@@ -125,7 +132,7 @@ public class PracticeService {
             return practice;
         } catch (NoSuchElementException e) {
             throw e;
-            
+
         } catch (RuntimeException e) {
             if (e.getMessage() != null || e.getMessage() != "") {
                 throw new RuntimeException("Error updating practice log: " + e.getMessage());

@@ -68,12 +68,13 @@ public class PracticeController {
 
     // Teacher update practice (comments and points)
     @Operation(summary = "Feedback practice by teacher")
-    @PutMapping("/feedback/{practiceId}")
+    @PutMapping(path = "/feedback/{practiceId}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> feedbackPractice(@PathVariable String practiceId, 
         @RequestParam(value = "teacherFeedback") String teacherFeedback, 
-        @RequestParam(value = "points") Integer points) {
+        @RequestParam(value = "points") Integer points,
+        @RequestPart("files") List<MultipartFile> files) {
         try {
-            Practice updatedPractice = practiceService.updatePractice(practiceId, teacherFeedback, points);
+            Practice updatedPractice = practiceService.updatePractice(practiceId, teacherFeedback, points,files );
             return ResponseEntity.ok(updatedPractice);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
