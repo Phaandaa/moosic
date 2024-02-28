@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +18,7 @@ import com.example.server.entity.Assignment;
 import com.example.server.entity.Student;
 import com.example.server.exception.StudentNotFoundException;
 import com.example.server.models.CreateAssignmentDTO;
+import com.example.server.models.EditAssignmentDTO;
 
 @Service
 public class AssignmentService {
@@ -173,4 +176,48 @@ public class AssignmentService {
             throw new RuntimeException("Error updating student points and teacher feedback for assignment ID " + assignmentId + ": " + e.getMessage());
         }
     }
+
+    @Transactional
+    public Assignment updateAssignmentListing (String assignmentId, EditAssignmentDTO assignmentDTO, List<MultipartFile> files) {
+        try {
+
+            Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(()->
+                new NoSuchElementException("No assignment found with the ID " + assignmentId));
+
+            if (files != null && !files.isEmpty()) {
+                List<String> publicUrls = cloudStorageService.uploadFilesToGCS(files);
+                assignment.setFeedbackDocumentLinks(publicUrls);
+            }
+
+            if (assignmentDTO.getAssignmentDesc() != null) {
+                assignment.setDescription(assignmentDTO.getAssignmentDesc());
+            }
+
+            if (assignmentDTO.getAssignmentDeadline() != null) {
+                assignment.setDeadline(assignmentDTO.getAssignmentDeadline());
+            }
+
+            if (assignmentDTO.getPoints() != null) {
+                assignment.setPoints(assignmentDTO.getPoints());
+            }
+
+            return assignmentRepository.save(assignment);
+
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating assignment listing for assignment ID " + assignmentId + ": " + e.getMessage());
+        }
+    }
+
+    // Detele assignemnt by ID
+    public void deleteAssignment(String assignmentId) {
+    try {
+        assignmentRepository.deleteById(assignmentId);
+    } catch (EmptyResultDataAccessException e) {
+        throw new RuntimeException("Assignment with ID " + assignmentId + " does not exist.");
+    } catch (DataAccessException e) {
+        throw new RuntimeException("Error deleting assignment with ID " + assignmentId + ": " + e.getMessage());
+    }
+}
 }

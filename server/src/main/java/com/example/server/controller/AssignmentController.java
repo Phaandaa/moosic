@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.server.entity.Assignment;
 import com.example.server.models.CreateAssignmentDTO;
+import com.example.server.models.EditAssignmentDTO;
 import com.example.server.service.AssignmentService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -83,5 +85,23 @@ public class AssignmentController {
         Assignment updatedAssignment = assignmentService.updateAssignmentStudentPointsAndComments(assignmentId, files, points, teacherFeedback);
 
         return ResponseEntity.ok(updatedAssignment);
+    }
+
+    @Operation(summary = "Update assignment details")
+    @PutMapping(path = "/teacher/{assignmentId}/update-details", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<?> updateAssignmentDetails(@PathVariable String assignmentId,
+    @RequestPart("assignment") EditAssignmentDTO assignmentDTO, 
+            @RequestPart("files") List<MultipartFile> files){
+                
+        Assignment updatedAssignment = assignmentService.updateAssignmentListing(assignmentId, assignmentDTO, files);
+
+        return ResponseEntity.ok(updatedAssignment);
+    }
+
+    @Operation(summary = "Delete assignment by assignment ID")
+    @DeleteMapping("/{assignmentId}")
+    public ResponseEntity<?> deleteAssignment(@PathVariable String assignmentId) {
+        assignmentService.deleteAssignment(assignmentId);
+        return ResponseEntity.ok().build();
     }
 }
