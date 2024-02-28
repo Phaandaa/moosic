@@ -40,8 +40,7 @@ public class PracticeService {
             String title = practiceDTO.getTitle();
             String comment = practiceDTO.getComment();
             Practice createdPractice = new Practice(studentId, studentName, teacherId, teacherName, videoURL, title,
-                    comment,
-                    null);
+                    comment,null,null);
             practiceRepository.save(createdPractice);
             return createdPractice;
         } catch (RuntimeException e) {
