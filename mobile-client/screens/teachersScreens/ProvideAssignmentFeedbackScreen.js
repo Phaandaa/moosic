@@ -15,7 +15,7 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
   const {assignmentID} = route.params;
   const [assignmentName, setAssignmentName] = useState('');
   const [teacherFeedback, setTeacherFeedback] = useState('');
-  const [points, setPoints] = useState(0);
+  const [points, setPoints] = useState('');
   const [errors, setErrors] = useState({});
 
   const [images, setImages] = useState([]);
@@ -137,7 +137,7 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
 
 
     formData.append("teacherFeedback", teacherFeedback);
-    formData.append("points", points);
+    formData.append("points", parseInt(points));
 
     console.log(formData)
 
@@ -167,7 +167,7 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.formContainer}>
-        <Text style={styles.header}>Submit Assignment</Text>
+        <Text style={styles.header}>Provide Feedback</Text>
 
         {/* <View style={styles.inputContainer}>
           <TextInput
@@ -195,7 +195,7 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
             value={points}
             onChangeText={setPoints}
             style={[styles.input, styles.textArea]}
-            keyboardType='numeric'
+            // keyboardType='numeric'
           />
         </View>
       

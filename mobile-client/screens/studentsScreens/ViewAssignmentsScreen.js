@@ -35,6 +35,8 @@ function ViewAssignmentsScreen({route, navigation}) {
                             </TouchableOpacity>
                         </View>
                     </View>
+
+                    {assignment.submissionLinks && assignment.submissionLinks.length > 0 ? (
                     <View style={theme.card3}>
                         <View style={theme.cardTextContainer}>
                             <View style={theme.oneRow}> 
@@ -43,7 +45,7 @@ function ViewAssignmentsScreen({route, navigation}) {
                                 {/* <Text style={theme.cardText}>Attachments:</Text> */}
 
                             </View>
-                            {assignment.submissionLinks.map((link, linkIndex) => (
+                            {assignment.submissionLinks && assignment.submissionLinks.map((link, linkIndex) => (
                                 <TouchableOpacity key={linkIndex} onPress={() => Linking.openURL(link)} style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <Ionicons name="link" size={24} color="#525F7F" />
                                     <Text style={theme.documentName}> {getFileNameFromUrl(link)}</Text>
@@ -52,26 +54,45 @@ function ViewAssignmentsScreen({route, navigation}) {
                             <Text style={theme.cardText}>{assignment.studentComment}</Text>
                         </View>
                     </View>
-
-                    <View style={theme.card3}>
-                        <View style={theme.cardTextContainer}>
-                            <View style={theme.oneRow}> 
-                                <Text style={theme.cardTitlePink}>Feedback</Text>
-                                {/* <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text> */}
-                                {/* <Text style={theme.cardText}>Attachments:</Text> */}
-                                    <View style={theme.smallPinkButton}>
-                                        <Text style={theme.smallButtonText}>{assignment.points} Points</Text>
-                                    </View>
+                    ) : (
+                        <View style={theme.card3}>
+                            <View style={theme.cardTextContainer}>
+                                <View style={theme.oneRow}>
+                                    <Text style={theme.cardText}>No submission yet.</Text>
+                                </View>
                             </View>
-                            {assignment.feedbackDocumentLinks.map((link, linkIndex) => (
-                                <TouchableOpacity key={linkIndex} onPress={() => Linking.openURL(link)} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Ionicons name="link" size={24} color="#525F7F" />
-                                    <Text style={theme.documentName}> {getFileNameFromUrl(link)}</Text>
-                                </TouchableOpacity>
-                            ))}
-                            <Text style={theme.cardText}>{assignment.teacherFeedback}</Text>
                         </View>
-                    </View>
+                    )} 
+
+                    {assignment.teacherFeedback ? (
+                        <View style={theme.card3}>
+                            <View style={theme.cardTextContainer}>
+                                <View style={theme.oneRow}> 
+                                    <Text style={theme.cardTitlePink}>Feedback</Text>
+                                    {/* <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text> */}
+                                    {/* <Text style={theme.cardText}>Attachments:</Text> */}
+                                        <View style={theme.smallPinkButton}>
+                                            <Text style={theme.smallButtonText}>{assignment.points} Points</Text>
+                                        </View>
+                                </View>
+                                {assignment.feedbackDocumentLinks && assignment.feedbackDocumentLinks.map((link, linkIndex) => (
+                                    <TouchableOpacity key={linkIndex} onPress={() => Linking.openURL(link)} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        <Ionicons name="link" size={24} color="#525F7F" />
+                                        <Text style={theme.documentName}> {getFileNameFromUrl(link)}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                                <Text style={theme.cardText}>{assignment.teacherFeedback}</Text>
+                            </View>
+                        </View>
+                    ) : (
+                        <View style={theme.card3}>
+                            <View style={theme.cardTextContainer}>
+                                <View style={theme.oneRow}>
+                                    <Text style={theme.cardText}>No feedback yet.</Text>
+                                </View>
+                            </View>
+                        </View>
+                    )}
         </ScrollView>
     );
 }
