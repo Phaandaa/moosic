@@ -46,6 +46,7 @@ function ViewPracticeTeacherScreen({route, navigation}){
                         </View>
                     </View>
 
+                    {practice.teacherFeedback ? (
                     <View style={theme.card3}>
                         <View style={theme.cardTextContainer}>
                             <View style={theme.oneRow}> 
@@ -53,16 +54,25 @@ function ViewPracticeTeacherScreen({route, navigation}){
                                 {/* <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text> */}
                                 {/* <Text style={theme.cardText}>Attachments:</Text> */}
                                     <View style={theme.smallPinkButton}>
-                                        <Text style={theme.smallButtonText}>10 Points</Text>
+                                        <Text style={theme.smallButtonText}>{practice.points} Points</Text>
                                     </View>
                             </View>
                             <TouchableOpacity onPress={() => Linking.openURL(practice.videoLink)} style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <Ionicons name="link" size={24} color="#525F7F" />
                                     <Text style={theme.documentName}> {getFileNameFromUrl(practice.videoLink)}</Text>
                             </TouchableOpacity>
-                            <Text style={theme.cardText}>This is the teacher's feedback.</Text>
+                            <Text style={theme.cardText}>{practice.teacherFeedback}</Text>
                         </View>
                     </View>
+                    ) : (
+                        <View style={theme.card3}>
+                            <View style={theme.cardTextContainer}>
+                                <View style={theme.oneRow}>
+                                    <Text style={theme.cardText}>No feedback yet.</Text>
+                                </View>
+                            </View>
+                        </View> 
+                    )}
         </ScrollView>
     );
 }

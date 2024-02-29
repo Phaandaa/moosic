@@ -102,7 +102,6 @@ function ProvidePracticeFeedbackScreen({route}){
         });
         console.log('videouri: ', video.uri)
         console.log('vidfilename: ', video.fileName)
-        console.log('vidtype: ', video.type)
 
     }
     formData.append("teacherFeedback", teacherFeedback);
@@ -111,7 +110,7 @@ function ProvidePracticeFeedbackScreen({route}){
     console.log(formData)
 
     try {
-      const response = await fetch(`${IP_ADDRESS}/practices/feedback/${practiceID}/update?`, {
+      const response = await fetch(`${IP_ADDRESS}/practices/feedback/${practiceID}?`, {
           method: 'PUT',
           body: formData,
       });
@@ -169,7 +168,7 @@ function ProvidePracticeFeedbackScreen({route}){
         {videos.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Ionicons name="cloud-upload-outline" size={50} color="#cccccc" />
-            <Text style={styles.emptyText}>Upload a practice video</Text>
+            <Text style={styles.emptyText}>Upload a feedback video</Text>
           </View>
         ) : (
           <>
