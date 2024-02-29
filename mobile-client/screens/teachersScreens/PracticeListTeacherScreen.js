@@ -56,9 +56,9 @@ function PracticeListTeacherScreen({route, navigation}){
                 const responseData = await response.json();
                 setPracticeData(responseData); // Set the state with the response data
                 setSearchResults(responseData);
-                console.log(practiceData)
+                console.log(practiceData[0])
             } catch (error) {
-                console.error('Error fetching assignments:', error);
+                console.error('Error fetching practice:', error);
             }
         };
         if(teacherID){
@@ -87,12 +87,12 @@ function PracticeListTeacherScreen({route, navigation}){
             <AssignmentSearchBar onSearch={handleSearch} />
             {searchResults.length > 0 ? ( // Use searchResults here
                 searchResults.map((practice, index) => (
-                    <TouchableOpacity key={index} style={theme.card2} onPress={() => navigation.navigate('ViewPracticeStudentScreen', { practice: practice })}>
+                    <TouchableOpacity key={index} style={theme.card2} onPress={() => navigation.navigate('ViewPracticeTeacherScreen', { practice: practice })}>
                         <View style={theme.cardTextContainer}>
                             <Text style={theme.cardTitle}>{practice.title}</Text>
                         </View>
                         <TouchableOpacity style={theme.smallButton}>
-                            <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ViewPracticeStudentScreen', { practice: practice })}>View</Text>
+                            <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ViewPracticeTeacherScreen', { practice: practice })}>View</Text>
                         </TouchableOpacity>
                     </TouchableOpacity>
                 ))

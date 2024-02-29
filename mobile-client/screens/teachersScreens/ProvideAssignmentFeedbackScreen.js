@@ -156,10 +156,10 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
       console.log(responseData);
       // dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
       // navigation.navigate('ViewCreatedAssignmentsScreen', { responseData });
-      Alert.alert('Success', 'Assignment created successfully!');
+      Alert.alert('Success', 'Feedback added successfully!');
     } catch (error) {
-      console.error('Error creating assignment:', error);
-      Alert.alert('Error', `Failed to create assignment. ${error.response?.data?.message || 'Please try again.'}`);
+      console.error('Error adding feedback:', error);
+      Alert.alert('Error', `Failed to add feedback. ${error.response?.data?.message || 'Please try again.'}`);
     }
   };
 

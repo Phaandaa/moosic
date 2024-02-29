@@ -15,11 +15,8 @@ function CreatePracticeScreen({}){
     // const dispatch = useDispatch();
     const [title, setTitle] = useState('');
     const [comment, setComment] = useState('');
-    const cancelIcon = require('../../assets/cancel.png');
     const [videos, setVideos] = useState([]);
     const [loadingStates, setLoadingStates] = useState({});
-
-    const [selectedVideo, setSelectedVideo] = useState(null);
 
     const submitHandler = async ()=> {
         console.log('Practice Title on Submit:', title, 'Type:', typeof title );
@@ -165,7 +162,8 @@ function CreatePracticeScreen({}){
                 </View>            
           {/* </View> */}
         </View>
-        {/* Display Images and Document Names */}
+        
+        {/* Display Video */}
         {videos.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Ionicons name="cloud-upload-outline" size={50} color="#cccccc" />
