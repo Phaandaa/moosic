@@ -11,7 +11,6 @@ import LoginPage from './screens/login';
 import ViewAssignmentsScreen from './screens/studentsScreens/ViewAssignmentsScreen';
 import CreatePracticeScreen from './screens/studentsScreens/CreatePracticeScreen';
 import ViewPracticeStudentScreen from './screens/studentsScreens/ViewPracticeStudentScreen';
-import ViewPracticeFeedbackScreen from './screens/studentsScreens/ViewPracticeFeedbackScreen';
 import SubmitAssignmentScreen from './screens/studentsScreens/SubmitAssignmentScreen';
 import AssignmentListScreen from  './screens/studentsScreens/AssignmentListScreen';
 import PracticeListStudentScreen from './screens/studentsScreens/PracticeListStudentScreen';
@@ -67,7 +66,6 @@ const RootNavigator = () => {
           <Stack.Screen name="ProvidePracticeFeedbackScreen" component={ProvidePracticeFeedbackScreen} options={{ title: 'Provide Feedback' }} />
           <Stack.Screen name="PracticeListStudentScreen" component={PracticeListStudentScreen} options={{ title: 'My Practice Log' }} />
           <Stack.Screen name="ViewPracticeStudentScreen" component={ViewPracticeStudentScreen} options={{ title: 'My Practice Details' }} />
-          <Stack.Screen name="ViewPracticeFeedbackScreen" component={ViewPracticeFeedbackScreen} options={{ title: 'View Feedback' }} />
           <Stack.Screen name="SubmitAssignmentScreen" component={SubmitAssignmentScreen} options={{ title: 'Submit Assignment' }} />
           <Stack.Screen name="AssignmentListScreen" component={AssignmentListScreen} options={{ title: 'Assignment List' }} />
           <Stack.Screen name="CreatedAssignmentDetailsScreen" component={CreatedAssignmentDetailsScreen} options={{ title: 'Created Assignment' }} />
