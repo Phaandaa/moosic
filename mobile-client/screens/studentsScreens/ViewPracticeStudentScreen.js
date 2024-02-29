@@ -40,46 +40,35 @@ function ViewPracticeStudentScreen({route, navigation}){
                                 </TouchableOpacity>
                             {/* ))} */}
                         </View>
-                        <View style={theme.buttonContainer2}>
-                            <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('SubmitAssignmentScreen')}>
-                                <Text style={theme.smallButtonText}>Submit Assignment</Text>
-                            </TouchableOpacity>
-                        </View>
                     </View>
 
-                    <View style={theme.card3}>
-                        <View style={theme.cardTextContainer}>
-                            <View style={theme.oneRow}> 
-                                <Text style={theme.cardTitlePink}>My Submission</Text>
-                                {/* <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text> */}
-                                {/* <Text style={theme.cardText}>Attachments:</Text> */}
-
+                    {practice.teacherFeedback ? (
+                        <View style={theme.card3}>
+                            <View style={theme.cardTextContainer}>
+                                <View style={theme.oneRow}> 
+                                    <Text style={theme.cardTitlePink}>Feedback</Text>
+                                    {/* <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text> */}
+                                    {/* <Text style={theme.cardText}>Attachments:</Text> */}
+                                        <View style={theme.smallPinkButton}>
+                                            <Text style={theme.smallButtonText}>{practice.points} Points</Text>
+                                        </View>
+                                </View>
+                                <TouchableOpacity onPress={() => Linking.openURL(practice.videoLink)} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        <Ionicons name="link" size={24} color="#525F7F" />
+                                        <Text style={theme.documentName}> {getFileNameFromUrl(practice.videoLink)}</Text>
+                                </TouchableOpacity>
+                                <Text style={theme.cardText}>{practice.teacherFeedback}</Text>
                             </View>
-                            <TouchableOpacity onPress={() => Linking.openURL(practice.videoLink)} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Ionicons name="link" size={24} color="#525F7F" />
-                                    <Text style={theme.documentName}> {getFileNameFromUrl(practice.videoLink)}</Text>
-                            </TouchableOpacity>
-                            <Text style={theme.cardText}>This is the student's comment.</Text>
                         </View>
-                    </View>
-
-                    <View style={theme.card3}>
-                        <View style={theme.cardTextContainer}>
-                            <View style={theme.oneRow}> 
-                                <Text style={theme.cardTitlePink}>Feedback</Text>
-                                {/* <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text> */}
-                                {/* <Text style={theme.cardText}>Attachments:</Text> */}
-                                    <View style={theme.smallPinkButton}>
-                                        <Text style={theme.smallButtonText}>10 Points</Text>
-                                    </View>
+                    ) : (
+                        <View style={theme.card3}>
+                            <View style={theme.cardTextContainer}>
+                                <View style={theme.oneRow}>
+                                    <Text style={theme.cardText}>No feedback yet.</Text>
+                                </View>
                             </View>
-                            <TouchableOpacity onPress={() => Linking.openURL(practice.videoLink)} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Ionicons name="link" size={24} color="#525F7F" />
-                                    <Text style={theme.documentName}> {getFileNameFromUrl(practice.videoLink)}</Text>
-                            </TouchableOpacity>
-                            <Text style={theme.cardText}>This is the teacher's feedback.</Text>
-                        </View>
-                    </View>
+                        </View> 
+                    )}
         </ScrollView>
     );
 }
