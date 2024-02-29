@@ -51,6 +51,10 @@ function CreatePracticeScreen({}){
         const practiceData = {
             title: title,
             comment: comment,
+            student_id: parsedData.userId,
+            student_name: parsedData.name,
+            teacher_id: 'WA2G3fxLzNSdKWwerstzG7siTfu1',
+            teacher_name: 'Jake'
         };
         console.log('practiceData: ', practiceData)          
         
