@@ -100,14 +100,14 @@ public class PracticeService {
         }
     }
 
-    public Practice updatePractice(String practiceId, String teacherFeedback, Integer points, List<MultipartFile> files) {
+    public Practice updatePractice(String practiceId, String teacherFeedback, Integer points, MultipartFile video) {
         try {
             Practice practice = practiceRepository.findById(practiceId).orElseThrow(()->
                 new NoSuchElementException("No practice log found with the ID " + practiceId));
 
-            if (files != null && !files.isEmpty()) {
-                List<String> publicUrls = cloudStorageService.uploadFilesToGCS(files);
-                practice.setFeedbackLinks(publicUrls);
+            if (video != null && !video.isEmpty()) {;
+                String videoURL = cloudStorageService.uploadFileToGCS(video, "preactice");
+                practice.setFeedbackLinks(videoURL);
             } else {
                 throw new IllegalArgumentException("Please updload files to submit assignment");
             }

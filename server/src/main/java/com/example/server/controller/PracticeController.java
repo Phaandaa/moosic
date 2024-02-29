@@ -72,9 +72,9 @@ public class PracticeController {
     public ResponseEntity<?> feedbackPractice(@PathVariable String practiceId, 
         @RequestParam(value = "teacherFeedback") String teacherFeedback, 
         @RequestParam(value = "points") Integer points,
-        @RequestPart("files") List<MultipartFile> files) {
+        @RequestPart("video") MultipartFile video) {
         try {
-            Practice updatedPractice = practiceService.updatePractice(practiceId, teacherFeedback, points,files );
+            Practice updatedPractice = practiceService.updatePractice(practiceId, teacherFeedback, points, video);
             return ResponseEntity.ok(updatedPractice);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

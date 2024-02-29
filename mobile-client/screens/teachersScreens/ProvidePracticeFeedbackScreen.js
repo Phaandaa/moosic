@@ -102,6 +102,7 @@ function ProvidePracticeFeedbackScreen({route}){
         });
         console.log('videouri: ', video.uri)
         console.log('vidfilename: ', video.fileName)
+        console.log('vidtype: ', video.type)
 
     }
     formData.append("teacherFeedback", teacherFeedback);

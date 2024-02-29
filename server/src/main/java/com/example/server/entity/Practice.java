@@ -45,14 +45,14 @@ public class Practice {
     private Integer points;
 
     @Field(name = "feedbackLinks")
-    private List<String> feedbackLinks;
+    private String feedbackLinks;
 
     public Practice() {
 
     }
 
     public Practice(String studentId, String studentName, String teacherId, String teacherName, String videoLink,
-            String title, String comment, String feedback, List<String> feedbackLink) {
+            String title, String comment, String feedback, String feedbackLink) {
         this.studentId = studentId;
         this.studentName = studentName;
         this.teacherId = teacherId;
