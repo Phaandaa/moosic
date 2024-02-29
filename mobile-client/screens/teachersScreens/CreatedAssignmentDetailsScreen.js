@@ -4,7 +4,7 @@ import theme from '../../styles/theme';
 import { Ionicons } from '@expo/vector-icons';
 
 const getFileNameFromUrl = (url) => {
-    return url.split('/').pop();
+    return url.split('/').pop().slice(37);
 };
 function CreatedAssignmentDetailsScreen({route, navigation}) {
     const { assignment } = route.params;

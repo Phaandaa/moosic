@@ -10,7 +10,7 @@ import IP_ADDRESS from '../../constants/ip_address_temp';
 import { Ionicons } from '@expo/vector-icons';
 
 const getFileNameFromUrl = (url) => {
-    return url.split('/').pop();
+    return url.split('/').pop().slice(37);
 };
 
 function ViewPracticeStudentScreen({route, navigation}){
@@ -36,7 +36,7 @@ function ViewPracticeStudentScreen({route, navigation}){
                             {/* {practice.videoLink.map((link, linkIndex) => ( */}
                                 <TouchableOpacity onPress={() => Linking.openURL(practice.videoLink)} style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <Ionicons name="link" size={24} color="#525F7F" />
-                                    <Text style={theme.documentName}>Video Link</Text>
+                                    <Text style={theme.documentName}>{getFileNameFromUrl(practice.videoLink)}</Text>
                                 </TouchableOpacity>
                             {/* ))} */}
                         </View>
@@ -46,6 +46,7 @@ function ViewPracticeStudentScreen({route, navigation}){
                             </TouchableOpacity>
                         </View>
                     </View>
+
                     <View style={theme.card3}>
                         <View style={theme.cardTextContainer}>
                             <View style={theme.oneRow}> 
