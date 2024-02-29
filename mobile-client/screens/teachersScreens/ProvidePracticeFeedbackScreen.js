@@ -1,16 +1,19 @@
 import React, {useState} from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert, TextInput} from 'react-native';
 import theme from '../../styles/theme';
-import AnimatedPlaceholderInput from '../../components/ui/animateTextInput';
+import * as ImagePicker from "expo-image-picker";
+import { Audio, Video, ResizeMode} from 'expo-av';
 import { Ionicons } from '@expo/vector-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCache, clearCache } from '../../cacheSlice';
 import InputBox from '../../components/ui/inputBox';
+import IP_ADDRESS from '../../constants/ip_address_temp';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function ProvidePracticeFeedbackScreen({route}){
     const {practiceID} = route.params;
     const [teacherFeedback, setTeacherFeedback] = useState('');
-    const [points, setPoints] = useState(0);
+    const [points, setPoints] = useState('');
     const [errors, setErrors] = useState({});
   
 
@@ -44,7 +47,7 @@ function ProvidePracticeFeedbackScreen({route}){
 
     const saveVideo = (newVideo) => {
         setVideos((currentVideos) => [...currentVideos, newVideo]);
-        setLoadingStates((currentLoadingStates) => ({ ...currentLoadingStates, [newVideo]: true }));
+        // setLoadingStates((currentLoadingStates) => ({ ...currentLoadingStates, [newVideo]: true }));
     };
     
   const validateForm = () => {
@@ -103,7 +106,7 @@ function ProvidePracticeFeedbackScreen({route}){
 
     }
     formData.append("teacherFeedback", teacherFeedback);
-    formData.append("points", points);
+    formData.append("points", parseInt(points));
 
     console.log(formData)
 
@@ -129,7 +132,7 @@ function ProvidePracticeFeedbackScreen({route}){
     };
   
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView style={theme.container}>
 
         <View style={styles.inputContainer}>
           <TextInput
@@ -169,19 +172,18 @@ function ProvidePracticeFeedbackScreen({route}){
             <Text style={styles.emptyText}>Upload a practice video</Text>
           </View>
         ) : (
-            <>
+          <>
             <View style={styles.documentContainer}>
                 <View style={styles.documentItem}>
-                    <Ionicons name="document-attach" size={24} color="#4F8EF7" />
-                    <Text style={styles.documentName}>{videos[0].fileName}</Text>
-                    <TouchableOpacity onPress={removeVideo} style={styles.removeButton}>
-                        <Ionicons name="close-circle" size={24} color="red" />
-                    </TouchableOpacity>
+                <Ionicons name="document-attach" size={24} color="#4F8EF7" />
+                <Text style={styles.documentName}>{videos[0].fileName}</Text>
+                <TouchableOpacity onPress={removeVideo} style={styles.removeButton}>
+                    <Ionicons name="close-circle" size={24} color="red" />
+                </TouchableOpacity>
                 </View>
             </View>
-            </>
-        )};
-
+          </>
+        )}
 
         <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={submitHandler}>
           <Text style={styles.buttonText}>Submit Feedback</Text>
@@ -233,7 +235,9 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     padding: 15,
+    width: '100%'
   },
   attachButton: {
     flexDirection: 'row',
@@ -243,6 +247,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 16,
     color: '#4664EA',
+    alignItems:'center'
   },
   textArea: {
     minHeight: 100,
