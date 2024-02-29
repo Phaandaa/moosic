@@ -1,19 +1,17 @@
 import React, {useState} from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert, Button, Dimensions } from 'react-native';
-import Modal from 'react-native-modal';
+import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert, Button, TextInput } from 'react-native';
 import theme from '../../styles/theme';
 import AnimatedPlaceholderInput from '../../components/ui/animateTextInput';
 import * as ImagePicker from "expo-image-picker";
 import { Audio, Video, ResizeMode} from 'expo-av';
+import { Ionicons } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
 import { useSelector, useDispatch } from 'react-redux';
 import { setCache, clearCache } from '../../cacheSlice';
 
-function CreatePracticeScreen({navigation}){
+function CreatePracticeScreen({}){
     // const dispatch = useDispatch();
     const [title, setTitle] = useState('');
     const [comment, setComment] = useState('');
@@ -22,17 +20,6 @@ function CreatePracticeScreen({navigation}){
     const [loadingStates, setLoadingStates] = useState({});
 
     const [selectedVideo, setSelectedVideo] = useState(null);
-
-    const [isModalVisible, setModalVisible] = useState(false);
-
-    const toggleModal = () => {
-        setModalVisible(!isModalVisible);
-    };
-
-    const openVideo = (uri) => {
-        setSelectedVideo(uri);
-        toggleModal(); 
-    }
 
     const submitHandler = async ()=> {
         console.log('Practice Title on Submit:', title, 'Type:', typeof title );
@@ -64,10 +51,6 @@ function CreatePracticeScreen({navigation}){
         const practiceData = {
             title: title,
             comment: comment,
-            student_id: parsedData.userId,
-            student_name: parsedData.name,
-            teacher_id: 'WA2G3fxLzNSdKWwerstzG7siTfu1', //hardcode for testing
-            teacher_name: 'Jake'
         };
         console.log('practiceData: ', practiceData)          
         
@@ -115,7 +98,6 @@ function CreatePracticeScreen({navigation}){
         try {
             let result = {};
             if (mode==='gallery'){
-                console.log('gallery')
                 await ImagePicker.requestMediaLibraryPermissionsAsync()
                 result = await ImagePicker.launchImageLibraryAsync({
                     mediaTypes: ImagePicker.MediaTypeOptions.Videos,
@@ -125,19 +107,17 @@ function CreatePracticeScreen({navigation}){
                 })
             } 
             if(!result.canceled){
-                console.log('vid result: ', result)
                 await saveVideo(result.assets[0]);
             }
         } catch (error){
             alert("error uploading video:"+ error.message
             );
-            setModalVisible(false);
 
         }
     };
     
-    const removeVideo = (index) => {
-        setVideos((currentVideos) => currentVideos.filter((_, i) => i !== index));
+    const removeVideo = () => {
+        setVideos([]);
     };
 
     const saveVideo = (newVideo) => {
@@ -147,188 +127,243 @@ function CreatePracticeScreen({navigation}){
     
     
     return (
-        <ScrollView style={theme.container} contentContainerStyle={styles.contentContainer}> 
+        <ScrollView style={theme.container}> 
         <View>
-            <AnimatedPlaceholderInput 
-                placeholder="Practice Name" 
-                secureTextEntry={false} 
-                textInputConfig={{autoCapitalize: 'words'}}
+            <View style={styles.inputContainer}>
+            <TextInput
+                placeholder="Practice Name"
                 value={title}
-                onChangeText={setTitle}>    
-            </AnimatedPlaceholderInput>
-
-            <AnimatedPlaceholderInput 
-                placeholder="Comment" 
-                secureTextEntry={false} 
-                textInputConfig={{multiline: true}}
-                value={comment}
-                onChangeText={setComment}>
-            </AnimatedPlaceholderInput>
-            
-            {/* Upload Buttons  */}
-            <View style={styles.buttonsContainer}>
-                <TouchableOpacity style={theme.button2} onPress={() => uploadVideo("gallery")}>
-                    <Text style={theme.buttonText}>Upload Video</Text>
-                </TouchableOpacity>
+                onChangeText={setTitle}
+                style={styles.input}
+            />
             </View>
 
-            {/* Modal for viewing the video */}
-            <Modal
-                    isVisible={isModalVisible}
-                    animationType="slide"
-                    transparent={true}
-                    visible={isModalVisible}
-                >
-                    <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
-                            <Video
-                                source={{ uri: selectedVideo }}
-                                style={styles.modalVideo}
-                                resizeMode={ResizeMode.CONTAIN}
-                                // useNativeControls
-                                shouldPlay
-                            />
-                            <Button title="Close" onPress={() => setModalVisible(!isModalVisible)} />
-                        </View>
-                    </View>
-                </Modal>
+            <View style={styles.inputContainer}>
+            <TextInput
+                placeholder="Comment"
+                value={comment}
+                onChangeText={setComment}
+                multiline
+                style={[styles.input, styles.textArea]}
+            />
+            </View>
 
-            {/* Render each image with a remove button next to it */}
-            <ScrollView horizontal>
-                {videos.map((uri, index) => (
-                    <View key={uri} style={styles.imageContainer}>
-                        {/* {loadingStates[uri] && (
-                            <LottieView
-                                source={require('../assets/loading_fyp.json')} // Update with your Lottie file path
-                                autoPlay
-                                loop
-                                style={styles.lottie}
-                            />
-                        )} */}
-                        <TouchableOpacity onPress={() => openVideo(uri)}>
-                            <Video
-                                source={{ uri }}
-                                style={styles.video}
-                                resizeMode={ResizeMode.COVER}
-                                // useNativeControls
-                                // onLoadStart={() => setLoadingStates({ ...loadingStates, [uri]: true })}
-                                // onLoad={() => setLoadingStates({ ...loadingStates, [uri]: false })}
-                            />
-                            <TouchableOpacity onPress={() => removeVideo(index)} style={styles.removeButton}>
-                                {/* <Text style={theme.buttonText}>x</Text> */}
-                                <Image source={cancelIcon} style={styles.cancelIcon} /> 
-                            </TouchableOpacity>
-                            <View style={styles.buttons}>
-                        </View>
-                        </TouchableOpacity>
-                    </View>
-                ))}
+            {/* <View style={styles.uploadButtons}> */}
+                <View style={styles.attachFilesSection}>
+                <TouchableOpacity style={styles.attachButton} onPress={() => uploadVideo('gallery')}>
+                    <Ionicons name="images" size={24} color="#4664EA" />
+                    {videos.length === 0 ? (
+                        <Text style={styles.attachText}>Upload Video</Text>
+                    ) : (
+                        <><Text style={styles.attachText}>Replace Video</Text></>
+                    )}
+                </TouchableOpacity>
+                </View>            
+          {/* </View> */}
+        </View>
+        {/* Display Images and Document Names */}
+        {videos.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <Ionicons name="cloud-upload-outline" size={50} color="#cccccc" />
+            <Text style={styles.emptyText}>Upload a practice video</Text>
+          </View>
+        ) : (
+          <>
+            <View style={styles.documentContainer}>
+                <View style={styles.documentItem}>
+                <Ionicons name="document-attach" size={24} color="#4F8EF7" />
+                <Text style={styles.documentName}>{videos[0].fileName}</Text>
+                <TouchableOpacity onPress={removeVideo} style={styles.removeButton}>
+                    <Ionicons name="close-circle" size={24} color="red" />
+                </TouchableOpacity>
+                </View>
+            </View>
+{/* 
+            <View style={styles.imageContainer}>
+                <View style={styles.imageWrapper}>
+                    <Video source={{ uri: videos[0].uri }} style={styles.image} />
+                    <TouchableOpacity onPress={removeVideo} style={styles.removeButton}>
+                        
+                        <Ionicons name="close-circle" size={24} color="red" />
+                    </TouchableOpacity>
+                </View>
+            </View> */}
+          </>
+        )}
+            {/* Submit button */}
+            <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={submitHandler}>
+                <Text style={styles.buttonText}>Submit Recording</Text>
+            </TouchableOpacity>
             </ScrollView>
 
-            {/* Submit button */}
-            <TouchableOpacity style={theme.button} onPress={submitHandler}>
-                <Text style={theme.buttonText}>Submit</Text>
-            </TouchableOpacity>
-        </View>
-
-        
-    </ScrollView> 
     )
 };
 export default CreatePracticeScreen;
 
 const styles = StyleSheet.create({
-    contentContainer:{
-        flexGrow: 1, // Makes sure all content will be scrolled
+    container: {
+      flex: 1,
+      backgroundColor: '#ffffff',
     },
-    innerContainer:{
-        padding: 20,
+    emptyContainer: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 20,
+    },
+    emptyText: {
+      color: '#cccccc',
+      textAlign: 'center',
+      marginTop: 10,
+    },
+    formContainer: {
+      padding: 20,
+    },
+    header: {
+      fontSize: 22,
+      fontWeight: 'bold',
+      marginBottom: 20,
+      color: '#525F7F',
+    },
+    inputContainer: {
+      backgroundColor: '#F7F7F7',
+      borderRadius: 5,
+      marginBottom: 15,
+    },
+    input: {
+      padding: 15,
+      fontSize: 16,
+    },
+    textArea: {
+      minHeight: 100,
+      textAlignVertical: 'top',
+    },
+    attachFilesSection: {
+      backgroundColor: '#F7F7F7',
+      borderRadius: 5,
+      marginBottom: 15,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 15,
+      width: '100%',
+    },
+    attachButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    attachText: {
+      marginLeft: 10,
+      fontSize: 16,
+      color: '#4664EA',
+      alignItems:'center'
+    },
+    textArea: {
+      minHeight: 100,
+      textAlignVertical: 'top',
+    },
+    button: {
+      backgroundColor: '#4664EA',
+      padding: 15,
+      borderRadius: 15,
+      alignItems: 'center',
+      marginBottom: 10,
+    },
+    buttonText: {
+      color: '#ffffff',
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
+    uploadButtons: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 20,
     },
     imageContainer: {
-        position: 'relative',
-        marginRight: 10, // Add space between images
-        marginTop: 20,
-        marginLeft: 10,
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'flex-start',
+    },
+    imageWrapper: {
+      position: 'relative',
+      marginRight: 10,
+      marginBottom: 10,
     },
     image: {
-        width: 150,
-        height: 150
-    }, 
+      width: 100,
+      height: 100,
+      borderRadius: 5,
+    },
     removeButton: {
-        position: 'absolute',
-        right: 0,
-        top: 0,
-        // backgroundColor: '#4664EA',
-        // padding: 5,
-        // borderRadius: 10,
+      position: 'absolute',
+      top: -10,
+      right: -10,
     },
-    cancelIcon: {
-        width: 30,
-        height: 30
+    documentContainer: {
+      marginBottom: 20,
+      width: '80%',
     },
-    label:{
-        marginTop: 20,
-        marginLeft: 20,
-        fontSize: 16,
-        color: '#6e6e6e',
-    }, 
-    documentItemContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        marginTop: 20,
-        marginLeft: 10,
-    },
-    documentThumbnail: {
-        width: 30,
-        height: 30,
-        marginRight: 10,
+    documentItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 10,
     },
     documentName: {
-        flexGrow: 1,
-        flexShrink: 1,
-        marginRight: 10,
+      marginLeft: 10,
+      fontSize: 16,
     },
-    buttonsContainer:{
-        flexDirection: 'row',
-        justifyContent: 'space-between', // This will space out the buttons evenly
-        marginTop: 20,
-        paddingHorizontal: 10, // Add some padding on the sides
+    errorText: {
+      color: 'red',
+      margin: 10
     },
-    video: {
-        width: 150,
-        height: 150,
-        // other styles you might want to add
+    dateText: {
+      fontSize: 16,
+      marginBottom: 10,
+      
     },
-    lottie: {
-        position: 'absolute',
-        width: '100%',
-        size: '50%',
-        height: '100%',
+    dropdown: {
+      marginBottom: 20,
     },
-    centeredView: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 22,
+    submitButton: {
+      marginTop: 20,
     },
-    modalView: {
-        margin: 20,
-        backgroundColor: "white",
-        borderRadius: 20,
-        padding: 25,
-        alignItems: "center",
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5
+    deadlineContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 20,
+      padding: 10,
+      backgroundColor: '#F7F7F7', // Light gray background
+      borderRadius: 8,
     },
-    modalVideo: {
-        width: Dimensions.get('window').width * 0.8, // 80% of window width
-        height: Dimensions.get('window').height * 0.5, // 40% of window height
+    dueDateLabel: {
+      fontSize: 16,
+      color: '#8E8E93', // Light gray text
     },
-});
+    dateDisplay: {
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginLeft: 10,
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      backgroundColor: '#FFFFFF', // White background for date display
+      borderRadius: 8,
+    },
+    dateText: {
+      fontSize: 16,
+      color: '#000000', // Black text for the date
+    },
+    // Update existing button styles if necessary
+    button: {
+      backgroundColor: '#4664EA',
+      padding: 15,
+      borderRadius: 15,
+      alignItems: 'center',
+      marginBottom: 10,
+    },
+    buttonText: {
+      color: '#ffffff',
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
+  });
