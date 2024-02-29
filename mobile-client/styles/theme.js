@@ -91,7 +91,7 @@ const theme = StyleSheet.create({
     fontSize: 16,
   }, 
   card: {
-    backgroundColor: '#EE97BC',
+    backgroundColor: '#4664EA',
     padding: 20,
     borderRadius: 15,
     marginTop: 10, 

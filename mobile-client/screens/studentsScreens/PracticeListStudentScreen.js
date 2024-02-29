@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, TouchableOpacity, Text, Button, Image, Alert, Linking } from 'react-native';
 import theme from '../../styles/theme';
-import Modal from 'react-native-modal';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -13,7 +12,7 @@ function PracticeListStudentScreen({navigation}){
     const [practiceData, setPracticeData] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
 
-    // Check stored data for teacherID
+    // Check stored data for studentID
     const checkStoredData = async () => {
         try {
             const storedData = await AsyncStorage.getItem('authData');
@@ -98,7 +97,7 @@ function PracticeListStudentScreen({navigation}){
                 ))
             ) : (
                 <View style={theme.card2}>
-                  <Text>No assignments found.</Text>
+                  <Text>No practice found.</Text>
                 </View>
               )}
         </ScrollView>

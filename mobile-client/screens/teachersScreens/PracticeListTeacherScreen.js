@@ -1,126 +1,107 @@
-import React, {useState} from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert, Modal, Button, Dimensions} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert, Button} from 'react-native';
 import theme from '../../styles/theme';
-import ProvidePracticeFeedbackScreen from './ProvidePracticeFeedbackScreen';
-import { useSelector } from 'react-redux';
-import { Audio, Video, ResizeMode} from 'expo-av';
-function PracticeListTeacherScreen({navigation}){
-    // const practiceData = useSelector(state => state.cache.practiceData);
-    const [isModalVisible, setModalVisible] = useState(false);
-    const [selectedVideo, setSelectedVideo] = useState(null);
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import IP_ADDRESS from '../../constants/ip_address_temp';
+import AssignmentSearchBar from '../../components/ui/assignmentSearchBar';
 
+function PracticeListTeacherScreen({route, navigation}){
+    const { studentID }  = route.params;
 
-    const toggleModal = () => {
-        setModalVisible(!isModalVisible);
+    const [teacherID, setTeacherID] = useState('');
+    const [practiceData, setPracticeData] = useState([]);
+    const [searchResults, setSearchResults] = useState([]);
+
+    // Check stored data for teacherID
+    const checkStoredData = async () => {
+        try {
+            const storedData = await AsyncStorage.getItem('authData');
+            if (storedData !== null) {
+                const parsedData = JSON.parse(storedData);
+                console.log('teacherID:', parsedData.userId);
+                return parsedData.userId;
+            }
+        } catch (error) {
+            console.error('Error retrieving data from AsyncStorage', error);
+        }
+        return '';
     };
+    // Fetch studentID on component mount
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const id = await checkStoredData();
+                setTeacherID(id);
+                console.log('teacherID', teacherID)
+            } catch (error) {
+                console.error('Error processing stored data', error);
+            }
+        };
+        fetchData();
+    }, []);
 
-    const openVideo = (uri) => {
-        setSelectedVideo(uri);
-        toggleModal(); 
-    }
+    // Fetch practices using studentID
+    useEffect(() => {
+        const fetchPractices = async() => {
+            try {
+                console.log('teacherstudentID', teacherID, studentID)
+                const response = await fetch(`${IP_ADDRESS}/practices/${studentID}/${teacherID}`, {
+                    method: 'GET'
+                });
+                
+                if (!response.ok) {
+                    const errorText = response.statusText || 'Unknown error occurred';
+                    throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+                }
+                const responseData = await response.json();
+                setPracticeData(responseData); // Set the state with the response data
+                setSearchResults(responseData);
+                console.log(practiceData)
+            } catch (error) {
+                console.error('Error fetching assignments:', error);
+            }
+        };
+        if(teacherID){
+            fetchPractices();
+        }
+    }, [studentID, teacherID]);
 
+    const handleSearch = (searchText) => {
+        // Filter the assignmentData based on whether the assignment title includes the searchText
+        if (searchText) {
+            // Filter the assignmentData based on whether the assignment title includes the searchText
+            const results = practiceData.filter(practice => 
+              practice.title.toLowerCase().includes(searchText.toLowerCase())
+            );
+            setSearchResults(results);
+          } else {
+            // If the search text is empty, reset the search results to the full assignment data
+            setSearchResults(practiceData);
+          }
+    };
+    
     return (
-        <View style={theme.container}> 
-        {/* Student 1  */}
-            <TouchableOpacity style={theme.card}>
-                <View style={theme.cardTextContainer}>
-                    <Text style={theme.cardTextBold}>Dummy Song</Text>
-                    <Text style={theme.cardText}>Dummy comment</Text>
-                </View>
-                <View style={theme.buttonContainer}>
-                    <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText} onPress={() => openVideo(require('../../assets/dummyvid.mp4'))}>Recording</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ProvidePracticeFeedbackScreen')}>Feedback</Text>
-                    </TouchableOpacity>
-                </View>
-            </TouchableOpacity>
-            {/* Modal for viewing the video */}
-            <Modal
-                    isVisible={isModalVisible}
-                    animationType="slide"
-                    transparent={true}
-                    visible={isModalVisible}
-                >
-                    <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
-                            {/* {selectedVideo && ( */}
-                                <Video
-                                source={require('../../assets/dummyvid.mp4')}
-                                style={styles.modalVideo}
-                                resizeMode={ResizeMode.CONTAIN}
-                                shouldPlay
-                            />
-                            {/* )} */}
-                            <Button title="Close" onPress={toggleModal} />
+        <ScrollView style={theme.container}>
+            {/* <Text style={[theme.textTitle, { marginTop: 50, verticalAlign: 'middle' }]}>Your Assignments</Text> */}
+                    {/* Search bar */}
+            <AssignmentSearchBar onSearch={handleSearch} />
+            {searchResults.length > 0 ? ( // Use searchResults here
+                searchResults.map((practice, index) => (
+                    <TouchableOpacity key={index} style={theme.card2} onPress={() => navigation.navigate('ViewPracticeStudentScreen', { practice: practice })}>
+                        <View style={theme.cardTextContainer}>
+                            <Text style={theme.cardTitle}>{practice.title}</Text>
                         </View>
-                    </View>
-                </Modal>
-        </View>
-
-    )
+                        <TouchableOpacity style={theme.smallButton}>
+                            <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ViewPracticeStudentScreen', { practice: practice })}>View</Text>
+                        </TouchableOpacity>
+                    </TouchableOpacity>
+                ))
+            ) : (
+                <View style={theme.card2}>
+                  <Text>No practice found.</Text>
+                </View>
+              )}
+        </ScrollView>
+    );
 }
 export default PracticeListTeacherScreen;
-
-const styles = StyleSheet.create({
-    card: {
-        backgroundColor: '#EE97BC',
-        padding: 20,
-        borderRadius: 15,
-        marginTop: 10, 
-        flexDirection: 'row',
-        justifyContent: 'space-between', // Align items on both ends
-        alignItems: 'center', // Center items vertically
-    },
-    cardTextContainer: {
-        flex: 1, // Take up as much space as possible
-        marginRight: 8, // Add some margin to the right of the text
-    },
-    cardText: {
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: 16,
-    },
-    buttonContainer: {
-        flexDirection: 'row',
-        // If you need space between buttons add justifyContent: 'space-between',
-    },
-    smallButton: {
-        backgroundColor: '#4664EA',
-        padding: 10,
-        borderRadius: 15,
-        marginLeft: 8, // Add some margin to separate the buttons
-    },
-    smallButtonText: {
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: 14,
-        textAlign: 'center',
-    },
-    centeredView: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 22,
-    },
-    modalView: {
-        margin: 20,
-        backgroundColor: "white",
-        borderRadius: 20,
-        padding: 25,
-        alignItems: "center",
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5
-    },
-    modalVideo: {
-        width: Dimensions.get('window').width * 0.8, // 80% of window width
-        height: Dimensions.get('window').height * 0.7
-    }
-})
