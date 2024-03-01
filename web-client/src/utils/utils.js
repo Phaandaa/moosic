@@ -20,31 +20,36 @@ export const fetchAllEndpoints = async (urls, accessToken) => {
 };
 
 export const putAsync = (url, data, token = null, isImage = false) => {
-	const headers = token ? { Authorization: `Bearer ${token}` } : {};
-  
-	let body = data;
-	if (!isImage) {
-	  headers["Content-Type"] = "application/json";
-	  body = JSON.stringify(data);
-	}
-  
-	return fetch(`http://localhost:8080/${url}`, {
-	  method: "PUT",
-	  headers, // Do not set Content-Type for FormData
-	  body,
-	});
-  };  
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-export const postAsync = (url, data, token = null) => {
-  const headers = {
-    "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : undefined),
-  };
+  let body = data;
+  if (!isImage) {
+    headers["Content-Type"] = "application/json";
+    body = JSON.stringify(data);
+  }
 
   return fetch(`http://localhost:8080/${url}`, {
+    method: "PUT",
+    headers, // Do not set Content-Type for FormData
+    body,
+  });
+};
+
+export const postAsync = (url, data, token = null, isFormData = false) => {
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+  // Check if the request is not FormData, then set Content-Type to 'application/json'
+  // and stringify the body.
+  if (!isFormData) {
+    headers["Content-Type"] = "application/json";
+    data = JSON.stringify(data);
+  }
+
+  // For FormData, do not set Content-Type. Let the browser set it.
+  return fetch(`http://localhost:8080/${url}`, {
     method: "POST",
-    headers,
-    body: JSON.stringify(data),
+    headers, // Content-Type is not set for FormData, allowing the browser to handle it
+    body: data,
   });
 };
 
