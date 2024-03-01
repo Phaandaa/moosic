@@ -11,10 +11,11 @@ import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-function SubmitAssignmentScreen({ navigation, route }) {
+function ProvideAssignmentFeedbackScreen({ navigation, route }) {
   const {assignmentID} = route.params;
   const [assignmentName, setAssignmentName] = useState('');
-  const [studentComments, setStudentComments] = useState('');
+  const [teacherFeedback, setTeacherFeedback] = useState('');
+  const [points, setPoints] = useState(0);
   const [errors, setErrors] = useState({});
 
   const [images, setImages] = useState([]);
@@ -135,13 +136,14 @@ function SubmitAssignmentScreen({ navigation, route }) {
     });
 
 
-    formData.append("studentComment", studentComments);
+    formData.append("teacherFeedback", teacherFeedback);
+    formData.append("points", points);
 
     console.log(formData)
 
     try {
 
-      const response = await fetch(`${IP_ADDRESS}/assignments/student/${assignmentID}/update?`, {
+      const response = await fetch(`${IP_ADDRESS}/assignments/teacher/${assignmentID}/update?`, {
           method: 'PUT',
           body: formData,
       });
@@ -179,11 +181,21 @@ function SubmitAssignmentScreen({ navigation, route }) {
 
         <View style={styles.inputContainer}>
           <TextInput
-            placeholder="Comments"
-            value={studentComments}
-            onChangeText={setStudentComments}
+            placeholder="Feedback"
+            value={teacherFeedback}
+            onChangeText={setTeacherFeedback}
             multiline
             style={[styles.input, styles.textArea]}
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <TextInput
+            placeholder="Points"
+            value={points}
+            onChangeText={setPoints}
+            style={[styles.input, styles.textArea]}
+            keyboardType='numeric'
           />
         </View>
       
@@ -412,4 +424,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SubmitAssignmentScreen;
+export default ProvideAssignmentFeedbackScreen;

@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,6 +56,29 @@ public class PracticeController {
     public ResponseEntity<?> getPracticeByTeacherId(@PathVariable String teacherId) {
         List<Practice> practices = practiceService.findPracticeByTeacherId(teacherId);
         return ResponseEntity.ok(practices);
+    }
+
+    // Get practice logs by student ID and teacher ID
+    @Operation(summary = "Get practice logs by student ID and teacher ID")
+    @GetMapping("/{studentId}/{teacherId}")
+    public ResponseEntity<?> getPracticeByStudentIdAndTeacherId(@PathVariable String studentId, @PathVariable String teacherId) {
+        List<Practice> practices = practiceService.findPracticeByStudentIdAndTeacherId(studentId, teacherId);
+        return ResponseEntity.ok(practices);
+    }
+
+    // Teacher update practice (comments and points)
+    @Operation(summary = "Feedback practice by teacher")
+    @PutMapping(path = "/feedback/{practiceId}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<?> feedbackPractice(@PathVariable String practiceId, 
+        @RequestParam(value = "teacherFeedback") String teacherFeedback, 
+        @RequestParam(value = "points") Integer points,
+        @RequestPart("files") List<MultipartFile> files) {
+        try {
+            Practice updatedPractice = practiceService.updatePractice(practiceId, teacherFeedback, points,files );
+            return ResponseEntity.ok(updatedPractice);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
 }

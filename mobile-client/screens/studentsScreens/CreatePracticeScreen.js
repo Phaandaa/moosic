@@ -6,15 +6,17 @@ import AnimatedPlaceholderInput from '../../components/ui/animateTextInput';
 import * as ImagePicker from "expo-image-picker";
 import { Audio, Video, ResizeMode} from 'expo-av';
 import LottieView from 'lottie-react-native';
+import IP_ADDRESS from '../../constants/ip_address_temp';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 import { useSelector, useDispatch } from 'react-redux';
 import { setCache, clearCache } from '../../cacheSlice';
 
-function PracticeScreen({navigation}){
-    const dispatch = useDispatch();
+function CreatePracticeScreen({navigation}){
+    // const dispatch = useDispatch();
     const [title, setTitle] = useState('');
     const [comment, setComment] = useState('');
-    const [userData, setUserData] = useState('');
     const cancelIcon = require('../../assets/cancel.png');
     const [videos, setVideos] = useState([]);
     const [loadingStates, setLoadingStates] = useState({});
@@ -32,30 +34,80 @@ function PracticeScreen({navigation}){
         toggleModal(); 
     }
 
-    const submitHandler = () => {
+    const submitHandler = async ()=> {
         console.log('Practice Title on Submit:', title, 'Type:', typeof title );
         console.log('Student\'s Practice Comments on Submit:', comment, 'Type:', typeof comment );
+
+        
+
+        // Step 2: Validate Data (this is a basic example, you might need more complex validation)
+        // if (!practiceData.title || !practiceData.comment || !practiceData.videos) {
+        if (!title) {
+            alert('Please fill all fields');
+            return;
+        }
+        const storedData = await AsyncStorage.getItem('authData');
+        if (!storedData) {
+          Alert.alert('Error', 'Authentication data is not available. Please login again.');
+          return;
+        }
+      
+        const parsedData = JSON.parse(storedData);
+        if (!parsedData.userId || !parsedData.name) {
+          Alert.alert('Error', 'Incomplete authentication data. Please login again.');
+          return;
+        }
+    
+        const formData = new FormData();
 
         // Step 1: Collect Data
         const practiceData = {
             title: title,
             comment: comment,
-            videos: videos,
-            feedback: null
+            student_id: parsedData.userId,
+            student_name: parsedData.name,
+            teacher_id: 'WA2G3fxLzNSdKWwerstzG7siTfu1', //hardcode for testing
+            teacher_name: 'Jake'
         };
-        console.log(practiceData)
+        console.log('practiceData: ', practiceData)          
+        
+        if (videos.length > 0 && videos[0].uri) {
+            // Assuming `videos[0]` is the video object that you logged
+            const video = videos[0];
+            console.log('video: ',video)
+        
+            // Append the video file to the formData
+            formData.append("video", {
+              uri: video.uri,
+              name: video.fileName, // Use the filename from the video object
+            //   type: 'video/mov' // You can hardcode the type or derive it from the fileName
+            });
+            console.log('videouri: ', video.uri)
+            console.log('vidfilename: ', video.fileName)
+            console.log('vidtype: ', video.type)
 
-        // Step 2: Validate Data (this is a basic example, you might need more complex validation)
-        // if (!practiceData.title || !practiceData.comment || !practiceData.videos) {
-        if (!practiceData.title || !practiceData.comment) {
-            alert('Please fill all fields');
-            return;
         }
-        else{
-            alert('Success!')
-            console.log('submitted')
-            dispatch(setCache({ key: 'practiceData', value: practiceData })); 
-            navigation.navigate('PracticeListStudentScreen');
+        formData.append("practice", {"string" : JSON.stringify(practiceData), type: 'application/json'});
+        console.log(formData)
+
+        try {
+            const response = await fetch(`${IP_ADDRESS}/practices/create`, {
+                method: 'POST',
+                body: formData,
+            });
+              
+            if (!response.ok) {
+              const errorText = response.statusText || 'Unknown error occurred';
+              throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+            }
+            const responseData = await response.json();
+            console.log(responseData);
+            // dispatch(setCache({ key: 'practiceData', value: practiceData })); 
+            // navigation.navigate('PracticeListStudentScreen');
+            Alert.alert('Success', 'Practice created successfully!');
+        } catch (error) {
+            console.error('Error recording practice:', error);
+            Alert.alert('Error', `Failed to create practice. ${error.response?.data?.message || 'Please try again.'}`);
         }
     }
 
@@ -73,8 +125,8 @@ function PracticeScreen({navigation}){
                 })
             } 
             if(!result.canceled){
-                console.log('result not cancelled')
-                await saveVideo(result.assets[0].uri);
+                console.log('vid result: ', result)
+                await saveVideo(result.assets[0]);
             }
         } catch (error){
             alert("error uploading video:"+ error.message
@@ -183,7 +235,7 @@ function PracticeScreen({navigation}){
     </ScrollView> 
     )
 };
-export default PracticeScreen;
+export default CreatePracticeScreen;
 
 const styles = StyleSheet.create({
     contentContainer:{

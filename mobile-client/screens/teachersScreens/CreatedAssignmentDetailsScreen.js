@@ -6,11 +6,9 @@ import { Ionicons } from '@expo/vector-icons';
 const getFileNameFromUrl = (url) => {
     return url.split('/').pop();
 };
-function ViewAssignmentsScreen({route, navigation}) {
+function CreatedAssignmentDetailsScreen({route, navigation}) {
     const { assignment } = route.params;
-    console.log('assignment:', assignment)
-
-    // const assignmentDataAll = useSelector(state => state.cache.assignmentDataAll) || []; 
+    console.log('createdassignment', assignment)
 
     return (
         <ScrollView style={theme.container}>
@@ -29,19 +27,13 @@ function ViewAssignmentsScreen({route, navigation}) {
                                 </TouchableOpacity>
                             ))}
                         </View>
-                        <View style={theme.buttonContainer2}>
-                            <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('SubmitAssignmentScreen', {assignmentID: assignment.assignmentId})}>
-                                <Text style={theme.smallButtonText}>Submit Assignment</Text>
-                            </TouchableOpacity>
-                        </View>
                     </View>
                     <View style={theme.card3}>
                         <View style={theme.cardTextContainer}>
                             <View style={theme.oneRow}> 
-                                <Text style={theme.cardTitlePink}>My Submission</Text>
+                                <Text style={theme.cardTitlePink}>Submission</Text>
                                 {/* <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text> */}
                                 {/* <Text style={theme.cardText}>Attachments:</Text> */}
-
                             </View>
                             {assignment.submissionLinks.map((link, linkIndex) => (
                                 <TouchableOpacity key={linkIndex} onPress={() => Linking.openURL(link)} style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -50,6 +42,11 @@ function ViewAssignmentsScreen({route, navigation}) {
                                 </TouchableOpacity>
                             ))}
                             <Text style={theme.cardText}>{assignment.studentComment}</Text>
+                            <View style={theme.buttonContainer2}>
+                            <TouchableOpacity style={theme.smallPinkButton} onPress={() => navigation.navigate('ProvideAssignmentFeedbackScreen', {assignmentID : assignment.assignmentId})}>
+                                <Text style={theme.smallButtonText}>Give Feedback</Text>
+                            </TouchableOpacity>
+                        </View>
                         </View>
                     </View>
 
@@ -76,6 +73,6 @@ function ViewAssignmentsScreen({route, navigation}) {
     );
 }
 
-export default ViewAssignmentsScreen;
+export default CreatedAssignmentDetailsScreen;
 
 

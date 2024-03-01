@@ -13,7 +13,7 @@ function AssignmentListScreen({navigation}){
     const [assignmentData, setAssignmentData] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
 
-    // Check stored data for teacherID
+    // Check stored data for studentID
     const checkStoredData = async () => {
         try {
             const storedData = await AsyncStorage.getItem('authData');
