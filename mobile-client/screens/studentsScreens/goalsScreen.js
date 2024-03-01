@@ -33,16 +33,17 @@ const GoalsScreen = () => {
           const studentResponse = await axios.get(fetchStudentDataUrl);
           if (studentResponse.data) {
             setStudentData(studentResponse.data); // Update student data
+            
           } else {
             setStudentData({ pointsCounter: 0 }); // Set default if no student data found
           }
     
           // Fetch student's goals
-          const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/student/ongoing/${userId}`;
+          const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/student/${userId}`;
           const goalsResponse = await axios.get(fetchStudentsGoalsUrl);
           if (goalsResponse.data) {
             // Since the data is an object, we wrap it in an array
-            setGoals([goalsResponse.data]); // Wrap the object in an array and update goals
+            setGoals(goalsResponse.data); // Wrap the object in an array and update goals
             console.log(goalsResponse.data);
           } else {
             setGoals([]); // Set goals to an empty array if no goals were fetched
@@ -67,7 +68,6 @@ const GoalsScreen = () => {
 
   // Function to render the header
   const renderHeader = () => {
-    // Check if there are actual goals (not just the 'empty' placeholder)
     if (filteredData.length === 0 || (filteredData.length === 1 && filteredData[0] === 'empty')) {
       return null;
     }
@@ -87,10 +87,10 @@ const GoalsScreen = () => {
     <View style={styles.container}>
     <Text style={[theme.textTitle, {marginTop: 50, marginHorizontal: 15}]}> Your Goals </Text>  
     <View style={[styles.balanceContainer, { backgroundColor: '#007AFF', overflow: 'hidden', position: 'relative'}]}>
-      <Ionicons name="trophy" size={170} color='#FFFFFF' style={{ position: 'absolute', bottom: 0, right: 0 }} />
-      <Text style={styles.balanceText}>Your Points</Text>
-      <Text style={styles.pointsIndicator}>{studentData.pointsCounter}</Text>
-    </View>
+  <Ionicons name="trophy" size={170} color='#FFFFFF' style={{ position: 'absolute', bottom: 0, right: 0 }} />
+  <Text style={styles.balanceText}>Your Points</Text>
+  <Text style={styles.pointsIndicator}>{studentData.pointsCounter}</Text>
+</View>
     
     <View style={styles.tabContainer}>
       {['All', 'In Progress', 'Completed'].map((tab) => (
@@ -119,24 +119,24 @@ const styles = StyleSheet.create({
   },
   activeTab: {
     borderBottomWidth: 4,
-    borderBottomColor: '#FFD700',
+    borderBottomColor: '#FFD700', // Accent Color
   },
   activeTabText: {
-    color: '#FFD700',
+    color: '#FFD700', // Accent Color
   },
   balanceContainer: {
-    backgroundColor: '#686BFF',
+    backgroundColor: '#686BFF', // Primary Color
     borderRadius: 8,
     marginHorizontal: 20,
     marginTop: 10,
     marginBottom: 20,
     paddingHorizontal: 20,
-    paddingVertical: 60,
-    
+    paddingVertical: 60, // Reduced padding for a neater look
   },
   balanceText: {
     color: 'white',
     fontSize: 20,
+    fontWeight: 'bold', // Standardize font weight
   },
   pointsIndicator: {
     color: 'white',
@@ -147,14 +147,15 @@ const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    backgroundColor: '#686BFF',
+    backgroundColor: '#686BFF', // Primary Color
     paddingVertical: 10,
     borderRadius: 20,
     marginHorizontal: 20,
-    marginBottom: 20, // Add some space below the tab container
+    marginBottom: 20,
   },
   tab: {
-    padding: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12, // Ensure tabs are adequately spaced
   },
   tabText: {
     color: 'white',
@@ -165,9 +166,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 16,
-    backgroundColor: '#686BFF',
+    backgroundColor: '#686BFF', // Primary Color
     marginHorizontal: 20,
-    borderRadius: 10, // Rounded corners for the header
+    borderRadius: 10,
   },
   headerItem: {
     color: 'white',
