@@ -18,6 +18,7 @@ import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 
+
 export default function AddItem({ onAddItem }) {
   const [open, setOpen] = React.useState(false);
 
@@ -26,7 +27,6 @@ export default function AddItem({ onAddItem }) {
   const [points, setPoints] = React.useState(0);
   const [limit, setLimit] = React.useState(0);
   const [stock, setStock] = React.useState(0);
-  const [selectedFile, setSelectedFile] = React.useState(null);
   // You can define the options for the select dropdown
   const itemTypeOptions = ["physical", "digital"];
 
@@ -48,9 +48,6 @@ export default function AddItem({ onAddItem }) {
   };
   const handleStockChange = (event) => {
     setStock(event.target.value);
-  };
-  const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
   };
 
   const handleCloseSnackbar = () => {
@@ -86,11 +83,7 @@ export default function AddItem({ onAddItem }) {
           limit: limit,
           stock: stock,
         };
-        const formData = new FormData();
-        formData.append("files", selectedFile);
-        formData.append("reward-shop-item", JSON.stringify(newItem));
-        console.log("formData", formData.get("files"), formData.get("reward-shop-item"));
-        const response = await postAsync('reward-shop/create/with-image', formData, null, true);
+        const response = await postAsync("reward-shop/create/without-image", newItem);
         if (!response.ok) {
           console.error("Server error:", response.status, response.statusText);
           throw new Error("Server error");
@@ -112,12 +105,11 @@ export default function AddItem({ onAddItem }) {
         // Handle submission errors (e.g., display error message)
       } finally {
         // Perform any cleanup tasks here
-        // setDescription("");
-        // setType("");
-        // setPoints(0);
-        // setLimit(0);
-        // setStock(0);
-        // setSelectedFile(null);
+        setDescription("");
+        setType("");
+        setPoints(0);
+        setLimit(0);
+        setStock(0);
       }
     };
 
@@ -171,8 +163,7 @@ export default function AddItem({ onAddItem }) {
               >
                 {itemTypeOptions.map((option) => (
                   <MenuItem key={option} value={option}>
-                    {option.charAt(0).toUpperCase() + option.slice(1)}{" "}
-                    {/* Capitalize the first letter */}
+                    {option.charAt(0).toUpperCase() + option.slice(1)} {/* Capitalize the first letter */}
                   </MenuItem>
                 ))}
               </Select>
@@ -203,26 +194,6 @@ export default function AddItem({ onAddItem }) {
               value={stock}
               onChange={handleStockChange}
             />
-          </Box>
-          <Box display={"flex"} justifyContent={"space-between"} mt={1} alignItems={"center"}>
-            <TextField
-              id="image"
-              label="Image Link"
-              value={selectedFile ? selectedFile.name : ""}
-              sx={{ flexGrow: 1, mr: 2 }}
-            />
-            <input
-              accept="image/*"
-              type="file"
-              onChange={handleFileChange}
-              style={{ display: "none" }}
-              id="raised-button-file"
-            />
-            <label htmlFor="raised-button-file">
-              <Button variant="contained" color="success" component="span">
-                Choose Image
-              </Button>
-            </label>
           </Box>
         </DialogContent>
         <DialogActions>

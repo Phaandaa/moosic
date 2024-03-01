@@ -10,9 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.server.dao.RewardShopRepository;
 import com.example.server.entity.RewardShop;
 import com.example.server.models.RewardShopItemDTO;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class RewardShopService {
@@ -22,9 +19,6 @@ public class RewardShopService {
 
     @Autowired
     private CloudStorageService cloudStorageService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     public List<RewardShop> getAllRewardShopItem() {
         try {
@@ -66,9 +60,8 @@ public class RewardShopService {
         }
     }
 
-    public String addNewRewardShopItem(String rewardShopItemJSON, MultipartFile file) {
+    public String addNewRewardShopItem(RewardShopItemDTO rewardShopItemDTO, MultipartFile file) {
         try {
-            RewardShopItemDTO rewardShopItemDTO = objectMapper.readValue(rewardShopItemJSON, RewardShopItemDTO.class);
             String imageURL = cloudStorageService.uploadFileToGCS(file, "shop");
             String description = rewardShopItemDTO.getDescription();
             Integer points = rewardShopItemDTO.getPoints();
@@ -80,10 +73,6 @@ public class RewardShopService {
             return "Create new item in reward shop successfully";
         } catch (RuntimeException e) {
             throw new RuntimeException("Error creating item in reward shop: " + e.getMessage());
-        } catch (JsonMappingException e) {
-            throw new IllegalArgumentException("Error creating item in reward shop: Failed to map JSON payload request: " + e.getMessage());
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("Error creating item in reward shop: Failed to map JSON payload request: " + e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException("Failed to create item in reward shop: " + e.getMessage());
         }

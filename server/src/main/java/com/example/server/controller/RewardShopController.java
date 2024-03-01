@@ -21,9 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.server.entity.RewardShop;
 import com.example.server.models.RewardShopItemDTO;
 import com.example.server.service.RewardShopService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.oas.annotations.Operation;
 // TODO: Student transactions, consisting of purchase history rewards shop amnd inventory entity
@@ -32,9 +29,6 @@ import io.swagger.v3.oas.annotations.Operation;
 @RequestMapping("/reward-shop")
 public class RewardShopController {
     @Autowired RewardShopService rewardShopService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
     
     @Operation(summary = "Get all items in reward shop")
     @GetMapping
@@ -60,9 +54,9 @@ public class RewardShopController {
     @Operation(summary = "Create new reward shop item with image")
     @PostMapping(path = "/create/with-image", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> createRewardShopItem(
-            @RequestPart("reward-shop-item") String rewardShopItemJSON,
+            @RequestPart("reward-shop-item") RewardShopItemDTO rewardShopItemDTO,
             @RequestPart("files") MultipartFile file) {
-        return ResponseEntity.ok(rewardShopService.addNewRewardShopItem(rewardShopItemJSON, file));
+        return ResponseEntity.ok(rewardShopService.addNewRewardShopItem(rewardShopItemDTO, file));
     }
 
     @Operation(summary = "Create new reward shop item without image")
