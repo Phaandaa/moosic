@@ -42,7 +42,7 @@ function ViewPracticeStudentScreen({route, navigation}){
                         </View>
                     </View>
 
-                    {practice.teacherFeedback ? (
+                    {practice.feedback ? (
                         <View style={theme.card3}>
                             <View style={theme.cardTextContainer}>
                                 <View style={theme.oneRow}> 
@@ -57,7 +57,7 @@ function ViewPracticeStudentScreen({route, navigation}){
                                         <Ionicons name="link" size={24} color="#525F7F" />
                                         <Text style={theme.documentName}> {getFileNameFromUrl(practice.videoLink)}</Text>
                                 </TouchableOpacity>
-                                <Text style={theme.cardText}>{practice.teacherFeedback}</Text>
+                                <Text style={theme.cardText}>{practice.feedback}</Text>
                             </View>
                         </View>
                     ) : (

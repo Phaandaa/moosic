@@ -252,7 +252,7 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
   
 
         <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={submitHandler}>
-          <Text style={styles.buttonText}>Submit Assignment</Text>
+          <Text style={styles.buttonText}>Submit Feedback</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
