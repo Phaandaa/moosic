@@ -4,7 +4,6 @@ import Modal from 'react-native-modal';
 import theme from '../../styles/theme';
 import { Audio, Video, ResizeMode} from 'expo-av';
 import { useSelector } from 'react-redux';
-import PracticeScreen from './CreatePracticeScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,7 +12,7 @@ const getFileNameFromUrl = (url) => {
     return url.split('/').pop().slice(37);
 };
 
-function ViewPracticeStudentScreen({route, navigation}){
+function ViewPracticeTeacherScreen({route, navigation}){
     // const practiceData = useSelector(state => state.cache.practiceData);
     const { practice } = route.params;
     console.log(practice)
@@ -40,6 +39,11 @@ function ViewPracticeStudentScreen({route, navigation}){
                                     <Text style={theme.documentName}>{getFileNameFromUrl(practice.videoLink)}</Text>
                                 </TouchableOpacity>
                             {/* ))} */}
+                        </View>
+                        <View style={theme.buttonContainer2}>
+                                <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('ProvidePracticeFeedbackScreen', {practiceID : practice.id})}>
+                                    <Text style={theme.smallButtonText}>Give Feedback</Text>
+                                </TouchableOpacity>
                         </View>
                     </View>
 
@@ -73,7 +77,7 @@ function ViewPracticeStudentScreen({route, navigation}){
         </ScrollView>
     );
 }
-export default ViewPracticeStudentScreen;
+export default ViewPracticeTeacherScreen;
 
 const styles = StyleSheet.create({
     card: {
