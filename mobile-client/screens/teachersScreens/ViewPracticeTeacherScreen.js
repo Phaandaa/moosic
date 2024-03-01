@@ -8,76 +8,77 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import { Ionicons } from '@expo/vector-icons';
 
+// Utility function to extract file name from URL
 const getFileNameFromUrl = (url) => {
+    if (!url) return '';
     return url.split('/').pop().slice(37);
 };
 
-function ViewPracticeTeacherScreen({route, navigation}){
-    // const practiceData = useSelector(state => state.cache.practiceData);
+const ViewPracticeTeacherScreen = ({ route, navigation }) => {
     const { practice } = route.params;
 
-    console.log('practice:', practice)
-
-    const [isModalVisible, setModalVisible] = useState(false);
-    const [studentID, setStudentID] = useState('');
-    const [selectedVideo, setSelectedVideo] = useState(null);
-    const [practiceData, setPracticeData] = useState([]);
-    const [fetchError, setFetchError] = useState(false);
+    // Render a link or disabled text based on the file's presence and validity
+    const renderLinkOrDisabledText = (link, iconName, iconColor) => {
+        const fileName = getFileNameFromUrl(link);
+        if (link && fileName) {
+            return (
+                <TouchableOpacity onPress={() => Linking.openURL(link)} style={styles.linkContainer}>
+                    <Ionicons name={iconName} size={24} color={iconColor} />
+                    <Text style={theme.documentName}>{fileName}</Text>
+                </TouchableOpacity>
+            );
+        } else {
+            return (
+                <TouchableOpacity style={styles.disabledLinkContainer}>
+                    <Ionicons name={iconName} size={24} color={iconColor} />
+                    <Text style={theme.cardText}>No file available</Text>
+                </TouchableOpacity>
+            );
+        }
+    };
 
     return (
         <ScrollView style={theme.container}>
-            {/* <Text style={[theme.textTitle, { marginTop: 50, verticalAlign: 'middle' }]}>Your Assignments</Text> */}
-                    <View style={theme.card3}>
-                        <View style={theme.cardTextContainer}>
-                            
-                            <Text style={theme.cardTitle}>{practice.title}</Text>
-                            <Text style={theme.cardText}>{practice.comment}</Text>
-                            {/* <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text> */}
-                            {/* <Text style={theme.cardText}>Attachments:</Text> */}
-                            {/* {practice.videoLink.map((link, linkIndex) => ( */}
-                                <TouchableOpacity onPress={() => Linking.openURL(practice.videoLink)} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Ionicons name="link" size={24} color="#525F7F" />
-                                    <Text style={theme.documentName}>{getFileNameFromUrl(practice.videoLink)}</Text>
-                                </TouchableOpacity>
-                            {/* ))} */}
-                            <View style={theme.buttonContainer2}>
-                                <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('ProvidePracticeFeedbackScreen', {practiceID : practice.id})}>
-                                    <Text style={theme.smallButtonText}>Give Feedback</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
+            <View style={theme.card3}>
+                <View style={theme.cardTextContainer}>
+                    <Text style={theme.cardTitle}>{practice.title}</Text>
+                    <Text style={theme.cardText}>{practice.comment}</Text>
 
-                    {practice.feedback ? (
-                    <View style={theme.card3}>
-                        <View style={theme.cardTextContainer}>
-                            <View style={theme.oneRow}> 
-                                <Text style={theme.cardTitlePink}>Feedback</Text>
-                                {/* <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text> */}
-                                {/* <Text style={theme.cardText}>Attachments:</Text> */}
-                                    <View style={theme.smallPinkButton}>
-                                        <Text style={theme.smallButtonText}>{practice.points} Points</Text>
-                                    </View>
+                    {renderLinkOrDisabledText(practice.videoLink, "link", "#525F7F")}
+
+                    <View style={theme.buttonContainer2}>
+                        <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('ProvidePracticeFeedbackScreen', {practiceID : practice.id})}>
+                            <Text style={theme.smallButtonText}>Give Feedback</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+
+            {practice.feedback ? (
+                <View style={theme.card3}>
+                    <View style={theme.cardTextContainer}>
+                        <View style={theme.oneRow}>
+                            <Text style={theme.cardTitlePink}>Feedback</Text>
+                            <View style={theme.smallPinkButton}>
+                                <Text style={theme.smallButtonText}>{practice.points} Points</Text>
                             </View>
-                            <TouchableOpacity onPress={() => Linking.openURL(practice.videoLink)} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Ionicons name="link" size={24} color="#525F7F" />
-                                    <Text style={theme.documentName}> {getFileNameFromUrl(practice.videoLink)}</Text>
-                            </TouchableOpacity>
-                            <Text style={theme.cardText}>{practice.feedback}</Text>
+                        </View>
+                        {renderLinkOrDisabledText(practice.feedbackLink, "link", "#525F7F")}
+                        <Text style={theme.cardText}>{practice.feedback}</Text>
+                    </View>
+                </View>
+            ) : (
+                <View style={theme.card3}>
+                    <View style={theme.cardTextContainer}>
+                        <View style={theme.oneRow}>
+                            <Text style={theme.cardText}>No feedback yet.</Text>
                         </View>
                     </View>
-                    ) : (
-                        <View style={theme.card3}>
-                            <View style={theme.cardTextContainer}>
-                                <View style={theme.oneRow}>
-                                    <Text style={theme.cardText}>No feedback yet.</Text>
-                                </View>
-                            </View>
-                        </View> 
-                    )}
+                </View>
+            )}
         </ScrollView>
     );
-}
+};
 export default ViewPracticeTeacherScreen;
 
 const styles = StyleSheet.create({
@@ -139,5 +140,14 @@ const styles = StyleSheet.create({
     modalVideo: {
         width: Dimensions.get('window').width * 0.8, // 80% of window width
         height: Dimensions.get('window').height * 0.7
-    }
+    },
+    linkContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    disabledLinkContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        opacity: 0.5,
+    },
 })
