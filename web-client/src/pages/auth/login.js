@@ -24,7 +24,7 @@ const Page = () => {
   const auth = useAuth();
   const formik = useFormik({
     initialValues: {
-      email: "demo@devias.io",
+      email: "demo@gmail.com",
       password: "Password123!",
       submit: null,
     },
@@ -122,7 +122,7 @@ const Page = () => {
               </Button>
               <Alert color="primary" severity="info" sx={{ mt: 3 }}>
                 <div>
-                  You can use <b>demo@devias.io</b> and password <b>Password123!</b>
+                  You can use <b>demo@gmail.com</b> and password <b>Password123!</b>
                 </div>
               </Alert>
             </form>

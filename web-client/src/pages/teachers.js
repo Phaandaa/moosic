@@ -21,9 +21,10 @@ const Page = () => {
       try {
         const response = await getAsync(`teachers`);
         const data = await response.json();
-        setTeacherData(data);
+        setTeacherData(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Error fetching teachers:", error);
+        setTeacherData([]);
       }
     };
 

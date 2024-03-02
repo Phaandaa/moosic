@@ -36,9 +36,10 @@ const Page = () => {
       try {
         const response = await getAsync("reward-shop");
         const data = await response.json();
-        setItems(data);
+        setItems(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Error fetching items:", error);
+        setItems([]);
       }
     };
     fetchItems();

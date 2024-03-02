@@ -16,6 +16,7 @@ const getFileNameFromUrl = (url) => {
 function ViewPracticeStudentScreen({route, navigation}){
     // const practiceData = useSelector(state => state.cache.practiceData);
     const { practice } = route.params;
+    console.log(practice)
 
     const [isModalVisible, setModalVisible] = useState(false);
     const [studentID, setStudentID] = useState('');
