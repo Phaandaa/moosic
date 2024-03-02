@@ -12,6 +12,7 @@ import StudentsModal from "src/sections/students/students-modal";
 import { getAsync } from "src/utils/utils";
 import * as XLSX from "xlsx";
 import { Card } from "@mui/material";
+import { set } from "nprogress";
 
 const Page = () => {
   const [studentData, setStudentData] = useState([]);
@@ -22,9 +23,10 @@ const Page = () => {
       try {
         const response = await getAsync(`students`);
         const data = await response.json();
-        setStudentData(data);
+        setStudentData(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Error fetching students:", error);
+        setStudentData([]);
       }
     };
 

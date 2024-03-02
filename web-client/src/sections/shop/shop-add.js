@@ -83,7 +83,7 @@ export default function AddItem({ onAddItem }) {
           description: description,
           type: type,
           points: points,
-          limit: limit,
+          limitation: limit,
           stock: stock,
         };
         const formData = new FormData();
@@ -112,12 +112,12 @@ export default function AddItem({ onAddItem }) {
         // Handle submission errors (e.g., display error message)
       } finally {
         // Perform any cleanup tasks here
-        // setDescription("");
-        // setType("");
-        // setPoints(0);
-        // setLimit(0);
-        // setStock(0);
-        // setSelectedFile(null);
+        setDescription("");
+        setType("");
+        setPoints(0);
+        setLimit(0);
+        setStock(0);
+        setSelectedFile(null);
       }
     };
 
