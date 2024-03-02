@@ -15,8 +15,7 @@ const getFileNameFromUrl = (url) => {
 function ViewPracticeTeacherScreen({route, navigation}){
     // const practiceData = useSelector(state => state.cache.practiceData);
     const { practice } = route.params;
-
-    console.log('practice:', practice)
+    console.log(practice)
 
     const [isModalVisible, setModalVisible] = useState(false);
     const [studentID, setStudentID] = useState('');
@@ -40,32 +39,32 @@ function ViewPracticeTeacherScreen({route, navigation}){
                                     <Text style={theme.documentName}>{getFileNameFromUrl(practice.videoLink)}</Text>
                                 </TouchableOpacity>
                             {/* ))} */}
-                            <View style={theme.buttonContainer2}>
+                        </View>
+                        <View style={theme.buttonContainer2}>
                                 <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('ProvidePracticeFeedbackScreen', {practiceID : practice.id})}>
                                     <Text style={theme.smallButtonText}>Give Feedback</Text>
                                 </TouchableOpacity>
-                            </View>
                         </View>
                     </View>
 
                     {practice.feedback ? (
-                    <View style={theme.card3}>
-                        <View style={theme.cardTextContainer}>
-                            <View style={theme.oneRow}> 
-                                <Text style={theme.cardTitlePink}>Feedback</Text>
-                                {/* <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text> */}
-                                {/* <Text style={theme.cardText}>Attachments:</Text> */}
-                                    <View style={theme.smallPinkButton}>
-                                        <Text style={theme.smallButtonText}>{practice.points} Points</Text>
-                                    </View>
+                        <View style={theme.card3}>
+                            <View style={theme.cardTextContainer}>
+                                <View style={theme.oneRow}> 
+                                    <Text style={theme.cardTitlePink}>Feedback</Text>
+                                    {/* <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text> */}
+                                    {/* <Text style={theme.cardText}>Attachments:</Text> */}
+                                        <View style={theme.smallPinkButton}>
+                                            <Text style={theme.smallButtonText}>{practice.points} Points</Text>
+                                        </View>
+                                </View>
+                                <TouchableOpacity onPress={() => Linking.openURL(practice.feedbackLinks)} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        <Ionicons name="link" size={24} color="#525F7F" />
+                                        <Text style={theme.documentName}> {getFileNameFromUrl(practice.feedbackLinks)}</Text>
+                                </TouchableOpacity>
+                                <Text style={theme.cardText}>{practice.feedback}</Text>
                             </View>
-                            <TouchableOpacity onPress={() => Linking.openURL(practice.videoLink)} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Ionicons name="link" size={24} color="#525F7F" />
-                                    <Text style={theme.documentName}> {getFileNameFromUrl(practice.videoLink)}</Text>
-                            </TouchableOpacity>
-                            <Text style={theme.cardText}>{practice.feedback}</Text>
                         </View>
-                    </View>
                     ) : (
                         <View style={theme.card3}>
                             <View style={theme.cardTextContainer}>
