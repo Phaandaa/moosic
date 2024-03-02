@@ -53,9 +53,9 @@ function ViewPracticeStudentScreen({route, navigation}){
                                             <Text style={theme.smallButtonText}>{practice.points} Points</Text>
                                         </View>
                                 </View>
-                                <TouchableOpacity onPress={() => Linking.openURL(practice.videoLink)} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <TouchableOpacity onPress={() => Linking.openURL(practice.feedbackLinks)} style={{ flexDirection: 'row', alignItems: 'center' }}>
                                         <Ionicons name="link" size={24} color="#525F7F" />
-                                        <Text style={theme.documentName}> {getFileNameFromUrl(practice.videoLink)}</Text>
+                                        <Text style={theme.documentName}> {getFileNameFromUrl(practice.feedbackLinks)}</Text>
                                 </TouchableOpacity>
                                 <Text style={theme.cardText}>{practice.feedback}</Text>
                             </View>

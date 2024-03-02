@@ -50,8 +50,8 @@ function CreatePracticeScreen({}){
             comment: comment,
             student_id: parsedData.userId,
             student_name: parsedData.name,
-            teacher_id: 'WA2G3fxLzNSdKWwerstzG7siTfu1',
-            teacher_name: 'Jake'
+            teacher_id: 'zdA739WuSFRLQ5ltgtM1AyCaAMj2',
+            teacher_name: 'Tiara Himawan'
         };
         console.log('practiceData: ', practiceData)          
         
