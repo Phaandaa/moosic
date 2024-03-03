@@ -6,6 +6,7 @@ import HomepageSearchBar from '../../components/ui/homepageSearchbar';
 import BottomTabNavigator from '../../components/ui/navbar';
 import axios from 'axios';
 import IP_ADDRESS from '../../constants/ip_address_temp';
+import LoadingComponent from '../../components/ui/LoadingComponent';
 
 
 function ViewCreatedGoalsForStudents ({ navigation }) {
@@ -14,12 +15,14 @@ function ViewCreatedGoalsForStudents ({ navigation }) {
     const [filteredStudents, setFilteredStudents] = useState([]);
     const [fetchError, setFetchError] = useState(false);
     const [goals, setStudentGoals] = useState([]);
+    const [loadingstate, setLoadingState] = useState(false);
 
     
     // Fetch goals using teacherID
     useEffect(() => {
         const fetchGoalsAndStudentData = async () => {
           try {
+            setLoadingState(true);
             const storedData = await AsyncStorage.getItem('authData');
             if (!storedData) {
               throw new Error('No user data found.');
@@ -51,6 +54,9 @@ function ViewCreatedGoalsForStudents ({ navigation }) {
             console.error('Error fetching data:', error);
             setFetchError(true); // Set fetch error to true to indicate there was an error
           }
+          finally{
+            setLoadingState(false);
+          }
         };
       
         fetchGoalsAndStudentData();
@@ -70,6 +76,7 @@ function ViewCreatedGoalsForStudents ({ navigation }) {
 
 
     return (
+    <LoadingComponent isLoading={loadingstate}>
       <ScrollView style={theme.container}>
             <HomepageSearchBar onSearch={handleSearch} />
             {fetchError ? (
@@ -96,6 +103,7 @@ function ViewCreatedGoalsForStudents ({ navigation }) {
                 </>
             )}
             </ScrollView>
+      </LoadingComponent>
     );
 }
 

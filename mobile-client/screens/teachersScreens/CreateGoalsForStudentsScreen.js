@@ -6,6 +6,7 @@ import HomepageSearchBar from '../../components/ui/homepageSearchbar';
 import BottomTabNavigator from '../../components/ui/navbar';
 import axios from 'axios';
 import IP_ADDRESS from '../../constants/ip_address_temp';
+import LoadingComponent from '../../components/ui/LoadingComponent';
 
 
 function CreateGoalsForStudents({ navigation }) {
@@ -14,7 +15,7 @@ function CreateGoalsForStudents({ navigation }) {
     const [filteredStudents, setFilteredStudents] = useState([]);
     const [fetchError, setFetchError] = useState(false);
     const [goals, setStudentGoals] = useState([]);
-    const [loadingstate, setLoadingState] = useState(true);
+    const [loadingstate, setLoadingState] = useState(false);
 
     
     // Fetch goals using teacherID
@@ -78,10 +79,11 @@ function CreateGoalsForStudents({ navigation }) {
 
 
     return (
+      <LoadingComponent isLoading={loadingstate}>
         <View style={theme.container}>
-            
             <Text> fak u </Text>
-            </View>
+        </View>
+      </LoadingComponent>
     );
 }
 

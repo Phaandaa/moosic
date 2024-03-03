@@ -5,16 +5,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import HomepageSearchBar from '../../components/ui/homepageSearchbar';
 import theme from '../../styles/theme';
 import IP_ADDRESS from '../../constants/ip_address_temp';
+import LoadingComponent from '../../components/ui/LoadingComponent';
 
 function MyStudentsScreen({ navigation }) {
     const [students, setStudents] = useState([]);
     const [filteredStudents, setFilteredStudents] = useState([]);
     const [teacherID, setTeacherID] = useState('');
     const [fetchError, setFetchError] = useState(false);
+    const [loadingstate, setLoadingState] = useState(false);
 
     // Check stored data for teacherID
     const checkStoredData = async () => {
         try {
+            
             const storedData = await AsyncStorage.getItem('authData');
             if (storedData !== null) {
                 const parsedData = JSON.parse(storedData);
@@ -22,6 +25,9 @@ function MyStudentsScreen({ navigation }) {
             }
         } catch (error) {
             console.error('Error retrieving data from AsyncStorage', error);
+        }
+        finally{
+            setLoadingState(false);
         }
         return '';
     };
@@ -44,6 +50,7 @@ function MyStudentsScreen({ navigation }) {
         const fetchStudentsApi = `${IP_ADDRESS}/students/teacher/${teacherID}/`;
         const fetchStudents = async() => {
             try {
+                setLoadingState(true);
                 const response = await axios.get(fetchStudentsApi);
                 const data = response.data;
                 
@@ -57,6 +64,9 @@ function MyStudentsScreen({ navigation }) {
             } catch (error) {
                 console.error('Error fetching students:', error);
                 setFetchError(true);
+            }
+            finally{
+                setLoadingState(false);
             }
         };
         if(teacherID){
@@ -77,6 +87,7 @@ function MyStudentsScreen({ navigation }) {
     };
 
     return (
+        <LoadingComponent isLoading={loadingstate}>
         <ScrollView style={theme.container}>
             <HomepageSearchBar onSearch={handleSearch} />
             
@@ -107,6 +118,7 @@ function MyStudentsScreen({ navigation }) {
             )}
             
         </ScrollView>
+        </LoadingComponent>
     );    
 }
 

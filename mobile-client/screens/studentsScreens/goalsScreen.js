@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import axios from 'axios';
 import GoalItem from '../../components/ui/goalItem';
-
+import LoadingComponent from '../../components/ui/LoadingComponent';
 
 
 const GoalsScreen = () => {
@@ -15,12 +15,13 @@ const GoalsScreen = () => {
   const [studentData, setStudentData] = useState({ pointsCounter: 0 });
   const [fetchError, setFetchError] = useState(false);
   const [expanded, setExpanded] = useState(false);
-
+  const [loadingstate, setLoadingState] = useState(false);
   
      // Fetch goals using studentID
      useEffect(() => {
       const fetchGoalsAndStudentData = async () => {
         try {
+          setLoadingState(true);
           const storedData = await AsyncStorage.getItem('authData');
           if (!storedData) {
             throw new Error('No user data found.');
@@ -51,6 +52,9 @@ const GoalsScreen = () => {
         } catch (error) {
           console.error('Error fetching data:', error);
           setFetchError(true); // Set fetch error to true to indicate there was an error
+        }
+        finally{
+          setLoadingState(false);
         }
       };
     
@@ -84,6 +88,7 @@ const GoalsScreen = () => {
   
 
   return (
+    <LoadingComponent isLoading={loadingstate}>
     <View style={styles.container}>
     <Text style={[theme.textTitle, {marginTop: 50, marginHorizontal: 15}]}> Your Goals </Text>  
     <View style={[styles.balanceContainer, { backgroundColor: '#007AFF', overflow: 'hidden', position: 'relative'}]}>
@@ -109,6 +114,7 @@ const GoalsScreen = () => {
       ListHeaderComponent={renderHeader()}
     />
   </View>
+  </LoadingComponent>
   );
 };
 
