@@ -12,8 +12,6 @@ function MyStudentsScreen({ navigation }) {
     const [teacherID, setTeacherID] = useState('');
     const [fetchError, setFetchError] = useState(false);
 
-    
-
     // Check stored data for teacherID
     const checkStoredData = async () => {
         try {
@@ -89,19 +87,19 @@ function MyStudentsScreen({ navigation }) {
                     <Text style={[theme.textTitle, {marginTop: 10}]}>My Students</Text>
                     {filteredStudents.map((student, index) => (
                         student.name ? (
-                            <TouchableOpacity key={index} style={styles.card}>
+                            <View key={index} style={styles.card}>
                                 <View style={styles.cardTextContainer}>
-                                    <Text style={theme.cardTextBold}>{student.name || "Unnamed Student"}</Text>
+                                    <Text style={styles.cardTextBold}>{student.name || "Unnamed Student"}</Text>
                                 </View>
                                 <View style={theme.buttonContainer}>
-                                    <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('PracticeListTeacherScreen')}>
-                                        <Text style={theme.smallButtonText}>Practice</Text>
+                                    <TouchableOpacity style={styles.smallButton} onPress={() => navigation.navigate('PracticeListTeacherScreen', { studentID: student.id })}>
+                                        <Text style={styles.smallButtonText}>Practice</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('ViewCreatedAssignmentsScreen', { studentId: student.id })}>
-                                        <Text style={theme.smallButtonText}>Assignments</Text>
+                                    <TouchableOpacity style={styles.smallButton} onPress={() => navigation.navigate('CreatedAssignmentsListScreen', { studentID: student.id })}>
+                                        <Text style={styles.smallButtonText}>Assignments</Text>
                                     </TouchableOpacity>
                                 </View>
-                            </TouchableOpacity>
+                            </View>
                         ) : null
                     ))}
                     
@@ -119,7 +117,7 @@ export default MyStudentsScreen;
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: '#EE97BC',
+        backgroundColor: '#4664EA',
         padding: 20,
         borderRadius: 15,
         marginTop: 10, 
@@ -137,18 +135,24 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 16,
     },
+    cardTextBold:{
+        color: '#ffffff',
+        fontWeight: 'bold',
+        fontSize: 16,
+        paddingVertical: 5
+      },
     buttonContainer: {
         flexDirection: 'row',
         // If you need space between buttons add justifyContent: 'space-between',
     },
     smallButton: {
-        backgroundColor: '#4664EA',
+        backgroundColor: 'white',
         padding: 10,
         borderRadius: 15,
         marginLeft: 8, // Add some margin to separate the buttons
     },
     smallButtonText: {
-        color: 'white',
+        color: '#4664EA',
         fontWeight: 'bold',
         fontSize: 14,
         textAlign: 'center',

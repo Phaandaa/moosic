@@ -143,6 +143,21 @@ public class GoalService {
 
     // edit goal item in goal
 
+    // get both ongoing and completed goals by student id
+    public List<Goal> getGoalsByStudentId(String studentId) {
+        try {
+            List<Goal> goals = goalRepository.findAllByStudentId(studentId);
+            if (goals.isEmpty() || goals == null) {
+                throw new NoSuchElementException("No goals found for student ID " + studentId);
+            }
+            return goals;       
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding goals by student ID " + studentId + ": " + e.getMessage());
+        }
+    }
+
     // get goal by student id 
     public Goal getOngoingGoalByStudentId(String studentId) {
         try {
@@ -162,6 +177,31 @@ public class GoalService {
             throw new RuntimeException("Error finding goals by student ID " + studentId + ": " + e.getMessage());
         }
     }
+
+    // get completed goal by Studentid
+    public List<Goal> getCompletedGoalByStudentId(String studentId) {
+        try {
+            List<Goal> goals = goalRepository.findAllByStudentId(studentId);
+            if (goals.isEmpty() || goals == null) {
+                throw new NoSuchElementException("No goals found for student ID " + studentId);
+            }
+            List<Goal> completedGoals = new ArrayList<>();
+            for (Goal goal : goals) {
+                if ("Done".equals(goal.getStatus())) {
+                    completedGoals.add(goal);
+                }
+            }
+            if (completedGoals.isEmpty() || completedGoals == null) {
+                throw new NoSuchElementException("No completed goals found for student ID " + studentId);
+            }
+            return completedGoals;       
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding completed goals by student ID " + studentId + ": " + e.getMessage());
+        }
+    }
+   
 
     // get goal by teacher id
     public List<Goal> getGoalByTeacherId(String teacherId) {

@@ -10,4 +10,6 @@ public interface PracticeRepository extends MongoRepository<Practice, String> {
     public List<Practice> findByStudentId(String studentId);
 
     public List<Practice> findByTeacherId(String teacherId);
+
+    public List<Practice> findByStudentIdAndTeacherId(String studentId, String teacherId);
 }

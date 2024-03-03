@@ -1,24 +1,25 @@
-import React, {useState, useEffect} from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert, Button} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, ScrollView, TouchableOpacity, Text, Button, Image, Alert, Linking } from 'react-native';
 import theme from '../../styles/theme';
+import Modal from 'react-native-modal';
+import { Ionicons } from '@expo/vector-icons';
+import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import AssignmentSearchBar from '../../components/ui/assignmentSearchBar';
 
-function PracticeListTeacherScreen({route, navigation}){
-    const { studentID }  = route.params;
-
-    const [teacherID, setTeacherID] = useState('');
-    const [practiceData, setPracticeData] = useState([]);
+function AssignmentListScreen({navigation}){
+    const [studentID, setStudentID] = useState('');
+    const [assignmentData, setAssignmentData] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
 
-    // Check stored data for teacherID
+    // Check stored data for studentID
     const checkStoredData = async () => {
         try {
             const storedData = await AsyncStorage.getItem('authData');
             if (storedData !== null) {
                 const parsedData = JSON.parse(storedData);
-                console.log('teacherID:', parsedData.userId);
+                console.log('studentID:', parsedData.userId);
                 return parsedData.userId;
             }
         } catch (error) {
@@ -31,8 +32,8 @@ function PracticeListTeacherScreen({route, navigation}){
         const fetchData = async () => {
             try {
                 const id = await checkStoredData();
-                setTeacherID(id);
-                console.log('teacherID', teacherID)
+                setStudentID(id);
+                console.log(studentID)
             } catch (error) {
                 console.error('Error processing stored data', error);
             }
@@ -40,12 +41,11 @@ function PracticeListTeacherScreen({route, navigation}){
         fetchData();
     }, []);
 
-    // Fetch practices using studentID
+    // Fetch assignments using studentID
     useEffect(() => {
-        const fetchPractices = async() => {
+        const fetchAssignments = async() => {
             try {
-                console.log('teacherstudentID', teacherID, studentID)
-                const response = await fetch(`${IP_ADDRESS}/practices/${studentID}/${teacherID}`, {
+                const response = await fetch(`${IP_ADDRESS}/assignments/student/${studentID}`, {
                     method: 'GET'
                 });
                 
@@ -54,29 +54,29 @@ function PracticeListTeacherScreen({route, navigation}){
                     throw new Error(`Request failed with status ${response.status}: ${errorText}`);
                 }
                 const responseData = await response.json();
-                setPracticeData(responseData); // Set the state with the response data
+                setAssignmentData(responseData); // Set the state with the response data
                 setSearchResults(responseData);
-                console.log(practiceData[0])
+                console.log(assignmentData)
             } catch (error) {
-                console.error('Error fetching practice:', error);
+                console.error('Error fetching assignments:', error);
             }
         };
-        if(teacherID){
-            fetchPractices();
+        if(studentID){
+            fetchAssignments();
         }
-    }, [studentID, teacherID]);
+    }, [studentID]);
 
     const handleSearch = (searchText) => {
         // Filter the assignmentData based on whether the assignment title includes the searchText
         if (searchText) {
             // Filter the assignmentData based on whether the assignment title includes the searchText
-            const results = practiceData.filter(practice => 
-              practice.title.toLowerCase().includes(searchText.toLowerCase())
+            const results = assignmentData.filter(assignment => 
+              assignment.title.toLowerCase().includes(searchText.toLowerCase())
             );
             setSearchResults(results);
           } else {
             // If the search text is empty, reset the search results to the full assignment data
-            setSearchResults(practiceData);
+            setSearchResults(assignmentData);
           }
     };
     
@@ -86,22 +86,23 @@ function PracticeListTeacherScreen({route, navigation}){
                     {/* Search bar */}
             <AssignmentSearchBar onSearch={handleSearch} />
             {searchResults.length > 0 ? ( // Use searchResults here
-                searchResults.map((practice, index) => (
-                    <TouchableOpacity key={index} style={theme.card2} onPress={() => navigation.navigate('ViewPracticeTeacherScreen', { practice: practice })}>
+                searchResults.map((assignment, index) => (
+                    <TouchableOpacity key={index} style={theme.card2} onPress={() => navigation.navigate('ViewAssignmentsScreen', { assignment: assignment })}>
                         <View style={theme.cardTextContainer}>
-                            <Text style={theme.cardTitle}>{practice.title}</Text>
+                            <Text style={theme.cardTitle}>{assignment.title}</Text>
+                            <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text>
                         </View>
                         <TouchableOpacity style={theme.smallButton}>
-                            <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ViewPracticeTeacherScreen', { practice: practice })}>View</Text>
+                            <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ViewAssignmentsScreen', { assignment: assignment })}>View</Text>
                         </TouchableOpacity>
                     </TouchableOpacity>
                 ))
             ) : (
                 <View style={theme.card2}>
-                  <Text>No practice found.</Text>
+                  <Text>No assignments found.</Text>
                 </View>
               )}
         </ScrollView>
     );
 }
-export default PracticeListTeacherScreen;
+export default AssignmentListScreen;

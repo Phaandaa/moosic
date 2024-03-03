@@ -1,107 +1,102 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, TouchableOpacity, Text, Button, Image, Alert } from 'react-native';
+import { View, ScrollView, TouchableOpacity, Text, Button, Image, Alert, Linking } from 'react-native';
 import theme from '../../styles/theme';
-import Modal from 'react-native-modal';
 import { Ionicons } from '@expo/vector-icons';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import IP_ADDRESS from '../../constants/ip_address_temp';
 
-function ViewAssignmentsScreen() {
-    const [isModalVisible, setModalVisible] = useState(false);
-    const [selectedImage, setSelectedImage] = useState(null);
-    const [studentID, setStudentID] = useState('');
-    const [assignmentData, setAssignmentData] = useState({
-      images: [],
-      documents: [],
-    }); // Initialize with empty arrays for images and documents
+const getFileNameFromUrl = (url) => {
+    return url.split('/').pop().slice(37);
+};
+function ViewAssignmentsScreen({route, navigation}) {
+    const { assignment } = route.params;
+    console.log('assignment:', assignment)
 
-    const checkStoredData = async () => {
-        try {
-            const storedData = await AsyncStorage.getItem('authData');
-            if (storedData) {
-                const parsedData = JSON.parse(storedData);
-                setStudentID(parsedData.userId); // Directly set the studentID here
-            }
-        } catch (error) {
-            console.error('Error retrieving data from AsyncStorage', error);
-            Alert.alert('Error', 'Failed to load user data');
-        }
-    };
+    // const assignmentDataAll = useSelector(state => state.cache.assignmentDataAll) || []; 
 
-    useEffect(() => {
-        checkStoredData();
-    }, []);
-
-    useEffect(() => {
-        const fetchAssignments = async () => {
-            if (studentID) {
-                try {
-                    const response = await axios.get(`${IP_ADDRESS}/assignments/${studentID}/`);
-                    setAssignmentData(response.data || {}); // Use default empty object if data is falsy
-                } catch (error) {
-                    console.error('Error fetching assignments:', error);
-                    Alert.alert('Error', 'Could not fetch assignments');
-                }
-            }
-        };
-        fetchAssignments();
-    }, [studentID]);
-
-    const toggleModal = () => {
-        setModalVisible(!isModalVisible);
-    };
-
-    const openImage = (uri) => {
-        setSelectedImage(uri);
-        toggleModal();
-    };
-
-    // No need to separately check hasImages and hasDocuments since they're initialized as empty arrays
     return (
         <ScrollView style={theme.container}>
-            <View style={theme.card2}>
-                <View style={theme.cardTextContainer}>
-                    <Text style={theme.cardTitle}>{assignmentData.name || 'No Name Provided'}</Text>
-                    <Text style={theme.cardText}>Description: {assignmentData.description || 'No Description Provided'}</Text>
-                    <Text style={theme.cardText}>Deadline: {assignmentData.deadline || 'No Deadline'}</Text>
-                    <Text style={theme.cardText}>Created on: {assignmentData.submissionDate || 'No Creation Date'}</Text>
-                    <Text style={theme.cardText}>Attachments:</Text>
-                    
-                    {assignmentData.images.map((image, index) => (
-                        <View key={index} style={theme.imageContainer}>
-                            <TouchableOpacity onPress={() => openImage(image)} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Ionicons name="image" size={24} color="black" />
-                                <Text style={theme.documentName}>{`Image ${index + 1}`}</Text>
+            {/* <Text style={[theme.textTitle, { marginTop: 50, verticalAlign: 'middle' }]}>Your Assignments</Text> */}
+                    <View style={theme.card3}>
+                        <View style={theme.cardTextContainer}>
+                            
+                            <Text style={theme.cardTitle}>{assignment.title}</Text>
+                            <Text style={theme.cardText}>{assignment.description}</Text>
+                            <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text>
+                            {/* <Text style={theme.cardText}>Attachments:</Text> */}
+                            {assignment.assignmentDocumentLinks.map((link, linkIndex) => (
+                                <TouchableOpacity key={linkIndex} onPress={() => Linking.openURL(link)} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <Ionicons name="link" size={24} color="#525F7F" />
+                                    <Text style={theme.documentName}> {getFileNameFromUrl(link)}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                        <View style={theme.buttonContainer2}>
+                            <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('SubmitAssignmentScreen', {assignmentID: assignment.assignmentId})}>
+                                <Text style={theme.smallButtonText}>Submit Assignment</Text>
                             </TouchableOpacity>
                         </View>
-                    ))}
-                    
-                    {assignmentData.documents.map((doc, index) => (
-                        <View key={index} style={theme.documentItemContainer}>
-                            <Ionicons name="document-attach" size={24} color="black" />
-                            <Text style={theme.documentName}>{doc}</Text>
-                        </View>
-                    ))}
+                    </View>
 
-                    <Modal isVisible={isModalVisible}>
-                        <View style={theme.modalContent}>
-                            <Image source={{ uri: selectedImage }} style={theme.fullSizeImage} />
-                            <Button title="Close" onPress={toggleModal} />
+                    {assignment.submissionLinks && assignment.submissionLinks.length > 0 ? (
+                    <View style={theme.card3}>
+                        <View style={theme.cardTextContainer}>
+                            <View style={theme.oneRow}> 
+                                <Text style={theme.cardTitlePink}>My Submission</Text>
+                                {/* <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text> */}
+                                {/* <Text style={theme.cardText}>Attachments:</Text> */}
+
+                            </View>
+                            {assignment.submissionLinks && assignment.submissionLinks.map((link, linkIndex) => (
+                                <TouchableOpacity key={linkIndex} onPress={() => Linking.openURL(link)} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <Ionicons name="link" size={24} color="#525F7F" />
+                                    <Text style={theme.documentName}> {getFileNameFromUrl(link)}</Text>
+                                </TouchableOpacity>
+                            ))}
+                            <Text style={theme.cardText}>{assignment.studentComment}</Text>
                         </View>
-                    </Modal>
-                </View>
-                <View style={theme.buttonContainer2}>
-                    <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText}>Submit Assignment</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={theme.smallButton}>
-                        <Text style={theme.smallButtonText}>View Feedback</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+                    </View>
+                    ) : (
+                        <View style={theme.card3}>
+                            <View style={theme.cardTextContainer}>
+                                <View style={theme.oneRow}>
+                                    <Text style={theme.cardText}>No submission yet.</Text>
+                                </View>
+                            </View>
+                        </View>
+                    )} 
+
+                    {assignment.teacherFeedback ? (
+                        <View style={theme.card3}>
+                            <View style={theme.cardTextContainer}>
+                                <View style={theme.oneRow}> 
+                                    <Text style={theme.cardTitlePink}>Feedback</Text>
+                                    {/* <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text> */}
+                                    {/* <Text style={theme.cardText}>Attachments:</Text> */}
+                                        <View style={theme.smallPinkButton}>
+                                            <Text style={theme.smallButtonText}>{assignment.points} Points</Text>
+                                        </View>
+                                </View>
+                                {assignment.feedbackDocumentLinks && assignment.feedbackDocumentLinks.map((link, linkIndex) => (
+                                    <TouchableOpacity key={linkIndex} onPress={() => Linking.openURL(link)} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        <Ionicons name="link" size={24} color="#525F7F" />
+                                        <Text style={theme.documentName}> {getFileNameFromUrl(link)}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                                <Text style={theme.cardText}>{assignment.teacherFeedback}</Text>
+                            </View>
+                        </View>
+                    ) : (
+                        <View style={theme.card3}>
+                            <View style={theme.cardTextContainer}>
+                                <View style={theme.oneRow}>
+                                    <Text style={theme.cardText}>No feedback yet.</Text>
+                                </View>
+                            </View>
+                        </View>
+                    )}
         </ScrollView>
     );
 }
 
 export default ViewAssignmentsScreen;
+
+

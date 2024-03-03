@@ -12,14 +12,20 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.logging.Logger;
+
 
 @Service
 public class CloudStorageService {
     
     private Dotenv dotenv = Dotenv.load();
+    private static final Logger logger = Logger.getLogger(CloudStorageService.class.getName());
+
 
     public Storage getStorage() {
         try {
@@ -43,12 +49,16 @@ public class CloudStorageService {
 
     public List<String> uploadFilesToGCS(List<MultipartFile> files) {
         try {
+            logger.info("Starting file upload process to Google Cloud Storage...");
             List<String> publicUrls = new ArrayList<>();
             String bucketName = dotenv.get("GCS_BUCKET_NAME");
 
             Storage storage = getStorage();
             for (MultipartFile file : files) {
-                String objectName = "assignments/" + file.getOriginalFilename();
+                String uniqueID = UUID.randomUUID().toString();
+
+                // Append the unique identifier to the file name
+                String objectName = "assignments/" + uniqueID + "_" + file.getOriginalFilename();
                 BlobId blobId = BlobId.of(bucketName, objectName);
                 BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
                         .setContentType(file.getContentType())
@@ -60,19 +70,24 @@ public class CloudStorageService {
                 String publicUrl = "https://storage.googleapis.com/" + bucketName + "/" + objectName;
                 publicUrls.add(publicUrl);
             }
+            logger.info("File upload process completed successfully.");
             return publicUrls;
         } catch (Exception e) {
+            logger.severe("Failed to upload files to Google Cloud Storage: " + e.getMessage());
             throw new RuntimeException("Failed to upload files to Google Cloud Storage");
         }
         
     }
     
-    public String uploadFileToGCS(MultipartFile file) {
+    public String uploadFileToGCS(MultipartFile file, String bucketSegment) {
         try {
             String bucketName = dotenv.get("GCS_BUCKET_NAME");
 
             Storage storage = getStorage();
-            String objectName = "practice/" + file.getOriginalFilename();
+            String uniqueID = UUID.randomUUID().toString();
+
+            // Append the unique identifier to the file name
+            String objectName = bucketSegment + "/" + uniqueID + "_" + file.getOriginalFilename();
             BlobId blobId = BlobId.of(bucketName, objectName);
             BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
                     .setContentType(file.getContentType())
@@ -86,6 +101,7 @@ public class CloudStorageService {
         } catch (IOException e) {
             throw new RuntimeException("Failed to get bucket name for Google Cloud Storage");
         } catch (Exception e) {
+            logger.severe("Failed to upload files to Google Cloud Storage: " + e.getMessage());
             throw new RuntimeException("Failed to upload file to Google Cloud Storage");
         }
         

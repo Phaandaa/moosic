@@ -11,31 +11,15 @@ import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-function CreateAssignmentScreen({ navigation }) {
-  const dispatch = useDispatch();
+function ProvideAssignmentFeedbackScreen({ navigation, route }) {
+  const {assignmentID} = route.params;
   const [assignmentName, setAssignmentName] = useState('');
-  const [assignmentDesc, setAssignmentDesc] = useState('');
-  const [assignmentDeadline, setAssignmentDeadline] = useState('');
-  const [selectedStudents, setSelectedStudents] = useState([]);
-  const [submissionDate, setSubmissionDate] = useState(new Date());
+  const [teacherFeedback, setTeacherFeedback] = useState('');
+  const [points, setPoints] = useState('');
   const [errors, setErrors] = useState({});
 
   const [images, setImages] = useState([]);
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
-
-  const [date, setDate] = useState(new Date());
-  const [showPicker, setShowPicker] = useState(false);
-
-  const toggleDatepicker = () => {
-    setShowPicker(!showPicker);
-  };
-
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShowPicker(Platform.OS === 'ios');
-    setDate(currentDate);
-    setAssignmentDeadline(currentDate.toDateString());
-  };
 
   const uploadImage = async (mode) => {
     let result = {};
@@ -89,27 +73,21 @@ function CreateAssignmentScreen({ navigation }) {
   const validateForm = () => {
     let newErrors = {};
     let isValid = true;
-    if (!assignmentName.trim()) {
-      newErrors.assignmentName = 'Assignment name is required.';
-      isValid = false;
-    }
-    if (!assignmentDesc.trim()) {
-      newErrors.assignmentDesc = 'Description is required.';
-      isValid = false;
-    }
-    if (!assignmentDeadline) {
-      newErrors.assignmentDeadline = 'Deadline is required.';
-      isValid = false;
-    }
-    setErrors(newErrors);
+    // if (!assignmentName.trim()) {
+    //   newErrors.assignmentName = 'Assignment name is required.';
+    //   isValid = false;
+    // }
+    // if (!assignmentDesc.trim()) {
+    //   newErrors.assignmentDesc = 'Description is required.';
+    //   isValid = false;
+    // }
+    // if (!assignmentDeadline) {
+    //   newErrors.assignmentDeadline = 'Deadline is required.';
+    //   isValid = false;
+    // }
+    // setErrors(newErrors);
     return isValid;
   };
-
-  // Handler to update state with selected student IDs in the desired format
-  const handleStudentSelectionChange = useCallback((selectedIds) => {
-    const formattedSelectedStudents = selectedIds.map(id => ({ student_id: id }));
-    setSelectedStudents(formattedSelectedStudents);
-  }, [setSelectedStudents]); // Assuming setSelectedStudents doesn't change, this function is now stable
 
   const submitHandler = async () => {
     if (!validateForm()) {
@@ -129,20 +107,7 @@ function CreateAssignmentScreen({ navigation }) {
       return;
     }
   
-    const formData = new FormData();
-
-    const assignmentData ={
-      teacher_id: parsedData.userId,
-      teacher_name: parsedData.name,
-      assignment_title: assignmentName,
-      assignment_desc: assignmentDesc,
-      assignment_deadline: assignmentDeadline,
-      selected_students: selectedStudents,
-      // selected_students: [{student_id: '5C4Q6ZILqoTBi9YnESwpKQuhMcN2'}],
-      points: 0
-    };
-    console.log('assignmentData:', assignmentData)
-    
+    const formData = new FormData();    
   
     images.forEach((image, index) => {
       const { uri, fileName } = image
@@ -170,14 +135,16 @@ function CreateAssignmentScreen({ navigation }) {
       });
     });
 
-    console.log(formData)
-    formData.append("assignment", {"string" : JSON.stringify(assignmentData), type: 'application/json'});
 
+    formData.append("teacherFeedback", teacherFeedback);
+    formData.append("points", parseInt(points));
+
+    console.log(formData)
 
     try {
-     
-      const response = await fetch(`${IP_ADDRESS}/assignments/create`, {
-          method: 'POST',
+
+      const response = await fetch(`${IP_ADDRESS}/assignments/teacher/${assignmentID}/update?`, {
+          method: 'PUT',
           body: formData,
       });
         
@@ -187,12 +154,12 @@ function CreateAssignmentScreen({ navigation }) {
       }
       const responseData = await response.json();
       console.log(responseData);
-      dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
-      navigation.navigate('MainApp');
-      Alert.alert('Success', 'Assignment created successfully!');
+      // dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
+      // navigation.navigate('ViewCreatedAssignmentsScreen', { responseData });
+      Alert.alert('Success', 'Feedback added successfully!');
     } catch (error) {
-      console.error('Error creating assignment:', error);
-      Alert.alert('Error', `Failed to create assignment. ${error.response?.data?.message || 'Please try again.'}`);
+      console.error('Error adding feedback:', error);
+      Alert.alert('Error', `Failed to add feedback. ${error.response?.data?.message || 'Please try again.'}`);
     }
   };
 
@@ -200,9 +167,9 @@ function CreateAssignmentScreen({ navigation }) {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.formContainer}>
-        <Text style={styles.header}>Create New Assignment</Text>
+        <Text style={styles.header}>Provide Feedback</Text>
 
-        <View style={styles.inputContainer}>
+        {/* <View style={styles.inputContainer}>
           <TextInput
             placeholder="Add a Title"
             value={assignmentName}
@@ -210,37 +177,28 @@ function CreateAssignmentScreen({ navigation }) {
             style={styles.input}
           />
           {errors.assignmentName && <Text style={styles.errorText}>{errors.assignmentName}</Text>}
+        </View> */}
+
+        <View style={styles.inputContainer}>
+          <TextInput
+            placeholder="Feedback"
+            value={teacherFeedback}
+            onChangeText={setTeacherFeedback}
+            multiline
+            style={[styles.input, styles.textArea]}
+          />
         </View>
 
         <View style={styles.inputContainer}>
           <TextInput
-            placeholder="Description"
-            value={assignmentDesc}
-            onChangeText={setAssignmentDesc}
-            multiline
+            placeholder="Points"
+            value={points}
+            onChangeText={setPoints}
             style={[styles.input, styles.textArea]}
+            // keyboardType='numeric'
           />
-          {errors.assignmentDesc && <Text style={styles.errorText}>{errors.assignmentDesc}</Text>}
         </View>
-        
-        <View style={styles.deadlineContainer}>
-          <Text style={styles.dueDateLabel}>Due date</Text>
-          <TouchableOpacity onPress={toggleDatepicker} style={styles.dateDisplay}>
-            <Text style={styles.dateText}>{assignmentDeadline || 'Select date'}</Text>
-            <Ionicons name="calendar" size={24} color="#4664EA" />
-          </TouchableOpacity>
-        </View>
-
-        {showPicker && (
-          <DateTimePicker
-            value={date}
-            mode="date"
-            display="default"
-            onChange={onChange}
-          />
-        )}
-
-
+      
         <View style={styles.uploadButtons}>
         <View style={styles.attachFilesSection}>
           <TouchableOpacity style={styles.attachButton} onPress={() => uploadImage('gallery')}>
@@ -291,13 +249,10 @@ function CreateAssignmentScreen({ navigation }) {
             </View>
           </>
         )}
-
-
-<StudentDropdown onSelectionChange={handleStudentSelectionChange} style={styles.dropdown} />
   
 
         <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={submitHandler}>
-          <Text style={styles.buttonText}>Create Assignment</Text>
+          <Text style={styles.buttonText}>Submit Feedback</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -469,4 +424,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CreateAssignmentScreen;
+export default ProvideAssignmentFeedbackScreen;

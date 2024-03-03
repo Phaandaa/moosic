@@ -61,6 +61,7 @@ export const StudentsTable = (props) => {
                 <TableCell>Email</TableCell>
                 <TableCell>Instrument</TableCell>
                 <TableCell>Grade</TableCell>
+                <TableCell>Teacher</TableCell>
                 <TableCell>Points</TableCell>
                 {/* <TableCell>
                   Phone
@@ -101,6 +102,7 @@ export const StudentsTable = (props) => {
                     <TableCell>{customer.email}</TableCell>
                     <TableCell>{customer.instrument}</TableCell>
                     <TableCell>{customer.grade}</TableCell>
+                    <TableCell>{customer.teacherName ? customer.teacherName : "-"}</TableCell>
                     <TableCell>{customer.pointsCounter}</TableCell>
                     {/* <TableCell>
                       {createdAt}

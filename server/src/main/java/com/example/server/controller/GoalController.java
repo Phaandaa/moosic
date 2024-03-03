@@ -63,6 +63,18 @@ public class GoalController {
         return ResponseEntity.ok(goalService.getOngoingGoalByStudentId(studentId));
     }
 
+    @Operation(summary = "Get completed goal by student ID")
+    @GetMapping("/student/completed/{studentId}")
+    public ResponseEntity<?> getCompletedGoalByStudentId(@PathVariable String studentId) {
+        return ResponseEntity.ok(goalService.getCompletedGoalByStudentId(studentId));
+    }
+
+    @Operation(summary = "Get goals by student ID")
+    @GetMapping("/student/{studentId}")
+    public ResponseEntity<?> getGoalByStudentId(@PathVariable String studentId) {
+        return ResponseEntity.ok(goalService.getGoalsByStudentId(studentId));
+    }
+
     @Operation(summary = "Get goals by teacher ID")
     @GetMapping("/teacher/{teacherId}")
     public ResponseEntity<?> getGoalByTeacherId(@PathVariable String teacherId) {
