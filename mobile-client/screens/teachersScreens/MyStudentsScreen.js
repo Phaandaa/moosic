@@ -32,47 +32,47 @@ function MyStudentsScreen({ navigation }) {
         return '';
     };
 
-    // Fetch teacherID on component mount
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const id = await checkStoredData();
-                setTeacherID(id);
-            } catch (error) {
-                console.error('Error processing stored data', error);
-            }
-        };
-        fetchData();
-    }, []);
+        // Fetch teacherID on component mount
+        useEffect(() => {
+            const fetchData = async () => {
+                try {
+                    const id = await checkStoredData();
+                    setTeacherID(id);
+                } catch (error) {
+                    console.error('Error processing stored data', error);
+                }
+            };
+            fetchData();
+        }, []);
 
-    // Fetch students using teacherID
-    useEffect(() => {
-        const fetchStudentsApi = `${IP_ADDRESS}/students/teacher/${teacherID}/`;
-        const fetchStudents = async() => {
-            try {
-                setLoadingState(true);
-                const response = await axios.get(fetchStudentsApi);
-                const data = response.data;
-                
-                if (data.length > 0) {
-                    setStudents(data);
-                    setFilteredStudents(data);
-                } else {
-                    // If the response is successful but contains no data
+        // Fetch students using teacherID
+        useEffect(() => {
+            const fetchStudentsApi = `${IP_ADDRESS}/students/teacher/${teacherID}/`;
+            const fetchStudents = async() => {
+                try {
+                    setLoadingState(true);
+                    const response = await axios.get(fetchStudentsApi);
+                    const data = response.data;
+                    
+                    if (data.length > 0) {
+                        setStudents(data);
+                        setFilteredStudents(data);
+                    } else {
+                        // If the response is successful but contains no data
+                        setFetchError(true);
+                    }
+                } catch (error) {
+                    console.error('Error fetching students:', error);
                     setFetchError(true);
                 }
-            } catch (error) {
-                console.error('Error fetching students:', error);
-                setFetchError(true);
+                finally{
+                    setLoadingState(false);
+                }
+            };
+            if(teacherID){
+                fetchStudents();
             }
-            finally{
-                setLoadingState(false);
-            }
-        };
-        if(teacherID){
-            fetchStudents();
-        }
-    }, [teacherID]);
+        }, [teacherID]);
 
     // Handle search functionality
     const handleSearch = (query) => {

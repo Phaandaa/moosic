@@ -18,6 +18,8 @@ function ViewCreatedGoalsForStudents ({ navigation }) {
     const [loadingstate, setLoadingState] = useState(false);
 
     
+
+    
     // Fetch goals using teacherID
     useEffect(() => {
         const fetchGoalsAndStudentData = async () => {
