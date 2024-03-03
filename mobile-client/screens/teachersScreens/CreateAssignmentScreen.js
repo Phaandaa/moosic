@@ -170,9 +170,9 @@ function CreateAssignmentScreen({ navigation }) {
       });
     });
 
-    console.log(formData)
+    // console.log(formData)
     formData.append("assignment", {"string" : JSON.stringify(assignmentData), type: 'application/json'});
-
+    console.log(formData)
 
     try {
      
@@ -180,11 +180,14 @@ function CreateAssignmentScreen({ navigation }) {
           method: 'POST',
           body: formData,
       });
+      
         
       if (!response.ok) {
         const errorText = response.statusText || 'Unknown error occurred';
         throw new Error(`Request failed with status ${response.status}: ${errorText}`);
       }
+      
+
       const responseData = await response.json();
       console.log(responseData);
       dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
