@@ -14,12 +14,14 @@ function CreateGoalsForStudents({ navigation }) {
     const [filteredStudents, setFilteredStudents] = useState([]);
     const [fetchError, setFetchError] = useState(false);
     const [goals, setStudentGoals] = useState([]);
+    const [loadingstate, setLoadingState] = useState(true);
 
     
     // Fetch goals using teacherID
     useEffect(() => {
         const fetchGoalsAndStudentData = async () => {
           try {
+            setLoadingState(true);
             const storedData = await AsyncStorage.getItem('authData');
             if (!storedData) {
               throw new Error('No user data found.');
@@ -28,13 +30,16 @@ function CreateGoalsForStudents({ navigation }) {
             const userId = parsedData.userId;
             
             // Fetch student data
+            
             const fetchStudentDataUrl = `${IP_ADDRESS}/students/teacher/${userId}/`;
             const studentResponse = await axios.get(fetchStudentDataUrl);
             if (studentResponse.data) {
               setStudentData(studentResponse.data); // Update student data
               setFilteredStudents(studentResponse.data);
+              
             } else {
               setStudentData([]); // Set default if no student data found
+              
             }
       
             // Fetch student's goals
@@ -50,6 +55,9 @@ function CreateGoalsForStudents({ navigation }) {
           } catch (error) {
             console.error('Error fetching data:', error);
             setFetchError(true); // Set fetch error to true to indicate there was an error
+          }
+          finally {
+            setLoadingState(false);
           }
         };
       
@@ -71,7 +79,7 @@ function CreateGoalsForStudents({ navigation }) {
 
     return (
         <View style={theme.container}>
-            <HomepageSearchBar onSearch={handleSearch} />
+            
             <Text> fak u </Text>
             </View>
     );
