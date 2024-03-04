@@ -2,6 +2,7 @@ package com.example.server.service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -113,5 +114,26 @@ public class TeacherService {
             throw new RuntimeException("Error deleting teacher");
         }
         
+    }
+
+    public Teacher getTeacherByStudentId(String studentId) {
+        Optional<Student> studentOptional = studentRepository.findById(studentId);
+
+        if (studentOptional.isPresent()){
+            Student student = studentOptional.get();
+            String teacherId = student.getTeacherId();
+            
+            try {
+                return teacherRepository.findById(teacherId).orElseThrow(() ->
+                    new NoSuchElementException("No teacher found with ID " + teacherId)
+                );
+            } catch (NoSuchElementException e) {
+                throw new RuntimeException("Teacher not found for student with ID " + studentId);
+            } catch (Exception e) {
+                throw new RuntimeException("Error fetching teacher with ID " + teacherId);
+            }
+        } else {
+            throw new RuntimeException("Student with ID " + studentId + " not found");
+        }
     }
 }
