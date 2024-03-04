@@ -1,5 +1,6 @@
 package com.example.server.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -41,6 +42,9 @@ public class PracticeService {
             String comment = practiceDTO.getComment();
             Practice createdPractice = new Practice(studentId, studentName, teacherId, teacherName, videoURL, title,
                     comment,null,null);
+
+            Date timestamp = new Date();
+            createdPractice.setSubmissionTimestamp(timestamp);
             practiceRepository.save(createdPractice);
             return createdPractice;
         } catch (RuntimeException e) {
@@ -126,6 +130,9 @@ public class PracticeService {
                 student.addPoints(points);
                 studentRepository.save(student);
             });
+
+            Date timestamp = new Date();
+            practice.setSubmissionTimestamp(timestamp);
 
             practiceRepository.save(practice);
             return practice;

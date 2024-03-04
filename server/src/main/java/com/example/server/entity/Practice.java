@@ -1,6 +1,7 @@
 package com.example.server.entity;
 
 import java.util.List;
+import java.util.Date;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -47,6 +48,12 @@ public class Practice {
     @Field(name = "feedbackLinks")
     private String feedbackLinks;
 
+    @Field(name = "practiceSubmissionTimestamp")
+    private Date submissionTimestamp;
+
+    @Field(name = "feedbackTimestamp")
+    private Date feedbackTimestamp;
+
     public Practice() {
 
     }
@@ -63,6 +70,8 @@ public class Practice {
         this.feedback = feedback;
         this.points = 0;
         this.feedbackLinks = null;
+        this.submissionTimestamp = null;
+        this.feedbackTimestamp = null;
     }
 
 }

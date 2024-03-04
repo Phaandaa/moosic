@@ -1,6 +1,7 @@
 package com.example.server.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -136,6 +137,9 @@ public class AssignmentService {
                 assignment.setStudentComment(studentComment);
             }
 
+            Date timestamp = new Date();
+            assignment.setSubmissionTimestamp(timestamp);
+
             return assignmentRepository.save(assignment);
         } catch (NoSuchElementException e) {
             throw e;
@@ -168,6 +172,9 @@ public class AssignmentService {
                 List<String> feedbackDocumentLinks = cloudStorageService.uploadFilesToGCS(feedbackDocuments);
                 assignment.setFeedbackDocumentLinks(feedbackDocumentLinks);
             }
+
+            Date timestamp = new Date();
+            assignment.setFeedbackTimestamp(timestamp);
     
             return assignmentRepository.save(assignment);
         } catch (NoSuchElementException e) {
