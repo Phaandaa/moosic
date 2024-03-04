@@ -1,5 +1,6 @@
 package com.example.server.entity;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -43,8 +44,11 @@ public class Goal {
     @Field(name = "points")
     private Integer points;
 
+    @Field(name = "created_timestamp")
+    private Date createdTimestamp;
+
     public Goal(String title, String studentId, String studentName, String teacherId,
-            List<GoalChecklistItem> goalChecklist, String status, Integer points) {
+            List<GoalChecklistItem> goalChecklist, String status, Integer points, Date createdTimestamp) {
         this.title = title;
         this.studentId = studentId;
         this.studentName = studentName;
@@ -52,6 +56,7 @@ public class Goal {
         this.goalChecklist = goalChecklist;
         this.status = status;
         this.points = points;
+        this.createdTimestamp = createdTimestamp;
     }
 
     public void addGoalChecklistItem(GoalChecklistItem goalChecklistItem) {

@@ -41,7 +41,9 @@ public class GoalService {
             String teacherId = goalDTO.getTeacherId();
             String title = goalDTO.getTitle();
             Integer points = goalDTO.getPoints();
-            Goal createdGoal = new Goal(title, studentId, studentName, teacherId, new ArrayList<>(), "Not done", points);
+            Date createdTimestamp = new Date();
+
+            Goal createdGoal = new Goal(title, studentId, studentName, teacherId, new ArrayList<>(), "Not done", points, createdTimestamp);
             goalRepository.save(createdGoal);
             return createdGoal;
         } catch (RuntimeException e) {
