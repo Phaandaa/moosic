@@ -191,7 +191,7 @@ function CreateAssignmentScreen({ navigation }) {
       const responseData = await response.json();
       console.log(responseData);
       dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
-      navigation.navigate('MainApp');
+      navigation.navigate('Home');
       Alert.alert('Success', 'Assignment created successfully!');
     } catch (error) {
       console.error('Error creating assignment:', error);

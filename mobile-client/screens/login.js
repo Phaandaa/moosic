@@ -23,7 +23,7 @@ const LoginPage = ({ navigation }) => {
       
       if (response != null){
         await checkStoredData();
-        navigation.navigate('MainApp');
+        navigation.navigate('Home');
       }
       
     } catch (error) {

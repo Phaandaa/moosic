@@ -3,7 +3,6 @@ import { View, Text, FlatList, ScrollView, TouchableOpacity, StyleSheet } from '
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import theme from '../../styles/theme';
 import HomepageSearchBar from '../../components/ui/homepageSearchbar';
-import BottomTabNavigator from '../../components/ui/navbar';
 import axios from 'axios';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import LoadingComponent from '../../components/ui/LoadingComponent';

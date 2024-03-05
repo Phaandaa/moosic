@@ -1,13 +1,20 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import BottomTabNavigator from './components/ui/navbar';
 import LoadingScreen from './components/ui/loadingstate';
+import { Ionicons } from '@expo/vector-icons';
 
 // Pages
 import LoginPage from './screens/login';
+import HomeScreen from './screens/home';
+import ProfileScreen from './screens/profilepage';
+import NotificationsScreen from './screens/notificationspage';
+
 
 //Student Pages
+import GoalsScreen from './screens/studentsScreens/goalsScreen';
+
 import ViewAssignmentsScreen from './screens/studentsScreens/ViewAssignmentsScreen';
 import CreatePracticeScreen from './screens/studentsScreens/CreatePracticeScreen';
 import ViewPracticeStudentScreen from './screens/studentsScreens/ViewPracticeStudentScreen';
@@ -32,8 +39,84 @@ import ViewPracticeTeacherScreen from './screens/teachersScreens/ViewPracticeTea
 import { Provider } from 'react-redux';
 import store from './store';
 import { AuthProvider, useAuth } from './context/Authcontext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+
+function StudentTabs() {
+  return (
+    <Tab.Navigator 
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color }) => {
+          let iconName;
+          switch (route.name) {
+            case 'Home':
+              iconName = focused ? 'home' : 'home-outline';
+              break;
+            case 'Goals':
+              iconName = focused ? 'flag' : 'flag-outline';
+              break;
+            case 'Notifications':
+              iconName = focused ? 'notifications' : 'notifications-outline';
+              break;
+            case 'Profile':
+              iconName = focused ? 'person' : 'person-outline';
+              break;
+          }
+          return <Ionicons name={iconName} size={30} color={color} />;
+        },
+        tabBarActiveTintColor: '#4664EA',
+        tabBarInactiveTintColor: 'gray',
+        tabBarStyle: { paddingBottom: 15, paddingTop: 15, height: 75 },
+        headerShown: false,
+        
+      })}
+    >
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Goals" component={GoalsScreen} />
+      <Tab.Screen name="Notifications" component={NotificationsScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+    </Tab.Navigator>
+  );
+}
+
+function TeacherTabs() {
+  return (
+    <Tab.Navigator 
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color }) => {
+          let iconName;
+          switch (route.name) {
+            case 'Home':
+              iconName = focused ? 'home' : 'home-outline';
+              break;
+            case 'My Students':
+              iconName = focused ? 'people' : 'people-outline';
+              break;
+            case 'Notifications':
+              iconName = focused ? 'notifications' : 'notifications-outline';
+              break;
+            case 'Profile':
+              iconName = focused ? 'person' : 'person-outline';
+              break;
+          }
+          return <Ionicons name={iconName} size={30} color={color} />;
+        },
+        tabBarActiveTintColor: '#4664EA',
+        tabBarInactiveTintColor: 'gray',
+        tabBarStyle: { paddingBottom: 15, paddingTop: 15, height: 75 },
+        headerShown: false,
+      })}
+    >
+      <Tab.Screen name="Home" component={HomeScreen}/>
+      <Tab.Screen name="My Students" component={MyStudentsScreen} />
+      <Tab.Screen name="Notifications" component={NotificationsScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+    </Tab.Navigator>
+  );
+}
 
 const App = () => {
   return (
@@ -49,39 +132,62 @@ const App = () => {
 
 const RootNavigator = () => {
   const { state } = useAuth();
-
-  if (state.isLoading) {
-    return <LoadingScreen />;
-  }
+  const [userRole, setUserRole] = useState('');
+  const checkStoredData = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem('authData');
+      if (storedData !== null) {
+        const parsedData = JSON.parse(storedData);
+        return parsedData.role;
+      }
+    } catch (error) {
+      console.error('Error retrieving data from AsyncStorage', error);
+    }
+    return '';
+  };
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const role = await checkStoredData();
+          setUserRole(role);
+        } catch (error) {
+          console.error('Error processing stored data', error);
+        }
+      };
+      fetchData();
+    }, []);
 
   return (
-    <Stack.Navigator>
-      {state.isLoggedIn ? (
-        // User is logged in
-        <>
-          <Stack.Screen name="MainApp" component={BottomTabNavigator} options={{ headerShown: false }} />
-          <Stack.Screen name="CreateAssignmentScreen" component={CreateAssignmentScreen} options={{ title: 'Create Assignment' }} />
+    <Stack.Navigator >
+      {state.isLoading ? (
+        <Stack.Screen name="Loading" component={LoadingScreen} />
+      ) : state.isLoggedIn ? (
+        userRole === 'Student' ? (
+          <>
+          <Stack.Screen name="StudentTabs" component={StudentTabs} options={{ headerShown: false }}/>
+          <Stack.Screen name="AssignmentListScreen" component={AssignmentListScreen} options={{ title: 'Assignment List'}} />
+          <Stack.Screen name="SubmitAssignmentScreen" component={SubmitAssignmentScreen} options={{ title: 'Submit Assignment' }} />
           <Stack.Screen name="CreatePracticeScreen" component={CreatePracticeScreen} options={{ title: 'Start Practice' }} />
-          <Stack.Screen name="MyStudentsScreen" component={MyStudentsScreen} options={{ title: 'My Students', headerShown: false }} />
-          <Stack.Screen name="CreatedAssignmentsListScreen" component={CreatedAssignmentsListScreen} options={{ title: 'Created Assignments' }} />
           <Stack.Screen name="ViewAssignmentsScreen" component={ViewAssignmentsScreen} options={{ title: 'My Assignment' }} />
-          <Stack.Screen name="PracticeListTeacherScreen" component={PracticeListTeacherScreen} options={{ title: 'Practice Log' }} />
-          <Stack.Screen name="ProvidePracticeFeedbackScreen" component={ProvidePracticeFeedbackScreen} options={{ title: 'Provide Feedback' }} />
           <Stack.Screen name="PracticeListStudentScreen" component={PracticeListStudentScreen} options={{ title: 'My Practice Log' }} />
           <Stack.Screen name="ViewPracticeStudentScreen" component={ViewPracticeStudentScreen} options={{ title: 'My Practice Details' }} />
-          <Stack.Screen name="SubmitAssignmentScreen" component={SubmitAssignmentScreen} options={{ title: 'Submit Assignment' }} />
-          <Stack.Screen name="AssignmentListScreen" component={AssignmentListScreen} options={{ title: 'Assignment List' }} />
-          <Stack.Screen name="CreatedAssignmentDetailsScreen" component={CreatedAssignmentDetailsScreen} options={{ title: 'Created Assignment' }} />
-          <Stack.Screen name="ProvideAssignmentFeedbackScreen" component={ProvideAssignmentFeedbackScreen} options={{ title: 'Provide Feedback' }} />
-          <Stack.Screen name="ViewPracticeTeacherScreen" component={ViewPracticeTeacherScreen} options={{ title: 'View Practice Details' }} />
-          <Stack.Screen name="ViewCreatedGoalsForStudents" component={ViewCreatedGoalsForStudents} options={{ title: 'View Created Goals' }} />
-          <Stack.Screen name="CreateGoalsForStudents" component={CreateGoalsForStudents} options={{ title: 'Create Goals' }} />
-
-        </>
-              
+          </>
+        ) : (
+          <>
+          <Stack.Screen name="TeacherTabs" component={TeacherTabs} options={{ headerShown: false }}/>
+          <Stack.Screen name="CreateAssignmentScreen" component={CreateAssignmentScreen} options={{ title: 'Create Assignment' }} />
+          <Stack.Screen name="CreatedAssignmentsListScreen" component={CreatedAssignmentsListScreen} options={{ title: 'Created Assignments' }} />
+           <Stack.Screen name="CreatedAssignmentDetailsScreen" component={CreatedAssignmentDetailsScreen} options={{ title: 'Created Assignment' }} />
+           <Stack.Screen name="ProvideAssignmentFeedbackScreen" component={ProvideAssignmentFeedbackScreen} options={{ title: 'Provide Feedback' }} />
+           <Stack.Screen name="ViewPracticeTeacherScreen" component={ViewPracticeTeacherScreen} options={{ title: 'View Practice Details' }} />
+           <Stack.Screen name="ViewCreatedGoalsForStudents" component={ViewCreatedGoalsForStudents} options={{ title: 'View Created Goals' }} />
+           <Stack.Screen name="CreateGoalsForStudents" component={CreateGoalsForStudents} options={{ title: 'Create Goals' }} />
+           <Stack.Screen name="PracticeListTeacherScreen" component={PracticeListTeacherScreen} options={{ title: 'Practice Log' }} />
+          <Stack.Screen name="ProvidePracticeFeedbackScreen" component={ProvidePracticeFeedbackScreen} options={{ title: 'Provide Feedback' }} />
+           </>
+        )
       ) : (
-        // User is not logged in
-        <Stack.Screen name="LoginScreen" component={LoginPage} options={{ headerShown: false }} />
+        <Stack.Screen name="LoginScreen" component={LoginPage} />
       )}
     </Stack.Navigator>
   );
