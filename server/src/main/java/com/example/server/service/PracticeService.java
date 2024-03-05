@@ -1,19 +1,20 @@
 package com.example.server.service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.server.dao.PointsLogRepository;
 import com.example.server.dao.PracticeRepository;
 import com.example.server.dao.StudentRepository;
+import com.example.server.entity.PointsLog;
 import com.example.server.entity.Practice;
-import com.example.server.entity.Student;
 import com.example.server.models.CreatePracticeDTO;
 
 @Service
@@ -28,7 +29,8 @@ public class PracticeService {
     @Autowired
     private StudentRepository studentRepository;
 
-    // TODO: do we auto rename the video name when we upload to cloud storage?
+    @Autowired
+    private PointsLogRepository pointsLogRepository;
 
     @Transactional
     public Practice createPractice(CreatePracticeDTO practiceDTO, MultipartFile video) {
@@ -104,6 +106,7 @@ public class PracticeService {
         }
     }
 
+    @Transactional
     public Practice updatePractice(String practiceId, String teacherFeedback, Integer points, MultipartFile video) {
         try {
             Practice practice = practiceRepository.findById(practiceId).orElseThrow(()->
@@ -135,6 +138,14 @@ public class PracticeService {
             practice.setSubmissionTimestamp(timestamp);
 
             practiceRepository.save(practice);
+
+            // Add points log for submitting practice
+            String pointsLogDescription = "Finished " + practice.getTitle() + " practice";
+            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy");
+            String formattedDate = sdf.format(timestamp);
+            PointsLog newPointsLog = new PointsLog(practice.getStudentId(), pointsLogDescription, points, formattedDate);
+            pointsLogRepository.save(newPointsLog);
+
             return practice;
         } catch (NoSuchElementException e) {
             throw e;
