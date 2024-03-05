@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 import lombok.Getter;
@@ -33,6 +34,9 @@ public class Assignment {
     private List<String> feedbackDocumentLinks;
     private String createdAtDate;
     private String studentComment;
+    private Date submissionTimestamp;
+    private Date feedbackTimestamp;
+    
 
     
     public Assignment(String title, List<String> assignmentDocumentLinks, String description, String deadline,
@@ -52,6 +56,8 @@ public class Assignment {
         this.feedbackDocumentLinks = feedbackDocumentLinks;
         this.createdAtDate = LocalDateTime.now().toString();
         this.studentComment = studentComment;
+        this.submissionTimestamp = null;
+        this.feedbackTimestamp = null;
     }
 
 

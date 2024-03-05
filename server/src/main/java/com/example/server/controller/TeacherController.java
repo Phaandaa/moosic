@@ -97,5 +97,17 @@ public class TeacherController {
         return new ResponseEntity<>("Teacher deleted successfully.", HttpStatus.OK);
     }
 
-}
+    @Operation(summary = "Get teacher by student ID")
+    @GetMapping("/student/{studentId}")
+    public ResponseEntity<Teacher> getTeacherByStudentId(@PathVariable String studentId){
+        try {
+            Teacher teacher = teacherService.getTeacherByStudentId(studentId);
+            return ResponseEntity.ok(teacher);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
+        }
+    }
+}   
+
+
 
