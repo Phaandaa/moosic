@@ -162,7 +162,7 @@ const RootNavigator = () => {
       {state.isLoading ? (
         <Stack.Screen name="Loading" component={LoadingScreen} />
       ) : state.isLoggedIn ? (
-        userRole === 'Student' ? (
+        userRole == 'Student' ? (
           <>
           <Stack.Screen name="StudentTabs" component={StudentTabs} options={{ headerShown: false }}/>
           <Stack.Screen name="AssignmentListScreen" component={AssignmentListScreen} options={{ title: 'Assignment List'}} />
@@ -187,7 +187,7 @@ const RootNavigator = () => {
            </>
         )
       ) : (
-        <Stack.Screen name="LoginScreen" component={LoginPage} />
+        <Stack.Screen name="LoginScreen" component={LoginPage} options={{ headerShown: false }}/>
       )}
     </Stack.Navigator>
   );
