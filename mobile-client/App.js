@@ -65,7 +65,7 @@ function StudentTabs() {
               iconName = focused ? 'person' : 'person-outline';
               break;
           }
-          return <Ionicons name={iconName} size={30} color={color} />;
+          return <Ionicons name={iconName} size={25} color={color} />;
         },
         tabBarActiveTintColor: '#4664EA',
         tabBarInactiveTintColor: 'gray',
@@ -102,7 +102,7 @@ function TeacherTabs() {
               iconName = focused ? 'person' : 'person-outline';
               break;
           }
-          return <Ionicons name={iconName} size={30} color={color} />;
+          return <Ionicons name={iconName} size={25} color={color} />;
         },
         tabBarActiveTintColor: '#4664EA',
         tabBarInactiveTintColor: 'gray',
@@ -133,36 +133,36 @@ const App = () => {
 const RootNavigator = () => {
   const { state } = useAuth();
   const [userRole, setUserRole] = useState('');
-  const checkStoredData = async () => {
-    try {
-      const storedData = await AsyncStorage.getItem('authData');
-      if (storedData !== null) {
-        const parsedData = JSON.parse(storedData);
-        return parsedData.role;
-      }
-    } catch (error) {
-      console.error('Error retrieving data from AsyncStorage', error);
-    }
-    return '';
-  };
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const role = await checkStoredData();
-          setUserRole(role);
-        } catch (error) {
-          console.error('Error processing stored data', error);
+  const [isLoading, setIsLoading] = useState(true); // Added state to track loading status
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true); // Start loading
+        const storedData = await AsyncStorage.getItem('authData');
+        if (storedData !== null) {
+          const parsedData = JSON.parse(storedData);
+          setUserRole(parsedData.role); // Set user role based on fetched data
         }
-      };
-      fetchData();
-    }, []);
+      } catch (error) {
+        console.error('Error retrieving data from AsyncStorage', error);
+      } finally {
+        setIsLoading(false); // End loading
+      }
+    };
+    fetchData();
+  }, []);
+
+  if (isLoading || state.isLoading) {
+    return <LoadingScreen />; // Show loading screen while fetching data or app state is loading
+  }
 
   return (
     <Stack.Navigator >
       {state.isLoading ? (
         <Stack.Screen name="Loading" component={LoadingScreen} />
       ) : state.isLoggedIn ? (
-        userRole == 'Student' ? (
+        userRole === 'Student' ? (
           <>
           <Stack.Screen name="StudentTabs" component={StudentTabs} options={{ headerShown: false }}/>
           <Stack.Screen name="AssignmentListScreen" component={AssignmentListScreen} options={{ title: 'Assignment List'}} />
