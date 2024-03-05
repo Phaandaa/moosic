@@ -37,11 +37,11 @@ const HomeScreen = ({ navigation }) => {
   const teacherModules = [
     { id: 'assignment', color: '#466CFF', title: 'Assignment', subtitle: 'Create an assignment', iconName: 'musical-notes', navigationPage: 'CreateAssignmentScreen', iconColor: 'white', buttonText: 'Create' },
     { id: 'students', color: '#EE97BC', title: 'View My Students', subtitle: 'My lovely students', iconName: 'people', navigationPage: 'MyStudentsScreen', iconColor: 'white', buttonText: 'View' },
+    { id: 'setGoals', color: '#686BFF', title: 'Set Goals', subtitle: 'Set goals for students', iconName: 'golf', navigationPage: 'ViewCreatedGoalsForStudents', iconColor: 'white', buttonText: 'Create' },
     // Add more modules specific to teacher
   ];
 
   const studentModules = [
-    // { id: 'knowledge', color: '#686BFF', title: 'Knowledge', subtitle: 'Hand and Finger Work', iconName: 'bulb', navigationPage: 'CreateAssignmentScreen', iconColor: 'white', buttonText: 'Continue' },
     { id: 'practice', color: '#EE97BC', title: 'Practice', subtitle: 'Record My Practice Sessions', iconName: 'musical-notes', navigationPage: 'CreatePracticeScreen', iconColor: 'white', buttonText: 'View' },
     { id: 'assignments', color: '#466CFF', title: 'Assignments', subtitle: 'View My Assignments', iconName: 'people', navigationPage: 'AssignmentListScreen', iconColor: 'white', buttonText: 'View' },
     { id: 'practicelog', color: '#EE97BC', title: 'Practice Log', subtitle: 'View My Practice Sessions', iconName: 'musical-notes', navigationPage: 'PracticeListStudentScreen', iconColor: 'white', buttonText: 'View' },
