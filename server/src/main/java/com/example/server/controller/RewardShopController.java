@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.server.entity.RewardShop;
 import com.example.server.models.RewardShopItemDTO;
 import com.example.server.service.RewardShopService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.oas.annotations.Operation;
 // TODO: Student transactions, consisting of purchase history rewards shop amnd inventory entity
