@@ -1,22 +1,12 @@
 #!/bin/bash
-
-sudo apt update
-sudo apt install default-jdk
-java -version
-
-# Install Git
-sudo apt-get install -y git
-
-# Clone your repository (Replace with your repository URL)
+sudo apt install unzip -y
+sudo apt install zip -y
+curl -s "https://get.sdkman.io" | bash
+source "$HOME/.sdkman/bin/sdkman-init.sh"
+sdk install java 21.0.2-amzn
+sudo apt install -y git
 git clone https://github.com/Phaandaa/moosic.git
-
-# Change directory to your repo (replace 'your_repo' with your actual repo name)
 cd moosic/server
-
-# Install Maven (if your project is a Maven project and needs it)
-sudo apt-get install -y maven
-
-# Build your project (if needed)
-mvn package
-
+sudo apt install -y maven
+# Remember to upload env and serviceAccountKey.json, and automate this process if possible
 mvn spring-boot:run
