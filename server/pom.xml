@@ -67,12 +67,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-           <groupId>com.google.cloud</groupId>
-           <artifactId>spring-cloud-gcp-dependencies</artifactId>
-           <version>4.9.0</version>
-           <type>pom</type>
-       	</dependency>
-		<dependency>
 			<groupId>io.github.cdimascio</groupId>
 			<artifactId>dotenv-java</artifactId>
 			<version>3.0.0</version>
