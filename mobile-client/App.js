@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
+import { View, Button, Alert,TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -10,7 +11,8 @@ import LoginPage from './screens/login';
 import HomeScreen from './screens/home';
 import ProfileScreen from './screens/profilepage';
 import NotificationsScreen from './screens/notificationspage';
-import CreateOptionsModal from './components/ui/navbarAddModal';
+import CreateOptionsModal from './components/navbar/navbarAddModal';
+import CustomTabBarButton from './components/navbar/CustomTabBarButton';
 
 
 //Student Pages
@@ -46,6 +48,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+function AddPlaceholderScreen() {
+  return <View />;
+}
+
+
+
 function StudentTabs() {
   return (
     <Tab.Navigator 
@@ -80,7 +88,18 @@ function StudentTabs() {
     >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Goals" component={GoalsScreen} />
-      <Tab.Screen name="New" component={CreateOptionsModal} />
+      <Tab.Screen
+        name="New"
+        component={AddPlaceholderScreen}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="add-circle-outline" size={40} color={color} />
+          ),
+          tabBarButton: (props) => (
+            <CustomTabBarButton {...props} />
+          ),
+        }}
+      />
       <Tab.Screen name="Notifications" component={NotificationsScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
@@ -120,7 +139,18 @@ function TeacherTabs() {
     >
       <Tab.Screen name="Home" component={HomeScreen}/>
       <Tab.Screen name="My Students" component={MyStudentsScreen} />
-      <Tab.Screen name="New" component={CreateOptionsModal} />
+      <Tab.Screen
+        name="Add"
+        component={AddPlaceholderScreen}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="add-circle-outline" size={25} color={color} />
+          ),
+          tabBarButton: (props) => (
+            <CustomTabBarButton {...props} />
+          ),
+        }}
+      />
       <Tab.Screen name="Notifications" component={NotificationsScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
@@ -174,6 +204,7 @@ const RootNavigator = () => {
         userRole === 'Student' ? (
           <>
           <Stack.Screen name="StudentTabs" component={StudentTabs} options={{ headerShown: false }}/>
+          <Stack.Screen name="CreateOptionsModal" component={CreateOptionsModal} options={{ presentation: 'modal' }}/>
           <Stack.Screen name="AssignmentListScreen" component={AssignmentListScreen} options={{ title: 'Assignment List'}} />
           <Stack.Screen name="SubmitAssignmentScreen" component={SubmitAssignmentScreen} options={{ title: 'Submit Assignment' }} />
           <Stack.Screen name="CreatePracticeScreen" component={CreatePracticeScreen} options={{ title: 'Start Practice' }} />
@@ -184,6 +215,7 @@ const RootNavigator = () => {
         ) : (
           <>
           <Stack.Screen name="TeacherTabs" component={TeacherTabs} options={{ headerShown: false }}/>
+          <Stack.Screen name="CreateOptionsModal" component={CreateOptionsModal} options={{ presentation: 'modal' }}/>
           <Stack.Screen name="CreateAssignmentScreen" component={CreateAssignmentScreen} options={{ title: 'Create Assignment' }} />
           <Stack.Screen name="CreatedAssignmentsListScreen" component={CreatedAssignmentsListScreen} options={{ title: 'Created Assignments' }} />
            <Stack.Screen name="CreatedAssignmentDetailsScreen" component={CreatedAssignmentDetailsScreen} options={{ title: 'Created Assignment' }} />
