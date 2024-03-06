@@ -21,9 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.server.entity.RewardShop;
 import com.example.server.models.RewardShopItemDTO;
 import com.example.server.service.RewardShopService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.oas.annotations.Operation;
 // TODO: Student transactions, consisting of purchase history rewards shop amnd inventory entity
@@ -32,9 +29,6 @@ import io.swagger.v3.oas.annotations.Operation;
 @RequestMapping("/reward-shop")
 public class RewardShopController {
     @Autowired RewardShopService rewardShopService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
     
     @Operation(summary = "Get all items in reward shop")
     @GetMapping
