@@ -7,14 +7,36 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import AssignmentSearchBar from '../../components/ui/assignmentSearchBar';
+import { useDispatch } from 'react-redux';
+import { setCache } from '../../cacheSlice';
 
 function CreatedAssignmentsListScreen ({route, navigation}) {
-    const {studentID} = route.params
-    // const assignmentDataAll = useSelector(state => state.cache.assignmentDataAll) || []; 
-     
+    const dispatch = useDispatch();
+    const cacheStudentID = useSelector(state => state.cache.studentID); // Assuming you have set up the Redux slice correctly
 
     const [teacherID, setTeacherID] = useState('');
-    
+    const [studentID, setStudentID] = useState(cacheStudentID || '');
+
+    const updateStudentIDCache = async (newStudentID) => {
+        dispatch(setCache({ key: 'studentID', value: newStudentID }));
+        await AsyncStorage.setItem('studentID', JSON.stringify(newStudentID));
+    };
+
+    useEffect(() => {
+        if (route.params?.studentID && route.params.studentID !== studentID) {
+            setStudentID(route.params.studentID);
+            updateStudentIDCache(route.params.studentID);
+        }
+    }, [route.params]);
+
+
+
+    // const {studentID} = route.params
+    // const dispatch = useDispatch();
+    // dispatch(setCache({ key: 'studentID', value: studentID }));
+
+    // const assignmentDataAll = useSelector(state => state.cache.assignmentDataAll) || []; 
+         
     const [assignmentData, setAssignmentData] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
 
