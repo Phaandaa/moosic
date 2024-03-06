@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { View, ScrollView, TouchableOpacity, Text, Button, Image, Alert, Linking } from 'react-native';
 import theme from '../../styles/theme';
 import { Ionicons } from '@expo/vector-icons';
-import CreatedAssignmentsListScreen from './CreatedAssignmentsListScreen';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 
 const getFileNameFromUrl = (url) => {
@@ -14,35 +13,24 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
     console.log('createdassignment', assignment)
 
     const deleteAssignment = async() => {
-    console.log('assignmentId', assignment.assignmentId)
-    try {
-        const response = await fetch(`${IP_ADDRESS}/assignments/${assignment.assignmentId}`, {
-            method: 'DELETE'
-        });
-        
-        if (!response.ok) {
-            const errorText = response.statusText || 'Unknown error occurred';
-            throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+        console.log('assignmentId', assignment.assignmentId)
+        try {
+            const response = await fetch(`${IP_ADDRESS}/assignments/${assignment.assignmentId}`, {
+                method: 'DELETE'
+            });
+            
+            if (!response.ok) {
+                const errorText = response.statusText || 'Unknown error occurred';
+                throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+            }
+            Alert.alert('Success', 'Assignment has been removed!');
+
+            navigation.goBack();
+
+        } catch (error) {
+            console.error('Error deleting assignment:', error);
         }
-        // const responseData = await response.json();
-        // setAssignmentData(responseData);
-        Alert.alert('Success', 'Assignment has been removed!');
-        navigation.navigate('AssignmentDeletionScreen', {
-            onDeleteSuccess: () => {
-                fetchCreatedAssignments();
-            },
-        });
-
-        const { onDeleteSuccess } = route.params;
-
-        // Call this function after the assignment is deleted successfully
-        onDeleteSuccess();
-        
-
-    } catch (error) {
-        console.error('Error deleting assignment:', error);
-    }
-};
+    };
 
     return (
         <ScrollView style={theme.container}>

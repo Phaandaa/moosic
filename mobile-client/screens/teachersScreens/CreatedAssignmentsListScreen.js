@@ -9,6 +9,8 @@ import IP_ADDRESS from '../../constants/ip_address_temp';
 import AssignmentSearchBar from '../../components/ui/assignmentSearchBar';
 import { useDispatch } from 'react-redux';
 import { setCache } from '../../cacheSlice';
+import { useFocusEffect } from '@react-navigation/native';
+
 
 function CreatedAssignmentsListScreen ({route, navigation}) {
     const dispatch = useDispatch();
@@ -29,7 +31,35 @@ function CreatedAssignmentsListScreen ({route, navigation}) {
         }
     }, [route.params]);
 
+    
+    useFocusEffect(
+        React.useCallback(() => {
+            // Function that fetches the assignments
+            const fetchCreatedAssignments = async () => {
+                // Check if we have a valid teacherID and studentID before fetching
+                if (teacherID && studentID) {
+                    try {
+                        const response = await fetch(`${IP_ADDRESS}/assignments/${studentID}/${teacherID}`, {
+                            method: 'GET'
+                        });
+                        
+                        if (!response.ok) {
+                            const errorText = response.statusText || 'Unknown error occurred';
+                            throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+                        }
 
+                        const responseData = await response.json();
+                        setAssignmentData(responseData); // Set the state with the response data
+                        setSearchResults(responseData); // Assuming you also want to filter
+                    } catch (error) {
+                        console.error('Error fetching assignments:', error);
+                    }
+                }
+            };
+
+            fetchCreatedAssignments();
+        }, [teacherID, studentID]) // Dependencies array
+    );
 
     // const {studentID} = route.params
     // const dispatch = useDispatch();
