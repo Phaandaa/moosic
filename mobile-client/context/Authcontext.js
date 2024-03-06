@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import IP_ADDRESS from '../constants/ip_address_temp';
 
+
 const AuthContext = createContext({
   state: { isLoggedIn: false, user: null, error: null },
 });
@@ -112,6 +113,7 @@ export const AuthProvider = ({ children }) => {
     try {
       await clearAuthDataFromCache(); // This function should remove auth data from AsyncStorage
       dispatch({ type: LOGOUT });
+      
     } catch (error) {
       console.error('Error during sign out:', error);
     }

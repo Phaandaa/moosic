@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import theme from '../../styles/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import GoalItem from '../../components/ui/goalItem';
-import PullToRefreshComponent from '../../components/ui/pulltoRefreshcomponent';
 import LoadingComponent from '../../components/ui/LoadingComponent';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 
@@ -14,6 +13,7 @@ const GoalsScreen = () => {
   const [goals, setGoals] = useState([]);
   const [studentData, setStudentData] = useState({ pointsCounter: 0 });
   const [loadingstate, setLoadingState] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   
   // Fetch goals and student data
   const fetchGoalsAndStudentData = async () => {
@@ -46,6 +46,12 @@ const GoalsScreen = () => {
     fetchGoalsAndStudentData();
   }, []);
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    fetchGoalsAndStudentData();
+    setRefreshing(false);
+  }; 
+
   // Function to filter data based on the active tab
   const filteredData = goals.filter((item) => {
     if (activeTab === 'all') return true;
@@ -69,7 +75,7 @@ const GoalsScreen = () => {
 
   return (
     <LoadingComponent isLoading={loadingstate}>
-      <PullToRefreshComponent onRefresh={fetchGoalsAndStudentData}>
+      
         <View style={styles.container}>
           <Text style={[theme.textTitle, {marginTop: 50, marginHorizontal: 15}]}>Your Goals</Text>  
           <View style={[styles.balanceContainer, { backgroundColor: '#007AFF', overflow: 'hidden', position: 'relative'}]}>
@@ -94,9 +100,12 @@ const GoalsScreen = () => {
             renderItem={({ item }) => <GoalItem item={item} />}
             keyExtractor={item => item.id || 'empty'}
             ListHeaderComponent={renderHeader()}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
           />
         </View>
-      </PullToRefreshComponent>  
+      
     </LoadingComponent>
   );
 };

@@ -42,6 +42,7 @@
     "expo-notifications": "~0.20.1",
     "expo-splash-screen": "~0.20.5",
     "expo-status-bar": "~1.6.0",
+    "expo-updates": "^0.24.11",
     "jest-expo": "~49.0.0",
     "lottie-react-native": "5.1.6",
     "native-notify": "^3.2.5",
