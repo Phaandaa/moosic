@@ -11,7 +11,6 @@ import LoginPage from './screens/login';
 import HomeScreen from './screens/home';
 import ProfileScreen from './screens/profilepage';
 import NotificationsScreen from './screens/notificationspage';
-import CreateOptionsModal from './components/navbar/navbarAddModal';
 import CustomTabBarButton from './components/navbar/CustomTabBarButton';
 
 
@@ -38,11 +37,14 @@ import CreateGoalsForStudents from './screens/teachersScreens/CreateGoalsForStud
 import ProvideAssignmentFeedbackScreen from './screens/teachersScreens/ProvideAssignmentFeedbackScreen';
 import ViewPracticeTeacherScreen from './screens/teachersScreens/ViewPracticeTeacherScreen';
 
+import TeacherRepository from './screens/teachersScreens/TeacherRepository';
+
 // Cache and Context
 import { Provider } from 'react-redux';
 import store from './store';
 import { AuthProvider, useAuth } from './context/Authcontext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 const Stack = createNativeStackNavigator();
@@ -98,6 +100,8 @@ function StudentTabs() {
           tabBarButton: (props) => (
             <CustomTabBarButton {...props} />
           ),
+          tabBarLabel: () => {return null}
+          
         }}
       />
       <Tab.Screen name="Notifications" component={NotificationsScreen} />
@@ -116,14 +120,14 @@ function TeacherTabs() {
             case 'Home':
               iconName = focused ? 'home' : 'home-outline';
               break;
-            case 'My Students':
+            case 'MyStudentsScreen':
               iconName = focused ? 'people' : 'people-outline';
               break;
             case 'New':
               iconName = focused ? 'add-circle' : 'add-circle-outline';
               break;
-            case 'Notifications':
-              iconName = focused ? 'notifications' : 'notifications-outline';
+            case 'Repository':
+              iconName = focused ? 'documents' : 'documents-outline';
               break;
             case 'Profile':
               iconName = focused ? 'person' : 'person-outline';
@@ -138,20 +142,24 @@ function TeacherTabs() {
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen}/>
-      <Tab.Screen name="My Students" component={MyStudentsScreen} />
+      <Tab.Screen name="MyStudentsScreen" component={MyStudentsScreen} options={{tabBarLabel: "My Students"}}/>
       <Tab.Screen
-        name="Add"
-        component={AddPlaceholderScreen}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="add-circle-outline" size={25} color={color} />
-          ),
-          tabBarButton: (props) => (
-            <CustomTabBarButton {...props} />
-          ),
-        }}
-      />
-      <Tab.Screen name="Notifications" component={NotificationsScreen} />
+          name="New"
+          component={AddPlaceholderScreen} // This is just a placeholder since the tab opens a modal
+          options={{
+            tabBarIcon: ({ color }) => (
+              <Ionicons name="add-circle-outline" size={40} color={color} />
+            ),
+            tabBarButton: (props) => (
+              <CustomTabBarButton {...props}>
+                <Ionicons name="add-circle-outline" size={40} color={"gray"} />
+              </CustomTabBarButton>
+            ),
+            tabBarLabel: () => {return null},
+          }}
+        />
+      <Tab.Screen name="Repository" component={TeacherRepository} options={{tabBarLabel: "Repository"}}/>
+      {/* <Tab.Screen name="Notifications" component={NotificationsScreen} /> */}
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
@@ -204,7 +212,8 @@ const RootNavigator = () => {
         userRole === 'Student' ? (
           <>
           <Stack.Screen name="StudentTabs" component={StudentTabs} options={{ headerShown: false }}/>
-          <Stack.Screen name="CreateOptionsModal" component={CreateOptionsModal} options={{ presentation: 'modal' }}/>
+          
+          
           <Stack.Screen name="AssignmentListScreen" component={AssignmentListScreen} options={{ title: 'Assignment List'}} />
           <Stack.Screen name="SubmitAssignmentScreen" component={SubmitAssignmentScreen} options={{ title: 'Submit Assignment' }} />
           <Stack.Screen name="CreatePracticeScreen" component={CreatePracticeScreen} options={{ title: 'Start Practice' }} />
@@ -215,7 +224,7 @@ const RootNavigator = () => {
         ) : (
           <>
           <Stack.Screen name="TeacherTabs" component={TeacherTabs} options={{ headerShown: false }}/>
-          <Stack.Screen name="CreateOptionsModal" component={CreateOptionsModal} options={{ presentation: 'modal' }}/>
+          
           <Stack.Screen name="CreateAssignmentScreen" component={CreateAssignmentScreen} options={{ title: 'Create Assignment' }} />
           <Stack.Screen name="CreatedAssignmentsListScreen" component={CreatedAssignmentsListScreen} options={{ title: 'Created Assignments' }} />
            <Stack.Screen name="CreatedAssignmentDetailsScreen" component={CreatedAssignmentDetailsScreen} options={{ title: 'Created Assignment' }} />

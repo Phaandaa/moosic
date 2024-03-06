@@ -113,10 +113,7 @@ export const AuthProvider = ({ children }) => {
     try {
       await clearAuthDataFromCache(); // This function should remove auth data from AsyncStorage
       dispatch({ type: LOGOUT });
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'LoginScreen' }],
-      });
+      
     } catch (error) {
       console.error('Error during sign out:', error);
     }
