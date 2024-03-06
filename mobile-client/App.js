@@ -10,6 +10,7 @@ import LoginPage from './screens/login';
 import HomeScreen from './screens/home';
 import ProfileScreen from './screens/profilepage';
 import NotificationsScreen from './screens/notificationspage';
+import CreateOptionsModal from './components/ui/navbarAddModal';
 
 
 //Student Pages
@@ -58,6 +59,9 @@ function StudentTabs() {
             case 'Goals':
               iconName = focused ? 'flag' : 'flag-outline';
               break;
+            case 'New':
+              iconName = focused ? 'add-circle' : 'add-circle-outline';
+              break;
             case 'Notifications':
               iconName = focused ? 'notifications' : 'notifications-outline';
               break;
@@ -76,6 +80,7 @@ function StudentTabs() {
     >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Goals" component={GoalsScreen} />
+      <Tab.Screen name="New" component={CreateOptionsModal} />
       <Tab.Screen name="Notifications" component={NotificationsScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
@@ -95,6 +100,9 @@ function TeacherTabs() {
             case 'My Students':
               iconName = focused ? 'people' : 'people-outline';
               break;
+            case 'New':
+              iconName = focused ? 'add-circle' : 'add-circle-outline';
+              break;
             case 'Notifications':
               iconName = focused ? 'notifications' : 'notifications-outline';
               break;
@@ -112,6 +120,7 @@ function TeacherTabs() {
     >
       <Tab.Screen name="Home" component={HomeScreen}/>
       <Tab.Screen name="My Students" component={MyStudentsScreen} />
+      <Tab.Screen name="New" component={CreateOptionsModal} />
       <Tab.Screen name="Notifications" component={NotificationsScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
