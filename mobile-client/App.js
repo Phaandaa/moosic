@@ -26,6 +26,7 @@ import PracticeListStudentScreen from './screens/studentsScreens/PracticeListStu
 
 //Teacher Pages
 import CreateAssignmentScreen from './screens/teachersScreens/CreateAssignmentScreen';
+import EditAssignmentScreen from './screens/teachersScreens/EditAssignmentScreen';
 import CreatedAssignmentDetailsScreen from './screens/teachersScreens/CreatedAssignmentDetailsScreen';
 import MyStudentsScreen from './screens/teachersScreens/MyStudentsScreen';
 import CreatedAssignmentsListScreen from './screens/teachersScreens/CreatedAssignmentsListScreen';
@@ -226,6 +227,7 @@ const RootNavigator = () => {
           <Stack.Screen name="TeacherTabs" component={TeacherTabs} options={{ headerShown: false }}/>
           
           <Stack.Screen name="CreateAssignmentScreen" component={CreateAssignmentScreen} options={{ title: 'Create Assignment' }} />
+          <Stack.Screen name="EditAssignmentScreen" component={EditAssignmentScreen} options={{ title: 'Edit Assignment' }} />
           <Stack.Screen name="CreatedAssignmentsListScreen" component={CreatedAssignmentsListScreen} options={{ title: 'Created Assignments' }} />
            <Stack.Screen name="CreatedAssignmentDetailsScreen" component={CreatedAssignmentDetailsScreen} options={{ title: 'Created Assignment' }} />
            <Stack.Screen name="ProvideAssignmentFeedbackScreen" component={ProvideAssignmentFeedbackScreen} options={{ title: 'Provide Feedback' }} />
