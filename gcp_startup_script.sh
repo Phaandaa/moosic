@@ -1,27 +1,29 @@
-#! /bin/bash
 
-apt update
-apt install -y unzip zip git maven
+#One time script
+
+sudo apt update
+sudo apt install -y unzip zip git maven
 
 curl -s "https://get.sdkman.io" | bash
 source "/root/.sdkman/bin/sdkman-init.sh"
 sdk install java 21.0.2-amzn
 
-if id "moosicuser" &>/dev/null; then
-    echo 'User moosicuser already exists.'
-else
-    useradd -m -s /bin/bash moosicuser
-fi
 
-git clone https://github.com/Phaandaa/moosic.git /opt/moosic
+#Repeat script below
 
-chown -R moosicuser:moosicuser /opt/moosic
+#! /bin/bash
 
-gsutil cp gs://cloud-setup/server/.env /opt/moosic/server/
-gsutil cp gs://cloud-setup/server/serviceAccountKey.json /opt/moosic/server/src/main/resources/
-chown moosicuser:moosicuser /opt/moosic/server/.env
-chown moosicuser:moosicuser /opt/moosic/server/src/main/resources/serviceAccountKey.json
+source "/home/phandavina/.sdkman/bin/sdkman-init.sh"
+export JAVA_HOME="/home/phandavina/.sdkman/candidates/java/current"
+export PATH="$JAVA_HOME/bin:$PATH"
+echo "JAVA_HOME is set to $JAVA_HOME"
+echo "PATH is set to $PATH"
 
-sudo -u moosicuser sh -c 'cd /opt/moosic/server && mvn install'
+cd /home/phandavina
+git clone https://github.com/Phaandaa/moosic.git moosic
 
-sudo -u moosicuser sh -c 'cd /opt/moosic/server && nohup mvn spring-boot:run &'
+gsutil cp gs://cloud-setup/server/.env /home/phandavina/moosic/server/
+gsutil cp gs://cloud-setup/server/serviceAccountKey.json /home/phandavina/moosic/server/src/main/resources/
+
+cd /home/phandavina/moosic/server
+nohup mvn spring-boot:run &
