@@ -1,10 +1,5 @@
 package com.example.server.entity;
 
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -23,9 +18,6 @@ public class Goal {
     @Id
     private String id;
 
-    @Field(name = "title")
-    private String title;
-
     @Field(name = "student_id")
     private String studentId;
 
@@ -35,8 +27,17 @@ public class Goal {
     @Field(name = "teacher_id")
     private String teacherId;
 
-    @Field(name = "goal_checklist")
-    private List<GoalChecklistItem> goalChecklist;
+    @Field(name = "practice_count")
+    private Integer practiceCount;
+
+    @Field(name = "assignment_count")
+    private Integer assignmentCount;
+
+    @Field(name = "practice_goal_count")
+    private Integer practiceGoalCount;
+
+    @Field(name = "assignment_goal_count")
+    private Integer assignmentGoalCount;
 
     @Field(name = "status")
     private String status;
@@ -44,62 +45,37 @@ public class Goal {
     @Field(name = "points")
     private Integer points;
 
-    @Field(name = "created_timestamp")
-    private Date createdTimestamp;
-
-    public Goal(String title, String studentId, String studentName, String teacherId,
-            List<GoalChecklistItem> goalChecklist, String status, Integer points, Date createdTimestamp) {
-        this.title = title;
+    public Goal(String studentId, String studentName, String teacherId, Integer practiceCount, Integer assignmentCount,
+            Integer practiceGoalCount, Integer assignmentGoalCount, String status, Integer points) {
         this.studentId = studentId;
         this.studentName = studentName;
         this.teacherId = teacherId;
-        this.goalChecklist = goalChecklist;
+        this.practiceCount = practiceCount;
+        this.assignmentCount = assignmentCount;
+        this.practiceGoalCount = practiceGoalCount;
+        this.assignmentGoalCount = assignmentGoalCount;
         this.status = status;
         this.points = points;
-        this.createdTimestamp = createdTimestamp;
     }
 
-    public void addGoalChecklistItem(GoalChecklistItem goalChecklistItem) {
-        goalChecklist.add(goalChecklistItem);
+    public void weeklyReset(){
+        assignmentCount = 0;
+        practiceCount = 0;
     }
 
-    public void removeGoalChecklistItem(String selectedKey) {
-        boolean found = false;
-        for (Iterator<GoalChecklistItem> iterator = goalChecklist.iterator(); iterator.hasNext();) {
-            GoalChecklistItem goalItem = iterator.next();
-            if (goalItem.getGoalChecklistItemKey().equals(selectedKey)) {
-                iterator.remove();
-                found = true;
-                break;
-            }
-        }
-    
-        if (!found) {
-            throw new NoSuchElementException("Goal Item with key '" + selectedKey + "' not found.");
-        }
-    }    
+    public void finishAssignment() {
+        assignmentCount++;
+        checkGoalCompletion();
+    }
 
-    public void changeGoalChecklistStatus(String selectedKey) {
-        boolean found = false;
-        for (GoalChecklistItem goalItem : goalChecklist) {
-            if (goalItem.getGoalChecklistItemKey().equals(selectedKey)) {
-                switch (goalItem.getStatus()) {
-                    case "Done":
-                        goalItem.setStatus("Not done");
-                        break;
-                    case "Not done":
-                        goalItem.setStatus("Done");
-                        break;
-                    default:
-                        break;
-                }
-                found = true;
-                break;
-            }
-        }
-    
-        if (!found) {
-            throw new NoSuchElementException("Goal Item with key '" + selectedKey + "' not found.");
+    public void finishPractice() {
+        practiceCount++;
+        checkGoalCompletion();
+    }
+
+    public void checkGoalCompletion() {
+        if (practiceCount >= practiceGoalCount && assignmentCount >= assignmentGoalCount) {
+            status = "Done";
         }
     }
     
