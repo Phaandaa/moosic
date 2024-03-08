@@ -39,7 +39,7 @@ function EditAssignmentScreen({ route, navigation }) {
     const currentDate = selectedDate || date;
     setShowPicker(Platform.OS === 'ios');
     // setDate(currentDate);
-    setAssignmentDeadline(currentDate.toDateString());
+    setAssignmentDeadline(selectedDate.toDateString());
   };
 
   const uploadImage = async (mode) => {
@@ -130,6 +130,10 @@ function EditAssignmentScreen({ route, navigation }) {
       Alert.alert('Error', 'Incomplete authentication data. Please login again.');
       return;
     }
+
+    console.log('assignmentDeadline', assignmentDeadline)
+    console.log('assignmentDeadline', assignmentDeadline)
+
   
     const formData = new FormData();
 

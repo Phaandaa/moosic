@@ -150,8 +150,8 @@ function CreatedAssignmentsListScreen ({route, navigation}) {
                             <Text style={theme.cardTitle}>{assignment.title}</Text>
                             <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text>
                         </View>
-                        <TouchableOpacity style={theme.smallButton}>
-                            <Text style={theme.smallButtonText} onPress={() => navigation.navigate('CreatedAssignmentDetailsScreen', { assignment: assignment })}>View</Text>
+                        <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('CreatedAssignmentDetailsScreen', { assignment: assignment })}>
+                            <Text style={theme.smallButtonText}>View</Text>
                         </TouchableOpacity>
                     </TouchableOpacity>
                 ))
