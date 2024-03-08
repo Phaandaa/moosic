@@ -49,7 +49,7 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
                                 </TouchableOpacity>
                             ))}
                             <View style={theme.buttonContainer2}>
-                                <TouchableOpacity style={theme.smallPinkButton} onPress={() => navigation.navigate('ProvideAssignmentFeedbackScreen', {assignmentID : assignment.assignmentId})}>
+                                <TouchableOpacity style={theme.smallPinkButton} onPress={() => navigation.navigate('EditAssignmentScreen', { assignment })}>
                                     <Text style={theme.smallButtonText}>Edit Assignment</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={theme.smallPinkButton} onPress={deleteAssignment}>

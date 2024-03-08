@@ -227,7 +227,7 @@ public class AssignmentService {
 
             if (files != null && !files.isEmpty()) {
                 List<String> publicUrls = cloudStorageService.uploadFilesToGCS(files);
-                assignment.setFeedbackDocumentLinks(publicUrls);
+                assignment.setAssignmentDocumentLinks(publicUrls);
             }
 
             if (EditAssignmentDTO.getAssignmentDesc() != null) {
