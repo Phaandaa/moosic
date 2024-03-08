@@ -12,6 +12,10 @@ const getFileNameFromUrl = (url) => {
     return url.split('/').pop().slice(37);
 };
 
+const trimDate = (date) => {
+    return date.slice(0, 10) + ' ' + date.slice(11, 16);
+}
+
 function ViewPracticeTeacherScreen({route, navigation}){
     // const practiceData = useSelector(state => state.cache.practiceData);
     const { practice } = route.params;
@@ -31,6 +35,7 @@ function ViewPracticeTeacherScreen({route, navigation}){
                             
                             <Text style={theme.cardTitle}>{practice.title}</Text>
                             <Text style={theme.cardText}>{practice.comment}</Text>
+                            <Text style={theme.cardText}>Created on: {trimDate(practice.submissionTimestamp)}</Text>
                             {/* <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text> */}
                             {/* <Text style={theme.cardText}>Attachments:</Text> */}
                             {/* {practice.videoLink.map((link, linkIndex) => ( */}
@@ -63,6 +68,7 @@ function ViewPracticeTeacherScreen({route, navigation}){
                                         <Text style={theme.documentName}> {getFileNameFromUrl(practice.feedbackLinks)}</Text>
                                 </TouchableOpacity>
                                 <Text style={theme.cardText}>{practice.feedback}</Text>
+
                             </View>
                         </View>
                     ) : (
