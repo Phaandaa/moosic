@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert, Button, TextInput } from 'react-native';
 import theme from '../../styles/theme';
 import AnimatedPlaceholderInput from '../../components/ui/animateTextInput';
@@ -16,13 +16,42 @@ function CreatePracticeScreen({}){
     const [title, setTitle] = useState('');
     const [comment, setComment] = useState('');
     const [videos, setVideos] = useState([]);
-    const [loadingStates, setLoadingStates] = useState({});
+    const [teacher, setTeacher] = useState({});
+    const [loadingstates, setLoadingStates] = useState(false);
+
+    useEffect(() => {
+      const fetchTeacher = async () => {
+        try {
+          const storedData = await AsyncStorage.getItem('authData');
+          if (!storedData) {
+            Alert.alert('Error', 'Authentication data is not available. Please login again.');
+            return;
+          }
+    
+          const parsedData = JSON.parse(storedData);
+          const response = await fetch(`${IP_ADDRESS}/teachers/student/${parsedData.userId}`, {
+            method: 'GET',
+          });
+          
+          if (!response.ok) {
+            const errorText = response.statusText || 'Unknown error occurred';
+            throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+          }
+          
+          const responseData = await response.json();
+          setTeacher(responseData);
+        } catch (error) {
+          console.error('Error fetching teacher:', error);
+          Alert.alert('Error', `Failed to fetch teacher. Please try again.`);
+        }
+      };
+    
+      fetchTeacher();
+    }, [])
 
     const submitHandler = async ()=> {
         console.log('Practice Title on Submit:', title, 'Type:', typeof title );
         console.log('Student\'s Practice Comments on Submit:', comment, 'Type:', typeof comment );
-
-        
 
         // Step 2: Validate Data (this is a basic example, you might need more complex validation)
         // if (!practiceData.title || !practiceData.comment || !practiceData.videos) {
@@ -41,7 +70,27 @@ function CreatePracticeScreen({}){
           Alert.alert('Error', 'Incomplete authentication data. Please login again.');
           return;
         }
-    
+
+        // Fetch teacher using studentID
+
+        // try {
+        //   const response = await fetch(`${IP_ADDRESS}/teachers/student/${parsedData.userId}`, {
+        //       method: 'GET',
+        //   });
+            
+        //   if (!response.ok) {
+        //     const errorText = response.statusText || 'Unknown error occurred';
+        //     throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+        //   }
+        //   const responseData = await response.json();
+        //   setTeacher(responseData);
+        //   console.log('teacher', responseData);
+
+        // } catch (error) {
+        //   console.error('Error fetching teacher:', error);
+        //   Alert.alert('Error', `Failed to fetch teacher. ${error.response?.data?.message || 'Please try again.'}`);
+        // }
+
         const formData = new FormData();
 
         // Step 1: Collect Data
@@ -50,8 +99,8 @@ function CreatePracticeScreen({}){
             comment: comment,
             student_id: parsedData.userId,
             student_name: parsedData.name,
-            teacher_id: 'zdA739WuSFRLQ5ltgtM1AyCaAMj2',
-            teacher_name: 'Tiara Himawan'
+            teacher_id: teacher.id,
+            teacher_name: teacher.name
         };
         console.log('practiceData: ', practiceData)          
         
