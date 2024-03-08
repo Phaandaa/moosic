@@ -177,6 +177,8 @@ public class AssignmentService {
             assignment.setFeedbackTimestamp(timestamp);
     
             return assignmentRepository.save(assignment);
+
+            // TODO: Check with goals and add points if goal is finished
         } catch (NoSuchElementException e) {
             throw e;
         } catch (Exception e) {

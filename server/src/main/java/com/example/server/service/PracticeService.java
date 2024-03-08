@@ -146,6 +146,8 @@ public class PracticeService {
             PointsLog newPointsLog = new PointsLog(practice.getStudentId(), pointsLogDescription, points, formattedDate);
             pointsLogRepository.save(newPointsLog);
 
+            // TODO: Check with goals and add points if goal is finished
+
             return practice;
         } catch (NoSuchElementException e) {
             throw e;
