@@ -79,7 +79,7 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
                                     </TouchableOpacity>
                                 ))}
                                 <Text style={theme.cardText}>{assignment.studentComment}</Text>
-                                <Text style={theme.cardText}>Submitted on: {trimDate(assignment.createdAtDate)}</Text>
+                                <Text style={theme.cardText}>Submitted on: {trimDate(assignment.submissionTimestamp)}</Text>
 
                                 <View style={theme.buttonContainer2}>
                                     <TouchableOpacity style={theme.smallPinkButton} onPress={() => navigation.navigate('ProvideAssignmentFeedbackScreen', {assignmentID : assignment.assignmentId})}>
@@ -114,6 +114,8 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
                                 </TouchableOpacity>
                             ))}
                             <Text style={theme.cardText}>{assignment.teacherFeedback}</Text>
+                            <Text style={theme.cardText}>Posted on: {trimDate(assignment.feedbackTimestamp)}</Text>
+
                         </View>
                     </View>
                     
