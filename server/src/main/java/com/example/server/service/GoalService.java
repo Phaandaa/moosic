@@ -34,8 +34,10 @@ public class GoalService {
             return goal;          
         } catch (NoSuchElementException e) {
             throw e;
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (Exception e) {
-            throw new RuntimeException("Error finding goals by student ID " + studentId + ": " + e.getMessage());
+            throw new RuntimeException("Error updating goals by student ID " + studentId + ": " + e.getMessage());
         }
     }
 
