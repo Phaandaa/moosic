@@ -12,6 +12,9 @@ import { Ionicons } from '@expo/vector-icons';
 const getFileNameFromUrl = (url) => {
     return url.split('/').pop().slice(37);
 };
+const trimDate = (date) => {
+    return date.slice(0, 10) + ' ' + date.slice(11, 16);
+}
 
 function ViewPracticeStudentScreen({route, navigation}){
     // const practiceData = useSelector(state => state.cache.practiceData);
@@ -32,6 +35,8 @@ function ViewPracticeStudentScreen({route, navigation}){
                             
                             <Text style={theme.cardTitle}>{practice.title}</Text>
                             <Text style={theme.cardText}>{practice.comment}</Text>
+                            <Text style={theme.cardText}>Created on: {trimDate(practice.submissionTimestamp)}</Text>
+
                             {/* <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text> */}
                             {/* <Text style={theme.cardText}>Attachments:</Text> */}
                             {/* {practice.videoLink.map((link, linkIndex) => ( */}
