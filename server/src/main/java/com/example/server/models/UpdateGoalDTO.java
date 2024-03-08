@@ -11,19 +11,13 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateGoalDTO {
+public class UpdateGoalDTO {
+    @JsonProperty("practice_goal_count")
+    private Integer practiceGoalCount;
 
-    @JsonProperty("student_id")
-    private String studentId;
+    @JsonProperty("assignment_goal_count")
+    private Integer assignmentGoalCount;
 
-    @JsonProperty("student_name")
-    private String studentName;
-
-    @JsonProperty("teacher_id")
-    private String teacherId;
-
-    private String title;
-
+    @JsonProperty("points")
     private Integer points;
-
 }
