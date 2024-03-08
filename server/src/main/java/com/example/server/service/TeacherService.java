@@ -43,8 +43,7 @@ public class TeacherService {
     public Teacher getTeacherById(String id) {
         try {
             return teacherRepository.findById(id).orElseThrow(()->
-                    new NoSuchElementException("No teacher found with ID " + id)
-                    );
+                    new NoSuchElementException("No teacher found with ID " + id));
         } catch (NoSuchElementException e) {
             throw e;
         } catch (Exception e) {

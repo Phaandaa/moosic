@@ -23,6 +23,7 @@ import com.example.server.models.EditAssignmentDTO;
 import com.example.server.service.AssignmentService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.constraints.NotNull;
 
 
 @RestController
@@ -90,8 +91,8 @@ public class AssignmentController {
     @Operation(summary = "Update assignment details")
     @PutMapping(path = "/teacher/{assignmentId}/update-details", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> updateAssignmentDetails(@PathVariable String assignmentId,
-    @RequestPart("assignment") EditAssignmentDTO assignmentDTO, 
-            @RequestPart("files") List<MultipartFile> files){
+                                                    @RequestPart("assignment") EditAssignmentDTO assignmentDTO, 
+                                                    @RequestPart(name = "files", required = false) List<MultipartFile> files){
                 
         Assignment updatedAssignment = assignmentService.updateAssignmentListing(assignmentId, assignmentDTO, files);
 
