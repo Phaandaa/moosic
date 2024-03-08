@@ -10,11 +10,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.server.dao.GoalRepository;
 import com.example.server.dao.PointsLogRepository;
 import com.example.server.dao.PracticeRepository;
 import com.example.server.dao.StudentRepository;
+import com.example.server.entity.Goal;
 import com.example.server.entity.PointsLog;
 import com.example.server.entity.Practice;
+import com.example.server.entity.Student;
 import com.example.server.models.CreatePracticeDTO;
 
 @Service
@@ -31,6 +34,9 @@ public class PracticeService {
 
     @Autowired
     private PointsLogRepository pointsLogRepository;
+
+    @Autowired
+    private GoalRepository goalRepository;
 
     @Transactional
     public Practice createPractice(CreatePracticeDTO practiceDTO, MultipartFile video) {
@@ -147,6 +153,20 @@ public class PracticeService {
             pointsLogRepository.save(newPointsLog);
 
             // TODO: Check with goals and add points if goal is finished
+            String studentId = practice.getStudentId();
+            Student student = studentRepository.findById(studentId).orElseThrow(()->
+                new NoSuchElementException("No student found with the ID " + studentId));
+            student.addPoints(points);
+            Goal goal = goalRepository.findByStudentId(studentId).orElseThrow(()->
+                new NoSuchElementException("Goal not found with student ID " + studentId));
+            goal.finishPractice();
+            if (goal.getStatus().equals("Done")) {
+                student.addPoints(goal.getPoints());
+                String pointsLogDescription2 = "Finished weekly goal";
+                PointsLog newPointsLog2 = new PointsLog(studentId, pointsLogDescription2, goal.getPoints(), formattedDate);
+                pointsLogRepository.save(newPointsLog2);
+            }
+            studentRepository.save(student);
 
             return practice;
         } catch (NoSuchElementException e) {

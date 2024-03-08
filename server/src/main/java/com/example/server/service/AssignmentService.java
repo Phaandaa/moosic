@@ -1,5 +1,6 @@
 package com.example.server.service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,8 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.server.dao.AssignmentRepository;
+import com.example.server.dao.GoalRepository;
+import com.example.server.dao.PointsLogRepository;
 import com.example.server.dao.StudentRepository;
 import com.example.server.entity.Assignment;
+import com.example.server.entity.Goal;
+import com.example.server.entity.PointsLog;
 import com.example.server.entity.Student;
 import com.example.server.exception.StudentNotFoundException;
 import com.example.server.models.CreateAssignmentDTO;
@@ -29,6 +34,12 @@ public class AssignmentService {
 
     @Autowired
     private CloudStorageService cloudStorageService;
+
+    @Autowired
+    private GoalRepository goalRepository;
+
+    @Autowired
+    private PointsLogRepository pointsLogRepository;
 
     @Autowired
     private StudentRepository studentRepository;
@@ -158,10 +169,11 @@ public class AssignmentService {
             }
 
             assignment.setPoints(points);
-            studentRepository.findById(assignment.getStudentId()).ifPresent(student -> {
-                student.addPoints(points);
-                studentRepository.save(student);
-            });
+            String studentId = assignment.getStudentId();
+            Student student = studentRepository.findById(studentId).orElseThrow(()->
+                new NoSuchElementException("No student found with the ID " + studentId));
+            student.addPoints(points);
+        
 
             if (teacherFeedback != null && !teacherFeedback.isEmpty()) {
                 assignment.setTeacherFeedback(teacherFeedback);
@@ -175,10 +187,24 @@ public class AssignmentService {
 
             Date timestamp = new Date();
             assignment.setFeedbackTimestamp(timestamp);
-    
-            return assignmentRepository.save(assignment);
 
-            // TODO: Check with goals and add points if goal is finished
+            String pointsLogDescription = "Finished " + assignment.getTitle() + " practice";
+            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy");
+            String formattedDate = sdf.format(timestamp);
+            PointsLog newPointsLog = new PointsLog(studentId, pointsLogDescription, points, formattedDate);
+            pointsLogRepository.save(newPointsLog);
+
+            Goal goal = goalRepository.findByStudentId(studentId).orElseThrow(()->
+                new NoSuchElementException("Goal not found with student ID " + studentId));
+            goal.finishAssignment();
+            if (goal.getStatus().equals("Done")) {
+                student.addPoints(goal.getPoints());
+                String pointsLogDescription2 = "Finished weekly goal";
+                PointsLog newPointsLog2 = new PointsLog(studentId, pointsLogDescription2, goal.getPoints(), formattedDate);
+                pointsLogRepository.save(newPointsLog2);
+            }
+            studentRepository.save(student);
+            return assignmentRepository.save(assignment);
         } catch (NoSuchElementException e) {
             throw e;
         } catch (Exception e) {
