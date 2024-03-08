@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.server.models.CreateGoalDTO;
-import com.example.server.models.GoalItemDTO;
+import com.example.server.models.UpdateGoalDTO;
 import com.example.server.service.GoalService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,53 +25,18 @@ public class GoalController {
     @Autowired
     private GoalService goalService;
 
-    @Operation(summary = "Create goal")
-    @PostMapping("/create")
-    public ResponseEntity<?> createGoal(@RequestBody CreateGoalDTO goalDTO) {
-        return ResponseEntity.ok(goalService.createGoal(goalDTO));
-    } 
-
-    @Operation(summary = "Create Goal Item")
-    @PostMapping("/create-goal-item/{goalId}")
-    public ResponseEntity<?> createGoalItem(@PathVariable String goalId, @RequestBody GoalItemDTO goalItemDTO) {
-        return ResponseEntity.ok(goalService.createGoalItem(goalId, goalItemDTO));
-    }
-
-    @Operation(summary = "Remove Goal Item")
-    @DeleteMapping("/remove-goal-item/{goalId}/{goalItemKey}")
-    public ResponseEntity<?> removeGoalItemByKey(@PathVariable String goalId, @PathVariable String goalItemKey) {
-        return ResponseEntity.ok(goalService.deleteGoalItem(goalId, goalItemKey));
-    }
-
-    @Operation(summary = "Mark goal item as completed")
-    @PutMapping("/change-goal-item-status/{goalId}/{goalItemKey}")
-    public ResponseEntity<?> changeGoalItemStatus(@PathVariable String goalId, @PathVariable String goalItemKey) {
-        return ResponseEntity.ok(goalService.changeGoalItemStatus(goalId, goalItemKey));
-    }
-
-    // Can only be done after all goal item is marked complete
-    @Operation(summary = "Mark whole goal as completed")
-    @PutMapping("/mark-goal-done/{goalId}")
-    public ResponseEntity<?> markGoalAsDone(@PathVariable String goalId) {
-        return ResponseEntity.ok(goalService.markGoalAsDone(goalId));
-    }
-
-    @Operation(summary = "Get ongoing goal by student ID")
-    @GetMapping("/student/ongoing/{studentId}")
-    public ResponseEntity<?> getOngoingGoalByStudentId(@PathVariable String studentId) {
-        return ResponseEntity.ok(goalService.getOngoingGoalByStudentId(studentId));
-    }
-
-    @Operation(summary = "Get completed goal by student ID")
-    @GetMapping("/student/completed/{studentId}")
-    public ResponseEntity<?> getCompletedGoalByStudentId(@PathVariable String studentId) {
-        return ResponseEntity.ok(goalService.getCompletedGoalByStudentId(studentId));
-    }
-
-    @Operation(summary = "Get goals by student ID")
+    @Operation(summary = "Get goal by student ID")
     @GetMapping("/student/{studentId}")
-    public ResponseEntity<?> getGoalByStudentId(@PathVariable String studentId) {
-        return ResponseEntity.ok(goalService.getGoalsByStudentId(studentId));
+    public ResponseEntity<?> getOngoingGoalByStudentId(@PathVariable String studentId) {
+        return ResponseEntity.ok(goalService.getGoalByStudentId(studentId));
+    }
+
+    @Operation(summary = "Update goal by student ID")
+    @PutMapping("/update-goal/{studentId}")
+    public ResponseEntity<?> updateGoalByStudentId(
+        @PathVariable String studentId, 
+        @RequestBody UpdateGoalDTO updateGoalDTO) {
+        return ResponseEntity.ok(goalService.updateGoalByStudentId(studentId, updateGoalDTO));
     }
 
     @Operation(summary = "Get goals by teacher ID")
