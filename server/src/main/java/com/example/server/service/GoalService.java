@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.server.dao.GoalRepository;
-import com.example.server.dao.PointsLogRepository;
 import com.example.server.entity.Goal;
 import com.example.server.models.UpdateGoalDTO;
 
@@ -22,9 +21,15 @@ public class GoalService {
         try {
             Goal goal = goalRepository.findByStudentId(studentId).orElseThrow(()->
                 new NoSuchElementException("Goal not found with student ID " + studentId));
-            goal.setPracticeGoalCount(updateGoalDTO.getPracticeGoalCount());
-            goal.setAssignmentGoalCount(updateGoalDTO.getAssignmentGoalCount());
-            goal.setPoints(updateGoalDTO.getPoints());
+            Integer newPracticeGoalCount = updateGoalDTO.getPracticeGoalCount();
+            Integer newAssignmentGoalCount = updateGoalDTO.getAssignmentGoalCount();
+            Integer newPoints = updateGoalDTO.getPoints();
+            if (newPracticeGoalCount <= 0) throw new IllegalArgumentException("Practice Goal Count cannot be 0 or under");
+            if (newAssignmentGoalCount <= 0) throw new IllegalArgumentException("Assignment Goal Count cannot be 0 or under");
+            if (newPoints <= 0) throw new IllegalArgumentException("Goal Points cannot be 0 or under");
+            goal.setPracticeGoalCount(newPracticeGoalCount);
+            goal.setAssignmentGoalCount(newAssignmentGoalCount);
+            goal.setPoints(newPoints);
             goalRepository.save(goal);
             return goal;          
         } catch (NoSuchElementException e) {
