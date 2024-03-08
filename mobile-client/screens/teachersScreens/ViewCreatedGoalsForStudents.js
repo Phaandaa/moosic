@@ -93,7 +93,7 @@ function ViewCreatedGoalsForStudents ({ navigation }) {
                                 </View>
                                 <View style={theme.buttonContainer}>
                                     <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('CreateGoalsForStudents')}>
-                                        <Text style={theme.smallButtonText}>Create Goals</Text>
+                                        <Text style={theme.smallButtonText}>Create Goal</Text>
                                     </TouchableOpacity>
                           
                                 </View>

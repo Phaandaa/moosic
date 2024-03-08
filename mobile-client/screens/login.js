@@ -7,9 +7,6 @@ import { useAuth } from '../context/Authcontext';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
-
-
 const LoginPage = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,10 +33,14 @@ const LoginPage = ({ navigation }) => {
   const checkStoredData = async () => {
     try {
       const storedData = await AsyncStorage.getItem('authData');
-      if (storedData !== null) {
+      const userData =  await AsyncStorage.getItem('userData');
+      
+      if (storedData !== null  && userData !== null) {
         // Data exists in AsyncStorage
+        const parsedUserData = JSON.parse(userData);
         const parsedData = JSON.parse(storedData);
-        console.log("Stored Data:", parsedData);
+        console.log("Stored Auth Data:", parsedData);
+        console.log("Stored User Data:", parsedUserData);
         return parsedData; // Return it if you need to use it
       } else {
         console.log("No data stored in AsyncStorage");
@@ -76,8 +77,6 @@ const LoginPage = ({ navigation }) => {
         onChangeText={setPassword}
         secureTextEntry={true}
       />
-
-      
 
       <TouchableOpacity style={{...theme.button, marginTop: 100}} onPress={handleLogin}>
         <Text style={theme.buttonText}>Login</Text>

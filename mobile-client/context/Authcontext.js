@@ -39,6 +39,29 @@ const saveAuthDataToCache = async (data) => {
   }
 };
 
+const saveUserCache = async (data) => {
+  try {
+    await AsyncStorage.setItem('userData', JSON.stringify(data));
+    AsyncStorage.getItem('userData').then(data => {
+      console.log('UserData from cache:', data);
+    }).catch(err => {
+      console.error('Error reading userData from cache:', err);
+    });
+    
+  } catch (error) {
+    console.error('Error saving data to cache', error);
+  }
+};
+const storeUserData = async (userData) => {
+  try {
+    await AsyncStorage.setItem('userData', JSON.stringify(userData));
+    dispatch({ type: STORE_USER_DATA, payload: userData });
+    
+  } catch (error) {
+    console.error('Error storing user data:', error);
+  }
+};
+
 const getAuthDataFromCache = async () => {
   try {
     const data = await AsyncStorage.getItem('authData');
@@ -48,9 +71,19 @@ const getAuthDataFromCache = async () => {
   }
 };
 
+const getUserDataFromCache = async () => {
+  try {
+    const data = await AsyncStorage.getItem('userData');
+    return data ? JSON.parse(data) : null;
+  } catch (error) {
+    console.error('Error retrieving data from cache', error);
+  }
+};
+
 const clearAuthDataFromCache = async () => {
   try {
     await AsyncStorage.removeItem('authData');
+    await AsyncStorage.removeItem('userData');
   } catch (error) {
     console.error('Error clearing auth data from cache', error);
   }
@@ -74,14 +107,15 @@ export const AuthProvider = ({ children }) => {
 
     const loadCachedUserData = async () => {
       try {
-        const userData = await AsyncStorage.getItem('userData');
-        if (userData) {
-          dispatch({ type: STORE_USER_DATA, payload: JSON.parse(userData) });
+        const cachedData = await getUserDataFromCache(); // Correct variable used
+        if (cachedData) { // Check the correct variable
+          dispatch({ type: STORE_USER_DATA, payload: cachedData }); // Directly use parsed data
         }
       } catch (error) {
         console.error('Error retrieving user data from cache', error);
       }
     };
+    
 
     loadAuthData();
     loadCachedUserData();
@@ -90,24 +124,40 @@ export const AuthProvider = ({ children }) => {
 
   const signIn = async (email, password) => {
     try {
-      
-      const response = await axios.post( `${IP_ADDRESS}/api/auth/signin`, { email, password });
-      const data = response.data;
-      
-      if (response.status === 200) {
-        await saveAuthDataToCache(data);
-        dispatch({ type: LOGIN_SUCCESS, payload: data });
-        return data;
-      } else {
-        dispatch({ type: LOGIN_ERROR, payload: data.message || 'Failed to sign in' });
-        throw new Error(data.message || 'Failed to sign in');
-      }
+        const response = await axios.post(`${IP_ADDRESS}/api/auth/signin`, { email, password });
+        const { data } = response;
+        
+        console.log(data.userId, data.role); // Confirm these values are correctly logged
+        
+        if (response.status === 200 && data.userId) {
+            await saveAuthDataToCache(data);
+            
+            // Using a dynamic URL based on the role to simplify the fetch logic
+            const userRolePath = data.role === 'Teacher' ? 'teachers' : 'students';
+            const userDetailsResponse = await axios.get(`${IP_ADDRESS}/${userRolePath}/${data.userId}`);
+
+            if (userDetailsResponse.status === 200) {
+                console.log(userDetailsResponse.data); // Log the fetched user details
+                await saveUserCache(userDetailsResponse.data);
+                dispatch({ type: LOGIN_SUCCESS, payload: data });
+                return data; // Return or handle the successful login and data fetch
+            } else {
+                console.error('Failed to fetch user details');
+                // Handle failure to fetch user details
+            }
+        } else {
+            // Handle unsuccessful login or missing userId
+            const errorMessage = data.message || 'Failed to sign in';
+            dispatch({ type: LOGIN_ERROR, payload: errorMessage });
+            throw new Error(errorMessage);
+        }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || error.message || 'An error occurred during sign in';
-      dispatch({ type: LOGIN_ERROR, payload: errorMessage });
-      throw new Error(errorMessage);
+        const errorMessage = error.response?.data?.message || error.message || 'An error occurred during sign in';
+        dispatch({ type: LOGIN_ERROR, payload: errorMessage });
+        throw new Error(errorMessage);
     }
-  };
+};
+
 
   const signOut = async () => {
     try {
@@ -120,15 +170,7 @@ export const AuthProvider = ({ children }) => {
   };
   
 
-  const storeUserData = async (userData) => {
-    try {
-      await AsyncStorage.setItem('userData', JSON.stringify(userData));
-      dispatch({ type: STORE_USER_DATA, payload: userData });
-      
-    } catch (error) {
-      console.error('Error storing user data:', error);
-    }
-  };
+  
 
   const values = { state, dispatch, signIn, signOut, storeUserData };
 
