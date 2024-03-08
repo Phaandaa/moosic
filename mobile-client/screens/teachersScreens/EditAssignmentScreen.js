@@ -36,7 +36,6 @@ function EditAssignmentScreen({ route, navigation }) {
   };
 
   const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
     setShowPicker(Platform.OS === 'ios');
     // setDate(currentDate);
     setAssignmentDeadline(selectedDate.toDateString());
