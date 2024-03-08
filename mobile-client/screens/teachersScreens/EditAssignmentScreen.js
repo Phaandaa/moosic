@@ -2,14 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { TextInput, View, ScrollView, TouchableOpacity, Text, Button, Image, Alert, StyleSheet, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
-import StudentDropdown from '../../components/ui/StudentDropdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
 import { useDispatch } from 'react-redux';
 import { setCache } from '../../cacheSlice';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
 import theme from '../../styles/theme';
 
 const getFileNameFromUrl = (url) => {
@@ -192,10 +190,10 @@ function EditAssignmentScreen({ route, navigation }) {
       console.log(responseData);
       dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
       navigation.navigate('Home');
-      Alert.alert('Success', 'Assignment created successfully!');
+      Alert.alert('Success', 'Assignment edited successfully!');
     } catch (error) {
-      console.error('Error creating assignment:', error);
-      Alert.alert('Error', `Failed to create assignment. ${error.response?.data?.message || 'Please try again.'}`);
+      console.error('Error editing assignment:', error);
+      Alert.alert('Error', `Failed to edit assignment. ${error.response?.data?.message || 'Please try again.'}`);
     }
   };
 
@@ -310,7 +308,7 @@ function EditAssignmentScreen({ route, navigation }) {
   
 
         <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={submitHandler}>
-          <Text style={styles.buttonText}>Create Assignment</Text>
+          <Text style={styles.buttonText}>Edit Assignment</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
