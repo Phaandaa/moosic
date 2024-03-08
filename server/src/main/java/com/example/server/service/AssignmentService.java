@@ -197,12 +197,14 @@ public class AssignmentService {
             Goal goal = goalRepository.findByStudentId(studentId).orElseThrow(()->
                 new NoSuchElementException("Goal not found with student ID " + studentId));
             goal.finishAssignment();
-            if (goal.getStatus().equals("Done")) {
+            if (goal.getStatus().equals("Done") && !goal.isPointsReceived()) {
                 student.addPoints(goal.getPoints());
+                goal.setPointsReceived(true);
                 String pointsLogDescription2 = "Finished weekly goal";
                 PointsLog newPointsLog2 = new PointsLog(studentId, pointsLogDescription2, goal.getPoints(), formattedDate);
                 pointsLogRepository.save(newPointsLog2);
             }
+            goalRepository.save(goal);
             studentRepository.save(student);
             return assignmentRepository.save(assignment);
         } catch (NoSuchElementException e) {

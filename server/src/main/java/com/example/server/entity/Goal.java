@@ -45,8 +45,12 @@ public class Goal {
     @Field(name = "points")
     private Integer points;
 
+    @Field(name = "points_received")
+    private boolean pointsReceived;
+
     public Goal(String studentId, String studentName, String teacherId, Integer practiceCount, Integer assignmentCount,
-            Integer practiceGoalCount, Integer assignmentGoalCount, String status, Integer points) {
+            Integer practiceGoalCount, Integer assignmentGoalCount, String status, Integer points,
+            boolean pointsReceived) {
         this.studentId = studentId;
         this.studentName = studentName;
         this.teacherId = teacherId;
@@ -56,11 +60,13 @@ public class Goal {
         this.assignmentGoalCount = assignmentGoalCount;
         this.status = status;
         this.points = points;
+        this.pointsReceived = pointsReceived;
     }
 
     public void weeklyReset(){
         assignmentCount = 0;
         practiceCount = 0;
+        pointsReceived = false;
     }
 
     public void finishAssignment() {
