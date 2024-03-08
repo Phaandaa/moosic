@@ -187,27 +187,31 @@ public class AssignmentService {
     }
 
     @Transactional
-    public Assignment updateAssignmentListing (String assignmentId, EditAssignmentDTO assignmentDTO, List<MultipartFile> files) {
+    public Assignment updateAssignmentListing (String assignmentId, EditAssignmentDTO EditAssignmentDTO, List<MultipartFile> files) {
         try {
 
             Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(()->
                 new NoSuchElementException("No assignment found with the ID " + assignmentId));
+
+            System.out.println(EditAssignmentDTO.getAssignmentDesc());
+            System.out.println(EditAssignmentDTO.getAssignmentDeadline());
+            System.out.println(EditAssignmentDTO.getPoints());
 
             if (files != null && !files.isEmpty()) {
                 List<String> publicUrls = cloudStorageService.uploadFilesToGCS(files);
                 assignment.setFeedbackDocumentLinks(publicUrls);
             }
 
-            if (assignmentDTO.getAssignmentDesc() != null) {
-                assignment.setDescription(assignmentDTO.getAssignmentDesc());
+            if (EditAssignmentDTO.getAssignmentDesc() != null) {
+                assignment.setDescription(EditAssignmentDTO.getAssignmentDesc());
             }
 
-            if (assignmentDTO.getAssignmentDeadline() != null) {
-                assignment.setDeadline(assignmentDTO.getAssignmentDeadline());
+            if (EditAssignmentDTO.getAssignmentDeadline() != null) {
+                assignment.setDeadline(EditAssignmentDTO.getAssignmentDeadline());
             }
 
-            if (assignmentDTO.getPoints() != null) {
-                assignment.setPoints(assignmentDTO.getPoints());
+            if (EditAssignmentDTO.getPoints() != null) {
+                assignment.setPoints(EditAssignmentDTO.getPoints());
             }
 
             return assignmentRepository.save(assignment);

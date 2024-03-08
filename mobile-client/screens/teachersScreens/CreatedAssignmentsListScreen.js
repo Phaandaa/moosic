@@ -7,14 +7,66 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import AssignmentSearchBar from '../../components/ui/assignmentSearchBar';
+import { useDispatch } from 'react-redux';
+import { setCache } from '../../cacheSlice';
+import { useFocusEffect } from '@react-navigation/native';
+
 
 function CreatedAssignmentsListScreen ({route, navigation}) {
-    const {studentID} = route.params
-    // const assignmentDataAll = useSelector(state => state.cache.assignmentDataAll) || []; 
-     
+    const dispatch = useDispatch();
+    const cacheStudentID = useSelector(state => state.cache.studentID); // Assuming you have set up the Redux slice correctly
 
     const [teacherID, setTeacherID] = useState('');
+    const [studentID, setStudentID] = useState(cacheStudentID || '');
+
+    const updateStudentIDCache = async (newStudentID) => {
+        dispatch(setCache({ key: 'studentID', value: newStudentID }));
+        await AsyncStorage.setItem('studentID', JSON.stringify(newStudentID));
+    };
+
+    useEffect(() => {
+        if (route.params?.studentID && route.params.studentID !== studentID) {
+            setStudentID(route.params.studentID);
+            updateStudentIDCache(route.params.studentID);
+        }
+    }, [route.params]);
+
     
+    useFocusEffect(
+        React.useCallback(() => {
+            // Function that fetches the assignments
+            const fetchCreatedAssignments = async () => {
+                // Check if we have a valid teacherID and studentID before fetching
+                if (teacherID && studentID) {
+                    try {
+                        const response = await fetch(`${IP_ADDRESS}/assignments/${studentID}/${teacherID}`, {
+                            method: 'GET'
+                        });
+                        
+                        if (!response.ok) {
+                            const errorText = response.statusText || 'Unknown error occurred';
+                            throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+                        }
+
+                        const responseData = await response.json();
+                        setAssignmentData(responseData); // Set the state with the response data
+                        setSearchResults(responseData); // Assuming you also want to filter
+                    } catch (error) {
+                        console.error('Error fetching assignments:', error);
+                    }
+                }
+            };
+
+            fetchCreatedAssignments();
+        }, [teacherID, studentID]) // Dependencies array
+    );
+
+    // const {studentID} = route.params
+    // const dispatch = useDispatch();
+    // dispatch(setCache({ key: 'studentID', value: studentID }));
+
+    // const assignmentDataAll = useSelector(state => state.cache.assignmentDataAll) || []; 
+         
     const [assignmentData, setAssignmentData] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
 
