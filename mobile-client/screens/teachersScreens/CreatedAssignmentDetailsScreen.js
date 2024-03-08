@@ -79,6 +79,8 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
                                     </TouchableOpacity>
                                 ))}
                                 <Text style={theme.cardText}>{assignment.studentComment}</Text>
+                                <Text style={theme.cardText}>Submitted on: {trimDate(assignment.createdAtDate)}</Text>
+
                                 <View style={theme.buttonContainer2}>
                                     <TouchableOpacity style={theme.smallPinkButton} onPress={() => navigation.navigate('ProvideAssignmentFeedbackScreen', {assignmentID : assignment.assignmentId})}>
                                         <Text style={theme.smallButtonText}>Give Feedback</Text>

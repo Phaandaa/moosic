@@ -56,6 +56,8 @@ function ViewAssignmentsScreen({route, navigation}) {
                                 </TouchableOpacity>
                             ))}
                             <Text style={theme.cardText}>{assignment.studentComment}</Text>
+                            <Text style={theme.cardText}>Submitted on: {trimDate(assignment.createdAtDate)}</Text>
+
                         </View>
                     </View>
                     ) : (
