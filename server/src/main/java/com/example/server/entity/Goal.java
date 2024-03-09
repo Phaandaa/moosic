@@ -67,6 +67,7 @@ public class Goal {
         assignmentCount = 0;
         practiceCount = 0;
         pointsReceived = false;
+        status = "Not done";
     }
 
     public void finishAssignment() {

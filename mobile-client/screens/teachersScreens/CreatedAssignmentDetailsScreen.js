@@ -8,6 +8,10 @@ const getFileNameFromUrl = (url) => {
     return url.split('/').pop().slice(37);
 };
 
+const trimDate = (date) => {
+    return date.slice(0, 10) + ' ' + date.slice(11, 16);
+}
+
 function CreatedAssignmentDetailsScreen({route, navigation}) {
     const { assignment } = route.params;
     console.log('createdassignment', assignment)
@@ -41,6 +45,8 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
                             <Text style={theme.cardTitle}>{assignment.title}</Text>
                             <Text style={theme.cardText}>{assignment.description}</Text>
                             <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text>
+                            <Text style={theme.cardText}>Created on: {trimDate(assignment.createdAtDate)}</Text>
+
                             {/* <Text style={theme.cardText}>Attachments:</Text> */}
                             {assignment.assignmentDocumentLinks.map((link, linkIndex) => (
                                 <TouchableOpacity key={linkIndex} onPress={() => Linking.openURL(link)} style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -73,6 +79,8 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
                                     </TouchableOpacity>
                                 ))}
                                 <Text style={theme.cardText}>{assignment.studentComment}</Text>
+                                <Text style={theme.cardText}>Submitted on: {trimDate(assignment.submissionTimestamp)}</Text>
+
                                 <View style={theme.buttonContainer2}>
                                     <TouchableOpacity style={theme.smallPinkButton} onPress={() => navigation.navigate('ProvideAssignmentFeedbackScreen', {assignmentID : assignment.assignmentId})}>
                                         <Text style={theme.smallButtonText}>Give Feedback</Text>
@@ -106,6 +114,8 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
                                 </TouchableOpacity>
                             ))}
                             <Text style={theme.cardText}>{assignment.teacherFeedback}</Text>
+                            <Text style={theme.cardText}>Posted on: {trimDate(assignment.feedbackTimestamp)}</Text>
+
                         </View>
                     </View>
                     

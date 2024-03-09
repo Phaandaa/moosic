@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.example.server.dao.GoalRepository;
@@ -66,6 +67,20 @@ public class GoalService {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Error finding goals by teacher ID " + teacherId + ": " + e.getMessage());
+        }
+    }
+
+    @Scheduled(cron = "0 0 0 * * MON")
+    public void resetWeeklyGoal() {
+        System.out.println("Trying the weekly reset process...");
+        try {
+            List<Goal> goals = goalRepository.findAll();
+            for (Goal goal : goals) {
+                goal.weeklyReset();
+            }
+            goalRepository.saveAll(goals);
+        } catch (Exception e) {
+            System.out.println("Error doing weekly goal reset");
         }
     }
 

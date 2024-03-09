@@ -6,6 +6,10 @@ import { Ionicons } from '@expo/vector-icons';
 const getFileNameFromUrl = (url) => {
     return url.split('/').pop().slice(37);
 };
+const trimDate = (date) => {
+    return date.slice(0, 10) + ' ' + date.slice(11, 16);
+}
+
 function ViewAssignmentsScreen({route, navigation}) {
     const { assignment } = route.params;
     console.log('assignment:', assignment)
@@ -21,7 +25,7 @@ function ViewAssignmentsScreen({route, navigation}) {
                             <Text style={theme.cardTitle}>{assignment.title}</Text>
                             <Text style={theme.cardText}>{assignment.description}</Text>
                             <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text>
-                            {/* <Text style={theme.cardText}>Attachments:</Text> */}
+                            <Text style={theme.cardText}>Created on: {trimDate(assignment.createdAtDate)}</Text>
                             {assignment.assignmentDocumentLinks.map((link, linkIndex) => (
                                 <TouchableOpacity key={linkIndex} onPress={() => Linking.openURL(link)} style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <Ionicons name="link" size={24} color="#525F7F" />
@@ -52,6 +56,8 @@ function ViewAssignmentsScreen({route, navigation}) {
                                 </TouchableOpacity>
                             ))}
                             <Text style={theme.cardText}>{assignment.studentComment}</Text>
+                            <Text style={theme.cardText}>Submitted on: {trimDate(assignment.submissionTimestamp)}</Text>
+
                         </View>
                     </View>
                     ) : (
@@ -82,6 +88,8 @@ function ViewAssignmentsScreen({route, navigation}) {
                                     </TouchableOpacity>
                                 ))}
                                 <Text style={theme.cardText}>{assignment.teacherFeedback}</Text>
+                                <Text style={theme.cardText}>Posted on: {trimDate(assignment.feedbackTimestamp)}</Text>
+
                             </View>
                         </View>
                     ) : (
