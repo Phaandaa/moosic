@@ -43,8 +43,9 @@ public class StudentInventoryService {
         try {
             List<String> ownedAvatarList = CreateInventoryDTO.getOwnedAvatarList();
             List<String> ownedBadgeList = CreateInventoryDTO.getOwnedBadgeList();
+            List<String> ownedFrameList = CreateInventoryDTO.getOwnedFrameList();
 
-            StudentInventory studentInventory = new StudentInventory(studentId, ownedAvatarList, ownedBadgeList);
+            StudentInventory studentInventory = new StudentInventory(studentId, ownedAvatarList, ownedBadgeList, ownedFrameList);
             studentInventoryRepository.save(studentInventory);
             return studentInventory;
         } catch (RuntimeException e) {
@@ -58,7 +59,7 @@ public class StudentInventoryService {
     }
 
     // add Avatar
-    public StudentInventory addAvatar (String studentId, String avatarUrl) {
+    public StudentInventory addAvatar (String studentId, String avatarId) {
         try {
             StudentInventory studentInventory = studentInventoryRepository.findByStudentId(studentId).orElseThrow(()->
                 new NoSuchElementException("Student inventory not found with the student ID " + studentId));
@@ -71,11 +72,11 @@ public class StudentInventoryService {
             }
 
             // Check if the avatar is already in the list
-            if (ownedAvatarList.contains(avatarUrl)) {
+            if (ownedAvatarList.contains(avatarId)) {
                 throw new RuntimeException("Avatar already exists in the student inventory with student ID " + studentId);
             }
 
-            ownedAvatarList.add(avatarUrl);
+            ownedAvatarList.add(avatarId);
             studentInventory.setOwnedAvatarList(ownedAvatarList);
             studentInventoryRepository.save(studentInventory);
             return studentInventory;
@@ -87,7 +88,7 @@ public class StudentInventoryService {
     }
 
     // add Badge
-    public StudentInventory addBadge (String studentId, String badgeUrl) {
+    public StudentInventory addBadge (String studentId, String badgeId) {
         try {
             StudentInventory studentInventory = studentInventoryRepository.findByStudentId(studentId).orElseThrow(()->
                 new NoSuchElementException("Student inventory not found with the student ID " + studentId));
@@ -100,11 +101,11 @@ public class StudentInventoryService {
             }
 
             // Check if the badge is already in the list
-            if (ownedBadgeList.contains(badgeUrl)) {
+            if (ownedBadgeList.contains(badgeId)) {
                 throw new RuntimeException("Badge already exists in the student inventory with student ID " + studentId);
             }
 
-            ownedBadgeList.add(badgeUrl);
+            ownedBadgeList.add(badgeId);
             studentInventory.setOwnedBadgeList(ownedBadgeList);
             studentInventoryRepository.save(studentInventory);
             return studentInventory;
@@ -112,6 +113,35 @@ public class StudentInventoryService {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Error adding badge to student inventory with student ID " + studentId + ": " + e.getMessage());
+        }
+    }
+
+    // add Frame
+    public StudentInventory addFrame (String studentId, String frameId) {
+        try {
+            StudentInventory studentInventory = studentInventoryRepository.findByStudentId(studentId).orElseThrow(()->
+                new NoSuchElementException("Student inventory not found with the student ID " + studentId));
+
+            List<String> ownedFrameList = studentInventory.getOwnedFrameList();
+
+            // Initialize the list if it's null
+            if (ownedFrameList == null) {
+                ownedFrameList = new ArrayList<>();
+            }
+
+            // Check if the frame is already in the list
+            if (ownedFrameList.contains(frameId)) {
+                throw new RuntimeException("Frame already exists in the student inventory with student ID " + studentId);
+            }
+
+            ownedFrameList.add(frameId);
+            studentInventory.setOwnedFrameList(ownedFrameList);
+            studentInventoryRepository.save(studentInventory);
+            return studentInventory;
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error adding frame to student inventory with student ID " + studentId + ": " + e.getMessage());
         }
     }
 
@@ -141,6 +171,19 @@ public class StudentInventoryService {
         }
     }
 
+    // get owned frame list
+    public List<String> getOwnedFrameList(String studentId) {
+        try {
+            StudentInventory studentInventory = studentInventoryRepository.findByStudentId(studentId).orElseThrow(()->
+                new NoSuchElementException("Student inventory not found with the student ID " + studentId));
+            return studentInventory.getOwnedFrameList();
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error fetching owned frame list for student ID " + studentId + ": " + e.getMessage());
+        }
+    }
+
     // delete
     public void deleteStudentInventory(String studentId) {
         try {
@@ -151,13 +194,13 @@ public class StudentInventoryService {
     }
 
     // delete badge from inventory
-    public StudentInventory deleteBadge (String studentId, String badgeUrl) {
+    public StudentInventory deleteBadge (String studentId, String badgeId) {
         try {
             StudentInventory studentInventory = studentInventoryRepository.findByStudentId(studentId).orElseThrow(()->
                 new NoSuchElementException("Student inventory not found with the student ID " + studentId));
 
             List<String> ownedBadgeList = studentInventory.getOwnedBadgeList();
-            ownedBadgeList.remove(badgeUrl);
+            ownedBadgeList.remove(badgeId);
             studentInventory.setOwnedBadgeList(ownedBadgeList);
             studentInventoryRepository.save(studentInventory);
             return studentInventory;
@@ -169,13 +212,13 @@ public class StudentInventoryService {
     }
 
     // delete avatar from inventory
-    public StudentInventory deleteAvatar (String studentId, String avatarUrl) {
+    public StudentInventory deleteAvatar (String studentId, String avatarId) {
         try {
             StudentInventory studentInventory = studentInventoryRepository.findByStudentId(studentId).orElseThrow(()->
                 new NoSuchElementException("Student inventory not found with the student ID " + studentId));
 
             List<String> ownedAvatarList = studentInventory.getOwnedAvatarList();
-            ownedAvatarList.remove(avatarUrl);
+            ownedAvatarList.remove(avatarId);
             studentInventory.setOwnedAvatarList(ownedAvatarList);
             studentInventoryRepository.save(studentInventory);
             return studentInventory;
@@ -183,6 +226,24 @@ public class StudentInventoryService {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Error deleting avatar from student inventory with student ID " + studentId + ": " + e.getMessage());
+        }
+    }
+
+    // delete frame from inventory
+    public StudentInventory deleteFrame (String studentId, String frameId) {
+        try {
+            StudentInventory studentInventory = studentInventoryRepository.findByStudentId(studentId).orElseThrow(()->
+                new NoSuchElementException("Student inventory not found with the student ID " + studentId));
+
+            List<String> ownedFrameList = studentInventory.getOwnedFrameList();
+            ownedFrameList.remove(frameId);
+            studentInventory.setOwnedFrameList(ownedFrameList);
+            studentInventoryRepository.save(studentInventory);
+            return studentInventory;
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error deleting frame from student inventory with student ID " + studentId + ": " + e.getMessage());
         }
     }
 }

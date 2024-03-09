@@ -48,14 +48,20 @@ public class StudentInventoryController {
 
     @Operation(summary = "Add avatar to student inventory")
     @PostMapping("/{studentId}/add-avatar")
-    public ResponseEntity<?> addAvatar(@PathVariable String studentId, @RequestBody String avatarUrl) {
-        return ResponseEntity.ok(studentInventoryService.addAvatar(studentId, avatarUrl));
+    public ResponseEntity<?> addAvatar(@PathVariable String studentId, @RequestBody String avatarId) {
+        return ResponseEntity.ok(studentInventoryService.addAvatar(studentId, avatarId));
     }
 
     @Operation(summary = "Add badge to student inventory")
     @PostMapping("/{studentId}/add-badge")
-    public ResponseEntity<?> addBadge(@PathVariable String studentId, @RequestBody String badgeUrl) {
-        return ResponseEntity.ok(studentInventoryService.addBadge(studentId, badgeUrl));
+    public ResponseEntity<?> addBadge(@PathVariable String studentId, @RequestBody String badgeId) {
+        return ResponseEntity.ok(studentInventoryService.addBadge(studentId, badgeId));
+    }
+
+    @Operation(summary = "Add frame to student inventory")
+    @PostMapping("/{studentId}/add-frame")
+    public ResponseEntity<?> addFrame(@PathVariable String studentId, @RequestBody String frameId) {
+        return ResponseEntity.ok(studentInventoryService.addFrame(studentId, frameId));
     }
 
     @Operation(summary = "Delete student inventory by student id")
@@ -67,13 +73,19 @@ public class StudentInventoryController {
 
     @Operation(summary = "Delete avatar from student inventory")
     @DeleteMapping("/{studentId}/delete-avatar")
-    public ResponseEntity<?> deleteAvatar(@PathVariable String studentId, @RequestBody String avatarUrl) {
-        return ResponseEntity.ok(studentInventoryService.deleteAvatar(studentId, avatarUrl));
+    public ResponseEntity<?> deleteAvatar(@PathVariable String studentId, @RequestBody String avatarId) {
+        return ResponseEntity.ok(studentInventoryService.deleteAvatar(studentId, avatarId));
     }
 
     @Operation(summary = "Delete badge from student inventory")
     @DeleteMapping("/{studentId}/delete-badge")
-    public ResponseEntity<?> deleteBadge(@PathVariable String studentId, @RequestBody String badgeUrl) {
-        return ResponseEntity.ok(studentInventoryService.deleteBadge(studentId, badgeUrl));
+    public ResponseEntity<?> deleteBadge(@PathVariable String studentId, @RequestBody String badgeId) {
+        return ResponseEntity.ok(studentInventoryService.deleteBadge(studentId, badgeId));
+    }
+
+    @Operation(summary = "Delete frame in student inventory")
+    @DeleteMapping("/{studentId}/delete-frame")
+    public ResponseEntity<?> deleteFrame(@PathVariable String studentId, @RequestBody String frameId) {
+        return ResponseEntity.ok(studentInventoryService.deleteFrame(studentId, frameId));
     }
 }
