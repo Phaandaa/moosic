@@ -45,6 +45,8 @@ const HomeScreen = ({ navigation }) => {
     { id: 'practice', color: '#EE97BC', title: 'Practice', subtitle: 'Record My Practice Sessions', iconName: 'musical-notes', navigationPage: 'CreatePracticeScreen', iconColor: 'white', buttonText: 'View' },
     { id: 'assignments', color: '#466CFF', title: 'Assignments', subtitle: 'View My Assignments', iconName: 'people', navigationPage: 'AssignmentListScreen', iconColor: 'white', buttonText: 'View' },
     { id: 'practicelog', color: '#EE97BC', title: 'Practice Log', subtitle: 'View My Practice Sessions', iconName: 'musical-notes', navigationPage: 'PracticeListStudentScreen', iconColor: 'white', buttonText: 'View' },
+    { id: 'rewardsshop', color: '#466CFF', title: 'Rewards Shop', subtitle: 'Rewards Shop', iconName: 'people', navigationPage: 'RewardsShopScreen', iconColor: 'white', buttonText: 'View' },
+
     // Add more modules specific to student
   ];
 
