@@ -25,5 +25,7 @@ git clone https://github.com/Phaandaa/moosic.git moosic
 gsutil cp gs://cloud-setup/server/.env /home/phandavina/moosic/server/
 gsutil cp gs://cloud-setup/server/serviceAccountKey.json /home/phandavina/moosic/server/src/main/resources/
 
-cd /home/phandavina/moosic/server
+cd /home/phandavina/moosic
+git pull
+cd server
 nohup mvn spring-boot:run &
