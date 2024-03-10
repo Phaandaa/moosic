@@ -1,6 +1,9 @@
 package com.example.server.controller;
 
+import java.util.NoSuchElementException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,16 +37,32 @@ public class StudentInventoryController {
         return ResponseEntity.ok(studentInventoryService.getStudentInventoryByStudentId(studentId));
     }
 
-    @Operation(summary = "Get owned avatar list by student id")
-    @GetMapping("/{studentId}/avatars")
-    public ResponseEntity<?> getOwnedAvatarsByStudentId(@PathVariable String studentId) {
-        return ResponseEntity.ok(studentInventoryService.getOwnedAvatarList(studentId));
+
+    @Operation(summary = "Get owned avatar list details by student id")
+    @GetMapping("/{studentId}/avatar-details")
+    public ResponseEntity<?> getOwnedAvatarsDetailsByStudentId(@PathVariable String studentId) {
+        return ResponseEntity.ok(studentInventoryService.getOwnedAvatarDetails(studentId));
     }
 
-    @Operation(summary = "Get owned badge list by student id")
-    @GetMapping("/{studentId}/badges")
+    @Operation(summary = "Get owned badge list details by student id")
+    @GetMapping("/{studentId}/badge-details")
     public ResponseEntity<?> getOwnedBadgesByStudentId(@PathVariable String studentId) {
-        return ResponseEntity.ok(studentInventoryService.getOwnedBadgeList(studentId));
+    try {
+        return ResponseEntity.ok(studentInventoryService.getOwnedBadgeDetails(studentId));
+    } catch (NoSuchElementException e) {
+        // Return a response indicating that no badges were found
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    } catch (Exception e) {
+        // Handle other exceptions and return a generic error response
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while fetching badge details.");
+    }
+}
+
+
+    @Operation(summary = "Get owned frame list details by student id")
+    @GetMapping("/{studentId}/frame-details")
+    public ResponseEntity<?> getOwnedFrameByStudentId(@PathVariable String studentId) {
+        return ResponseEntity.ok(studentInventoryService.getOwnedFrameDetails(studentId));
     }
 
     @Operation(summary = "Add avatar to student inventory")

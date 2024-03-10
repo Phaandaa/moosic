@@ -3,12 +3,14 @@ package com.example.server.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.server.dao.StudentInventoryRepository;
+import com.example.server.entity.RewardShop;
 import com.example.server.entity.StudentInventory;
 import com.example.server.models.CreateInventoryDTO;
 
@@ -18,6 +20,9 @@ public class StudentInventoryService {
     // read
     @Autowired
     private StudentInventoryRepository studentInventoryRepository;
+
+    @Autowired
+    private RewardShopService rewardShopService;
 
     public StudentInventory getStudentInventoryByStudentId(String studentId) {
         try {
@@ -145,38 +150,70 @@ public class StudentInventoryService {
         }
     }
 
-    // get owned avatar list
-    public List<String> getOwnedAvatarList(String studentId) {
+    public List<RewardShop> getOwnedAvatarDetails(String studentId){
         try {
             StudentInventory studentInventory = studentInventoryRepository.findByStudentId(studentId).orElseThrow(()->
                 new NoSuchElementException("Student inventory not found with the student ID " + studentId));
-            return studentInventory.getOwnedAvatarList();
+
+            List<String> ownedAvatarList = studentInventory.getOwnedAvatarList();
+
+            if (ownedAvatarList== null || ownedAvatarList.isEmpty()) {
+                throw new NoSuchElementException("No avatar found in student inventory with student ID " + studentId);
+            }
+
+            List<RewardShop> ownedAvatarDetails = rewardShopService.getAllRewardShopItem();
+            return ownedAvatarDetails.stream()
+                    .filter(item -> ownedAvatarList.contains(item.getId()))
+                    .collect(Collectors.toList());
+
         } catch (NoSuchElementException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuntimeException("Error fetching owned avatar list for student ID " + studentId + ": " + e.getMessage());
+            throw new RuntimeException("Error fetching owned avatar details for student ID " + studentId + ": " + e.getMessage());
         }
     }
 
     // get owned badge list
-    public List<String> getOwnedBadgeList(String studentId) {
+    public List<RewardShop> getOwnedBadgeDetails(String studentId) {
         try {
             StudentInventory studentInventory = studentInventoryRepository.findByStudentId(studentId).orElseThrow(()->
                 new NoSuchElementException("Student inventory not found with the student ID " + studentId));
-            return studentInventory.getOwnedBadgeList();
+
+            List<String> ownedBadgeList = studentInventory.getOwnedBadgeList();
+
+            if (ownedBadgeList.isEmpty() || ownedBadgeList == null) {
+                    throw new NoSuchElementException("No badge found in student inventory with student ID " + studentId);
+            } else {
+                List<RewardShop> ownedBadgeDetails = rewardShopService.getAllRewardShopItem();
+                return ownedBadgeDetails.stream()
+                    .filter(item ->  ownedBadgeDetails.contains(item.getId()))
+                    .collect(Collectors.toList());
+            }
+
         } catch (NoSuchElementException e) {
             throw e;
+
         } catch (Exception e) {
             throw new RuntimeException("Error fetching owned badge list for student ID " + studentId + ": " + e.getMessage());
         }
     }
 
     // get owned frame list
-    public List<String> getOwnedFrameList(String studentId) {
+    public List<RewardShop> getOwnedFrameDetails(String studentId) {
         try {
             StudentInventory studentInventory = studentInventoryRepository.findByStudentId(studentId).orElseThrow(()->
                 new NoSuchElementException("Student inventory not found with the student ID " + studentId));
-            return studentInventory.getOwnedFrameList();
+
+            List<String> ownedFrameList = studentInventory.getOwnedFrameList();
+
+            if (ownedFrameList.isEmpty() || ownedFrameList == null) {
+                throw new NoSuchElementException("No avatars found in student inventory with student ID " + studentId);
+            }
+
+            List<RewardShop> ownedFrameDetails = rewardShopService.getAllRewardShopItem();
+            return ownedFrameDetails.stream()
+                    .filter(item -> ownedFrameList.contains(item.getId()))
+                    .collect(Collectors.toList());
         } catch (NoSuchElementException e) {
             throw e;
         } catch (Exception e) {

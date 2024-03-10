@@ -15,11 +15,4 @@ public interface RewardShopRepository extends MongoRepository<RewardShop, String
     public Optional<RewardShop> findById(String id);
 
     public List<RewardShop> findBySubtype(String Subtype);
-
-    @Aggregation("{ '$group': { '_id': '$subtype' } }")
-    List<SubtypeProjection> findDistinctSubtypes();
-
-    interface SubtypeProjection {
-        String get_id();
-    }
 }
