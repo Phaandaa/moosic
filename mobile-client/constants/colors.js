@@ -1,5 +1,5 @@
 const Colors = {
-    primary500: '#4664EA',
+    primary500: '#6F66FF', // main-purple
     primary600: '#640233',
     primary700: '#4e0329',
     primary800: '#3b021f',
@@ -15,6 +15,21 @@ const Colors = {
     babyRed: '#F58060',
     babyYellow: '#F6D855',
     babyPurple: '#897AA8',
+
+    blue: '#3FA6F0', // accent-blue
+    green: '#65D155', // accent-green
+    orange: '#F1934B', // accent-orange
+    yellow: '#F6D855', // accent-yellow
+    pink: '#FA698C', // accent-pink
+    grey: '#EEF0F7', // accent-grey
+    red: '#EE4242', // accent-red
+
+    fontPrimary: "#2E3340",
+    fontSecondary: "#525F7F",
+    fontTertiary: "#8193AB",
+    fontQuaternary: "#A1B2CF",
+
+    bgWhite: "#FFFFFF",
 
 };
   
