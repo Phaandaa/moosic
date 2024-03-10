@@ -43,7 +43,7 @@ function RewardsShopScreen (){
                 <Text style={styles.itemTitle}>{title}</Text>
             </View>
             <View style={styles.pointsContainer}>
-                <Text style={styles.itemPoints}><Ionicons name="star" size={16} color="#ffffff" />{${points}}</Text>
+                <Text style={styles.itemPoints}><Ionicons name="star" size={16} color="#ffffff" /> {points}</Text>
             </View>
           </View>
         );
