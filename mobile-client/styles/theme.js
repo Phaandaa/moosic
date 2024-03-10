@@ -137,7 +137,8 @@ const theme = StyleSheet.create({
     color: '#525F7F',
     fontWeight: 'bold',
     fontSize: 16,
-    paddingVertical: 5
+    paddingVertical: 5,
+    color: 'white',
   },
   cardText: {
       color: '#525F7F',
