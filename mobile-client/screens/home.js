@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import BoxComponent from '../components/ui/homepageModuleBoxes';
 import theme from '../styles/theme';
 import HomepageSearchBar from '../components/ui/homepageSearchbar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons } from '@expo/vector-icons';
+
+
+const { width } = Dimensions.get('window');
 
 const HomeScreen = ({ navigation }) => {
   const [searchResults, setSearchResults] = useState([]);
@@ -52,6 +56,18 @@ const HomeScreen = ({ navigation }) => {
 
   const modules = userRole === 'Teacher' ? teacherModules : studentModules;
 
+  const Header = () => {
+    
+    return (
+      <View style={styles.headerContainer}>
+      <HomepageSearchBar onSearch={handleSearch} style={styles.searchBar} />
+      <TouchableOpacity style={styles.notificationButton} onPress={() => navigation.navigate('Notifications')}>
+        <Ionicons name="notifications" size={40} color="#466CFF" />
+      </TouchableOpacity>
+    </View>
+    );
+  };
+
   const handleSearch = (searchText) => {
     const results = modules.filter(module => module.id.includes(searchText));
     setSearchResults(results);
@@ -61,7 +77,7 @@ const HomeScreen = ({ navigation }) => {
     <View style={[theme.container, {paddingBottom: 0}]}>
 
       {/* Search bar */}
-      <HomepageSearchBar onSearch={handleSearch} />
+      <Header />
       
       <Text style={[theme.textTitle, {marginTop: 10}]}> Welcome!</Text>
 
@@ -88,3 +104,28 @@ const HomeScreen = ({ navigation }) => {
 };
 
 export default HomeScreen;
+
+const styles = StyleSheet.create({
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '90%',
+    padding: 10,
+  },
+  searchBar: {
+    // Assuming HomepageSearchBar accepts a style prop to adjust its styling
+    flex: 1,
+    marginRight: 10, // Give some space between search bar and time
+  },
+  timeText: {
+    fontSize: 16,
+  },
+  notificationButton: {
+    // Add padding if necessary for touchable area
+    padding: 8,
+    marginTop: 20,
+    marginHorizontal: 10,
+  },
+  // ... rest of your styles
+});

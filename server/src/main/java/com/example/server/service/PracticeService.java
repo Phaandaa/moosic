@@ -1,6 +1,5 @@
 package com.example.server.service;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -147,9 +146,7 @@ public class PracticeService {
 
             // Add points log for submitting practice
             String pointsLogDescription = "Finished " + practice.getTitle() + " practice";
-            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy");
-            String formattedDate = sdf.format(timestamp);
-            PointsLog newPointsLog = new PointsLog(practice.getStudentId(), pointsLogDescription, points, formattedDate);
+            PointsLog newPointsLog = new PointsLog(practice.getStudentId(), pointsLogDescription, points);
             pointsLogRepository.save(newPointsLog);
 
             // TODO: Check with goals and add points if goal is finished
@@ -164,7 +161,7 @@ public class PracticeService {
                 student.addPoints(goal.getPoints());
                 goal.setPointsReceived(true);
                 String pointsLogDescription2 = "Finished weekly goal";
-                PointsLog newPointsLog2 = new PointsLog(studentId, pointsLogDescription2, goal.getPoints(), formattedDate);
+                PointsLog newPointsLog2 = new PointsLog(studentId, pointsLogDescription2, goal.getPoints());
                 pointsLogRepository.save(newPointsLog2);
             }
             goalRepository.save(goal);

@@ -9,4 +9,6 @@ public interface StudentInventoryRepository extends MongoRepository<StudentInven
     
     public Optional<StudentInventory> findByStudentId(String studentId);
 
+    public void deleteByStudentId(String studentId);
+
 }

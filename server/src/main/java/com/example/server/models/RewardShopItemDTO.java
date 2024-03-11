@@ -15,4 +15,5 @@ public class RewardShopItemDTO {
     private Integer stock;
     private Integer limitation;
     private String type;
+    private String subtype;
 }

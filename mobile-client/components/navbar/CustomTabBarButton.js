@@ -13,7 +13,7 @@ const CustomTabBarButton = ({ children }) => {
     
     const checkStoredData = async () => {
         try {
-            
+          setLoadingState(true);
             const storedData = await AsyncStorage.getItem('authData');
             if (storedData !== null) {
                 const parsedData = JSON.parse(storedData);
@@ -78,7 +78,7 @@ const CustomTabBarButton = ({ children }) => {
                           <Text style={styles.optionText}>Create Assignment</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                          onPress={() => navigateToScreen('CreateGoalsForStudents')}
+                          onPress={() => navigateToScreen('ViewCreatedGoalsForStudents')}
                           style={styles.optionButton}
                         >
                           <Text style={styles.optionText}>Create Goals</Text>

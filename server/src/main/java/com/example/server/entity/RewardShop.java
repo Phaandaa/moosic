@@ -27,10 +27,6 @@ public class RewardShop {
     @Field(name = "stock")
     private Integer stock;
 
-    // just use their login password because if each item has their own password, not v effective
-    // @Field(name = "admin_password")
-    // private String adminPassword; 
-
     @Field(name = "limitation")
     private Integer limitation;
 
@@ -40,20 +36,32 @@ public class RewardShop {
     @Field(name = "type")
     private String type;
 
+    // sticker / avatar / badge / frame
+    @Field(name= "subtype")
+    private String subtype;
+
     public RewardShop(String description, Integer points, Integer stock, Integer limitation, String imageLink,
-            String type) {
+            String type, String subtype) {
         this.description = description;
         this.points = points;
         this.stock = stock;
         this.limitation = limitation;
         this.imageLink = imageLink;
         this.type = type;
+        this.subtype = subtype;
+    }
+
+    public void deductStock(Integer amount) {
+        if (amount > stock) {
+            throw new IllegalArgumentException("Purchase amount cannot be more than stock amount");
+        }
+        stock = stock - amount;
     }
 
     @Override
     public String toString() {
         return "RewardShop [id=" + id + ", description=" + description + ", points=" + points + ", stock=" + stock
-                + ", limitation=" + limitation + ", imageLink=" + imageLink + ", type=" + type + "]";
+                + ", limitation=" + limitation + ", imageLink=" + imageLink + ", type=" + type + ", subtype=" + subtype +"]";
     }
 
 }

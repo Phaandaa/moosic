@@ -43,6 +43,18 @@ public class RewardShopController {
         return ResponseEntity.ok(rewardShopItem);
     }
 
+    @Operation(summary = "Get list of subtypes in reward shop")
+    @GetMapping("/subtypes")
+    public ResponseEntity<List<String>> getRewardShopSubtypes() {
+        return ResponseEntity.ok(rewardShopService.getRewardShopSubtypes());
+    }
+
+    @Operation(summary = "Get items in reward shop by subtype")
+    @GetMapping("/items/{subtype}")
+    public ResponseEntity<List<RewardShop>> getRewardShopItemsBySubtype(@PathVariable String subtype) {
+        return ResponseEntity.ok(rewardShopService.getRewardShopItemBySubtype(subtype));
+    }
+
     // delete item 
     @Operation(summary = "Delete item in reward shop by item ID")
     @DeleteMapping("/{itemId}")
@@ -81,6 +93,17 @@ public class RewardShopController {
         @PathVariable String itemId,
         @RequestParam("image") MultipartFile file) {
             return ResponseEntity.ok(rewardShopService.updateRewardShopItemImage(itemId, file));
+    }
+
+    // Verify physical purchase
+    @Operation(summary = "Verify physical purchase")
+    @PutMapping("/physical/{itemid}")
+    public ResponseEntity<?> verifyPhysicalPurchase(
+        @PathVariable String itemId,
+        @RequestParam (value = "student_id") String studentId,
+        @RequestParam (value = "purchase_amount") Integer purchaseAmount
+    ) {
+        return ResponseEntity.ok(rewardShopService.verifyPhysicalPurchase(studentId, studentId, purchaseAmount));
     }
 
 }

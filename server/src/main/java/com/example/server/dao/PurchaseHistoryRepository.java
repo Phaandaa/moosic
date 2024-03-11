@@ -9,4 +9,6 @@ public interface PurchaseHistoryRepository extends MongoRepository<PurchaseHisto
     public List<PurchaseHistory> findByStudentId(String studentId);
     
     public List<PurchaseHistory> findAll();
+
+    public List<PurchaseHistory> findByStudentIdAndItemId(String studentId, String itemId);
 }

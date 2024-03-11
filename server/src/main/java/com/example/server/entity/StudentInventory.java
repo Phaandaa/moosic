@@ -25,20 +25,42 @@ public class StudentInventory {
     @Field (name = "owned_badge_list")
     private List<String> ownedBadgeList;
 
+    @Field (name = "owned_frame_list")
+    private List<String> ownedFrameList;
+
     public StudentInventory() {
 
     }
 
-    public StudentInventory(String studentId, List<String> ownedAvatarList, List<String> ownedBadgeList) {
+    public StudentInventory(String studentId, List<String> ownedAvatarList, List<String> ownedBadgeList, List<String> ownedFrameList) {
         this.studentId = studentId;
         this.ownedAvatarList = ownedAvatarList;
         this.ownedBadgeList = ownedBadgeList;
+        this.ownedFrameList = ownedFrameList;
+    }
+
+    public void addInventoryItem(String subtype, String imageURL) {
+        switch (subtype) {
+            case "avatar":
+                ownedAvatarList.add(imageURL);
+                break;
+            case "badge":
+                ownedBadgeList.add(imageURL);
+                break;
+            case "frame":
+                ownedFrameList.add(imageURL);
+                break;
+            default:
+                throw new IllegalArgumentException("Subtype is not valid");
+        }
     }
 
     @Override
     public String toString() {
         return "StudentInventory [id=" + id + ", studentId=" + studentId + ", ownedAvatarList=" + ownedAvatarList
-                + ", ownedBadgeList=" + ownedBadgeList + "]";
+                + ", ownedBadgeList=" + ownedBadgeList + ", ownedFrameList=" + ownedFrameList + "]";
     }
+
+
     
 }
