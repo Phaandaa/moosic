@@ -27,10 +27,6 @@ public class RewardShop {
     @Field(name = "stock")
     private Integer stock;
 
-    // just use their login password because if each item has their own password, not v effective
-    // @Field(name = "admin_password")
-    // private String adminPassword; 
-
     @Field(name = "limitation")
     private Integer limitation;
 
