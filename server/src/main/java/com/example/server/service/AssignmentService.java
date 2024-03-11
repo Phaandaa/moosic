@@ -1,6 +1,5 @@
 package com.example.server.service;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,10 +42,6 @@ public class AssignmentService {
 
     @Autowired
     private StudentRepository studentRepository;
-
-    // TODO: Ask if assignment should be created for each student or no. tbh easier to code
-    // if each student has their own assignment entry so teacher can give feedback
-    // and student can submit individually without complex code on frontend
 
     @Transactional
     public List<Assignment> createAssignment(CreateAssignmentDTO createAssignmentDTO, List<MultipartFile> files) {
@@ -189,9 +184,7 @@ public class AssignmentService {
             assignment.setFeedbackTimestamp(timestamp);
 
             String pointsLogDescription = "Finished " + assignment.getTitle() + " practice";
-            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy");
-            String formattedDate = sdf.format(timestamp);
-            PointsLog newPointsLog = new PointsLog(studentId, pointsLogDescription, points, formattedDate);
+            PointsLog newPointsLog = new PointsLog(studentId, pointsLogDescription, points);
             pointsLogRepository.save(newPointsLog);
 
             Goal goal = goalRepository.findByStudentId(studentId).orElseThrow(()->
@@ -201,7 +194,7 @@ public class AssignmentService {
                 student.addPoints(goal.getPoints());
                 goal.setPointsReceived(true);
                 String pointsLogDescription2 = "Finished weekly goal";
-                PointsLog newPointsLog2 = new PointsLog(studentId, pointsLogDescription2, goal.getPoints(), formattedDate);
+                PointsLog newPointsLog2 = new PointsLog(studentId, pointsLogDescription2, goal.getPoints());
                 pointsLogRepository.save(newPointsLog2);
             }
             goalRepository.save(goal);
