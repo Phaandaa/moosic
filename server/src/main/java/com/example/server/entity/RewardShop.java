@@ -51,6 +51,13 @@ public class RewardShop {
         this.subtype = subtype;
     }
 
+    public void deductStock(Integer amount) {
+        if (amount > stock) {
+            throw new IllegalArgumentException("Purchase amount cannot be more than stock amount");
+        }
+        stock = stock - amount;
+    }
+
     @Override
     public String toString() {
         return "RewardShop [id=" + id + ", description=" + description + ", points=" + points + ", stock=" + stock

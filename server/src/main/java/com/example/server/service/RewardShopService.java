@@ -9,10 +9,18 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.server.dao.PointsLogRepository;
+import com.example.server.dao.PurchaseHistoryRepository;
 import com.example.server.dao.RewardShopRepository;
+import com.example.server.dao.StudentInventoryRepository;
+import com.example.server.dao.StudentRepository;
+import com.example.server.entity.PointsLog;
+import com.example.server.entity.PurchaseHistory;
 import com.example.server.entity.RewardShop;
+import com.example.server.entity.Student;
 import com.example.server.models.RewardShopItemDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -23,6 +31,18 @@ public class RewardShopService {
     
     @Autowired
     private RewardShopRepository rewardShopRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
+    private PointsLogRepository pointsLogRepository;
+
+    @Autowired
+    private StudentInventoryRepository studentInventoryRepository;
+    
+    @Autowired
+    private PurchaseHistoryRepository purchaseHistoryRepository;
 
     @Autowired
     private CloudStorageService cloudStorageService;
@@ -183,19 +203,55 @@ public class RewardShopService {
     }
 
     // TODO: verify purchase from admin side, requires inventory entity
+    @Transactional
     public RewardShop verifyPhysicalPurchase(String id, String studentId, Integer purchaseAmount) {
-        // kurangin stock
+        try {
+           
+            RewardShop rewardShopItem = rewardShopRepository.findById(id).orElseThrow(()->
+                new NoSuchElementException("Reward Shop item not found with the ID " + id));
 
-        // kurangin points murid
+            // check if student has exceeded limitation count
+            Integer itemLimitCount = rewardShopItem.getLimitation();
+            List<PurchaseHistory> studentPurchaseHistories = purchaseHistoryRepository.findByStudentIdAndItemId(studentId, id);
+            PurchaseHistory.hasExceededLimit(purchaseAmount, itemLimitCount, studentPurchaseHistories);
 
-        // add to inventory if not physical
+            // kurangin stock
+            rewardShopItem.deductStock(purchaseAmount);
+            rewardShopRepository.save(rewardShopItem);
 
-        // tambahin points log murid
+            // kurangin points murid
+            Student student = studentRepository.findById(studentId).orElseThrow(()->
+                new NoSuchElementException("Student not found with the ID " + id));
+            Integer totalPrice = rewardShopItem.getPoints() * purchaseAmount;
+            student.deductPoints(totalPrice);
+            studentRepository.save(student);
 
-        // tambahin purchase history murid 
-        
-        return null;
+            // add to inventory if not physical
+
+            // tambahin points log murid
+            String pointsLogDesc = "Bought " + rewardShopItem.getDescription() + " from shop";
+            PointsLog pointsLog = new PointsLog(studentId, pointsLogDesc, -totalPrice);
+            pointsLogRepository.save(pointsLog);
+
+            // tambahin purchase history murid 
+            PurchaseHistory purchaseHistory = new PurchaseHistory(
+                studentId, 
+                student.getName(), 
+                rewardShopItem.getId(), 
+                purchaseAmount, 
+                totalPrice);
+            purchaseHistoryRepository.save(purchaseHistory);
+            
+            return rewardShopItem;
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error verifying physical purchase: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to verify physical purchase: " + e.getMessage());
+        }
     }
-
 }
 
