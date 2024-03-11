@@ -1,7 +1,11 @@
 package com.example.server.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +33,33 @@ public class RewardShopService {
     public List<RewardShop> getAllRewardShopItem() {
         try {
             List<RewardShop> items = rewardShopRepository.findAll();
+            if (items.isEmpty() || items == null) {
+                throw new NoSuchElementException("No items found in shop currently ");
+            }
+            return items;
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Error fetching items in shop: " + e.getMessage());
+        }
+    }
+
+    // get subtypes of reward shop
+    public List<String> getRewardShopSubtypes() {
+        List<RewardShop> items = rewardShopRepository.findAll();
+        Set <String> subtypes = items.stream()
+                                    .map(RewardShop::getSubtype)
+                                    .filter(Objects::nonNull)
+                                    .collect(Collectors.toSet());
+        return new ArrayList<>(subtypes);
+    }
+        
+
+    // get reward shop item by subtype
+    public List<RewardShop> getRewardShopItemBySubtype(String type) {
+        try {
+            List<RewardShop> items = rewardShopRepository.findBySubtype(type);
             if (items.isEmpty() || items == null) {
                 throw new NoSuchElementException("No items found in shop currently ");
             }
@@ -74,8 +105,9 @@ public class RewardShopService {
             Integer points = rewardShopItemDTO.getPoints();
             Integer stock = rewardShopItemDTO.getStock();
             Integer limiation = rewardShopItemDTO.getLimitation();
+            String Subtype = rewardShopItemDTO.getSubtype();
             String type = rewardShopItemDTO.getType();
-            RewardShop createdRewardShopItem = new RewardShop(description, points, stock, limiation, imageURL, type);
+            RewardShop createdRewardShopItem = new RewardShop(description, points, stock, limiation, imageURL, type, Subtype);
             rewardShopRepository.save(createdRewardShopItem);
             return "Create new item in reward shop successfully";
         } catch (RuntimeException e) {
@@ -96,7 +128,8 @@ public class RewardShopService {
             Integer stock = rewardShopItemDTO.getStock();
             Integer limiation = rewardShopItemDTO.getLimitation();
             String type = rewardShopItemDTO.getType();
-            RewardShop createdRewardShopItem = new RewardShop(description, points, stock, limiation, null, type);
+            String subtype = rewardShopItemDTO.getSubtype();
+            RewardShop createdRewardShopItem = new RewardShop(description, points, stock, limiation, null, type, subtype);
             rewardShopRepository.save(createdRewardShopItem);
             return "Create new item in reward shop successfully";
         } catch (RuntimeException e) {
@@ -115,11 +148,13 @@ public class RewardShopService {
             Integer stock = rewardShopItemDTO.getStock();
             Integer limitation = rewardShopItemDTO.getLimitation();
             String type = rewardShopItem.getType();
+            String subtype = rewardShopItem.getSubtype();
             rewardShopItem.setDescription(description);
             rewardShopItem.setPoints(points);
             rewardShopItem.setStock(stock);
             rewardShopItem.setLimitation(limitation);
             rewardShopItem.setType(type);
+            rewardShopItem.setSubtype(subtype);
             rewardShopRepository.save(rewardShopItem);
             return "Reward Shop item updated successfully";
         } catch (NoSuchElementException e) {

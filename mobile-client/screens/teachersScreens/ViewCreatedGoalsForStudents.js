@@ -36,6 +36,7 @@ function ViewCreatedGoalsForStudents ({ navigation }) {
             const studentResponse = await axios.get(fetchStudentDataUrl);
             if (studentResponse.data) {
               setStudentData(studentResponse.data); // Update student data
+              console.log(studentResponse.data)
               setFilteredStudents(studentResponse.data);
             } else {
               setStudentData([]); // Set default if no student data found
@@ -47,7 +48,7 @@ function ViewCreatedGoalsForStudents ({ navigation }) {
             if (goalsResponse.data) {
               // Since the data is an object, we wrap it in an array
               setStudentGoals([goalsResponse.data]); // Wrap the object in an array and update goals
-              console.log(goalsResponse.data);
+              
             } else {
               setStudentGoals([]); // Set goals to an empty array if no goals were fetched
             }
@@ -92,7 +93,10 @@ function ViewCreatedGoalsForStudents ({ navigation }) {
                                     <Text style={theme.cardTextBold}>{student.name || "Unnamed Student"}</Text>
                                 </View>
                                 <View style={theme.buttonContainer}>
-                                    <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('CreateGoalsForStudents')}>
+                                    <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('CreateGoalsForStudents', {
+                                          studentID: student.id,
+                                          studentName: student.name, // Assuming 'id' is the property that holds the student ID
+                                        })}>
                                         <Text style={theme.smallButtonText}>Create Goal</Text>
                                     </TouchableOpacity>
                           

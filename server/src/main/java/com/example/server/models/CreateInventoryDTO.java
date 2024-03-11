@@ -22,4 +22,7 @@ public class CreateInventoryDTO {
 
     @JsonProperty("owned_badge_list")
     private List<String> ownedBadgeList;
+
+    @JsonProperty("owned_frame_list")
+    private List<String> ownedFrameList;
 }

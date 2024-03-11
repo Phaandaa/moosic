@@ -25,20 +25,26 @@ public class StudentInventory {
     @Field (name = "owned_badge_list")
     private List<String> ownedBadgeList;
 
+    @Field (name = "owned_frame_list")
+    private List<String> ownedFrameList;
+
     public StudentInventory() {
 
     }
 
-    public StudentInventory(String studentId, List<String> ownedAvatarList, List<String> ownedBadgeList) {
+    public StudentInventory(String studentId, List<String> ownedAvatarList, List<String> ownedBadgeList, List<String> ownedFrameList) {
         this.studentId = studentId;
         this.ownedAvatarList = ownedAvatarList;
         this.ownedBadgeList = ownedBadgeList;
+        this.ownedFrameList = ownedFrameList;
     }
 
     @Override
     public String toString() {
         return "StudentInventory [id=" + id + ", studentId=" + studentId + ", ownedAvatarList=" + ownedAvatarList
-                + ", ownedBadgeList=" + ownedBadgeList + "]";
+                + ", ownedBadgeList=" + ownedBadgeList + ", ownedFrameList=" + ownedFrameList + "]";
     }
+
+
     
 }
