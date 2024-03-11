@@ -7,7 +7,7 @@ const theme = StyleSheet.create({
   container: {
     padding: 20,
     marginBottom: 20,
-    backgroundColor: '#eeeeee',
+    backgroundColor: '#ffffff',
     width: '100%',
     height : '100%',    
   },

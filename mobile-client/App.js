@@ -23,6 +23,7 @@ import ViewPracticeStudentScreen from './screens/studentsScreens/ViewPracticeStu
 import SubmitAssignmentScreen from './screens/studentsScreens/SubmitAssignmentScreen';
 import AssignmentListScreen from  './screens/studentsScreens/AssignmentListScreen';
 import PracticeListStudentScreen from './screens/studentsScreens/PracticeListStudentScreen';
+import RewardsShopScreen from './screens/studentsScreens/RewardsShopScreen';
 
 //Teacher Pages
 import CreateAssignmentScreen from './screens/teachersScreens/CreateAssignmentScreen';
@@ -221,6 +222,8 @@ const RootNavigator = () => {
           <Stack.Screen name="ViewAssignmentsScreen" component={ViewAssignmentsScreen} options={{ title: 'My Assignment' }} />
           <Stack.Screen name="PracticeListStudentScreen" component={PracticeListStudentScreen} options={{ title: 'My Practice Log' }} />
           <Stack.Screen name="ViewPracticeStudentScreen" component={ViewPracticeStudentScreen} options={{ title: 'My Practice Details' }} />
+          <Stack.Screen name="RewardsShopScreen" component={RewardsShopScreen} options={{ title: 'Rewards Shop' }} />
+
           </>
         ) : (
           <>
