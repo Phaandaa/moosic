@@ -21,6 +21,7 @@ import com.example.server.entity.PointsLog;
 import com.example.server.entity.PurchaseHistory;
 import com.example.server.entity.RewardShop;
 import com.example.server.entity.Student;
+import com.example.server.entity.StudentInventory;
 import com.example.server.models.RewardShopItemDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -202,11 +203,9 @@ public class RewardShopService {
         }
     }
 
-    // TODO: verify purchase from admin side, requires inventory entity
     @Transactional
     public RewardShop verifyPhysicalPurchase(String id, String studentId, Integer purchaseAmount) {
-        try {
-           
+        try {          
             RewardShop rewardShopItem = rewardShopRepository.findById(id).orElseThrow(()->
                 new NoSuchElementException("Reward Shop item not found with the ID " + id));
 
@@ -227,6 +226,62 @@ public class RewardShopService {
             studentRepository.save(student);
 
             // add to inventory if not physical
+
+            // tambahin points log murid
+            String pointsLogDesc = "Bought " + rewardShopItem.getDescription() + " from shop";
+            PointsLog pointsLog = new PointsLog(studentId, pointsLogDesc, -totalPrice);
+            pointsLogRepository.save(pointsLog);
+
+            // tambahin purchase history murid 
+            PurchaseHistory purchaseHistory = new PurchaseHistory(
+                studentId, 
+                student.getName(), 
+                rewardShopItem.getId(), 
+                purchaseAmount, 
+                totalPrice);
+            purchaseHistoryRepository.save(purchaseHistory);
+            
+            return rewardShopItem;
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error verifying physical purchase: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to verify physical purchase: " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public RewardShop verifyDigitalPurchase(String id, String studentId, Integer purchaseAmount) {
+        try {          
+            if (!purchaseAmount.equals(1)) {
+                throw new IllegalArgumentException("Digital Item purchase amount should only be 1");
+            }
+            RewardShop rewardShopItem = rewardShopRepository.findById(id).orElseThrow(()->
+                new NoSuchElementException("Reward Shop item not found with the ID " + id));
+
+            // check if student has exceeded limitation count
+            Integer itemLimitCount = rewardShopItem.getLimitation();
+            List<PurchaseHistory> studentPurchaseHistories = purchaseHistoryRepository.findByStudentIdAndItemId(studentId, id);
+            PurchaseHistory.hasExceededLimit(purchaseAmount, itemLimitCount, studentPurchaseHistories);
+
+            // kurangin stock
+            rewardShopItem.deductStock(purchaseAmount); // sebenrnya g perlu si buat digital tp bebas la hahahah
+            rewardShopRepository.save(rewardShopItem);
+
+            // kurangin points murid
+            Student student = studentRepository.findById(studentId).orElseThrow(()->
+                new NoSuchElementException("Student not found with the ID " + studentId));
+            Integer totalPrice = rewardShopItem.getPoints();
+            student.deductPoints(totalPrice);
+            studentRepository.save(student);
+
+            // add to inventory if not physical
+            StudentInventory studentInventory = studentInventoryRepository.findByStudentId(studentId).orElseThrow(()->
+                new NoSuchElementException("Student Inventory not found for student ID " + studentId));
+            studentInventory.addInventoryItem(rewardShopItem.getSubtype(), rewardShopItem.getImageLink());
 
             // tambahin points log murid
             String pointsLogDesc = "Bought " + rewardShopItem.getDescription() + " from shop";
