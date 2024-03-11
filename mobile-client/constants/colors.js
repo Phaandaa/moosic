@@ -16,6 +16,12 @@ const Colors = {
     babyYellow: '#F6D855',
     babyPurple: '#897AA8',
 
+    accentGrey: '#EEF0F7',
+    fontSecondary: '#525F7F',
+    fontPrimary: '#2E3340',
+    mainPurple: '#6F66FF',
+    accentPink: '#FA698C'
+
 };
   
 export default Colors;

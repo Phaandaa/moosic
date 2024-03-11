@@ -45,7 +45,6 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
                             <Text style={theme.cardTitle}>{assignment.title}</Text>
                             <Text style={theme.cardText}>{assignment.description}</Text>
                             <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text>
-                            <Text style={theme.cardText}>Created on: {trimDate(assignment.createdAtDate)}</Text>
 
                             {/* <Text style={theme.cardText}>Attachments:</Text> */}
                             {assignment.assignmentDocumentLinks.map((link, linkIndex) => (
@@ -54,14 +53,17 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
                                     <Text style={theme.documentName}> {getFileNameFromUrl(link)}</Text>
                                 </TouchableOpacity>
                             ))}
+                            <Text style={theme.cardTextSecondary}>Created on: {trimDate(assignment.createdAtDate)}</Text>
+
                             <View style={theme.buttonContainer2}>
-                                <TouchableOpacity style={theme.smallPinkButton} onPress={() => navigation.navigate('EditAssignmentScreen', { assignment })}>
-                                    <Text style={theme.smallButtonText}>Edit Assignment</Text>
+                                <TouchableOpacity style={theme.smallButtonLeftMargin} onPress={() => navigation.navigate('EditAssignmentScreen', { assignment })}>
+                                    <Text style={theme.smallButtonText}>Edit <Ionicons name="pencil" size={16} color="#ffffff" /></Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={theme.smallPinkButton} onPress={deleteAssignment}>
-                                    <Text style={theme.smallButtonText}>Delete Assignment</Text>
+                                <TouchableOpacity style={theme.smallButtonLeftMargin} onPress={deleteAssignment}>
+                                    <Text style={theme.smallButtonText}>Delete <Ionicons name="trash-bin" size={16} color="#ffffff" /></Text>
                                 </TouchableOpacity>
                             </View>
+
                         </View>
                     </View>
 
@@ -69,7 +71,7 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
                         <View style={theme.card3}>
                             <View style={theme.cardTextContainer}>
                                 <View style={theme.oneRow}> 
-                                    <Text style={theme.cardTitlePink}>Submission</Text>
+                                    <Text style={theme.cardTitlePurple}>Submission</Text>
                                 </View>
                                 
                                 {assignment.submissionLinks.map((link, linkIndex) => (
@@ -79,10 +81,10 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
                                     </TouchableOpacity>
                                 ))}
                                 <Text style={theme.cardText}>{assignment.studentComment}</Text>
-                                <Text style={theme.cardText}>Submitted on: {trimDate(assignment.submissionTimestamp)}</Text>
+                                <Text style={theme.cardTextSecondary}>Submitted on: {trimDate(assignment.submissionTimestamp)}</Text>
 
                                 <View style={theme.buttonContainer2}>
-                                    <TouchableOpacity style={theme.smallPinkButton} onPress={() => navigation.navigate('ProvideAssignmentFeedbackScreen', {assignmentID : assignment.assignmentId})}>
+                                    <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('ProvideAssignmentFeedbackScreen', {assignmentID : assignment.assignmentId})}>
                                         <Text style={theme.smallButtonText}>Give Feedback</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -101,11 +103,14 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
                     <View style={theme.card3}>
                         <View style={theme.cardTextContainer}>
                             <View style={theme.oneRow}> 
-                                <Text style={theme.cardTitlePink}>Feedback</Text>
-                                <View style={theme.smallPinkButton}>
+                                <Text style={theme.cardTitlePurple}>Feedback</Text>
+                                <View style={theme.smallButton}>
                                     <Text style={theme.smallButtonText}>{assignment.points} Points</Text>
                                 </View>
                             </View>
+
+                            <Text style={theme.cardText}>{assignment.teacherFeedback}</Text>
+
                 
                             {assignment.feedbackDocumentLinks && assignment.feedbackDocumentLinks.map((link, linkIndex) => (
                                 <TouchableOpacity key={linkIndex} onPress={() => Linking.openURL(link)} style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -113,8 +118,7 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
                                     <Text style={theme.documentName}> {getFileNameFromUrl(link)}</Text>
                                 </TouchableOpacity>
                             ))}
-                            <Text style={theme.cardText}>{assignment.teacherFeedback}</Text>
-                            <Text style={theme.cardText}>Posted on: {trimDate(assignment.feedbackTimestamp)}</Text>
+                            <Text style={theme.cardTextSecondary}>Posted on: {trimDate(assignment.feedbackTimestamp)}</Text>
 
                         </View>
                     </View>
