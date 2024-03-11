@@ -183,6 +183,19 @@ public class RewardShopService {
     }
 
     // TODO: verify purchase from admin side, requires inventory entity
+    public RewardShop verifyPhysicalPurchase(String id, String studentId, Integer purchaseAmount) {
+        // kurangin stock
+
+        // kurangin points murid
+
+        // add to inventory if not physical
+
+        // tambahin points log murid
+
+        // tambahin purchase history murid 
+        
+        return null;
+    }
 
 }
 

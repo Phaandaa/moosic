@@ -95,5 +95,16 @@ public class RewardShopController {
             return ResponseEntity.ok(rewardShopService.updateRewardShopItemImage(itemId, file));
     }
 
+    // Verify physical purchase
+    @Operation(summary = "Verify physical purchase")
+    @PutMapping("/physical/{itemid}")
+    public ResponseEntity<?> verifyPhysicalPurchase(
+        @PathVariable String itemId,
+        @RequestParam (value = "student_id") String studentId,
+        @RequestParam (value = "purchase_amount") Integer purchaseAmount
+    ) {
+        return ResponseEntity.ok(rewardShopService.verifyPhysicalPurchase(studentId, studentId, purchaseAmount));
+    }
+
 }
 
