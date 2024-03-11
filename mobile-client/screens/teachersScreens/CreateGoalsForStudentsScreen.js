@@ -210,17 +210,6 @@ const styles = StyleSheet.create({
       marginBottom: 20,
       textAlign: 'center',
   },
-  pointsInput: {
-    borderWidth: 1,
-    borderColor: 'grey',
-    borderRadius: 5,
-    padding: 10,
-    marginRight: 10,  // If you want some space around your input
-    textAlign: 'center',
-    fontSize: 18,
-    width: 80,  // Fixed width for the input field
-    flex: 1,
-},
 pointsLabel: {
   marginBottom: 10, // Add some space above the text input
 },
