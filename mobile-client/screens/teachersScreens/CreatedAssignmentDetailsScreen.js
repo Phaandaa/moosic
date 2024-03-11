@@ -9,7 +9,9 @@ const getFileNameFromUrl = (url) => {
 };
 
 const trimDate = (date) => {
-    return date.slice(0, 10) + ' ' + date.slice(11, 16);
+    if(date){
+        return date.slice(0, 10) + ' ' + date.slice(11, 16);
+    }
 }
 
 function CreatedAssignmentDetailsScreen({route, navigation}) {
@@ -100,6 +102,8 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
                         </View>
                     )}
 
+
+                    {assignment.teacherFeedback !== null ? ( 
                     <View style={theme.card3}>
                         <View style={theme.cardTextContainer}>
                             <View style={theme.oneRow}> 
@@ -121,7 +125,17 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
                             <Text style={theme.cardTextSecondary}>Posted on: {trimDate(assignment.feedbackTimestamp)}</Text>
 
                         </View>
+                        
+                    </View> ) : (
+                        <View style={theme.card3}>
+                        <View style={theme.cardTextContainer}>
+                            <View style={theme.oneRow}>
+                                <Text style={theme.cardText}>No feedback yet.</Text>
+                            </View>
+                        </View>
                     </View>
+                    )}
+
                     
 
 

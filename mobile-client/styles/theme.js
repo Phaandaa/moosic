@@ -144,7 +144,6 @@ const theme = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     paddingVertical: 5,
-    color: 'white',
   },
   cardText: {
       color: Colors.fontPrimary,
@@ -183,6 +182,18 @@ const theme = StyleSheet.create({
   },
   smallButtonLeftMargin: {
     backgroundColor: Colors.accentPink,
+    padding: 10,
+    borderRadius: 15,
+    marginLeft: 8, // Add some margin to separate the buttons
+  },
+  smallButtonLeftMarginGreen: {
+    backgroundColor: Colors.accentGreen,
+    padding: 10,
+    borderRadius: 15,
+    marginLeft: 8, // Add some margin to separate the buttons
+  },
+  smallButtonLeftMarginBlue: {
+    backgroundColor: Colors.accentBlue,
     padding: 10,
     borderRadius: 15,
     marginLeft: 8, // Add some margin to separate the buttons

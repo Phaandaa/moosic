@@ -6,6 +6,7 @@ import HomepageSearchBar from '../../components/ui/homepageSearchbar';
 import theme from '../../styles/theme';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import LoadingComponent from '../../components/ui/LoadingComponent';
+import Colors from '../../constants/colors';
 
 function MyStudentsScreen({ navigation }) {
     const [students, setStudents] = useState([]);
@@ -99,16 +100,16 @@ function MyStudentsScreen({ navigation }) {
                     {filteredStudents.map((student, index) => (
                         student.name ? (
                             <View key={index} style={styles.card}>
-                                <Text style={styles.cardTextBold}>{student.name || "Unnamed Student"}</Text>
+                                <Text style={theme.cardTextBold}>{student.name || "Unnamed Student"}</Text>
                                 <View style={theme.buttonContainer}>
-                                    <TouchableOpacity style={styles.smallButton} onPress={() => navigation.navigate('PracticeListTeacherScreen', { studentID: student.id })}>
-                                        <Text style={styles.smallButtonText}>Practice</Text>
+                                    <TouchableOpacity style={theme.smallButtonLeftMarginBlue} onPress={() => navigation.navigate('PracticeListTeacherScreen', { studentID: student.id })}>
+                                        <Text style={theme.smallButtonText}>Practice</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={styles.smallButton} onPress={() => navigation.navigate('CreatedAssignmentsListScreen', { studentID: student.id })}>
-                                        <Text style={styles.smallButtonText}>Assignments</Text>
+                                    <TouchableOpacity style={theme.smallButtonLeftMargin} onPress={() => navigation.navigate('CreatedAssignmentsListScreen', { studentID: student.id })}>
+                                        <Text style={theme.smallButtonText}>Assignments</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={styles.smallButton} onPress={() => navigation.navigate('CreateGoalsForStudents', { studentID: student.id, studentName: student.name })}>
-                                        <Text style={styles.smallButtonText}>Goals</Text>
+                                    <TouchableOpacity style={theme.smallButtonLeftMarginGreen} onPress={() => navigation.navigate('CreateGoalsForStudents', { studentID: student.id, studentName: student.name })}>
+                                        <Text style={theme.smallButtonText}>Goals</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -130,14 +131,13 @@ export default MyStudentsScreen;
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: '#4664EA',
+        backgroundColor: Colors.accentGrey,
         padding: 20,
         borderRadius: 15,
         marginTop: 10, 
         flexDirection: 'column',
         justifyContent: 'space-between', // Align items on both ends
         alignItems: 'center', // Center items vertically
-        
     },
     cardTextContainer: {
         flex: 1, // Take up as much space as possible
@@ -159,16 +159,16 @@ const styles = StyleSheet.create({
         width : '100%',
         // If you need space between buttons add justifyContent: 'space-between',
     },
-    smallButton: {
-        backgroundColor: 'white',
-        padding: 10,
-        borderRadius: 15,
-        marginLeft: 8, // Add some margin to separate the buttons
-    },
-    smallButtonText: {
-        color: '#4664EA',
-        fontWeight: 'bold',
-        fontSize: 14,
-        textAlign: 'center',
-    }
+    // smallButton: {
+    //     backgroundColor: 'white',
+    //     padding: 10,
+    //     borderRadius: 15,
+    //     marginLeft: 8, // Add some margin to separate the buttons
+    // },
+    // smallButtonText: {
+    //     color: '#4664EA',
+    //     fontWeight: 'bold',
+    //     fontSize: 14,
+    //     textAlign: 'center',
+    // }
 })
