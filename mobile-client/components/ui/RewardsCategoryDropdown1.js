@@ -1,35 +1,69 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
 import { MultiSelect } from "react-native-element-dropdown";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Colors from "../../constants/colors";
+import Ionicons from "@expo/vector-icons/Ionicons"; // make sure to import Ionicons
 
 const data = [
-  { label: "Item 1", value: "1" },
-  { label: "Item 2", value: "2" },
-  { label: "Item 3", value: "3" },
-  { label: "Item 4", value: "4" },
-  { label: "Item 5", value: "5" },
-  { label: "Item 6", value: "6" },
-  { label: "Item 7", value: "7" },
-  { label: "Item 8", value: "8" },
+  // { label: "Avatars", value: "digital1" },
+  // { label: "Frames", value: "digital2" },
+  // { label: "Stickers", value: "digital3" },
+  { label: "Digital Items", value: "digital" },
+  { label: "Physical Items", value: "physical" },
 ];
 
-const RewardsCategoryDropdown1 = () => {
+const RewardsCategoryDropdown1 = (props) => {
   const [selected, setSelected] = useState([]);
+  const dropdownRef = useRef(null);
+
+  const isItemSelected = (value) => {
+    return selected.includes(value);
+  };
+
+  const handleSelection = (item) => {
+    const newValue = item.value;
+    const isSelected = isItemSelected(newValue);
+
+    let newSelected;
+    if (isSelected) {
+      newSelected = selected.filter((value) => value !== newValue);
+    } else {
+      newSelected = [...selected, newValue];
+    }
+    setSelected(newSelected);
+
+    // Notify parent component about the change
+    if (props.onCategoryChange) {
+      props.onCategoryChange(newSelected);
+    }
+
+    // Close the dropdown
+    if (dropdownRef.current) {
+      dropdownRef.current.close();
+    }
+  };
 
   const renderItem = (item) => {
     return (
-      <View style={styles.item}>
+      <TouchableOpacity
+        style={styles.item}
+        onPress={() => handleSelection(item)}
+      >
         <Text style={styles.selectedTextStyle}>{item.label}</Text>
-        {/* <AntDesign style={styles.icon} color="black" name="Safety" size={20} /> */}
-      </View>
+        <Ionicons
+          name={isItemSelected(item.value) ? "checkbox" : "square-outline"}
+          size={20}
+          color={Colors.fontQuaternary}
+        />
+      </TouchableOpacity>
     );
   };
 
   return (
     <View style={styles.container}>
       <MultiSelect
+        ref={dropdownRef}
         style={styles.dropdown}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
@@ -38,13 +72,11 @@ const RewardsCategoryDropdown1 = () => {
         data={data}
         labelField="label"
         valueField="value"
-        placeholder="Select item"
+        placeholder="Select category"
         value={selected}
         // search
-        searchPlaceholder="Search..."
-        onChange={(item) => {
-          setSelected(item);
-        }}
+        // searchPlaceholder="Search..."
+        onChange={handleSelection}
         // renderLeftIcon={() => (
         //   <AntDesign
         //     style={styles.icon}
@@ -54,11 +86,28 @@ const RewardsCategoryDropdown1 = () => {
         //   />
         // )}
         renderItem={renderItem}
-        renderSelectedItem={(item, unSelect) => (
-          <TouchableOpacity onPress={() => unSelect && unSelect(item)}>
+        renderSelectedItem={(item) => (
+          <TouchableOpacity
+            onPress={() => {
+              setSelected((currentSelected) =>
+                currentSelected.filter((value) => value !== item.value)
+              );
+              if (props.onCategoryChange) {
+                // Need to ensure props.onCategoryChange is called with the updated state
+                // This might not be reflecting the immediate change due to asynchronous state updates
+                props.onCategoryChange(
+                  selected.filter((value) => value !== item.value)
+                );
+              }
+            }}
+          >
             <View style={styles.selectedStyle}>
               <Text style={styles.textSelectedStyle}>{item.label}</Text>
-              <AntDesign color="black" name="delete" size={17} />
+              <AntDesign
+                color={Colors.fontQuaternary}
+                name="delete"
+                size={17}
+              />
             </View>
           </TouchableOpacity>
         )}
@@ -76,7 +125,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.fontQuaternary,
     borderRadius: 12,
     padding: 12,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 1,
@@ -106,17 +155,18 @@ const styles = StyleSheet.create({
   },
   item: {
     padding: 17,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   selectedStyle: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 14,
-    backgroundColor: 'white',
-    shadowColor: '#000',
+    backgroundColor: Colors.bgWhite,
+    color: Colors.bgWhite,
+    shadowColor: "#000",
     marginTop: 12,
     marginRight: 12,
     paddingHorizontal: 12,
@@ -133,5 +183,6 @@ const styles = StyleSheet.create({
   textSelectedStyle: {
     marginRight: 5,
     fontSize: 16,
+    color: Colors.fontQuaternary,
   },
 });
