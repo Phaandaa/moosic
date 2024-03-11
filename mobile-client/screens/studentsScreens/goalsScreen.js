@@ -66,6 +66,7 @@ const GoalsScreen = () => {
   const toggleSortOrder = () => {
     const reversedList = [...pointsLog].reverse(); // Create a shallow copy and reverse it
     setPointsLog(reversedList);
+    setSortDescending(!sortDescending);
   };
 
 
@@ -74,11 +75,13 @@ const GoalsScreen = () => {
     return (
       <View style={styles.headerRow}>
         <Text style={[styles.headerItem, { flex: 1 }]}>Title</Text>
-        <Text style={[styles.headerItem, { flex: 3, textAlign: 'center' }]}>Points</Text>
-        <TouchableOpacity onPress={toggleSortOrder} style={styles.headerItem}>
-          <Text style={[styles.headerItem, { flex: 1 }]}>Date</Text>
-          <Ionicons name={sortDescending ? 'arrow-down' : 'arrow-up'} size={15} color="white" />
-      </TouchableOpacity>
+        <Text style={[styles.headerItem, { flex: 1, textAlign: 'center' }]}>Points</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+          <Text style={[styles.headerItem, { marginRight: 10 }]}>Date</Text>
+          <TouchableOpacity onPress={toggleSortOrder}>
+            <Ionicons name={sortDescending ? 'arrow-up' : 'arrow-down'} size={15} color="white" />
+          </TouchableOpacity>
+        </View>
       </View>
     );
   };
@@ -116,19 +119,26 @@ const GoalsScreen = () => {
       <View style={styles.currentGoalsContainer}>
         <Text style={styles.currentGoalsText}>Your Weekly Goal:</Text>
         <View style={styles.progressContainer}>
-          <View style={[styles.progressBar, {width: `${progress}%`}]} />
-          <Text style={styles.progressText}>{progress}% Completed</Text>
-        </View>
+          {/* Background of the progress bar (the track) */}
+          <View style={styles.progressTrack}>
+              {/* Foreground of the progress bar */}
+              <View style={[styles.progressBar, {width: `${progress}%`}]} />
+          </View>
+          <Text style={styles.progressText}>
+              {progress}% Completed
+          </Text>
+      </View>
+
         <View style={styles.goalsRow}>
-          <View style={styles.goalCard}>
+          <View style={[styles.goalCard, {backgroundColor: '#466CFF'}]}>
             <Text style={styles.goalLabel}>Practice Goal</Text>
             <Text style={styles.goalValue}>{completedPractice} / {currentPracticeGoalCount}</Text>
           </View>
-          <View style={styles.goalCard}>
+          <View style={[styles.goalCard, {backgroundColor: '#EE97BC'}]}>
             <Text style={styles.goalLabel}>Assignment Goal</Text>
             <Text style={styles.goalValue}>{completedAssignment} / {currentAssignmentGoalCount}</Text>
           </View>
-          <View style={styles.goalCard}>
+          <View style={[styles.goalCard, {backgroundColor: '#686BFF'}]}>
             <Text style={styles.goalLabel}>Points Allocated</Text>
             <Text style={styles.goalValue}>{currentPoints}</Text>
           </View>
@@ -237,7 +247,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 16,
-    backgroundColor: '#686BFF', // Primary Color
+    backgroundColor: '#686BFF', // Adjust as per your color scheme
     marginHorizontal: 20,
     borderRadius: 10,
   },
@@ -245,16 +255,16 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: '700',
+    // Add any additional styling as needed
   },
   logItemContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 15,
     marginHorizontal: 20,
-    marginTop: 10,
     backgroundColor: 'white',
     borderRadius: 8,
-    
+    // Match the padding and margin with the header for alignment
   },
   logDescription: {
     flex: 2,
@@ -283,18 +293,19 @@ const styles = StyleSheet.create({
     flex: 2,
   },
   currentGoalsContainer: {
-    alignItems: 'center',
     marginBottom: 20,
   },
   currentGoalsText: {
     fontSize: 16,
     fontWeight: 'bold',
+    textAlign: 'center',
     
   },
   goalsRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: '100%',
+    paddingHorizontal: 20,
   },
   goalCard: {
     backgroundColor: 'white',
@@ -312,31 +323,42 @@ const styles = StyleSheet.create({
     color: '#777',
     marginBottom: 5, // Give some space between the label and the value
     textAlign: 'center',
+    color: 'white'
   },
   goalValue: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: 'white'
   },
   progressContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#e0e0e0',
-    borderRadius: 20,
-    height: 20,
     margin: 20,
-    overflow: 'hidden', // Important to ensure the inner bar does not overflow
-  },
-  progressBar: {
-    height: '100%',
+    position: 'relative', // Ensures the text can be absolutely positioned within
+},
+
+progressTrack: {
+    backgroundColor: '#e0e0e0', // Light grey for the unfilled track
+    borderRadius: 20,
+    height: 30,
+    width: '100%', // Ensure it fills the container
+    position: 'hidden', // Position it behind the progress bar
+},
+
+progressBar: {
     backgroundColor: '#007AFF',
-    borderRadius: 20, // Rounded corners for the progress bar
-    borderColor: 'black',
-  },
-  progressText: {
-    position: 'absolute', // Position text over the bar
-    right: 10,
+    height: '100%',
+    borderRadius: 20,
+    minWidth: 20, // Minimum visibility
+    maxWidth: '100%', // Ensure it doesn't overflow the container
+    position: 'absolute', // Position it behind the progress bar
+},
+
+progressText: {
+    position: 'absolute',
+    padding: 20,
     color: 'black',
-  },
+},
 });
 
 
