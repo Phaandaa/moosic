@@ -9,6 +9,7 @@ import { setCache, clearCache } from '../../cacheSlice';
 import InputBox from '../../components/ui/inputBox';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Colors from '../../constants/colors';
 
 function ProvidePracticeFeedbackScreen({route}){
     const {practiceID} = route.params;
@@ -156,7 +157,7 @@ function ProvidePracticeFeedbackScreen({route}){
       
         <View style={styles.attachFilesSection}>
           <TouchableOpacity style={styles.attachButton} onPress={() => uploadVideo('gallery')}>
-            <Ionicons name="images" size={24} color="#4664EA" />
+            <Ionicons name="images" size={24} color={Colors.mainPurple} />
                 {videos.length === 0 ? (
                     <Text style={styles.attachText}>Upload Video</Text>
                 ) : (
@@ -254,7 +255,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   button: {
-    backgroundColor: '#4664EA',
+    backgroundColor: Colors.mainPurple,
     padding: 15,
     borderRadius: 15,
     alignItems: 'center',

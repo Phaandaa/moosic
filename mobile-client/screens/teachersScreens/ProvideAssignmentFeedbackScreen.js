@@ -10,6 +10,8 @@ import { setCache } from '../../cacheSlice';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import Colors from '../../constants/colors';
+
 
 function ProvideAssignmentFeedbackScreen({ navigation, route }) {
   const {assignmentID} = route.params;
@@ -20,6 +22,7 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
 
   const [images, setImages] = useState([]);
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
+
 
   const uploadImage = async (mode) => {
     let result = {};
@@ -281,7 +284,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#525F7F',
+    color: Colors.fontPrimary,
   },
   inputContainer: {
     backgroundColor: '#F7F7F7',
@@ -311,18 +314,11 @@ const styles = StyleSheet.create({
   attachText: {
     marginLeft: 10,
     fontSize: 16,
-    color: '#4664EA',
+    color: Colors.mainPurple,
   },
   textArea: {
     minHeight: 100,
     textAlignVertical: 'top',
-  },
-  button: {
-    backgroundColor: '#4664EA',
-    padding: 15,
-    borderRadius: 15,
-    alignItems: 'center',
-    marginBottom: 10,
   },
   buttonText: {
     color: '#ffffff',
@@ -411,7 +407,7 @@ const styles = StyleSheet.create({
   },
   // Update existing button styles if necessary
   button: {
-    backgroundColor: '#4664EA',
+    backgroundColor: Colors.mainPurple,
     padding: 15,
     borderRadius: 15,
     alignItems: 'center',
