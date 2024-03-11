@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.server.dao.GoalRepository;
 import com.example.server.dao.StudentRepository;
 import com.example.server.dao.TeacherRepository;
 import com.example.server.dao.UserRepository;
+import com.example.server.entity.Goal;
 import com.example.server.entity.Student;
 import com.example.server.entity.Teacher;
 import com.example.server.entity.User;
@@ -34,6 +36,9 @@ public class UserService {
 
     @Autowired
     private TeacherRepository teacherRepository;
+
+    @Autowired
+    private GoalRepository goalRepository;
 
     private void isNotEmptyOrNull(String variable, String attributeName) {
         if (variable == null || variable.isEmpty()) {
@@ -133,13 +138,15 @@ public class UserService {
         
     }
 
+    @Transactional
     private Student createStudent(String id, String name, String email, CreateUserDTO userDTO) {
         try {
             String instrument = userDTO.getInfo().get("instrument");
             String grade = userDTO.getInfo().get("grade");
-            // Student newStudent = new Student(0, null, new ArrayList<>(), instrument, grade, null, null);
             Student newStudent = new Student(id, name, email, 0, null, new ArrayList<>(), instrument, grade, null,null);
             studentRepository.save(newStudent);
+            Goal newGoal = new Goal(id, name, null, 0, 0, 3, 1, "Not done", 20, false);
+            goalRepository.save(newGoal);
             return newStudent;
         } catch (IllegalArgumentException e) {
             throw e;

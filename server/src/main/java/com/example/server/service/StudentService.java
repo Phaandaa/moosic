@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.server.dao.GoalRepository;
 import com.example.server.dao.StudentRepository;
 import com.example.server.dao.TeacherRepository;
 import com.example.server.dao.UserRepository;
+import com.example.server.entity.Goal;
 import com.example.server.entity.Student;
 import com.example.server.entity.Teacher;
 
@@ -24,6 +26,9 @@ public class StudentService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private GoalRepository goalRepository;
 
     public List<Student> getAllStudents() {
         try {
@@ -80,8 +85,12 @@ public class StudentService {
             teacher.addStudent(studentId);
             String teacherName = teacher.getName();
             student.setTeacherName(teacherName);
+            Goal goal = goalRepository.findByStudentId(studentId).orElseThrow(()->
+                new NoSuchElementException("Goal not found with student ID " + studentId));
+            goal.setTeacherId(teacherId);
             studentRepository.save(student);
             teacherRepository.save(teacher);
+            goalRepository.save(goal);
         } catch (NoSuchElementException e) {
             throw e;
         } catch (Exception e) {

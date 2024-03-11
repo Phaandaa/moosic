@@ -99,15 +99,16 @@ function MyStudentsScreen({ navigation }) {
                     {filteredStudents.map((student, index) => (
                         student.name ? (
                             <View key={index} style={styles.card}>
-                                <View style={styles.cardTextContainer}>
-                                    <Text style={styles.cardTextBold}>{student.name || "Unnamed Student"}</Text>
-                                </View>
+                                <Text style={styles.cardTextBold}>{student.name || "Unnamed Student"}</Text>
                                 <View style={theme.buttonContainer}>
                                     <TouchableOpacity style={styles.smallButton} onPress={() => navigation.navigate('PracticeListTeacherScreen', { studentID: student.id })}>
                                         <Text style={styles.smallButtonText}>Practice</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.smallButton} onPress={() => navigation.navigate('CreatedAssignmentsListScreen', { studentID: student.id })}>
                                         <Text style={styles.smallButtonText}>Assignments</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.smallButton} onPress={() => navigation.navigate('CreateGoalsForStudents', { studentID: student.id, studentName: student.name })}>
+                                        <Text style={styles.smallButtonText}>Goals</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
         padding: 20,
         borderRadius: 15,
         marginTop: 10, 
-        flexDirection: 'row',
+        flexDirection: 'column',
         justifyContent: 'space-between', // Align items on both ends
         alignItems: 'center', // Center items vertically
         
@@ -155,6 +156,7 @@ const styles = StyleSheet.create({
       },
     buttonContainer: {
         flexDirection: 'row',
+        width : '100%',
         // If you need space between buttons add justifyContent: 'space-between',
     },
     smallButton: {

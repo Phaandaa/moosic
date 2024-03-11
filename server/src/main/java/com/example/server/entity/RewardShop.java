@@ -40,20 +40,25 @@ public class RewardShop {
     @Field(name = "type")
     private String type;
 
+    // sticker / avatar / badge / frame
+    @Field(name= "subtype")
+    private String subtype;
+
     public RewardShop(String description, Integer points, Integer stock, Integer limitation, String imageLink,
-            String type) {
+            String type, String subtype) {
         this.description = description;
         this.points = points;
         this.stock = stock;
         this.limitation = limitation;
         this.imageLink = imageLink;
         this.type = type;
+        this.subtype = subtype;
     }
 
     @Override
     public String toString() {
         return "RewardShop [id=" + id + ", description=" + description + ", points=" + points + ", stock=" + stock
-                + ", limitation=" + limitation + ", imageLink=" + imageLink + ", type=" + type + "]";
+                + ", limitation=" + limitation + ", imageLink=" + imageLink + ", type=" + type + ", subtype=" + subtype +"]";
     }
 
 }
