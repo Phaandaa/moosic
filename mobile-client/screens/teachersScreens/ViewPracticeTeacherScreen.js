@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import { Ionicons } from '@expo/vector-icons';
 
+
 const getFileNameFromUrl = (url) => {
     return url.split('/').pop().slice(37);
 };
@@ -35,7 +36,6 @@ function ViewPracticeTeacherScreen({route, navigation}){
                             
                             <Text style={theme.cardTitle}>{practice.title}</Text>
                             <Text style={theme.cardText}>{practice.comment}</Text>
-                            <Text style={theme.cardText}>Created on: {trimDate(practice.submissionTimestamp)}</Text>
                             {/* <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text> */}
                             {/* <Text style={theme.cardText}>Attachments:</Text> */}
                             {/* {practice.videoLink.map((link, linkIndex) => ( */}
@@ -44,6 +44,8 @@ function ViewPracticeTeacherScreen({route, navigation}){
                                     <Text style={theme.documentName}>{getFileNameFromUrl(practice.videoLink)}</Text>
                                 </TouchableOpacity>
                             {/* ))} */}
+                            <Text style={theme.cardTextSecondary}>Created on: {trimDate(practice.submissionTimestamp)}</Text>
+
                         </View>
                         <View style={theme.buttonContainer2}>
                                 <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('ProvidePracticeFeedbackScreen', {practiceID : practice.id})}>
@@ -56,18 +58,19 @@ function ViewPracticeTeacherScreen({route, navigation}){
                         <View style={theme.card3}>
                             <View style={theme.cardTextContainer}>
                                 <View style={theme.oneRow}> 
-                                    <Text style={theme.cardTitlePink}>Feedback</Text>
+                                    <Text style={theme.cardTitlePurple}>Feedback</Text>
                                     {/* <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text> */}
                                     {/* <Text style={theme.cardText}>Attachments:</Text> */}
-                                        <View style={theme.smallPinkButton}>
+                                        <View style={theme.smallButton}>
                                             <Text style={theme.smallButtonText}>{practice.points} Points</Text>
                                         </View>
                                 </View>
+                                <Text style={theme.cardText}>{practice.feedback}</Text>
+
                                 <TouchableOpacity onPress={() => Linking.openURL(practice.feedbackLinks)} style={{ flexDirection: 'row', alignItems: 'center' }}>
                                         <Ionicons name="link" size={24} color="#525F7F" />
                                         <Text style={theme.documentName}> {getFileNameFromUrl(practice.feedbackLinks)}</Text>
                                 </TouchableOpacity>
-                                <Text style={theme.cardText}>{practice.feedback}</Text>
 
                             </View>
                         </View>

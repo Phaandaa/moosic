@@ -10,6 +10,7 @@ import AssignmentSearchBar from '../../components/ui/assignmentSearchBar';
 import { useDispatch } from 'react-redux';
 import { setCache } from '../../cacheSlice';
 import { useFocusEffect } from '@react-navigation/native';
+import Colors from '../../constants/colors';
 
 
 function CreatedAssignmentsListScreen ({route, navigation}) {
@@ -148,7 +149,7 @@ function CreatedAssignmentsListScreen ({route, navigation}) {
                     <TouchableOpacity key={index} style={theme.card2} onPress={() => navigation.navigate('CreatedAssignmentDetailsScreen', { assignment: assignment })}>
                         <View style={theme.cardTextContainer}>
                             <Text style={theme.cardTitle}>{assignment.title}</Text>
-                            <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text>
+                            <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color={Colors.fontPrimary} /> {assignment.deadline}</Text>
                         </View>
                         <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('CreatedAssignmentDetailsScreen', { assignment: assignment })}>
                             <Text style={theme.smallButtonText}>View</Text>
