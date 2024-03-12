@@ -140,7 +140,7 @@ public class PracticeService {
             });
 
             Date timestamp = new Date();
-            practice.setSubmissionTimestamp(timestamp);
+            practice.setFeedbackTimestamp(timestamp);
 
             practiceRepository.save(practice);
 
