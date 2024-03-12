@@ -40,6 +40,14 @@ public class UserService {
     @Autowired
     private GoalRepository goalRepository;
 
+    public User getUserByUid(String uid) {
+        return userRepository.findById(uid).orElse(null);
+    }
+
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
     private void isNotEmptyOrNull(String variable, String attributeName) {
         if (variable == null || variable.isEmpty()) {
             throw new IllegalArgumentException(attributeName + " cannot be empty");
