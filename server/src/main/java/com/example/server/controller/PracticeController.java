@@ -72,7 +72,7 @@ public class PracticeController {
     public ResponseEntity<?> feedbackPractice(@PathVariable String practiceId, 
         @RequestParam(value = "teacherFeedback") String teacherFeedback, 
         @RequestParam(value = "points") Integer points,
-        @RequestPart("video") MultipartFile video) {
+        @RequestPart(value="video", required = false) MultipartFile video) {
         try {
             Practice updatedPractice = practiceService.updatePractice(practiceId, teacherFeedback, points, video);
             return ResponseEntity.ok(updatedPractice);
