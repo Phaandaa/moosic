@@ -12,6 +12,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setCache, clearCache } from '../../cacheSlice';
 import Modal from "react-native-modal";
 import Colors from '../../constants/colors';
+import SuccessModal from '../../components/ui/SuccessModal';
 function CreatePracticeScreen({navigation}){
     // const dispatch = useDispatch();
     const [title, setTitle] = useState('');
@@ -22,8 +23,9 @@ function CreatePracticeScreen({navigation}){
 
     const [isModalVisible, setModalVisible] = useState(false);
 
-    const toggleModal = () => {
-      setModalVisible(!isModalVisible);
+    const handleModalButtonPress = () => {
+      navigation.navigate('Home');
+      setModalVisible(false);
     };
 
     useEffect(() => {
@@ -126,7 +128,7 @@ function CreatePracticeScreen({navigation}){
             console.log(responseData);
             // dispatch(setCache({ key: 'practiceData', value: practiceData })); 
             // navigation.navigate('PracticeListStudentScreen');
-            toggleModal();
+            setModalVisible(true);
         } catch (error) {
             console.error('Error recording practice:', error);
             Alert.alert('Error', `Failed to create practice. ${error.response?.data?.message || 'Please try again.'}`);
@@ -221,7 +223,7 @@ function CreatePracticeScreen({navigation}){
           </>
         )}
 
-      <Modal isVisible={isModalVisible} style={{alignItems: 'center'}}>
+      {/* <Modal isVisible={isModalVisible} style={{alignItems: 'center'}}>
         <View style={theme.modalContent}>
           <Image source={require('../../assets/happynote.png')} style={theme.modalImage}/>
           <Text style={[theme.textBoldItalic, {marginBottom: 10}]}>Submitted Successfully!</Text>
@@ -230,7 +232,14 @@ function CreatePracticeScreen({navigation}){
             <Text style={theme.buttonText}>Back to Home</Text>           
           </TouchableOpacity>
         </View>
-      </Modal>
+      </Modal> */}
+      <SuccessModal 
+        isModalVisible={isModalVisible} 
+        imageSource={require('../../assets/happynote.png')}
+        textMessage="Submitted Successfully!"
+        buttonText="Back to Home"
+        onButtonPress={handleModalButtonPress}
+      />
 
       {/* Submit button */}
       <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={submitHandler}>
@@ -238,7 +247,6 @@ function CreatePracticeScreen({navigation}){
       </TouchableOpacity>
 
       </ScrollView>
-
     )
 };
 export default CreatePracticeScreen;
