@@ -10,6 +10,7 @@ import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCache, clearCache } from '../../cacheSlice';
+import Modal from "react-native-modal";
 
 function CreatePracticeScreen({}){
     // const dispatch = useDispatch();
@@ -18,6 +19,12 @@ function CreatePracticeScreen({}){
     const [videos, setVideos] = useState([]);
     const [teacher, setTeacher] = useState({});
     const [loadingstates, setLoadingStates] = useState(false);
+
+    const [isModalVisible, setModalVisible] = useState(false);
+
+    const toggleModal = () => {
+      setModalVisible(!isModalVisible);
+    };
 
     useEffect(() => {
       const fetchTeacher = async () => {
@@ -71,25 +78,7 @@ function CreatePracticeScreen({}){
           return;
         }
 
-        // Fetch teacher using studentID
-
-        // try {
-        //   const response = await fetch(`${IP_ADDRESS}/teachers/student/${parsedData.userId}`, {
-        //       method: 'GET',
-        //   });
-            
-        //   if (!response.ok) {
-        //     const errorText = response.statusText || 'Unknown error occurred';
-        //     throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-        //   }
-        //   const responseData = await response.json();
-        //   setTeacher(responseData);
-        //   console.log('teacher', responseData);
-
-        // } catch (error) {
-        //   console.error('Error fetching teacher:', error);
-        //   Alert.alert('Error', `Failed to fetch teacher. ${error.response?.data?.message || 'Please try again.'}`);
-        // }
+       
 
         const formData = new FormData();
 
@@ -138,6 +127,7 @@ function CreatePracticeScreen({}){
             // dispatch(setCache({ key: 'practiceData', value: practiceData })); 
             // navigation.navigate('PracticeListStudentScreen');
             Alert.alert('Success', 'Practice created successfully!');
+            toggleModal();
         } catch (error) {
             console.error('Error recording practice:', error);
             Alert.alert('Error', `Failed to create practice. ${error.response?.data?.message || 'Please try again.'}`);
@@ -229,23 +219,22 @@ function CreatePracticeScreen({}){
                 </TouchableOpacity>
                 </View>
             </View>
-{/* 
-            <View style={styles.imageContainer}>
-                <View style={styles.imageWrapper}>
-                    <Video source={{ uri: videos[0].uri }} style={styles.image} />
-                    <TouchableOpacity onPress={removeVideo} style={styles.removeButton}>
-                        
-                        <Ionicons name="close-circle" size={24} color="red" />
-                    </TouchableOpacity>
-                </View>
-            </View> */}
           </>
         )}
-            {/* Submit button */}
-            <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={submitHandler}>
-                <Text style={styles.buttonText}>Submit Recording</Text>
-            </TouchableOpacity>
-            </ScrollView>
+
+      <Modal isVisible={isModalVisible}>
+        <View style={{ flex: 1 }}>
+          <Text>Hello!</Text>
+
+          <Button title="Hide modal" onPress={toggleModal} />
+        </View>
+      </Modal>
+
+      {/* Submit button */}
+      <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={submitHandler}>
+          <Text style={styles.buttonText}>Submit Recording</Text>
+      </TouchableOpacity>
+      </ScrollView>
 
     )
 };
