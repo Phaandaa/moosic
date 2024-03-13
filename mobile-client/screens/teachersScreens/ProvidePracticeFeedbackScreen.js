@@ -10,8 +10,9 @@ import InputBox from '../../components/ui/inputBox';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Colors from '../../constants/colors';
+import SuccessModal from '../../components/ui/SuccessModal';
 
-function ProvidePracticeFeedbackScreen({route}){
+function ProvidePracticeFeedbackScreen({route, navigation}){
     const {practiceID} = route.params;
     const [teacherFeedback, setTeacherFeedback] = useState('');
     const [points, setPoints] = useState('');
@@ -19,6 +20,13 @@ function ProvidePracticeFeedbackScreen({route}){
   
 
     const [videos, setVideos] = useState([]);
+
+    const [isModalVisible, setModalVisible] = useState(false);
+
+    const handleModalButtonPress = () => {
+      navigation.navigate('Home');
+      setModalVisible(false);
+    };
 
     const uploadVideo = async(mode) => {
         try {
@@ -125,7 +133,8 @@ function ProvidePracticeFeedbackScreen({route}){
       console.log(responseData);
       // dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
       // navigation.navigate('ViewCreatedAssignmentsScreen', { responseData });
-      Alert.alert('Success', 'Feedback added successfully!');
+      setModalVisible(true);
+
     } catch (error) {
       console.error('Error adding feedback:', error);
       Alert.alert('Error', `Failed to add feedback. ${error.response?.data?.message || 'Please try again.'}`);
@@ -185,6 +194,14 @@ function ProvidePracticeFeedbackScreen({route}){
             </View>
           </>
         )}
+
+      <SuccessModal 
+        isModalVisible={isModalVisible} 
+        imageSource={require('../../assets/happynote.png')}
+        textMessage="Feedback Added Successfully!"
+        buttonText="Back to Home"
+        onButtonPress={handleModalButtonPress}
+      />
 
         <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={submitHandler}>
           <Text style={styles.buttonText}>Submit Feedback</Text>

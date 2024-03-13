@@ -90,6 +90,20 @@ public class StudentController {
         }
     }
 
+    @Operation(summary = "Update student's avatar frame")
+    @PutMapping("/{studentId}/update-avatar-frame")
+    public ResponseEntity<String> updateStudentAvatarFrame(
+            @PathVariable String studentId,
+            @RequestParam String avatarFrame) {
+
+        try {
+            studentService.updateStudentAvatarFrame(studentId, avatarFrame);
+            return new ResponseEntity<>("Student's avatar frame updated successfully.", HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("Failed to update student's avatar frame: "+e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @Operation(summary = "Update student's information (grade, teacher, avatar)")
     @PutMapping("/{studentId}/update-info")
     public ResponseEntity<String> updateStudentInfo(

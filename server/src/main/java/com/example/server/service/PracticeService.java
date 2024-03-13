@@ -120,9 +120,7 @@ public class PracticeService {
             if (video != null && !video.isEmpty()) {;
                 String videoURL = cloudStorageService.uploadFileToGCS(video, "preactice");
                 practice.setFeedbackLinks(videoURL);
-            } else {
-                throw new IllegalArgumentException("Please updload files to submit assignment");
-            }
+            } 
             
             if (teacherFeedback == null || teacherFeedback == "") {
                 throw new IllegalArgumentException("Teacher feedback cannot be empty");

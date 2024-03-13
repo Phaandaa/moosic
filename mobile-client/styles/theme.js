@@ -46,6 +46,12 @@ const theme = StyleSheet.create({
     color: '#A1B2CF',
   
   },
+  textBoldItalic:{
+    fontSize: 20,
+    paddingVertical: 6,
+    fontWeight: 'bold',
+    fontStyle: 'italic'
+  },
   
   //component themes
   box:{
@@ -274,15 +280,15 @@ const theme = StyleSheet.create({
   },
   modalContent:{
     backgroundColor: 'white',
-    padding: 22,
+    padding: 25,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 4,
-    borderColor: 'rgba(0,0,0, 0.1)',
+    width: '90%',
+    borderRadius: 30,
+    borderColor: 'white',
   },
-  fullSizeImage: {
-    width:250,
-    height: 600,
+  modalImage:{
+    height: 200,
     resizeMode: 'contain'
   },
   inputOuterContainer:{

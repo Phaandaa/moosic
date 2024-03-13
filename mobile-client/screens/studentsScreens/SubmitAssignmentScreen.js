@@ -2,14 +2,13 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { TextInput, View, ScrollView, TouchableOpacity, Text, Button, Image, Alert, StyleSheet, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
-import StudentDropdown from '../../components/ui/StudentDropdown';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
 import { useDispatch } from 'react-redux';
 import { setCache } from '../../cacheSlice';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
+import SuccessModal from '../../components/ui/SuccessModal';
+import Colors from '../../constants/colors';
 
 function SubmitAssignmentScreen({ navigation, route }) {
   const {assignmentID} = route.params;
@@ -19,6 +18,14 @@ function SubmitAssignmentScreen({ navigation, route }) {
 
   const [images, setImages] = useState([]);
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
+
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const handleModalButtonPress = () => {
+    navigation.navigate('Home');
+    setModalVisible(false);
+  };
+
 
   const uploadImage = async (mode) => {
     let result = {};
@@ -153,8 +160,8 @@ function SubmitAssignmentScreen({ navigation, route }) {
       const responseData = await response.json();
       console.log(responseData);
       // dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
-      // navigation.navigate('ViewCreatedAssignmentsScreen', { responseData });
-      Alert.alert('Success', 'Assignment created successfully!');
+      setModalVisible(true);
+
     } catch (error) {
       console.error('Error creating assignment:', error);
       Alert.alert('Error', `Failed to create assignment. ${error.response?.data?.message || 'Please try again.'}`);
@@ -166,16 +173,6 @@ function SubmitAssignmentScreen({ navigation, route }) {
     <ScrollView style={styles.container}>
       <View style={styles.formContainer}>
         <Text style={styles.header}>Submit Assignment</Text>
-
-        {/* <View style={styles.inputContainer}>
-          <TextInput
-            placeholder="Add a Title"
-            value={assignmentName}
-            onChangeText={setAssignmentName}
-            style={styles.input}
-          />
-          {errors.assignmentName && <Text style={styles.errorText}>{errors.assignmentName}</Text>}
-        </View> */}
 
         <View style={styles.inputContainer}>
           <TextInput
@@ -190,14 +187,14 @@ function SubmitAssignmentScreen({ navigation, route }) {
         <View style={styles.uploadButtons}>
         <View style={styles.attachFilesSection}>
           <TouchableOpacity style={styles.attachButton} onPress={() => uploadImage('gallery')}>
-            <Ionicons name="images" size={24} color="#4664EA" />
+            <Ionicons name="images" size={24} color={Colors.mainPurple} />
             <Text style={styles.attachText}>Upload Image</Text>
           </TouchableOpacity>
         </View>
 
           <View style={styles.attachFilesSection}>
             <TouchableOpacity style={styles.attachButton} onPress={uploadDocument}>
-              <Ionicons name="attach" size={24} color="#4664EA" />
+              <Ionicons name="attach" size={24} color={Colors.mainPurple} />
               <Text style={styles.attachText}>Attach Files</Text>
             </TouchableOpacity>
           </View>
@@ -227,7 +224,7 @@ function SubmitAssignmentScreen({ navigation, route }) {
             <View style={styles.documentContainer}>
               {uploadedDocuments.map((doc, index) => (
                 <View key={index} style={styles.documentItem}>
-                  <Ionicons name="document-attach" size={24} color="#4F8EF7" />
+                  <Ionicons name="document-attach" size={24} color={Colors.mainPurple} />
                   <Text style={styles.documentName}>{doc.name}</Text>
                   <TouchableOpacity onPress={() => removeDocument(index)} style={styles.removeButton}>
                     <Ionicons name="close-circle" size={24} color="red" />
@@ -237,8 +234,15 @@ function SubmitAssignmentScreen({ navigation, route }) {
             </View>
           </>
         )}
-  
 
+        <SuccessModal 
+          isModalVisible={isModalVisible} 
+          imageSource={require('../../assets/happynote.png')}
+          textMessage="Submitted Successfully!"
+          buttonText="Back to Home"
+          onButtonPress={handleModalButtonPress}
+        />
+  
         <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={submitHandler}>
           <Text style={styles.buttonText}>Submit Assignment</Text>
         </TouchableOpacity>
@@ -299,23 +303,11 @@ const styles = StyleSheet.create({
   attachText: {
     marginLeft: 10,
     fontSize: 16,
-    color: '#4664EA',
+    color: Colors.mainPurple,
   },
   textArea: {
     minHeight: 100,
     textAlignVertical: 'top',
-  },
-  button: {
-    backgroundColor: '#4664EA',
-    padding: 15,
-    borderRadius: 15,
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   uploadButtons: {
     flexDirection: 'row',
@@ -397,9 +389,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#000000', // Black text for the date
   },
-  // Update existing button styles if necessary
   button: {
-    backgroundColor: '#4664EA',
+    backgroundColor: Colors.mainPurple,
     padding: 15,
     borderRadius: 15,
     alignItems: 'center',

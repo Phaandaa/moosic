@@ -11,7 +11,7 @@ import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Colors from '../../constants/colors';
-
+import SuccessModal from '../../components/ui/SuccessModal';
 
 function ProvideAssignmentFeedbackScreen({ navigation, route }) {
   const {assignmentID} = route.params;
@@ -23,6 +23,13 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
   const [images, setImages] = useState([]);
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
 
+
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const handleModalButtonPress = () => {
+    navigation.navigate('Home');
+    setModalVisible(false);
+  };
 
   const uploadImage = async (mode) => {
     let result = {};
@@ -158,8 +165,8 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
       const responseData = await response.json();
       console.log(responseData);
       // dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
-      // navigation.navigate('ViewCreatedAssignmentsScreen', { responseData });
-      Alert.alert('Success', 'Feedback added successfully!');
+      setModalVisible(true);
+
     } catch (error) {
       console.error('Error adding feedback:', error);
       Alert.alert('Error', `Failed to add feedback. ${error.response?.data?.message || 'Please try again.'}`);
@@ -252,6 +259,14 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
             </View>
           </>
         )}
+
+        <SuccessModal 
+          isModalVisible={isModalVisible} 
+          imageSource={require('../../assets/happynote.png')}
+          textMessage="Feedback Added Successfully!"
+          buttonText="Back to Home"
+          onButtonPress={handleModalButtonPress}
+        />
   
 
         <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={submitHandler}>

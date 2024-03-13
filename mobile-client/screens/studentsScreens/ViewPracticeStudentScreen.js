@@ -1,20 +1,15 @@
 import React, {useState, useEffect} from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert, Dimensions, Button, Linking} from 'react-native';
-import Modal from 'react-native-modal';
 import theme from '../../styles/theme';
-import { Audio, Video, ResizeMode} from 'expo-av';
 import { useSelector } from 'react-redux';
-import PracticeScreen from './CreatePracticeScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import { Ionicons } from '@expo/vector-icons';
+import trimDate from '../../components/ui/trimDate';
 
 const getFileNameFromUrl = (url) => {
     return url.split('/').pop().slice(37);
 };
-const trimDate = (date) => {
-    return date.slice(0, 10) + ' ' + date.slice(11, 16);
-}
 
 function ViewPracticeStudentScreen({route, navigation}){
     // const practiceData = useSelector(state => state.cache.practiceData);
@@ -35,7 +30,7 @@ function ViewPracticeStudentScreen({route, navigation}){
                             
                             <Text style={theme.cardTitle}>{practice.title}</Text>
                             <Text style={theme.cardText}>{practice.comment}</Text>
-                            <Text style={theme.cardText}>Created on: {trimDate(practice.submissionTimestamp)}</Text>
+                            <Text style={theme.cardTextSecondary}>Created on: {trimDate(practice.submissionTimestamp)}</Text>
 
                             {/* <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text> */}
                             {/* <Text style={theme.cardText}>Attachments:</Text> */}
@@ -52,10 +47,10 @@ function ViewPracticeStudentScreen({route, navigation}){
                         <View style={theme.card3}>
                             <View style={theme.cardTextContainer}>
                                 <View style={theme.oneRow}> 
-                                    <Text style={theme.cardTitlePink}>Feedback</Text>
+                                    <Text style={theme.cardTitlePurple}>Feedback</Text>
                                     {/* <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text> */}
                                     {/* <Text style={theme.cardText}>Attachments:</Text> */}
-                                        <View style={theme.smallPinkButton}>
+                                        <View style={theme.smallButton}>
                                             <Text style={theme.smallButtonText}>{practice.points} Points</Text>
                                         </View>
                                 </View>
@@ -79,65 +74,3 @@ function ViewPracticeStudentScreen({route, navigation}){
     );
 }
 export default ViewPracticeStudentScreen;
-
-const styles = StyleSheet.create({
-    card: {
-        backgroundColor: '#EE97BC',
-        padding: 20,
-        borderRadius: 15,
-        marginTop: 10, 
-        flexDirection: 'row',
-        justifyContent: 'space-between', // Align items on both ends
-        alignItems: 'center', // Center items vertically
-    },
-    cardTextContainer: {
-        flex: 1, // Take up as much space as possible
-        marginRight: 8, // Add some margin to the right of the text
-    },
-    cardText: {
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: 16,
-    },
-    buttonContainer: {
-        flexDirection: 'row',
-        // If you need space between buttons add justifyContent: 'space-between',
-    },
-    smallButton: {
-        backgroundColor: '#4664EA',
-        padding: 10,
-        borderRadius: 15,
-        marginLeft: 8, // Add some margin to separate the buttons
-    },
-    smallButtonText: {
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: 14,
-        textAlign: 'center',
-    },
-    centeredView: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 22,
-    },
-    modalView: {
-        margin: 20,
-        backgroundColor: "white",
-        borderRadius: 20,
-        padding: 25,
-        alignItems: "center",
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5
-    },
-    modalVideo: {
-        width: Dimensions.get('window').width * 0.8, // 80% of window width
-        height: Dimensions.get('window').height * 0.7
-    }
-})
