@@ -11,8 +11,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCache, clearCache } from '../../cacheSlice';
 import Modal from "react-native-modal";
-
-function CreatePracticeScreen({}){
+import Colors from '../../constants/colors';
+function CreatePracticeScreen({navigation}){
     // const dispatch = useDispatch();
     const [title, setTitle] = useState('');
     const [comment, setComment] = useState('');
@@ -126,7 +126,6 @@ function CreatePracticeScreen({}){
             console.log(responseData);
             // dispatch(setCache({ key: 'practiceData', value: practiceData })); 
             // navigation.navigate('PracticeListStudentScreen');
-            Alert.alert('Success', 'Practice created successfully!');
             toggleModal();
         } catch (error) {
             console.error('Error recording practice:', error);
@@ -191,7 +190,7 @@ function CreatePracticeScreen({}){
             {/* <View style={styles.uploadButtons}> */}
                 <View style={styles.attachFilesSection}>
                 <TouchableOpacity style={styles.attachButton} onPress={() => uploadVideo('gallery')}>
-                    <Ionicons name="images" size={24} color="#4664EA" />
+                    <Ionicons name="images" size={24} color={Colors.mainPurple} />
                     {videos.length === 0 ? (
                         <Text style={styles.attachText}>Upload Video</Text>
                     ) : (
@@ -222,11 +221,14 @@ function CreatePracticeScreen({}){
           </>
         )}
 
-      <Modal isVisible={isModalVisible}>
-        <View style={{ flex: 1 }}>
-          <Text>Hello!</Text>
+      <Modal isVisible={isModalVisible} style={{alignItems: 'center'}}>
+        <View style={theme.modalContent}>
+          <Image source={require('../../assets/happynote.png')} style={theme.modalImage}/>
+          <Text style={[theme.textBoldItalic, {marginBottom: 10}]}>Submitted Successfully!</Text>
 
-          <Button title="Hide modal" onPress={toggleModal} />
+          <TouchableOpacity onPress={() => navigation.navigate('Home')} style={theme.button}>     
+            <Text style={theme.buttonText}>Back to Home</Text>           
+          </TouchableOpacity>
         </View>
       </Modal>
 
@@ -234,6 +236,7 @@ function CreatePracticeScreen({}){
       <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={submitHandler}>
           <Text style={styles.buttonText}>Submit Recording</Text>
       </TouchableOpacity>
+
       </ScrollView>
 
     )
@@ -294,19 +297,12 @@ const styles = StyleSheet.create({
     attachText: {
       marginLeft: 10,
       fontSize: 16,
-      color: '#4664EA',
+      color: Colors.mainPurple,
       alignItems:'center'
     },
     textArea: {
       minHeight: 100,
       textAlignVertical: 'top',
-    },
-    button: {
-      backgroundColor: '#4664EA',
-      padding: 15,
-      borderRadius: 15,
-      alignItems: 'center',
-      marginBottom: 10,
     },
     buttonText: {
       color: '#ffffff',
@@ -366,36 +362,8 @@ const styles = StyleSheet.create({
     submitButton: {
       marginTop: 20,
     },
-    deadlineContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginBottom: 20,
-      padding: 10,
-      backgroundColor: '#F7F7F7', // Light gray background
-      borderRadius: 8,
-    },
-    dueDateLabel: {
-      fontSize: 16,
-      color: '#8E8E93', // Light gray text
-    },
-    dateDisplay: {
-      flex: 1,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginLeft: 10,
-      paddingVertical: 8,
-      paddingHorizontal: 12,
-      backgroundColor: '#FFFFFF', // White background for date display
-      borderRadius: 8,
-    },
-    dateText: {
-      fontSize: 16,
-      color: '#000000', // Black text for the date
-    },
-    // Update existing button styles if necessary
     button: {
-      backgroundColor: '#4664EA',
+      backgroundColor: Colors.mainPurple,
       padding: 15,
       borderRadius: 15,
       alignItems: 'center',
