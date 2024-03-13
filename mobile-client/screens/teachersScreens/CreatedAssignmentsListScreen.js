@@ -12,7 +12,11 @@ import { setCache } from '../../cacheSlice';
 import { useFocusEffect } from '@react-navigation/native';
 import Colors from '../../constants/colors';
 
-
+const trimDate = (date) => {
+    if(date){
+        return date.slice(0, 10) + ' ' + date.slice(11, 16);
+    }
+}
 function CreatedAssignmentsListScreen ({route, navigation}) {
     const dispatch = useDispatch();
     const cacheStudentID = useSelector(state => state.cache.studentID); // Assuming you have set up the Redux slice correctly
@@ -173,6 +177,8 @@ function CreatedAssignmentsListScreen ({route, navigation}) {
                         <View style={theme.cardTextContainer}>
                             <Text style={theme.cardTitle}>{assignment.title}</Text>
                             <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color={Colors.fontPrimary} /> {assignment.deadline}</Text>
+                            <Text style={theme.cardTextSecondary}>Created on: {trimDate(assignment.createdAtDate)}</Text>
+
                         </View>
                         <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('CreatedAssignmentDetailsScreen', { assignment: assignment })}>
                             <Text style={theme.smallButtonText}>View</Text>
