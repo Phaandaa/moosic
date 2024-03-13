@@ -11,6 +11,7 @@ import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Colors from '../../constants/colors';
+import SuccessModal from '../../components/ui/SuccessModal';
 
 
 function CreateAssignmentScreen({ navigation }) {
@@ -24,6 +25,13 @@ function CreateAssignmentScreen({ navigation }) {
 
   const [images, setImages] = useState([]);
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
+
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const handleModalButtonPress = () => {
+    navigation.navigate('Home');
+    setModalVisible(false);
+  };
 
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
@@ -189,12 +197,11 @@ function CreateAssignmentScreen({ navigation }) {
         throw new Error(`Request failed with status ${response.status}: ${errorText}`);
       }
       
-
       const responseData = await response.json();
       console.log(responseData);
       dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
-      navigation.navigate('Home');
-      Alert.alert('Success', 'Assignment created successfully!');
+      setModalVisible(true);
+
     } catch (error) {
       console.error('Error creating assignment:', error);
       Alert.alert('Error', `Failed to create assignment. ${error.response?.data?.message || 'Please try again.'}`);
@@ -297,9 +304,15 @@ function CreateAssignmentScreen({ navigation }) {
           </>
         )}
 
+        <StudentDropdown onSelectionChange={handleStudentSelectionChange} style={styles.dropdown} />
 
-<StudentDropdown onSelectionChange={handleStudentSelectionChange} style={styles.dropdown} />
-  
+      <SuccessModal 
+        isModalVisible={isModalVisible} 
+        imageSource={require('../../assets/happynote.png')}
+        textMessage="Created Successfully!"
+        buttonText="Back to Home"
+        onButtonPress={handleModalButtonPress}
+      />
 
         <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={submitHandler}>
           <Text style={styles.buttonText}>Create Assignment</Text>

@@ -10,10 +10,12 @@ import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import theme from '../../styles/theme';
 import Colors from '../../constants/colors';
+import SuccessModal from '../../components/ui/SuccessModal';
 
 const getFileNameFromUrl = (url) => {
   return url.split('/').pop().slice(37);
 };
+
 function EditAssignmentScreen({ route, navigation }) {
   const { assignment } = route.params;
 
@@ -26,6 +28,14 @@ function EditAssignmentScreen({ route, navigation }) {
 
   const [images, setImages] = useState([]);
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
+
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const handleModalButtonPress = () => {
+    navigation.navigate('Home');
+    setModalVisible(false);
+  };
+
 
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
@@ -190,8 +200,8 @@ function EditAssignmentScreen({ route, navigation }) {
       const responseData = await response.json();
       console.log(responseData);
       dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
-      navigation.navigate('Home');
-      Alert.alert('Success', 'Assignment edited successfully!');
+      setModalVisible(true);
+
     } catch (error) {
       console.error('Error editing assignment:', error);
       Alert.alert('Error', `Failed to edit assignment. ${error.response?.data?.message || 'Please try again.'}`);
@@ -203,16 +213,6 @@ function EditAssignmentScreen({ route, navigation }) {
     <ScrollView style={styles.container}>
       <View style={styles.formContainer}>
         <Text style={styles.header}>Edit Assignment</Text>
-{/* 
-        <View style={styles.inputContainer}>
-          <TextInput
-            placeholder="Add a Title"
-            value={assignmentName}
-            onChangeText={setAssignmentName}
-            style={styles.input}
-          />
-          {errors.assignmentName && <Text style={styles.errorText}>{errors.assignmentName}</Text>}
-        </View> */}
 
         <Text style={theme.cardTitle}>{assignment.title}</Text>
 
@@ -304,10 +304,15 @@ function EditAssignmentScreen({ route, navigation }) {
           </>
         )}
 
-
 {/* <StudentDropdown onSelectionChange={handleStudentSelectionChange} style={styles.dropdown} /> */}
+      <SuccessModal 
+        isModalVisible={isModalVisible} 
+        imageSource={require('../../assets/happynote.png')}
+        textMessage="Edited Successfully!"
+        buttonText="Back to Home"
+        onButtonPress={handleModalButtonPress}
+      />
   
-
         <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={submitHandler}>
           <Text style={styles.buttonText}>Edit Assignment</Text>
         </TouchableOpacity>
