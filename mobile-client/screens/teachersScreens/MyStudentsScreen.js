@@ -102,10 +102,10 @@ function MyStudentsScreen({ navigation }) {
                             <View key={index} style={styles.card}>
                                 <Text style={theme.cardTextBold}>{student.name || "Unnamed Student"}</Text>
                                 <View style={theme.buttonContainer}>
-                                    <TouchableOpacity style={theme.smallButtonLeftMarginBlue} onPress={() => navigation.navigate('PracticeListTeacherScreen', { studentID: student.id })}>
+                                    <TouchableOpacity style={theme.smallButtonLeftMarginBlue} onPress={() => navigation.navigate('PracticeListTeacherScreen', { studentID: student.id, studentName: student.name })}>
                                         <Text style={theme.smallButtonText}>Practice</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={theme.smallButtonLeftMargin} onPress={() => navigation.navigate('CreatedAssignmentsListScreen', { studentID: student.id })}>
+                                    <TouchableOpacity style={theme.smallButtonLeftMargin} onPress={() => navigation.navigate('CreatedAssignmentsListScreen', { studentID: student.id, studentName: student.name })}>
                                         <Text style={theme.smallButtonText}>Assignments</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={theme.smallButtonLeftMarginGreen} onPress={() => navigation.navigate('CreateGoalsForStudents', { studentID: student.id, studentName: student.name })}>

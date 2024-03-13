@@ -16,19 +16,31 @@ import Colors from '../../constants/colors';
 function CreatedAssignmentsListScreen ({route, navigation}) {
     const dispatch = useDispatch();
     const cacheStudentID = useSelector(state => state.cache.studentID); // Assuming you have set up the Redux slice correctly
+    const cacheStudentName = useSelector(state => state.cache.studentID); // Assuming you have set up the Redux slice correctly
 
     const [teacherID, setTeacherID] = useState('');
     const [studentID, setStudentID] = useState(cacheStudentID || '');
+    const [studentName, setStudentName] = useState(cacheStudentName || '');
+
 
     const updateStudentIDCache = async (newStudentID) => {
         dispatch(setCache({ key: 'studentID', value: newStudentID }));
         await AsyncStorage.setItem('studentID', JSON.stringify(newStudentID));
     };
 
+    const updateStudentNameCache = async (newStudentName) => {
+        dispatch(setCache({ key: 'studentName', value: newStudentName }));
+        await AsyncStorage.setItem('studentName', JSON.stringify(newStudentName));
+    };
+
     useEffect(() => {
         if (route.params?.studentID && route.params.studentID !== studentID) {
             setStudentID(route.params.studentID);
             updateStudentIDCache(route.params.studentID);
+        }
+        if (route.params?.studentName && route.params.studentName !== studentName) {
+            setStudentName(route.params.studentName);
+            updateStudentNameCache(route.params.studentName);
         }
     }, [route.params]);
 
@@ -50,8 +62,15 @@ function CreatedAssignmentsListScreen ({route, navigation}) {
                         }
 
                         const responseData = await response.json();
-                        setAssignmentData(responseData); // Set the state with the response data
-                        setSearchResults(responseData); // Assuming you also want to filter
+                        // Sort assignments by deadline in descending order
+                        const sortedData = responseData.sort((a, b) => {
+                            // Assuming the deadline is in a format that can be directly compared, like 'YYYY-MM-DD'
+                            // If the date format is different, you may need to parse it to a Date object first
+                            return new Date(b.createdAtDate) - new Date(a.createdAtDate);
+                        });
+
+                        setAssignmentData(sortedData); // Set the state with the response data
+                        setSearchResults(sortedData); // Assuming you also want to filter
                     } catch (error) {
                         console.error('Error fetching assignments:', error);
                     }
@@ -140,10 +159,14 @@ function CreatedAssignmentsListScreen ({route, navigation}) {
     };
     
     return (
-        <ScrollView style={theme.container}>
+        <View style={theme.container}>
             {/* <Text style={[theme.textTitle, { marginTop: 50, verticalAlign: 'middle' }]}>Your Assignments</Text> */}
                     {/* Search bar */}
-            <AssignmentSearchBar onSearch={handleSearch} />
+            <View style={{marginBottom: 10}}>
+                <Text style={theme.cardTitle}>Assignments for {studentName}</Text>
+                <AssignmentSearchBar onSearch={handleSearch} />
+            </View>
+            <ScrollView>
             {searchResults.length > 0 ? ( // Use searchResults here
                 searchResults.map((assignment, index) => (
                     <TouchableOpacity key={index} style={theme.card2} onPress={() => navigation.navigate('CreatedAssignmentDetailsScreen', { assignment: assignment })}>
@@ -160,8 +183,9 @@ function CreatedAssignmentsListScreen ({route, navigation}) {
                 <View style={theme.card2}>
                   <Text>No assignments found.</Text>
                 </View>
-              )}
-        </ScrollView>
+            )}
+            </ScrollView>
+        </View>
     );
 }
 
