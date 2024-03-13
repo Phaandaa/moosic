@@ -143,7 +143,7 @@ public class UserService {
         try {
             String instrument = userDTO.getInfo().get("instrument");
             String grade = userDTO.getInfo().get("grade");
-            Student newStudent = new Student(id, name, email, 0, null, new ArrayList<>(), instrument, grade, null,null);
+            Student newStudent = new Student(id, name, email, 0, null, new ArrayList<>(), instrument, grade, null,null, null);
             studentRepository.save(newStudent);
             Goal newGoal = new Goal(id, name, null, 0, 0, 3, 1, "Not done", 20, false);
             goalRepository.save(newGoal);

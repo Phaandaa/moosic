@@ -17,13 +17,15 @@ public class Student extends User{
     private String instrument;
     private String grade;
     private String avatar;
+    private String avatarFrame;
     private String teacherName;
+
 
     public Student() {
 
     }
 
-    public Student(String id, String name, String email, Integer pointsCounter, String teacherId, ArrayList<String> purchaseHistory, String instrument, String grade, String avatar, String teacherName) {
+    public Student(String id, String name, String email, Integer pointsCounter, String teacherId, ArrayList<String> purchaseHistory, String instrument, String grade, String avatar, String teacherName, String avatarFrame) {
         super(id, name, email, "Student");
         this.pointsCounter = pointsCounter;
         this.teacherId = teacherId;
@@ -32,6 +34,7 @@ public class Student extends User{
         this.grade = grade;
         this.avatar = avatar;
         this.teacherName = teacherName;
+        this.avatarFrame = avatarFrame;
     }
 
     public void deductPoints(Integer pointAmount) {
