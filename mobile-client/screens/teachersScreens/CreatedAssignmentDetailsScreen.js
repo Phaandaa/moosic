@@ -3,16 +3,11 @@ import { View, ScrollView, TouchableOpacity, Text, Button, Image, Alert, Linking
 import theme from '../../styles/theme';
 import { Ionicons } from '@expo/vector-icons';
 import IP_ADDRESS from '../../constants/ip_address_temp';
+import trimDate from '../../components/ui/trimDate';
 
 const getFileNameFromUrl = (url) => {
     return url.split('/').pop().slice(37);
 };
-
-const trimDate = (date) => {
-    if(date){
-        return date.slice(0, 10) + ' ' + date.slice(11, 16);
-    }
-}
 
 function CreatedAssignmentDetailsScreen({route, navigation}) {
     const { assignment } = route.params;

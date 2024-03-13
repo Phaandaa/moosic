@@ -11,12 +11,8 @@ import { useDispatch } from 'react-redux';
 import { setCache } from '../../cacheSlice';
 import { useFocusEffect } from '@react-navigation/native';
 import Colors from '../../constants/colors';
+import trimDate from '../../components/ui/trimDate';
 
-const trimDate = (date) => {
-    if(date){
-        return date.slice(0, 10) + ' ' + date.slice(11, 16);
-    }
-}
 function CreatedAssignmentsListScreen ({route, navigation}) {
     const dispatch = useDispatch();
     const cacheStudentID = useSelector(state => state.cache.studentID); // Assuming you have set up the Redux slice correctly

@@ -4,12 +4,8 @@ import theme from '../../styles/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import AssignmentSearchBar from '../../components/ui/assignmentSearchBar';
+import trimDate from '../../components/ui/trimDate';
 
-const trimDate = (date) => {
-    if(date){
-        return date.slice(0, 10) + ' ' + date.slice(11, 16);
-    }
-}
 function PracticeListTeacherScreen({route, navigation}){
     const { studentID, studentName }  = route.params;
 

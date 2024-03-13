@@ -10,7 +10,6 @@ import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCache, clearCache } from '../../cacheSlice';
-import Modal from "react-native-modal";
 import Colors from '../../constants/colors';
 import SuccessModal from '../../components/ui/SuccessModal';
 function CreatePracticeScreen({navigation}){
@@ -223,16 +222,6 @@ function CreatePracticeScreen({navigation}){
           </>
         )}
 
-      {/* <Modal isVisible={isModalVisible} style={{alignItems: 'center'}}>
-        <View style={theme.modalContent}>
-          <Image source={require('../../assets/happynote.png')} style={theme.modalImage}/>
-          <Text style={[theme.textBoldItalic, {marginBottom: 10}]}>Submitted Successfully!</Text>
-
-          <TouchableOpacity onPress={() => navigation.navigate('Home')} style={theme.button}>     
-            <Text style={theme.buttonText}>Back to Home</Text>           
-          </TouchableOpacity>
-        </View>
-      </Modal> */}
       <SuccessModal 
         isModalVisible={isModalVisible} 
         imageSource={require('../../assets/happynote.png')}
