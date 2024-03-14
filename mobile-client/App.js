@@ -50,6 +50,15 @@ import store from './store';
 import { AuthProvider, useAuth } from './context/Authcontext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => {
+    return {
+      shouldPlaySound: false,
+      shouldSetBadge: false,
+      shouldShowAlert: true,
+    };
+  },
+});
 
 
 const Stack = createNativeStackNavigator();
@@ -235,10 +244,6 @@ const RootNavigator = () => {
           const parsedData = JSON.parse(storedData);
           setUserRole(parsedData.role); // Set user role based on fetched data
         }
-        token = await Notifications.getExpoPushTokenAsync({
-          projectId: Constants.expoConfig.extra.eas.projectId,
-        });
-        console.log(token);
       } catch (error) {
         console.error('Error retrieving data from AsyncStorage', error);
       } finally {
