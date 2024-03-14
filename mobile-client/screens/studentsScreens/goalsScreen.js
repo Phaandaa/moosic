@@ -154,11 +154,7 @@ const GoalsScreen = () => {
       
         <View style={styles.container}>
           <Text style={[theme.textTitle, {marginTop: 50, marginHorizontal: 15}]}>Your Goals</Text>  
-          <View style={[styles.balanceContainer, { backgroundColor: '#007AFF', overflow: 'hidden', position: 'relative'}]}>
-            <Ionicons name="trophy" size={170} color='#FFFFFF' style={{ position: 'absolute', bottom: 0, right: 0 }} />
-            <Text style={styles.balanceText}>Your Points</Text>
-            <Text style={styles.pointsIndicator}>{points}</Text>
-          </View>
+          
 
           {isGoalsSet ? (
               <CurrentGoals
@@ -171,6 +167,12 @@ const GoalsScreen = () => {
           ) : (
               <Text style={styles.createGoalPrompt}>Aim High, Start your Goals!</Text>
           )}
+
+          <View style={[styles.balanceContainer, { backgroundColor: '#007AFF', overflow: 'hidden', position: 'relative'}]}>
+            <Ionicons name="trophy" size={180} color='#FFFFFF' style={{ position: 'absolute', bottom: 0, right: 0 }} />
+            <Text style={styles.balanceText}>Your Points</Text>
+            <Text style={styles.pointsIndicator}>{points}</Text>
+          </View>
 
           <FlatList
             data={pointsLog}
@@ -346,7 +348,7 @@ progressTrack: {
 },
 
 progressBar: {
-    backgroundColor: '#007AFF',
+    backgroundColor: 'lightgreen', // Primary color for the filled track
     height: '100%',
     borderRadius: 20,
     minWidth: 20, // Minimum visibility
