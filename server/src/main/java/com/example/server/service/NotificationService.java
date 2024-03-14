@@ -28,7 +28,7 @@ public class NotificationService {
 
     public String testPublishMessage() {
         try {
-            NotificationDTO message = new NotificationDTO("123456darispringboot", "hallo", "tess");
+            NotificationDTO message = new NotificationDTO("ExponentPushToken[L3WY0TPGfFql4zg4d_EQ4O]", "hallo", "tess");
             String jsonString = objectMapper.writeValueAsString(message);
             pubSubTemplate.publish(this.topicName, jsonString);
             return "Ok";

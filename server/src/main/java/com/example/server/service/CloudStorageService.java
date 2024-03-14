@@ -1,7 +1,5 @@
 package com.example.server.service;
 
-import com.google.cloud.spring.storage.GoogleStorageLocation;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
@@ -10,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -18,8 +15,8 @@ import java.util.UUID;
 @Service
 public class CloudStorageService {
 
-    private String gcsBucket; // Your GCS bucket URL from application.properties
-
+    private String gcsBucket;
+    
     private final ResourceLoader resourceLoader;
 
     @Autowired
