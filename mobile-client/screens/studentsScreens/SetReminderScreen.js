@@ -13,6 +13,7 @@ import Colors from '../../constants/colors';
 import SuccessModal from '../../components/ui/SuccessModal';
 import * as Notifications from 'expo-notifications';
 import { format } from 'date-fns';
+import theme from '../../styles/theme';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => {
@@ -45,7 +46,7 @@ const allowsNotificationsAsync = async () => {
   };
   //// END: NEWLY ADDED FUNCTIONS ////
 
-function SetReminderScreen(){
+function SetReminderScreen({navigation}){
     useEffect(() => {
         const subscription1 = Notifications.addNotificationReceivedListener((notification)=> {
             console.log('NOTIF RECEIVED');
@@ -66,9 +67,16 @@ function SetReminderScreen(){
     }, []);
 
     const dispatch = useDispatch();
-    const [frequency, setFrequency] = useState('');
+    const [frequency, setFrequency] = useState(1);
     const [notificationTime, setNotificationTime] = useState('');
     const [errors, setErrors] = useState({});
+
+    const [isModalVisible, setModalVisible] = useState(false);
+
+    const handleModalButtonPress = () => {
+      navigation.navigate('Home');
+      setModalVisible(false);
+    };
 
     const [time, setTime] = useState(new Date());
     const [showPicker, setShowPicker] = useState(false);
@@ -131,17 +139,16 @@ function SetReminderScreen(){
             repeats: true // Note: This might not precisely match the user-defined frequency for iOS
         };
         
-    
-
         // Schedule the notification
         await Notifications.scheduleNotificationAsync({
             content: {
-                title: "Custom Reminder",
-                body: "This is your custom scheduled reminder.",
+                title: "🎵 Tune Time 🎵",
+                body: "Grab your instrument & let the fun begin 🤪",
                 data: { withSome: "data" },
             },
             trigger,
         });      
+        setModalVisible(true); 
         // Due to limitations in setting custom frequencies, especially for iOS,
         // you might need to manually reschedule the notification upon receipt
         // to accurately adhere to the user-defined frequency.
@@ -152,15 +159,54 @@ function SetReminderScreen(){
         <View style={styles.formContainer}>
             <Text style={styles.header}>Schedule Practice Reminder</Text>
 
-            <View style={styles.inputContainer}>
+            {/* <View style={styles.inputContainer}>
             <TextInput
                 placeholder="Frequency"
                 value={frequency}
                 onChangeText={setFrequency}
                 style={styles.input}
             />
-            {errors.assignmentName && <Text style={styles.errorText}>{errors.assignmentName}</Text>}
+            {errors.frequency && <Text style={styles.errorText}>{errors.frequency}</Text>}
+            </View> */}
+            <View style={styles.deadlineContainer}>
+              <Text style={styles.dueDateLabel}>Frequency (days)</Text>
+              <View style={styles.counterDisplay}>
+                  <View style={styles.counter}>
+                      <TouchableOpacity
+                        onPress={() => setFrequency(Math.max(0, frequency - 1))}>
+                        <Ionicons name="remove-circle" size={40} color={Colors.mainPurple}/>
+                      </TouchableOpacity>
+                      <View style={styles.countDisplay}>
+                        <Text style={styles.counterText}>{frequency}</Text>
+                      </View>
+                      <TouchableOpacity
+                        onPress={() => setFrequency(frequency + 1)}>
+                        <Ionicons name="add-circle" size={40} color={Colors.mainPurple}/>
+                      </TouchableOpacity>
+                  </View>
+              </View>
             </View>
+
+
+            {/* COUNTER */}
+            {/* <View style={styles.goalCounterContainer}>
+              <Text style={styles.label}>Frequency (days)</Text>
+              <View style={styles.counter}>
+                <TouchableOpacity
+                  style={styles.counterButton}
+                  onPress={() => setFrequency(Math.max(0, frequency - 1))}>
+                  <Text style={styles.counterButtonText}>-</Text>
+                </TouchableOpacity>
+                <View style={styles.countDisplay}>
+                  <Text style={styles.counterText}>{frequency}</Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.counterButton}
+                  onPress={() => setFrequency(frequency + 1)}>
+                  <Text style={styles.counterButtonText}>+</Text>
+                </TouchableOpacity>
+              </View>
+            </View> */}
             
             <View style={styles.deadlineContainer}>
             <Text style={styles.dueDateLabel}>Time</Text>
@@ -179,9 +225,22 @@ function SetReminderScreen(){
             />
             )}
 
+            <View style={{alignItems: 'center'}}>
+              <Image source={require('../../assets/musicclock.png')}/>
+            </View>
+
+            <SuccessModal 
+              isModalVisible={isModalVisible} 
+              imageSource={require('../../assets/musicclock.png')}
+              textMessage= {`Practice reminder is set for every ${frequency} day(s) at ${notificationTime}.`}
+              buttonText="Back to Home"
+              onButtonPress={handleModalButtonPress}
+            />
+
             <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={() => scheduleUserDefinedNotification(time, parseInt(frequency, 10))}>
-            <Text style={styles.buttonText}>Schedule Notification</Text>
+              <Text style={styles.buttonText}>Schedule Reminder</Text>
             </TouchableOpacity>
+
         </View>
         </ScrollView>
     );
@@ -209,7 +268,8 @@ const styles = StyleSheet.create({
     header: {
       fontSize: 22,
       fontWeight: 'bold',
-      marginBottom: 20,
+      marginTop: 20,
+      marginBottom: 40,
       color: Colors.fontPrimary,
     },
     inputContainer: {
@@ -343,5 +403,39 @@ const styles = StyleSheet.create({
       color: '#ffffff',
       fontSize: 16,
       fontWeight: 'bold',
+    },
+    goalCounterContainer: {
+      alignItems: 'center',
+      marginBottom: 20
+    },
+    counter: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    countDisplay: {
+      paddingVertical: 6,
+      paddingHorizontal: 15,
+      borderWidth: 1,
+      borderColor: 'lightgrey',
+      borderRadius: 5,
+      margin: 5,
+    },
+    counterText: {
+      fontSize: 25,
+    },
+    label: {
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
+    counterDisplay: {
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'center', // Center children along the main axis
+      alignItems: 'center', // Center children along the cross axis
+      marginLeft: 10,
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      backgroundColor: '#FFFFFF', // White background for date display
+      borderRadius: 8,
     },
 });
