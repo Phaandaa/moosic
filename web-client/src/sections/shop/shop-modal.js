@@ -32,7 +32,7 @@ export const ItemDetailModal = ({
   triggerSnackbar,
   onEditItem,
 }) => {
-  const [studentId, setStudentId] = React.useState("");
+  const [studentEmail, setStudentEmail] = React.useState("");
   const [disabled, setDisabled] = React.useState(true);
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -66,6 +66,10 @@ export const ItemDetailModal = ({
 
   const handleDescriptionChange = (event) => {
     setDescription(event.target.value);
+  };
+
+  const handleStudentEmailChange = (event) => {
+    setStudentEmail(event.target.value);
   };
 
   const handleUploadImage = async () => {
@@ -292,10 +296,11 @@ export const ItemDetailModal = ({
               <DialogContentText sx={{ my: 2 }}>Redeem Points</DialogContentText>
               <Box display={"flex"} justifyContent={"space-between"}>
                 <TextField
-                  id="stu-id"
-                  label="Student ID"
-                  value={studentId}
+                  id="stu-email"
+                  label="Student Email"
+                  value={studentEmail}
                   sx={{ flexGrow: 1, mr: 2 }}
+                  onChange={handleStudentEmailChange}
                 />
                 <Button variant="contained" color="success">
                   Redeem Points

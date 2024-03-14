@@ -91,11 +91,12 @@ export default function AddItem({ onAddItem }) {
         formData.append("reward-shop-item", JSON.stringify(newItem));
         console.log("formData", formData.get("files"), formData.get("reward-shop-item"));
         const response = await postAsync('reward-shop/create/with-image', formData, null, true);
+        const data = await response.json();
         if (!response.ok) {
           console.error("Server error:", response.status, response.statusText);
           throw new Error("Server error");
         }
-        onAddItem(newItem); // Call the callback function to update the student list
+        onAddItem(data); // Call the callback function to update the student list
         console.log("Form submitted successfully");
         setSnackbarMessage("Item added successfully!");
         setSnackbarSeverity("success");
