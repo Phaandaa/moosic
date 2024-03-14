@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoadingScreen from './components/ui/loadingstate';
 import { Ionicons } from '@expo/vector-icons';
+import * as Notifications from 'expo-notifications';
 
 // Pages
 import LoginPage from './screens/login';
@@ -12,7 +13,6 @@ import HomeScreen from './screens/home';
 import ProfileScreen from './screens/profilepage';
 import NotificationsScreen from './screens/notificationspage';
 import CustomTabBarButton from './components/navbar/CustomTabBarButton';
-
 
 //Student Pages
 import GoalsScreen from './screens/studentsScreens/goalsScreen';
@@ -24,6 +24,7 @@ import SubmitAssignmentScreen from './screens/studentsScreens/SubmitAssignmentSc
 import AssignmentListScreen from  './screens/studentsScreens/AssignmentListScreen';
 import PracticeListStudentScreen from './screens/studentsScreens/PracticeListStudentScreen';
 import RewardsShopScreen from './screens/studentsScreens/RewardsShopScreen';
+import SetReminderScreen from './screens/studentsScreens/SetReminderScreen';
 
 //Teacher Pages
 import CreateAssignmentScreen from './screens/teachersScreens/CreateAssignmentScreen';
@@ -168,6 +169,7 @@ function TeacherTabs() {
 }
 
 const App = () => {
+    
   return (
     <AuthProvider>
       <Provider store={store}>
@@ -223,6 +225,7 @@ const RootNavigator = () => {
           <Stack.Screen name="PracticeListStudentScreen" component={PracticeListStudentScreen} options={{ title: 'My Practice Log' }} />
           <Stack.Screen name="ViewPracticeStudentScreen" component={ViewPracticeStudentScreen} options={{ title: 'My Practice Details' }} />
           <Stack.Screen name="RewardsShopScreen" component={RewardsShopScreen} options={{ title: 'Rewards Shop' }} />
+          <Stack.Screen name="SetReminderScreen" component={SetReminderScreen} options={{ title: 'Set Practice Reminder' }} />
 
           </>
         ) : (
