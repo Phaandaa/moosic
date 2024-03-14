@@ -12,13 +12,14 @@ const { width } = Dimensions.get('window');
 const HomeScreen = ({ navigation }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [userRole, setUserRole] = useState('');
+  const [user, setUser] = useState({}); 
 
   const checkStoredData = async () => {
     try {
       const storedData = await AsyncStorage.getItem('authData');
       if (storedData !== null) {
         const parsedData = JSON.parse(storedData);
-        return parsedData.role;
+        return parsedData;
       }
     } catch (error) {
       console.error('Error retrieving data from AsyncStorage', error);
@@ -29,8 +30,9 @@ const HomeScreen = ({ navigation }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const role = await checkStoredData();
-        setUserRole(role);
+        const userData = await checkStoredData();
+        setUserRole(userData.role);
+        setUser(userData);
       } catch (error) {
         console.error('Error processing stored data', error);
       }
@@ -79,7 +81,7 @@ const HomeScreen = ({ navigation }) => {
       {/* Search bar */}
       <Header />
       
-      <Text style={[theme.textTitle, {marginTop: 10}]}> Welcome!</Text>
+      <Text style={[theme.textTitle, {marginTop: 10}]}> Welcome {} </Text>
 
       {/* Display modules or search results */}
       <FlatList
