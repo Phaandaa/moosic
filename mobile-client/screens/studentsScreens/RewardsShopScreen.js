@@ -16,6 +16,7 @@ import IP_ADDRESS from "../../constants/ip_address_temp";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "../../constants/colors";
 import RewardsCategoryDropdown1 from "../../components/ui/RewardsCategoryDropdown1";
+import theme from "../../styles/theme";
 
 // Dimensions to calculate the window width
 const { width } = Dimensions.get("window");
@@ -168,6 +169,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   headerButtons: {
+    marginTop: 30,
     flexDirection: "column",
     justifyContent: "space-between",
   },
