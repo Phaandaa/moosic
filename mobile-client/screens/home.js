@@ -27,18 +27,35 @@ const HomeScreen = ({ navigation }) => {
     return '';
   };
 
+  const checkStoredUserData = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem('userData');
+      if (storedData !== null) {
+        const parsedData = JSON.parse(storedData);
+        return parsedData;
+      }
+    } catch (error) {
+      console.error('Error retrieving data from AsyncStorage', error);
+    }
+    return '';
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const userData = await checkStoredData();
+        const user = await checkStoredUserData();
         setUserRole(userData.role);
-        setUser(userData);
+        setUser(user);
       } catch (error) {
         console.error('Error processing stored data', error);
       }
     };
     fetchData();
   }, []);
+
+  console.log(user.pointsCounter);
+  console.log(user);
 
   const teacherModules = [
     { id: 'assignment', color: '#466CFF', title: 'Assignment', subtitle: 'Create an assignment', iconName: 'musical-notes', navigationPage: 'CreateAssignmentScreen', iconColor: 'white', buttonText: 'Create' },
@@ -48,10 +65,10 @@ const HomeScreen = ({ navigation }) => {
   ];
 
   const studentModules = [
-    { id: 'practice', color: '#EE97BC', title: 'Practice', subtitle: 'Record My Practice Sessions', iconName: 'musical-notes', navigationPage: 'CreatePracticeScreen', iconColor: 'white', buttonText: 'View' },
+    // { id: 'practice', color: '#EE97BC', title: 'Practice', subtitle: 'Record My Practice Sessions', iconName: 'musical-notes', navigationPage: 'CreatePracticeScreen', iconColor: 'white', buttonText: 'View' },
     { id: 'assignments', color: '#466CFF', title: 'Assignments', subtitle: 'View My Assignments', iconName: 'people', navigationPage: 'AssignmentListScreen', iconColor: 'white', buttonText: 'View' },
     { id: 'practicelog', color: '#EE97BC', title: 'Practice Log', subtitle: 'View My Practice Sessions', iconName: 'musical-notes', navigationPage: 'PracticeListStudentScreen', iconColor: 'white', buttonText: 'View' },
-    { id: 'rewardsshop', color: '#466CFF', title: 'Rewards Shop', subtitle: 'Rewards Shop', iconName: 'people', navigationPage: 'RewardsShopScreen', iconColor: 'white', buttonText: 'View' },
+    // { id: 'rewardsshop', color: '#466CFF', title: 'Rewards Shop', subtitle: 'Rewards Shop', iconName: 'people', navigationPage: 'RewardsShopScreen', iconColor: 'white', buttonText: 'View' },
 
     // Add more modules specific to student
   ];
@@ -81,8 +98,10 @@ const HomeScreen = ({ navigation }) => {
       {/* Search bar */}
       <Header />
       
-      <Text style={[theme.textTitle, {marginTop: 10}]}> Welcome {} </Text>
-
+      <Text style={[theme.textTitle, {marginTop: 10}]}> Welcome, {user?.name?.split(" ")[0]}! </Text>
+      {userRole === 'Student' && (
+        <Text style={[theme.textBody, {marginTop: 10, marginBottom: 10}]}> Your current points: {user?.pointsCounter ? user.pointsCounter : 0} </Text>
+      )}
       {/* Display modules or search results */}
       <FlatList
         data={searchResults.length > 0 ? searchResults : modules}

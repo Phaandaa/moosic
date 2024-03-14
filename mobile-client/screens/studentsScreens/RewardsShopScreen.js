@@ -17,6 +17,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Colors from "../../constants/colors";
 import RewardsCategoryDropdown1 from "../../components/ui/RewardsCategoryDropdown1";
 import theme from "../../styles/theme";
+import ConfirmPurchaseModal from "../../components/ui/confirmPurchaseModal";
 
 // Dimensions to calculate the window width
 const { width } = Dimensions.get("window");
@@ -27,6 +28,8 @@ function RewardsShopScreen() {
   const [filteredResults, setFilteredResults] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -74,14 +77,14 @@ function RewardsShopScreen() {
 
     // Filter by search text
     if (searchText) {
-      result = result.filter(item =>
+      result = result.filter((item) =>
         item.description.toLowerCase().includes(searchText.toLowerCase())
       );
     }
 
     // Filter by selected categories
     if (selectedCategories.length > 0) {
-      result = result.filter(item =>
+      result = result.filter((item) =>
         selectedCategories.includes(item.type.toLowerCase())
       );
     }
@@ -93,9 +96,66 @@ function RewardsShopScreen() {
     setSearchText(text);
   };
 
-  const ShopItem = ({ description, points, type, imageLink }) => {
+  const handlePressPurchase = (item) => {
+    setSelectedItem(item); // Set the selected item
+    setModalVisible(true); // Show confirmation modal
+  };
+
+  const handleConfirmPurchase = async () => {
+    if (!selectedItem || !userData.id) return;
+
+    try {
+      const response = await fetch(
+        `${IP_ADDRESS}/reward-shop/digital/${selectedItem.id}?student_id=${userData.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        // If the server response is not ok, throw an error
+        const errorText =
+          (await response.text()) || "An unknown error occurred";
+        throw new Error(
+          `Request failed with status ${response.status}: ${errorText}`
+        );
+      }
+
+      // Parse the JSON response from the server
+      const updatedItem = await response.json();
+
+      // Update local state to reflect the redeemed item and the new points total
+      setUserData((previousUserData) => ({
+        ...previousUserData,
+        pointsCounter: previousUserData.pointsCounter - updatedItem.points, // Subtract points from user's total
+      }));
+
+      Alert.alert("Success", "Item redeemed successfully!");
+      setModalVisible(false);
+      setSelectedItem(null); // Reset selected item on successful redemption
+    } catch (error) {
+      console.error("Redemption error:", error);
+      Alert.alert("Redemption Failed", error.toString());
+      setModalVisible(false);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    setSelectedItem(null); // Reset selected item on modal close
+  };
+
+  const ShopItem = ({ description, points, type, imageLink, id }) => {
     return (
-      <View style={styles.item}>
+      <TouchableOpacity
+        style={styles.item}
+        onPress={() =>
+          handlePressPurchase({ description, points, type, imageLink, id })
+        }
+      >
         <View style={styles.itemHeader}>
           <Text style={styles.itemType}>{type}</Text>
         </View>
@@ -112,17 +172,24 @@ function RewardsShopScreen() {
             <Ionicons name="star" size={16} color="#ffffff" /> {points}
           </Text>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
   return (
     <View style={styles.container}>
+      <ConfirmPurchaseModal
+        isVisible={modalVisible}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmPurchase}
+        item={selectedItem}
+        user={userData}
+      />
       <View style={styles.shadowContainer}>
         <View style={styles.headerButtons}>
           <HomepageSearchBar onSearch={handleSearch} />
           {/* <RewardsCategoryDropdown /> */}
-          <RewardsCategoryDropdown1 onCategoryChange={setSelectedCategories}/>
+          <RewardsCategoryDropdown1 onCategoryChange={setSelectedCategories} />
         </View>
         <View style={styles.header}>
           <Text style={styles.headerText}>
@@ -137,12 +204,12 @@ function RewardsShopScreen() {
       </View>
 
       <View style={styles.itemList}>
-          <FlatList
-            data={filteredResults}
-            renderItem={({ item }) => <ShopItem {...item} />}
-            keyExtractor={(item) => item.id}
-            numColumns={2}
-          />
+        <FlatList
+          data={filteredResults}
+          renderItem={({ item }) => <ShopItem {...item} />}
+          keyExtractor={(item) => item.id}
+          numColumns={2}
+        />
       </View>
     </View>
   );
@@ -202,17 +269,24 @@ const styles = StyleSheet.create({
     minHeight: 250,
   },
   itemHeader: {
-    backgroundColor: "#F6D855",
+    backgroundColor: Colors.accentYellow,
     padding: 5,
     marginTop: 20,
     position: "absolute",
     top: 0,
     left: 0,
     zIndex: 1,
-    borderBottomRightRadius: 10,
+    // iOS shadow styles
+    shadowColor: Colors.primary500,
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 1.41,
+    // Android elevation
+    elevation: 5,
   },
   itemType: {
     fontWeight: "bold",
+    color: Colors.fontPrimary,
   },
   itemImage: {
     width: "100%",
@@ -230,6 +304,7 @@ const styles = StyleSheet.create({
   itemTitle: {
     fontWeight: "bold",
     textAlign: "center",
+    color: Colors.fontSecondary,
   },
   pointsContainer: {
     backgroundColor: Colors.primary500, // Button background

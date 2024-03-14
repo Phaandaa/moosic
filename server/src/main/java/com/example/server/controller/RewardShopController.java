@@ -106,5 +106,15 @@ public class RewardShopController {
         return ResponseEntity.ok(rewardShopService.verifyPhysicalPurchase(itemId, studentId, purchaseAmount));
     }
 
+    // Verify digital purchase
+    @Operation(summary = "Verify digital purchase")
+    @PutMapping("/digital/{itemId}")
+    public ResponseEntity<?> verifyDigitalPurchase(
+        @PathVariable String itemId,
+        @RequestParam (value = "student_id") String studentId
+    ) {
+        return ResponseEntity.ok(rewardShopService.verifyDigitalPurchase(itemId, studentId, 1));
+    }
+
 }
 
