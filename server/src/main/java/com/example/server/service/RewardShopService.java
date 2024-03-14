@@ -118,7 +118,7 @@ public class RewardShopService {
         }
     }
 
-    public String addNewRewardShopItem(String rewardShopItemJSON, MultipartFile file) {
+    public RewardShop addNewRewardShopItem(String rewardShopItemJSON, MultipartFile file) {
         try {
             RewardShopItemDTO rewardShopItemDTO = objectMapper.readValue(rewardShopItemJSON, RewardShopItemDTO.class);
             String imageURL = cloudStorageService.uploadFileToGCS(file, "shop");
@@ -130,7 +130,7 @@ public class RewardShopService {
             String type = rewardShopItemDTO.getType();
             RewardShop createdRewardShopItem = new RewardShop(description, points, stock, limiation, imageURL, type, Subtype);
             rewardShopRepository.save(createdRewardShopItem);
-            return "Create new item in reward shop successfully";
+            return createdRewardShopItem;
         } catch (RuntimeException e) {
             throw new RuntimeException("Error creating item in reward shop: " + e.getMessage());
         } catch (JsonMappingException e) {
@@ -142,7 +142,7 @@ public class RewardShopService {
         }
     }
 
-    public String addNewRewardShopItemWithoutPic(RewardShopItemDTO rewardShopItemDTO) {
+    public RewardShop addNewRewardShopItemWithoutPic(RewardShopItemDTO rewardShopItemDTO) {
         try {
             String description = rewardShopItemDTO.getDescription();
             Integer points = rewardShopItemDTO.getPoints();
@@ -152,7 +152,7 @@ public class RewardShopService {
             String subtype = rewardShopItemDTO.getSubtype();
             RewardShop createdRewardShopItem = new RewardShop(description, points, stock, limiation, null, type, subtype);
             rewardShopRepository.save(createdRewardShopItem);
-            return "Create new item in reward shop successfully";
+            return createdRewardShopItem;
         } catch (RuntimeException e) {
             throw new RuntimeException("Error creating item in reward shop: " + e.getMessage());
         } catch (Exception e) {

@@ -50,7 +50,7 @@ const Page = () => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = items.filter(
       (item) =>
-        item.type.toLowerCase().includes(lowercasedQuery) ||
+        // item.type.toLowerCase().includes(lowercasedQuery) ||
         item.description.toLowerCase().includes(lowercasedQuery)
     );
     setFilteredItems(filtered);
