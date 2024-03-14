@@ -151,7 +151,6 @@ export default RewardsShopScreen;
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 20,
     backgroundColor: "#ffffff",
     width: "100%",
     height: "100%",
@@ -187,8 +186,9 @@ const styles = StyleSheet.create({
   },
   itemList: {
     flex: 1,
-    padding: 10,
-    paddingTop: 0,
+    paddingHorizontal: 10,
+    paddingVertical: 0,
+    marginVertical: 0,
   },
   item: {
     backgroundColor: "#f9f9f9",
