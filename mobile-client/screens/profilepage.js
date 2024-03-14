@@ -19,6 +19,8 @@ const ProfileScreen = ({ navigation }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [ownedAvatars, setOwnedAvatars] = useState([]);
   const [ownedFrames, setOwnedFrames] = useState([]);
+  const [selectedAvatarId, setSelectedAvatarId] = useState('');
+  const [selectedFrameId, setSelectedFrameId] = useState('');
   
 
   // Fetch inventory data
@@ -41,25 +43,50 @@ const ProfileScreen = ({ navigation }) => {
     const loadData = async () => {
       setIsLoading(true);
       try {
-        const storedData = await AsyncStorage.getItem('authData');
-        if (storedData) {
-          const userData = JSON.parse(storedData);
-          setUserName(userData.name);
-          setUserEmail(userData.email);
-          setUserId(userData.userId);
-
-          // Once we have the userId, we can fetch the inventory data
-          await fetchInventoryData(userData.userId);
+        const storedData = await AsyncStorage.getItem('userData');
+        console.log('storedData', storedData)
+        if (!storedData) {
+          throw new Error("No stored user data found");
         }
+        
+        const userData = JSON.parse(storedData);
+        setUserName(userData.name);
+        setUserEmail(userData.email);
+        setUserId(userData.id);
+        setSelectedAvatarId(userData.avatar);
+        setSelectedFrameId(userData.avatarFrame);
+        
+        // Fetch inventory data
+        await fetchInventoryData(userId);
       } catch (error) {
-        console.error('Error processing stored data', error);
+        console.error('Error processing stored data:', error);
+        // Handle errors, such as alerting the user or setting state to show an error message
       } finally {
         setIsLoading(false);
       }
     };
 
+    const loadAvatarAndFrame = async () => {
+      try {
+        console.log('selectedAvatarId', selectedAvatarId)
+        console.log('selectedFrameId', selectedFrameId)
+        const avatarDataResponse = await axios.get(`${IP_ADDRESS}/reward-shop/${selectedAvatarId}`);
+        const avatarFrameDataResponse = await axios.get(`${IP_ADDRESS}/reward-shop/${selectedFrameId}`);
+        
+        // Assuming the response contains an object with an imageLink property
+        setAvatar(avatarDataResponse.data.imageLink);
+        setFrame(avatarFrameDataResponse.data.imageLink);
+      } catch (fetchError) {
+        console.error('Error fetching avatar or frame data:', fetchError);
+        // Handle errors, such as setting a default image or providing user feedback
+      }
+
+    }
+  
     loadData();
+    loadAvatarAndFrame();
   }, []);
+  
 
   // Handle the sign-out process
   const handleSignOut = async () => {
@@ -94,8 +121,7 @@ const ProfileScreen = ({ navigation }) => {
   
   const InventoryModal = () => {
     const [selectedTab, setSelectedTab] = useState('avatars'); // 'avatars' or 'frames'
-    const [selectedAvatarId, setSelectedAvatarId] = useState('');
-    const [selectedFrameId, setSelectedFrameId] = useState('');
+    
 
     const renderAvatarItem = ({ item, index }) => (
       <TouchableOpacity
@@ -132,6 +158,19 @@ const ProfileScreen = ({ navigation }) => {
         
       };
 
+      const onAvatarSelect = (item) => {
+        setAvatar(item.imageLink); // Update avatar preview
+        AsyncStorage.setItem('avatar', item.imageLink);
+        setSelectedAvatarId(item.id); // Store selected avatar ID
+      };
+      
+      const onFrameSelect = (item) => {
+        setFrame(item.imageLink); // Update frame preview
+        AsyncStorage.setItem('avatarFrame', item.imageLink);
+        setSelectedFrameId(item.id); // Store selected frame ID
+      };
+      
+
       const renderRemoveOption = (type) => (
         <TouchableOpacity
           style={styles.itemOption}
@@ -145,30 +184,33 @@ const ProfileScreen = ({ navigation }) => {
       );
 
       const updateStudentAvatarAndFrame = async () => {
-        setIsLoading(true); // Reuse the existing loading state to indicate progress
-      
-        // Prepare your API calls
-        const avatarUpdatePromise = selectedAvatarId ? axios.post(`${IP_ADDRESS}/students/${userId}/update-avatar`, {
-          studentId: userId,
-          avatarId: selectedAvatarId
-        }) : Promise.resolve();
-      
-        const frameUpdatePromise = selectedFrameId ? axios.post(`${IP_ADDRESS}/students/${userId}/update-avatar-frame`, {
-          studentId: userId,
-          avatarId: selectedFrameId // If it's actually called 'frameId' or similar, adjust accordingly
-        }) : Promise.resolve();
-      
+        setIsLoading(true); // Indicate loading
+        console.log('selectedAvatarId', selectedAvatarId)
+        console.log('selectedFrameId', selectedFrameId)
+        console.log('userId', userId)
+
         try {
-          // Execute both requests in parallel and wait for all to complete
-          await Promise.all([avatarUpdatePromise, frameUpdatePromise]);
+          // Update Avatar if selected
+          if (selectedAvatarId) {
+            await axios.put(`${IP_ADDRESS}/students/${userId}/update-avatar?avatar=${selectedAvatarId}`);
+          }
+      
+          // Update Frame if selected
+          if (selectedFrameId) {
+            await axios.put(`${IP_ADDRESS}/students/${userId}/update-avatar-frame?avatarFrame=${selectedFrameId}`);
+      
           alert('Your profile has been updated successfully.');
+          }
         } catch (error) {
           console.error('Error updating profile:', error);
           alert('An error occurred while updating your profile. Please try again.');
         } finally {
-          setIsLoading(false);
+          setIsLoading(false); // Hide loading indicator
+          setIsModalVisible(false); // Optionally close modal
         }
       };
+      
+      
   
     return (
       <Modal
@@ -212,17 +254,7 @@ const ProfileScreen = ({ navigation }) => {
     </Modal>
     );
 
-    function onAvatarSelect(item) {
-      setAvatar(item.imageLink);
-      setSelectedAvatarId(item.id); 
-      console.log(item.id)
-    }
-
-    function onFrameSelect(item) {
-      setFrame(item.imageLink);
-      setSelectedFrameId(item.id); 
-      console.log(item.id)
-    }
+    
     
   };
   return (
