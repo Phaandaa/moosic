@@ -13,6 +13,9 @@ const ProfileScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
+  const [userInstrument, setUserInstrument] = useState(''); // Assuming the user's instrument is stored in the user data
+  const [userPoints, setUserPoints] = useState(0);
+
   const [userId, setUserId] = useState('');
   const [avatar, setAvatar] = useState('');
   const [frame, setFrame] = useState('');
@@ -21,6 +24,7 @@ const ProfileScreen = ({ navigation }) => {
   const [ownedFrames, setOwnedFrames] = useState([]);
   const [selectedAvatarId, setSelectedAvatarId] = useState('');
   const [selectedFrameId, setSelectedFrameId] = useState('');
+  
   
 
   // Fetch inventory data
@@ -55,7 +59,8 @@ const ProfileScreen = ({ navigation }) => {
         setUserId(userData.id);
         setSelectedAvatarId(userData.avatar);
         setSelectedFrameId(userData.avatarFrame);
-        
+        setUserInstrument(userData.instrument); // Assuming the user's instrument is stored in the user data
+        setUserPoints(userData.pointsCounter);
         // Fetch inventory data
         await fetchInventoryData(userId);
       } catch (error) {
@@ -148,13 +153,14 @@ const ProfileScreen = ({ navigation }) => {
     // Function to handle removing the avatar
       const onRemoveAvatar = () => {
         setAvatar(''); // Reset avatar to default
+        setSelectedAvatarId(''); // Clear selected avatar ID
         
       };
 
       // Function to handle removing the frame
       const onRemoveFrame = () => {
         setFrame(''); // Reset frame to default
-        
+        setSelectedFrameId(''); // Clear selected frame ID
         
       };
 
@@ -235,11 +241,11 @@ const ProfileScreen = ({ navigation }) => {
                   <Text style={styles.tabText}>Frames</Text>
                 </TouchableOpacity>
               </View>
-                <ScrollView contentContainerStyle={styles.itemsContainer}>
+            <ScrollView contentContainerStyle={styles.itemsContainer} >
                 {renderRemoveOption(selectedTab)}
                 {selectedTab === 'avatars' && ownedAvatars.map((item, index) => renderAvatarItem({ item, index }))}
                 {selectedTab === 'frames' && ownedFrames.map((item, index) => renderFrameItem({ item, index }))}
-          </ScrollView>
+            </ScrollView>
             <TouchableOpacity
               style={styles.modalCloseButton}
               onPress={() => {
@@ -278,13 +284,13 @@ const ProfileScreen = ({ navigation }) => {
           </TouchableOpacity>
           <Text style={styles.username}>{userName}</Text>
           <Text style={styles.joinDate}>{userEmail}</Text>
-          <Text style={styles.joinDate}>Joined March 2024</Text>
+          <Text style={styles.joinDate}>{userInstrument}</Text>
           
         </View>
         <View style={styles.statsContainer}>
           {/* Render stats using StatsCard component */}
           <StatsCard iconName="local-fire-department" value="2" label="Day Streak" />
-            <StatsCard iconName="star" value="268" label="Total XP" />
+            <StatsCard iconName="star" value={userPoints} label="Points" />
             <StatsCard iconName="emoji-events" value="5" label="Total crowns" />
             <StatsCard iconName="military-tech" value="Bronze" label="League" />
           
@@ -539,8 +545,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     margin: 10, // adjust the margin as needed
-    width: 80, // this should match the size of your avatars/frames
-    height: 80, // this should match the size of your avatars/frames
+    width: '25%', // this should match the size of your avatars/frames
+    width: '25%', // this should match the size of your avatars/frames
+    aspectRatio: 1, // ensure the items are square
   },
   itemImage: {
     width: 80,
