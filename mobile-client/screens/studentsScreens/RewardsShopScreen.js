@@ -136,14 +136,12 @@ function RewardsShopScreen() {
       </View>
 
       <View style={styles.itemList}>
-        <View style={styles.innerItemContainer}>
           <FlatList
             data={filteredResults}
             renderItem={({ item }) => <ShopItem {...item} />}
             keyExtractor={(item) => item.id}
             numColumns={2}
           />
-        </View>
       </View>
     </View>
   );
@@ -187,12 +185,6 @@ const styles = StyleSheet.create({
   },
   itemList: {
     flex: 1,
-    alignItems: "center",
-  },
-  innerItemContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
     padding: 10,
     paddingTop: 0,
   },
