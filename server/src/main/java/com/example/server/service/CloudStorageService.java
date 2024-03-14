@@ -1,7 +1,10 @@
 package com.example.server.service;
 
 import com.google.cloud.spring.storage.GoogleStorageLocation;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.WritableResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,19 +18,28 @@ import java.util.UUID;
 @Service
 public class CloudStorageService {
 
-    @Value("${gcs-bucket}")
-    private String gcsBucket; // Assume gcs-bucket is defined in your application.properties as 'gs://your-bucket-name'
+    private String gcsBucket; // Your GCS bucket URL from application.properties
+
+    private final ResourceLoader resourceLoader;
+
+    @Autowired
+    public CloudStorageService(ResourceLoader resourceLoader, @Value("${gcs-bucket}") String gcsBucket) {
+        this.resourceLoader = resourceLoader;
+        this.gcsBucket = gcsBucket;
+    }
 
     public String uploadFileToGCS(MultipartFile file, String bucketSegment) {
         try {
             String objectName = bucketSegment + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
+            System.out.println(gcsBucket);
+            System.out.println(objectName);
             WritableResource resource = (WritableResource) resourceLoader.getResource("gs://" + gcsBucket + "/" + objectName);
     
             try (OutputStream os = resource.getOutputStream()) {
                 os.write(file.getBytes());
             }
-    
-            return objectName;
+            String fileURL = "https://storage.googleapis.com/" + gcsBucket + "/" + objectName;
+            return fileURL;
         } catch (Exception e) {
             throw new RuntimeException("Failed to upload file to Google Cloud Storage: " + e.getMessage());
         }

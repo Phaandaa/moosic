@@ -26,7 +26,7 @@ public class ServerApplication {
 		System.setProperty("spring.cloud.gcp.project-id", gcpProjectId);
 		System.setProperty("spring.cloud.gcp.pubsub.topic-name", pubSubTopicName); 
 		System.setProperty("spring.cloud.gcp.credentials.location", "file:" + googleApplicationCredentials);
-		System.setProperty("gcs-bucket", "gs://" + gcsBucketName);
+		System.setProperty("gcs-bucket", gcsBucketName);
 		
 		SpringApplication.run(ServerApplication.class, args);
 	}
