@@ -15,6 +15,7 @@ const ProfileScreen = ({ navigation }) => {
   const [userEmail, setUserEmail] = useState('');
   const [userInstrument, setUserInstrument] = useState(''); // Assuming the user's instrument is stored in the user data
   const [userPoints, setUserPoints] = useState(0);
+  const [userRole,  setUserRole] = useState(''); // Assuming the user's role is stored in the user data
 
   const [userId, setUserId] = useState('');
   const [avatar, setAvatar] = useState('');
@@ -57,18 +58,23 @@ const ProfileScreen = ({ navigation }) => {
         setUserName(userData.name);
         setUserEmail(userData.email);
         setUserId(userData.id);
+        setUserRole(userData.role);
         setSelectedAvatarId(userData.avatar);
         setSelectedFrameId(userData.avatarFrame);
-        setUserInstrument(userData.instrument); // Assuming the user's instrument is stored in the user data
+        setUserInstrument(userData.instrument); 
         setUserPoints(userData.pointsCounter);
         // Fetch inventory data
-        await fetchInventoryData(userId);
+        if (userData.role !== 'teacher') {
+          await fetchInventoryData(userId);
+        }
       } catch (error) {
         console.error('Error processing stored data:', error);
         // Handle errors, such as alerting the user or setting state to show an error message
       } finally {
         setIsLoading(false);
       }
+
+      
     };
 
     const loadAvatarAndFrame = async () => {
@@ -207,6 +213,13 @@ const ProfileScreen = ({ navigation }) => {
       
           alert('Your profile has been updated successfully.');
           }
+
+          const studentResponse = await axios.get(`${IP_ADDRESS}/students/${userId}`);
+          const studentData = studentResponse.data;
+          console.log('studentData', studentData)
+
+          AsyncStorage.setItem('userData', JSON.stringify(studentData));
+          
         } catch (error) {
           console.error('Error updating profile:', error);
           alert('An error occurred while updating your profile. Please try again.');
@@ -267,26 +280,33 @@ const ProfileScreen = ({ navigation }) => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity style={styles.avatarContainer} onPress={onEditPress}>
-          <Image
-              style={styles.avatar}
-              source={avatar ? { uri: avatar } : require('../assets/favicon.png')}
-            />
-            {frame ? (
+          {userRole !== 'teacher' ? (
+            <TouchableOpacity style={styles.avatarContainer} onPress={onEditPress}>
               <Image
-                style={styles.frame}
-                source={{ uri: frame }}
+                style={styles.avatar}
+                source={avatar ? { uri: avatar } : require('../assets/favicon.png')}
               />
-            ) : (
-              <View style={styles.defaultFrame} /> // A view to maintain layout if no frame is selected
-            )}
-            <Icon name="edit" size={24} color="white" style={styles.editIcon} />
-          </TouchableOpacity>
+              <Image
+              style={styles.frame}
+              source={frame ? { uri: frame } : require('../assets/favicon.png')}
+            />
+              <Icon name="edit" size={24} color="white" style={styles.editIcon} />
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.avatarContainer}>
+              <Image
+                style={styles.avatar}
+                source={avatar ? { uri: avatar } : require('../assets/favicon.png')}
+              />
+            </View>
+          )}
           <Text style={styles.username}>{userName}</Text>
           <Text style={styles.joinDate}>{userEmail}</Text>
           <Text style={styles.joinDate}>{userInstrument}</Text>
           
         </View>
+
+        {userRole !== 'teacher' && (
         <View style={styles.statsContainer}>
           {/* Render stats using StatsCard component */}
           <StatsCard iconName="local-fire-department" value="2" label="Day Streak" />
@@ -295,6 +315,8 @@ const ProfileScreen = ({ navigation }) => {
             <StatsCard iconName="military-tech" value="Bronze" label="League" />
           
         </View>
+        )}
+
         <TouchableOpacity style={styles.addButton} onPress={handleSignOut}>
           <Text style={styles.addButtonText}>Sign Out</Text>
         </TouchableOpacity>
@@ -441,14 +463,14 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   frameImage: {
-    width: 90,
-    height: 90,
+    width: 80,
+    height: 80,
     resizeMode: 'contain',
   },
   frame: {
     position: 'absolute',
-    width: 90, // The frame should be larger than the avatar to fit around it
-    height: 90,
+    width: 110, // The frame should be larger than the avatar to fit around it
+    height: 110,
     resizeMode: 'contain',
     // Adjust these if needed to align the frame with the avatar
   },
