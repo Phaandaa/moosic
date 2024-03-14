@@ -24,6 +24,7 @@ import SubmitAssignmentScreen from './screens/studentsScreens/SubmitAssignmentSc
 import AssignmentListScreen from  './screens/studentsScreens/AssignmentListScreen';
 import PracticeListStudentScreen from './screens/studentsScreens/PracticeListStudentScreen';
 import RewardsShopScreen from './screens/studentsScreens/RewardsShopScreen';
+import SetReminderScreen from './screens/studentsScreens/SetReminderScreen';
 
 //Teacher Pages
 import CreateAssignmentScreen from './screens/teachersScreens/CreateAssignmentScreen';
@@ -223,6 +224,7 @@ const RootNavigator = () => {
           <Stack.Screen name="PracticeListStudentScreen" component={PracticeListStudentScreen} options={{ title: 'My Practice Log' }} />
           <Stack.Screen name="ViewPracticeStudentScreen" component={ViewPracticeStudentScreen} options={{ title: 'My Practice Details' }} />
           <Stack.Screen name="RewardsShopScreen" component={RewardsShopScreen} options={{ title: 'Rewards Shop' }} />
+          <Stack.Screen name="SetReminderScreen" component={SetReminderScreen} options={{ title: 'Set Practice Reminder' }} />
 
           </>
         ) : (
