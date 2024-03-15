@@ -80,10 +80,6 @@ export const ItemDetailModal = ({
     setDescription(event.target.value);
   };
 
-  const handleStudentIdChange = (event) => {
-    setStudentId(event.target.value);
-  };
-
   const handleUploadImage = async () => {
     if (!selectedFile) {
       triggerSnackbar("No file selected.", "error");
@@ -243,14 +239,13 @@ export const ItemDetailModal = ({
               )}
             </Box>
 
-            <Box display={"flex"} justifyContent={"space-between"} mt={1} alignItems={"center"}>
-              <TextField
-                id="image"
-                label="Image Link"
-                value={selectedFile ? selectedFile.name : item?.imageLink || ""}
-                sx={{ flexGrow: 1, mr: 2 }}
-                disabled
-              />
+            <Box display={"flex"} justifyContent={"flex-end"} mt={1} alignItems={"center"}>
+              {selectedFile && (
+                <Box sx={{ flexGrow: 1, mr: 2 }}>
+                  <Typography sx={{ flexGrow: 1, mr: 2, fontWeight: "bold" }}>Filename:</Typography>
+                  <Typography sx={{ flexGrow: 1, mr: 2 }}>{selectedFile.name}</Typography>
+                </Box>
+              )}
               <input
                 accept="image/*"
                 type="file"
@@ -359,22 +354,6 @@ export const ItemDetailModal = ({
             <>
               <DialogContentText sx={{ my: 2 }}>Redeem Points</DialogContentText>
               <Box display={"flex"} justifyContent={"space-between"}>
-                {/* <FormControl fullWidth sx={{ flexGrow: 1, mr: 2 }}>
-                  <InputLabel id="student-select-label">Student Name</InputLabel>
-                  <Select
-                    labelId="student-select-label"
-                    id="stu-id"
-                    value={studentId}
-                    onChange={handleStudentIdChange}
-                    label="Student Name"
-                  >
-                    {studentList.map((student) => (
-                      <MenuItem key={student.id} value={student.id}>
-                        {student.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl> */}
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"

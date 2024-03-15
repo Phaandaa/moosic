@@ -21,7 +21,7 @@ const ConfirmDeletionModal = ({ open, onClose, onConfirm, item }) => {
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose} color="primary">
+                <Button onClick={onClose} sx={{color: "#8193AB"}}>
                     Cancel
                 </Button>
                 <Button onClick={() => onConfirm(item.id)} color="primary" autoFocus>

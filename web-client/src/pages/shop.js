@@ -19,7 +19,7 @@ import { useEffect, useState } from "react";
 import { getAsync } from "src/utils/utils";
 import SnackbarAlert from "src/components/alert";
 import AddItem from "src/sections/shop/shop-add";
-import { convertArrayToCSV } from 'src/utils/utils';
+import { convertArrayToCSV } from "src/utils/utils";
 
 const Page = () => {
   const [items, setItems] = useState([]);
@@ -93,24 +93,22 @@ const Page = () => {
   };
 
   const handleAddItem = (newItem) => {
-    setItems((currentItems) => [...currentItems, newItem]);
+    setItems((currentItems) => [newItem, ...currentItems]);
     //  to immediately see this in the filtered list (in case there's an active search filter)
-    setFilteredItems((currentFilteredItems) => [...currentFilteredItems, newItem]);
+    setFilteredItems((currentFilteredItems) => [newItem, ...currentFilteredItems]);
   };
-  
 
   const handleExport = () => {
     const csvData = convertArrayToCSV(items);
-    const blob = new Blob([csvData], { type: 'text/csv' });
+    const blob = new Blob([csvData], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.setAttribute('download', 'reward-shop-items.csv');
+    link.setAttribute("download", "reward-shop-items.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
-  
 
   return (
     <>
@@ -160,7 +158,7 @@ const Page = () => {
                 style={{ marginLeft: "15px" }}
               >
                 Import
-              </Button> */} 
+              </Button> */}
             </Card>
             <Grid container spacing={3}>
               {currentItems.map((item) => (

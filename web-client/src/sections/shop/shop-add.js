@@ -17,6 +17,7 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import Typography from "@mui/material/Typography";
 
 export default function AddItem({ onAddItem }) {
   const [open, setOpen] = React.useState(false);
@@ -63,7 +64,15 @@ export default function AddItem({ onAddItem }) {
 
   const handleClose = () => {
     setOpen(false);
-  };
+    // Reset the selectedFile to null when the modal is closed
+    setSelectedFile(null);
+    // Reset other form fields if necessary
+    setDescription("");
+    setType("");
+    setPoints(0);
+    setLimit(0);
+    setStock(0);
+  };  
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -211,12 +220,12 @@ export default function AddItem({ onAddItem }) {
             />
           </Box>
           <Box display={"flex"} justifyContent={"space-between"} mt={1} alignItems={"center"}>
-            <TextField
-              id="image"
-              label="Image Link"
-              value={selectedFile ? selectedFile.name : ""}
-              sx={{ flexGrow: 1, mr: 2 }}
-            />
+            {selectedFile && (
+              <Box sx={{ flexGrow: 1, mr: 2}}>
+                <Typography sx={{ flexGrow: 1, mr: 2, fontWeight: "bold" }}>Filename:</Typography>
+                <Typography sx={{ flexGrow: 1, mr: 2 }}>{selectedFile.name}</Typography>
+              </Box>
+            )}
             <input
               accept="image/*"
               type="file"
@@ -225,7 +234,12 @@ export default function AddItem({ onAddItem }) {
               id="raised-button-file"
             />
             <label htmlFor="raised-button-file">
-              <Button variant="contained" color="success" component="span">
+              <Button
+                variant="contained"
+                color="success"
+                component="span"
+                sx={{ minHeight: 55 }}
+              >
                 Choose Image
               </Button>
             </label>
