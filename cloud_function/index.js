@@ -4,9 +4,15 @@ const axios = require('axios');
 
 functions.cloudEvent('notificationPubSub', cloudEvent => {
   try {
-    const messageData = cloudEvent.data.message;
+    const base64message = cloudEvent.data.message.data;
 
-    console.log(messageData);
+    const messageData = JSON.parse(base64message
+      ? Buffer.from(base64message, 'base64').toString()
+      : '');
+
+
+    console.log("messageData:")
+    console.log(messageData)
   
     const pushPayload = {
       to: messageData.device_id,
@@ -14,7 +20,8 @@ functions.cloudEvent('notificationPubSub', cloudEvent => {
       body: messageData.body
     };
 
-    console.log(pushPayload);
+    console.log("pushPayLoad:")
+    console.log(pushPayload)
 
     let response;
     
