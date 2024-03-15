@@ -51,7 +51,7 @@ const Page = () => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const filtered = items.filter((item) =>
       // item.type.toLowerCase().includes(lowercasedQuery) ||
-      item.description.toLowerCase().includes(lowercasedQuery)
+      item?.description?.toLowerCase().includes(lowercasedQuery)
     );
     setFilteredItems(filtered);
     setCurrentPage(1);
@@ -94,7 +94,10 @@ const Page = () => {
 
   const handleAddItem = (newItem) => {
     setItems((currentItems) => [...currentItems, newItem]);
+    //  to immediately see this in the filtered list (in case there's an active search filter)
+    setFilteredItems((currentFilteredItems) => [...currentFilteredItems, newItem]);
   };
+  
 
   const handleExport = () => {
     const csvData = convertArrayToCSV(items);

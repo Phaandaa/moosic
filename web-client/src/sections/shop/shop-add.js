@@ -89,8 +89,13 @@ export default function AddItem({ onAddItem }) {
         const formData = new FormData();
         formData.append("files", selectedFile);
         formData.append("reward-shop-item", JSON.stringify(newItem));
-        console.log("formData", formData.get("files"), formData.get("reward-shop-item"));
-        const response = await postAsync('reward-shop/create/with-image', formData, null, true);
+        // console.log("formData", formData.get("files"), formData.get("reward-shop-item"));
+        let response = null;
+        if (!selectedFile) {
+          response = await postAsync("reward-shop/create/without-image", newItem, null, false);
+        } else {
+          response = await postAsync("reward-shop/create/with-image", formData, null, true);
+        }
         const data = await response.json();
         if (!response.ok) {
           console.error("Server error:", response.status, response.statusText);
