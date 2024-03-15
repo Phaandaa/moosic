@@ -17,6 +17,7 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
+  Autocomplete,
 } from "@mui/material";
 import { deleteAsync, putAsync, getAsync } from "src/utils/utils";
 import { useState } from "react";
@@ -358,7 +359,7 @@ export const ItemDetailModal = ({
             <>
               <DialogContentText sx={{ my: 2 }}>Redeem Points</DialogContentText>
               <Box display={"flex"} justifyContent={"space-between"}>
-                <FormControl fullWidth sx={{ flexGrow: 1, mr: 2 }}>
+                {/* <FormControl fullWidth sx={{ flexGrow: 1, mr: 2 }}>
                   <InputLabel id="student-select-label">Student Name</InputLabel>
                   <Select
                     labelId="student-select-label"
@@ -369,11 +370,26 @@ export const ItemDetailModal = ({
                   >
                     {studentList.map((student) => (
                       <MenuItem key={student.id} value={student.id}>
-                        {student.name} {/* Assuming each student object has a 'name' and an 'id' */}
+                        {student.name}
                       </MenuItem>
                     ))}
                   </Select>
-                </FormControl>
+                </FormControl> */}
+                <Autocomplete
+                  disablePortal
+                  id="combo-box-demo"
+                  options={studentList}
+                  fullWidth
+                  sx={{ flexGrow: 1, mr: 2 }}
+                  getOptionLabel={(option) => option.name || ""} // Display student names
+                  onChange={(event, newValue) => {
+                    setStudentId(newValue ? newValue.id : ""); // Update the state with the selected student's ID
+                  }}
+                  isOptionEqualToValue={(option, value) => option.id === value}
+                  renderInput={(params) => <TextField {...params} label="Student Name" />}
+                  value={studentList.find((student) => student.id === studentId) || null} // Set the current value based on the studentId state
+                />
+
                 <Button
                   variant="contained"
                   color="success"
