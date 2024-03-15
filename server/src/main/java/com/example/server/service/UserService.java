@@ -7,11 +7,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.server.dao.GoalRepository;
+import com.example.server.dao.StudentInventoryRepository;
 import com.example.server.dao.StudentRepository;
 import com.example.server.dao.TeacherRepository;
 import com.example.server.dao.UserRepository;
 import com.example.server.entity.Goal;
 import com.example.server.entity.Student;
+import com.example.server.entity.StudentInventory;
 import com.example.server.entity.Teacher;
 import com.example.server.entity.User;
 import com.example.server.entity.UserType;
@@ -39,6 +41,9 @@ public class UserService {
 
     @Autowired
     private GoalRepository goalRepository;
+
+    @Autowired
+    private StudentInventoryRepository studentInventoryRepository;
 
     private void isNotEmptyOrNull(String variable, String attributeName) {
         if (variable == null || variable.isEmpty()) {
@@ -147,6 +152,9 @@ public class UserService {
             studentRepository.save(newStudent);
             Goal newGoal = new Goal(id, name, null, 0, 0, 3, 1, "Not done", 20, false);
             goalRepository.save(newGoal);
+            // TODO: Check if later need to set some default avatars
+            StudentInventory studentInventory = new StudentInventory(id, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+            studentInventoryRepository.save(studentInventory);
             return newStudent;
         } catch (IllegalArgumentException e) {
             throw e;
@@ -198,11 +206,22 @@ public class UserService {
         
     }
 
+    @Transactional
     public void deleteUserById(String userId) {
         try {
             User toBeDeletedUser = userRepository.findById(userId).orElseThrow(()->
-            new NoSuchElementException("No user found with ID " + userId));
+                new NoSuchElementException("No user found with ID " + userId));
+            if (toBeDeletedUser.getRole().equals("Student")) {
+                Goal toBeDeletedGoal = goalRepository.findByStudentId(userId).orElseThrow(()->
+                    new NoSuchElementException("No goal found with student ID " + userId));
+                goalRepository.delete(toBeDeletedGoal);
+
+                StudentInventory toBeDeletedStudentInventory = studentInventoryRepository.findByStudentId(userId).orElseThrow(()->
+                    new NoSuchElementException("No student inventory found with student ID " + userId));
+                studentInventoryRepository.delete(toBeDeletedStudentInventory);
+            }
             userRepository.delete(toBeDeletedUser);
+
         } catch (NoSuchElementException e) {
             throw e;
         } catch (Exception e) {
