@@ -10,6 +10,7 @@ import {
   SvgIcon,
   Typography,
   Unstable_Grid2 as Grid,
+  Card,
 } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
 import { ShopCard } from "src/sections/shop/shop-card";
@@ -18,7 +19,7 @@ import { useEffect, useState } from "react";
 import { getAsync } from "src/utils/utils";
 import SnackbarAlert from "src/components/alert";
 import AddItem from "src/sections/shop/shop-add";
-
+import { convertArrayToCSV } from 'src/utils/utils';
 
 const Page = () => {
   const [items, setItems] = useState([]);
@@ -48,10 +49,9 @@ const Page = () => {
   useEffect(() => {
     // Filter items based on the search query
     const lowercasedQuery = searchQuery.toLowerCase();
-    const filtered = items.filter(
-      (item) =>
-        // item.type.toLowerCase().includes(lowercasedQuery) ||
-        item.description.toLowerCase().includes(lowercasedQuery)
+    const filtered = items.filter((item) =>
+      // item.type.toLowerCase().includes(lowercasedQuery) ||
+      item.description.toLowerCase().includes(lowercasedQuery)
     );
     setFilteredItems(filtered);
     setCurrentPage(1);
@@ -93,10 +93,21 @@ const Page = () => {
   };
 
   const handleAddItem = (newItem) => {
-    setItems((currentItems) => [ ...currentItems, newItem]);
-  }
+    setItems((currentItems) => [...currentItems, newItem]);
+  };
 
-  console.log(items);
+  const handleExport = () => {
+    const csvData = convertArrayToCSV(items);
+    const blob = new Blob([csvData], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'reward-shop-items.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  
 
   return (
     <>
@@ -115,34 +126,39 @@ const Page = () => {
             <Stack direction="row" justifyContent="space-between" spacing={4}>
               <Stack spacing={1}>
                 <Typography variant="h4">Shop</Typography>
-                <Stack alignItems="center" direction="row" spacing={1}>
-                  <Button
-                    color="inherit"
-                    startIcon={
-                      <SvgIcon fontSize="small">
-                        <ArrowUpOnSquareIcon />
-                      </SvgIcon>
-                    }
-                  >
-                    Import
-                  </Button>
-                  <Button
-                    color="inherit"
-                    startIcon={
-                      <SvgIcon fontSize="small">
-                        <ArrowDownOnSquareIcon />
-                      </SvgIcon>
-                    }
-                  >
-                    Export
-                  </Button>
-                </Stack>
               </Stack>
               <div>
                 <AddItem onAddItem={handleAddItem} />
               </div>
             </Stack>
-            <ShopSearch handleSearchChange={handleSearchChange} />
+
+            <Card sx={{ p: 2, display: "flex", width: "100%" }}>
+              <ShopSearch handleSearchChange={handleSearchChange} />
+              <Button
+                color="inherit"
+                startIcon={
+                  <SvgIcon fontSize="small">
+                    <ArrowUpOnSquareIcon />
+                  </SvgIcon>
+                }
+                onClick={handleExport}
+                style={{ marginLeft: "15px" }}
+              >
+                Export
+              </Button>
+              {/* <Button                              // not sure about this import feature, dk if should implement now or not
+                color="inherit"
+                startIcon={
+                  <SvgIcon fontSize="small">
+                    <ArrowDownOnSquareIcon />
+                  </SvgIcon>
+                }
+                // onClick={handleExport}
+                style={{ marginLeft: "15px" }}
+              >
+                Import
+              </Button> */} 
+            </Card>
             <Grid container spacing={3}>
               {currentItems.map((item) => (
                 <Grid xs={12} md={6} lg={4} key={item.id}>

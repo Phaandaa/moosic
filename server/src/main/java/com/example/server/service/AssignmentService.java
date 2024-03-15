@@ -46,7 +46,7 @@ public class AssignmentService {
     @Transactional
     public List<Assignment> createAssignment(CreateAssignmentDTO createAssignmentDTO, List<MultipartFile> files) {
         try {
-            List<String> publicUrls = cloudStorageService.uploadFilesToGCS(files);
+            List<String> publicUrls = cloudStorageService.uploadFilesToGCS(files, "assignments");
             List<HashMap<String, String>> students = createAssignmentDTO.getSelectedStudents();
             String title = createAssignmentDTO.getAssignmentTitle();
             String description = createAssignmentDTO.getAssignmentDesc();
@@ -133,7 +133,7 @@ public class AssignmentService {
                 new NoSuchElementException("No assignment found with the ID " + assignmentId));
 
             if (files != null && !files.isEmpty()) {
-                List<String> publicUrls = cloudStorageService.uploadFilesToGCS(files);
+                List<String> publicUrls = cloudStorageService.uploadFilesToGCS(files, "assignments");
                 assignment.setSubmissionLinks(publicUrls);
             } else {
                 throw new IllegalArgumentException("Please updload files to submit assignment");
@@ -176,7 +176,7 @@ public class AssignmentService {
 
             // Update feedback document links
             if (feedbackDocuments != null && !feedbackDocuments.isEmpty()) {
-                List<String> feedbackDocumentLinks = cloudStorageService.uploadFilesToGCS(feedbackDocuments);
+                List<String> feedbackDocumentLinks = cloudStorageService.uploadFilesToGCS(feedbackDocuments, "assignments");
                 assignment.setFeedbackDocumentLinks(feedbackDocumentLinks);
             }
 
@@ -219,7 +219,7 @@ public class AssignmentService {
             System.out.println(EditAssignmentDTO.getPoints());
 
             if (files != null && !files.isEmpty()) {
-                List<String> publicUrls = cloudStorageService.uploadFilesToGCS(files);
+                List<String> publicUrls = cloudStorageService.uploadFilesToGCS(files, "assignments");
                 assignment.setAssignmentDocumentLinks(publicUrls);
             }
 
