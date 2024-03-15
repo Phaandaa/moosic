@@ -14,7 +14,6 @@ export const items = [
         <ChartBarIcon />
       </SvgIcon>
     ),
-    tooltip: "Overview of Music Academy's statistics."
   },
   {
     title: 'Students',
@@ -25,7 +24,6 @@ export const items = [
         <UsersIcon />
       </SvgIcon>
     ),
-    tooltip: 'Page to view, create, and edit student accounts.'
   },
   {
     title: 'Teachers',
@@ -36,7 +34,6 @@ export const items = [
         <AcademicCapIcon />
       </SvgIcon>
     ),
-    tooltip: 'Page to view, create, and edit teacher accounts.'
   },
   {
     title: 'Shop',
@@ -46,7 +43,6 @@ export const items = [
         <ShoppingBagIcon />
       </SvgIcon>
     ),
-    tooltip: 'Page to view, create, and edit reward items.'
   },
   // {
   //   title: 'Account',

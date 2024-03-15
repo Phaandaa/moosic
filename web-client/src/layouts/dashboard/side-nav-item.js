@@ -1,10 +1,10 @@
 import NextLink from "next/link";
 import PropTypes from "prop-types";
-import { Box, ButtonBase, Tooltip, Button } from "@mui/material";
+import { Box, ButtonBase, Button } from "@mui/material";
 import InformationCircleIcon from "@heroicons/react/24/solid/InformationCircleIcon";
 
 export const SideNavItem = (props) => {
-  const { active = false, disabled, external, icon, path, title, tooltip } = props;
+  const { active = false, disabled, external, icon, path, title } = props;
 
   const linkProps = path
     ? external
@@ -80,29 +80,6 @@ export const SideNavItem = (props) => {
             {title}
           </Box>
         </Box>
-        <Box>
-          {tooltip && (
-            <Tooltip title={tooltip} placement="right" arrow>
-              <Button
-                sx={{
-                  alignItems: "center",
-                  borderRadius: "50%",
-                  color: "neutral.400",
-                  display: "flex",
-                  height: 32,
-                  justifyContent: "center",
-                  minWidth: 32,
-                  padding: 0,
-                  ...(active && {
-                    color: "primary.main",
-                  }),
-                }}
-              >
-                <InformationCircleIcon />
-              </Button>
-            </Tooltip>
-          )}
-        </Box>
       </ButtonBase>
     </li>
   );
@@ -115,5 +92,4 @@ SideNavItem.propTypes = {
   icon: PropTypes.node,
   path: PropTypes.string,
   title: PropTypes.string.isRequired,
-  tooltip: PropTypes.string,
 };
