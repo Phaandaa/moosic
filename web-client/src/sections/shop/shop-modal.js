@@ -22,6 +22,8 @@ import { deleteAsync, putAsync, getAsync } from "src/utils/utils";
 import { useState } from "react";
 import Lottie from "react-lottie";
 import noImage from "public/assets/noImage.json";
+import ConfirmDeletionModal from "./shop-confirm-delete";
+import { set } from "nprogress";
 
 export const ItemDetailModal = ({
   open,
@@ -42,6 +44,9 @@ export const ItemDetailModal = ({
   const [type, setType] = useState(item?.type || "");
   const [description, setDescription] = useState(item?.description || "");
 
+  // confirm delete modal state
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
   const itemTypeOptions = ["physical", "digital"];
 
   useEffect(() => {
@@ -49,7 +54,7 @@ export const ItemDetailModal = ({
       setStudentId("");
     }
   }, [open]);
-  
+
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
   };
@@ -109,7 +114,11 @@ export const ItemDetailModal = ({
     }
   };
 
-  const handleDeleteItem = async () => {
+  const handleOpenConfirmDelete = () => {
+    setConfirmDeleteOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
     try {
       // Delete item logic
       const response = await deleteAsync(`reward-shop/${item.id}`);
@@ -125,6 +134,7 @@ export const ItemDetailModal = ({
       triggerSnackbar("Error deleting item", "error");
       console.error("Error deleting item:", error);
     }
+    setConfirmDeleteOpen(false); // Close confirmation modal
   };
 
   const handleEditDetails = async () => {
@@ -173,12 +183,10 @@ export const ItemDetailModal = ({
       } else {
         triggerSnackbar("Error redeeming points.", "error");
       }
-    }
-    catch (error) {
+    } catch (error) {
       triggerSnackbar("Error redeeming points.", "error");
       console.error("Error redeeming points:", error);
-    }
-    finally {
+    } finally {
       setStudentId("");
     }
   };
@@ -200,6 +208,12 @@ export const ItemDetailModal = ({
 
   return (
     <>
+      <ConfirmDeletionModal
+        open={confirmDeleteOpen}
+        onClose={() => setConfirmDeleteOpen(false)}
+        onConfirm={handleConfirmDelete}
+        item={item}
+      />
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle id="item-detail-modal-title">{item?.description || "N/A"}</DialogTitle>
         <DialogContent dividers>
@@ -244,7 +258,7 @@ export const ItemDetailModal = ({
                 id="raised-button-file"
               />
               <label htmlFor="raised-button-file">
-                <Button variant="contained" color="success" component="span" sx={{minHeight: 55}}>
+                <Button variant="contained" color="success" component="span" sx={{ minHeight: 55 }}>
                   Choose Image
                 </Button>
               </label>
@@ -360,7 +374,12 @@ export const ItemDetailModal = ({
                     ))}
                   </Select>
                 </FormControl>
-                <Button variant="contained" color="success" sx={{minWidth: 150}} onClick={handleRedeemPoints}>
+                <Button
+                  variant="contained"
+                  color="success"
+                  sx={{ minWidth: 150 }}
+                  onClick={handleRedeemPoints}
+                >
                   Redeem Points
                 </Button>
               </Box>
@@ -385,7 +404,7 @@ export const ItemDetailModal = ({
           >
             Submit Edit
           </Button>
-          <Button variant="contained" color="error" onClick={handleDeleteItem}>
+          <Button variant="contained" color="error" onClick={handleOpenConfirmDelete}>
             Delete Item
           </Button>
         </DialogActions>
