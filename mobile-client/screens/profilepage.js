@@ -288,7 +288,7 @@ const ProfileScreen = ({ navigation }) => {
               />
               <Image
               style={styles.frame}
-              source={frame ? { uri: frame } : require('../assets/favicon.png')}
+              source={{ uri: frame }}
             />
               <Icon name="edit" size={24} color="white" style={styles.editIcon} />
             </TouchableOpacity>
