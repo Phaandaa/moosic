@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Modal,
   Box,
@@ -18,8 +18,7 @@ import {
   InputLabel,
   FormControl,
 } from "@mui/material";
-import { deleteAsync } from "src/utils/utils";
-import { putAsync } from "src/utils/utils";
+import { deleteAsync, putAsync, getAsync } from "src/utils/utils";
 import { useState } from "react";
 import Lottie from "react-lottie";
 import noImage from "public/assets/noImage.json";
@@ -35,6 +34,7 @@ export const ItemDetailModal = ({
   const [studentId, setStudentId] = React.useState("");
   const [disabled, setDisabled] = React.useState(true);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [studentList, setStudentList] = useState([]);
 
   const [points, setPoints] = useState(item?.points || 0);
   const [limitation, setLimitation] = useState(item?.limitation || 0);
@@ -44,6 +44,12 @@ export const ItemDetailModal = ({
 
   const itemTypeOptions = ["physical", "digital"];
 
+  useEffect(() => {
+    if (!open) {
+      setStudentId("");
+    }
+  }, [open]);
+  
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
   };
@@ -66,6 +72,10 @@ export const ItemDetailModal = ({
 
   const handleDescriptionChange = (event) => {
     setDescription(event.target.value);
+  };
+
+  const handleStudentIdChange = (event) => {
+    setStudentId(event.target.value);
   };
 
   const handleUploadImage = async () => {
@@ -145,6 +155,49 @@ export const ItemDetailModal = ({
     }
   };
 
+  // console.log("item", item);
+  // console.log("item.id: ", item.id);
+  console.log("studentId", studentId);
+
+  const handleRedeemPoints = async () => {
+    if (!studentId) {
+      triggerSnackbar("Please select a student.", "error");
+      return;
+    }
+    try {
+      const url = `reward-shop/physical/${item.id}?student_id=${studentId}&purchase_amount=1`;
+      console.log("url", url);
+      const response = await putAsync(url, null, null, false);
+      if (response.ok) {
+        triggerSnackbar("Points redeemed successfully!", "success");
+      } else {
+        triggerSnackbar("Error redeeming points.", "error");
+      }
+    }
+    catch (error) {
+      triggerSnackbar("Error redeeming points.", "error");
+      console.error("Error redeeming points:", error);
+    }
+    finally {
+      setStudentId("");
+    }
+  };
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const response = await getAsync("students");
+        const data = await response.json();
+        console.log("data", data);
+        setStudentList(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Error fetching students:", error);
+        setStudentList([]);
+      }
+    };
+    fetchStudents();
+  }, []);
+
   return (
     <>
       <Dialog open={open} onClose={handleClose}>
@@ -191,7 +244,7 @@ export const ItemDetailModal = ({
                 id="raised-button-file"
               />
               <label htmlFor="raised-button-file">
-                <Button variant="contained" color="success" component="span">
+                <Button variant="contained" color="success" component="span" sx={{minHeight: 55}}>
                   Choose Image
                 </Button>
               </label>
@@ -199,7 +252,7 @@ export const ItemDetailModal = ({
                 variant="contained"
                 color="success"
                 onClick={handleUploadImage}
-                sx={{ ml: 2 }}
+                sx={{ ml: 2, minHeight: 55 }}
                 disabled={!selectedFile}
               >
                 Upload Image
@@ -287,17 +340,27 @@ export const ItemDetailModal = ({
             </Grid>
           </Grid>
           <Divider />
-          {type == "physical" && (
+          {type === "physical" && (
             <>
               <DialogContentText sx={{ my: 2 }}>Redeem Points</DialogContentText>
               <Box display={"flex"} justifyContent={"space-between"}>
-                <TextField
-                  id="stu-id"
-                  label="Student ID"
-                  value={studentId}
-                  sx={{ flexGrow: 1, mr: 2 }}
-                />
-                <Button variant="contained" color="success">
+                <FormControl fullWidth sx={{ flexGrow: 1, mr: 2 }}>
+                  <InputLabel id="student-select-label">Student Name</InputLabel>
+                  <Select
+                    labelId="student-select-label"
+                    id="stu-id"
+                    value={studentId}
+                    onChange={handleStudentIdChange}
+                    label="Student Name"
+                  >
+                    {studentList.map((student) => (
+                      <MenuItem key={student.id} value={student.id}>
+                        {student.name} {/* Assuming each student object has a 'name' and an 'id' */}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <Button variant="contained" color="success" sx={{minWidth: 150}} onClick={handleRedeemPoints}>
                   Redeem Points
                 </Button>
               </Box>

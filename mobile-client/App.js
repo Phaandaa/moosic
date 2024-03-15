@@ -120,8 +120,8 @@ function StudentTabs() {
             case 'New':
               iconName = focused ? 'add-circle' : 'add-circle-outline';
               break;
-            case 'Notifications':
-              iconName = focused ? 'notifications' : 'notifications-outline';
+            case 'Rewards Shop':
+              iconName = focused ? 'cart' : 'cart-outline';
               break;
             case 'Profile':
               iconName = focused ? 'person' : 'person-outline';
@@ -152,7 +152,7 @@ function StudentTabs() {
           
         }}
       />
-      <Tab.Screen name="Notifications" component={NotificationsScreen} />
+      <Tab.Screen name="Rewards Shop" component={RewardsShopScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
