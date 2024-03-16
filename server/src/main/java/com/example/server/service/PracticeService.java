@@ -48,7 +48,7 @@ public class PracticeService {
             String title = practiceDTO.getTitle();
             String comment = practiceDTO.getComment();
             Practice createdPractice = new Practice(studentId, studentName, teacherId, teacherName, videoURL, title,
-                    comment,null,null);
+                    comment,null,null, new Date());
 
             Date timestamp = new Date();
             createdPractice.setSubmissionTimestamp(timestamp);
