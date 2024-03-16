@@ -150,11 +150,11 @@ public class UserService {
             String instrument = userDTO.getInfo().get("instrument");
             String grade = userDTO.getInfo().get("grade");
             String phoneNumber = userDTO.getInfo().get("phone");
-            Student newStudent = new Student(id, name, email, 0, null, new ArrayList<>(), instrument, phoneNumber ,grade, null,null, null, creationTime);
+            String tuitionDay = userDTO.getInfo().get("tuition_day");
+            Student newStudent = new Student(id, name, email, 0, null, new ArrayList<>(), instrument, phoneNumber ,grade, null,null, null, creationTime,tuitionDay);
             studentRepository.save(newStudent);
             Goal newGoal = new Goal(id, name, null, 0, 0, 3, 1, "Not done", 20, false);
             goalRepository.save(newGoal);
-            // TODO: Check if later need to set some default avatars
             StudentInventory studentInventory = new StudentInventory(id, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
             studentInventoryRepository.save(studentInventory);
             return newStudent;

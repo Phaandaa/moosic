@@ -22,13 +22,14 @@ public class Student extends User{
     private String avatarFrame;
     private String teacherName;
     private String phoneNumber;
+    private String tuitionDay;
 
 
     public Student() {
 
     }
 
-    public Student(String id, String name, String email, Integer pointsCounter, String teacherId, ArrayList<String> purchaseHistory, String instrument, String phoneNumber, String grade, String avatar, String teacherName, String avatarFrame, Date creationTime) {
+    public Student(String id, String name, String email, Integer pointsCounter, String teacherId, ArrayList<String> purchaseHistory, String instrument, String phoneNumber, String grade, String avatar, String teacherName, String avatarFrame, Date creationTime, String tuitionDay) {
         super(id, name, email, "Student",creationTime);
         this.pointsCounter = pointsCounter;
         this.teacherId = teacherId;
@@ -39,6 +40,7 @@ public class Student extends User{
         this.teacherName = teacherName;
         this.avatarFrame = avatarFrame;
         this.phoneNumber = phoneNumber;
+        this.tuitionDay = tuitionDay;
     }
 
     public void deductPoints(Integer pointAmount) {
