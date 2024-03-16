@@ -183,6 +183,10 @@ const ProfileScreen = ({ navigation }) => {
     }
   };
 
+  const renderBadges = async() => {
+    
+  }
+
   const InventoryModal = () => {
     const [selectedTab, setSelectedTab] = useState('avatars'); // 'avatars' or 'frames'
     
@@ -294,6 +298,7 @@ const ProfileScreen = ({ navigation }) => {
     );
 
   };
+
 
 
   const onRefresh = async () => {
