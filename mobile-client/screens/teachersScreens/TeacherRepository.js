@@ -80,7 +80,7 @@ function TeacherRepository({ navigation }) {
     return (
       <LoadingComponent isLoading={loadingstate}>
         <View style={theme.container}>
-            <Text> fak u </Text>
+            <Text> Repository  </Text>
         </View>
       </LoadingComponent>
     );

@@ -127,7 +127,7 @@ const CustomTabBarButton = ({ children }) => {
       
     },
     optionButton: {
-      backgroundColor: '#466CFF',
+      backgroundColor: 'white',
       padding: 10,
       marginVertical: 10,
         width: "100%",
@@ -143,7 +143,7 @@ const CustomTabBarButton = ({ children }) => {
      
     },
     optionText: {
-      color: 'white',
+      color: '#466CFF',
       textAlign: 'center',
       fontWeight: 'bold',
     },

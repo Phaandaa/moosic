@@ -32,7 +32,7 @@ public class StudentService {
 
     public List<Student> getAllStudents() {
         try {
-            List<Student> students = studentRepository.findAll();
+            List<Student> students = studentRepository.findAllSortedByCreationTime();
             if (students == null || students.isEmpty()) {
                 throw new NoSuchElementException("No students found");
             }
@@ -113,7 +113,20 @@ public class StudentService {
         }
         
     }
-    
+
+    @Transactional
+    public void updateStudentAvatarFrame(String studentId, String avatarFrame) {
+        try {
+            Student student = studentRepository.findById(studentId).orElseThrow(()->
+                new NoSuchElementException("Student not found with the ID " + studentId));
+            student.setAvatarFrame(avatarFrame);
+            studentRepository.save(student);
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating student avatar frame for student ID: " + studentId + ": " + e.getMessage());
+        }}
+
     public List<Student> findStudentsByTeacherId(String teacherId) {
         try {
             teacherRepository.findById(teacherId).orElseThrow(()->

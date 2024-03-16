@@ -1,13 +1,14 @@
 // theme.js
 
 import { StyleSheet } from 'react-native';
+import Colors from '../constants/colors';
 
 
 const theme = StyleSheet.create({
   container: {
     padding: 20,
     marginBottom: 20,
-    backgroundColor: '#eeeeee',
+    backgroundColor: '#ffffff',
     width: '100%',
     height : '100%',    
   },
@@ -35,8 +36,7 @@ const theme = StyleSheet.create({
     fontSize: 24,
     paddingVertical: 6,
     fontWeight: 'bold',
-    
-    color: '#525F7F',
+    color: Colors.fontPrimary,
   },
   textSubtitle:{
     fontSize: 16,
@@ -45,6 +45,12 @@ const theme = StyleSheet.create({
     
     color: '#A1B2CF',
   
+  },
+  textBoldItalic:{
+    fontSize: 20,
+    paddingVertical: 6,
+    fontWeight: 'bold',
+    fontStyle: 'italic'
   },
   
   //component themes
@@ -57,13 +63,13 @@ const theme = StyleSheet.create({
     
   },
   button: {
-    backgroundColor: '#4664EA',
+    backgroundColor: Colors.mainPurple,
     padding: 15,
     borderRadius: 15,
     marginTop: 10,
   },
   button2: {
-    backgroundColor: '#525F7F',
+    backgroundColor: Colors.mainPurple,
     padding: 15,
     borderRadius: 15,
     marginTop: 10,
@@ -91,7 +97,7 @@ const theme = StyleSheet.create({
     fontSize: 16,
   }, 
   card: {
-    backgroundColor: '#4664EA',
+    backgroundColor: Colors.accentGrey,
     padding: 20,
     borderRadius: 15,
     marginTop: 10, 
@@ -100,7 +106,7 @@ const theme = StyleSheet.create({
     alignItems: 'center', // Center items vertically
   },
   card2:{
-      backgroundColor: '#FFFFFF',
+      backgroundColor: Colors.accentGrey,
       padding: 20,
       borderRadius: 15,
       marginTop: 10,
@@ -110,7 +116,7 @@ const theme = StyleSheet.create({
       justifyContent: 'space-between', // Add this to space out the title/deadline and the button  }
   },
   card3:{
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.accentGrey,
     padding: 20,
     borderRadius: 15,
     marginTop: 10,
@@ -122,29 +128,40 @@ const theme = StyleSheet.create({
       marginRight: 8, // Add some margin to the right of the text
   },
   cardTitle:{
-    color: '#4664EA',
+    color: Colors.fontPrimary,
+    fontWeight: 'bold',
+    fontSize: 20,
+    paddingVertical: 5
+  },
+  cardTitlePurple:{
+    color: Colors.mainPurple,
     fontWeight: 'bold',
     fontSize: 20,
     paddingVertical: 5
   },
   cardTitlePink:{
-    color: '#EE97BC',
+    color: Colors.accentPink,
     fontWeight: 'bold',
     fontSize: 20,
     paddingVertical: 5
   },
   cardTextBold:{
-    color: '#525F7F',
+    color: Colors.fontPrimary,
     fontWeight: 'bold',
     fontSize: 16,
     paddingVertical: 5,
-    color: 'white',
   },
   cardText: {
-      color: '#525F7F',
+      color: Colors.fontPrimary,
       fontWeight: '300',
       fontSize: 16,
       paddingVertical: 5
+  },
+  cardTextSecondary: {
+    color: Colors.fontSecondary,
+    fontWeight: '200',
+    fontSize: 14,
+    paddingVertical: 5
   },
   buttonContainer: {
       flexDirection: 'row',
@@ -164,13 +181,25 @@ const theme = StyleSheet.create({
     marginTop: 10, // Add some margin to the top of the button container
   },
   smallButton: {
-      backgroundColor: '#4664EA',
+      backgroundColor: Colors.mainPurple,
       padding: 10,
       borderRadius: 15,
       // marginLeft: 8, // Add some margin to separate the buttons
   },
-  smallPinkButton: {
-    backgroundColor: '#EE97BC',
+  smallButtonLeftMargin: {
+    backgroundColor: Colors.accentPink,
+    padding: 10,
+    borderRadius: 15,
+    marginLeft: 8, // Add some margin to separate the buttons
+  },
+  smallButtonLeftMarginGreen: {
+    backgroundColor: Colors.accentGreen,
+    padding: 10,
+    borderRadius: 15,
+    marginLeft: 8, // Add some margin to separate the buttons
+  },
+  smallButtonLeftMarginBlue: {
+    backgroundColor: Colors.accentBlue,
     padding: 10,
     borderRadius: 15,
     marginLeft: 8, // Add some margin to separate the buttons
@@ -251,15 +280,15 @@ const theme = StyleSheet.create({
   },
   modalContent:{
     backgroundColor: 'white',
-    padding: 22,
+    padding: 25,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 4,
-    borderColor: 'rgba(0,0,0, 0.1)',
+    width: '90%',
+    borderRadius: 30,
+    borderColor: 'white',
   },
-  fullSizeImage: {
-    width:250,
-    height: 600,
+  modalImage:{
+    height: 200,
     resizeMode: 'contain'
   },
   inputOuterContainer:{

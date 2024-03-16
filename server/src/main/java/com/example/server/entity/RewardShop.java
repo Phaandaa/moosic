@@ -1,5 +1,7 @@
 package com.example.server.entity;
 
+import java.util.Date;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -27,10 +29,6 @@ public class RewardShop {
     @Field(name = "stock")
     private Integer stock;
 
-    // just use their login password because if each item has their own password, not v effective
-    // @Field(name = "admin_password")
-    // private String adminPassword; 
-
     @Field(name = "limitation")
     private Integer limitation;
 
@@ -44,8 +42,11 @@ public class RewardShop {
     @Field(name= "subtype")
     private String subtype;
 
+    @Field(name = "creation_time")
+    private Date creationTime;
+
     public RewardShop(String description, Integer points, Integer stock, Integer limitation, String imageLink,
-            String type, String subtype) {
+            String type, String subtype, Date creationTime) {
         this.description = description;
         this.points = points;
         this.stock = stock;
@@ -53,6 +54,14 @@ public class RewardShop {
         this.imageLink = imageLink;
         this.type = type;
         this.subtype = subtype;
+        this.creationTime = creationTime;
+    }
+
+    public void deductStock(Integer amount) {
+        if (amount > stock) {
+            throw new IllegalArgumentException("Purchase amount cannot be more than stock amount");
+        }
+        stock = stock - amount;
     }
 
     @Override

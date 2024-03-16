@@ -1,6 +1,5 @@
 package com.example.server.service;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -41,7 +40,7 @@ public class PracticeService {
     @Transactional
     public Practice createPractice(CreatePracticeDTO practiceDTO, MultipartFile video) {
         try {
-            String videoURL = cloudStorageService.uploadFileToGCS(video, "preactice");
+            String videoURL = cloudStorageService.uploadFileToGCS(video, "practice");
             String studentId = practiceDTO.getStudentId();
             String studentName = practiceDTO.getStudentName();
             String teacherId = practiceDTO.getTeacherId();
@@ -49,7 +48,7 @@ public class PracticeService {
             String title = practiceDTO.getTitle();
             String comment = practiceDTO.getComment();
             Practice createdPractice = new Practice(studentId, studentName, teacherId, teacherName, videoURL, title,
-                    comment,null,null);
+                    comment,null,null, new Date());
 
             Date timestamp = new Date();
             createdPractice.setSubmissionTimestamp(timestamp);
@@ -119,11 +118,9 @@ public class PracticeService {
                 new NoSuchElementException("No practice log found with the ID " + practiceId));
 
             if (video != null && !video.isEmpty()) {;
-                String videoURL = cloudStorageService.uploadFileToGCS(video, "preactice");
+                String videoURL = cloudStorageService.uploadFileToGCS(video, "practice");
                 practice.setFeedbackLinks(videoURL);
-            } else {
-                throw new IllegalArgumentException("Please updload files to submit assignment");
-            }
+            } 
             
             if (teacherFeedback == null || teacherFeedback == "") {
                 throw new IllegalArgumentException("Teacher feedback cannot be empty");
@@ -141,15 +138,13 @@ public class PracticeService {
             });
 
             Date timestamp = new Date();
-            practice.setSubmissionTimestamp(timestamp);
+            practice.setFeedbackTimestamp(timestamp);
 
             practiceRepository.save(practice);
 
             // Add points log for submitting practice
             String pointsLogDescription = "Finished " + practice.getTitle() + " practice";
-            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy");
-            String formattedDate = sdf.format(timestamp);
-            PointsLog newPointsLog = new PointsLog(practice.getStudentId(), pointsLogDescription, points, formattedDate);
+            PointsLog newPointsLog = new PointsLog(practice.getStudentId(), pointsLogDescription, points);
             pointsLogRepository.save(newPointsLog);
 
             // TODO: Check with goals and add points if goal is finished
@@ -164,7 +159,7 @@ public class PracticeService {
                 student.addPoints(goal.getPoints());
                 goal.setPointsReceived(true);
                 String pointsLogDescription2 = "Finished weekly goal";
-                PointsLog newPointsLog2 = new PointsLog(studentId, pointsLogDescription2, goal.getPoints(), formattedDate);
+                PointsLog newPointsLog2 = new PointsLog(studentId, pointsLogDescription2, goal.getPoints());
                 pointsLogRepository.save(newPointsLog2);
             }
             goalRepository.save(goal);

@@ -10,6 +10,8 @@ import { setCache } from '../../cacheSlice';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import Colors from '../../constants/colors';
+import SuccessModal from '../../components/ui/SuccessModal';
 
 function ProvideAssignmentFeedbackScreen({ navigation, route }) {
   const {assignmentID} = route.params;
@@ -20,6 +22,14 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
 
   const [images, setImages] = useState([]);
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
+
+
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const handleModalButtonPress = () => {
+    navigation.navigate('Home');
+    setModalVisible(false);
+  };
 
   const uploadImage = async (mode) => {
     let result = {};
@@ -155,8 +165,8 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
       const responseData = await response.json();
       console.log(responseData);
       // dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
-      // navigation.navigate('ViewCreatedAssignmentsScreen', { responseData });
-      Alert.alert('Success', 'Feedback added successfully!');
+      setModalVisible(true);
+
     } catch (error) {
       console.error('Error adding feedback:', error);
       Alert.alert('Error', `Failed to add feedback. ${error.response?.data?.message || 'Please try again.'}`);
@@ -249,6 +259,14 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
             </View>
           </>
         )}
+
+        <SuccessModal 
+          isModalVisible={isModalVisible} 
+          imageSource={require('../../assets/happynote.png')}
+          textMessage="Feedback Added Successfully!"
+          buttonText="Back to Home"
+          onButtonPress={handleModalButtonPress}
+        />
   
 
         <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={submitHandler}>
@@ -281,7 +299,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#525F7F',
+    color: Colors.fontPrimary,
   },
   inputContainer: {
     backgroundColor: '#F7F7F7',
@@ -311,18 +329,11 @@ const styles = StyleSheet.create({
   attachText: {
     marginLeft: 10,
     fontSize: 16,
-    color: '#4664EA',
+    color: Colors.mainPurple,
   },
   textArea: {
     minHeight: 100,
     textAlignVertical: 'top',
-  },
-  button: {
-    backgroundColor: '#4664EA',
-    padding: 15,
-    borderRadius: 15,
-    alignItems: 'center',
-    marginBottom: 10,
   },
   buttonText: {
     color: '#ffffff',
@@ -411,7 +422,7 @@ const styles = StyleSheet.create({
   },
   // Update existing button styles if necessary
   button: {
-    backgroundColor: '#4664EA',
+    backgroundColor: Colors.mainPurple,
     padding: 15,
     borderRadius: 15,
     alignItems: 'center',

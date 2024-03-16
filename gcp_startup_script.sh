@@ -11,21 +11,28 @@ sdk install java 21.0.2-amzn
 
 #Repeat script below
 
-#! /bin/bash
+#!/bin/bash
 
-source "/home/phandavina/.sdkman/bin/sdkman-init.sh"
-export JAVA_HOME="/home/phandavina/.sdkman/candidates/java/current"
+export HOME="/home/phandavina"
+
+source "$HOME/.sdkman/bin/sdkman-init.sh"
+export JAVA_HOME="$HOME/.sdkman/candidates/java/current"
 export PATH="$JAVA_HOME/bin:$PATH"
 echo "JAVA_HOME is set to $JAVA_HOME"
 echo "PATH is set to $PATH"
 
-cd /home/phandavina
-git clone https://github.com/Phaandaa/moosic.git moosic
+sudo -u phandavina git config --global --add safe.directory "$HOME/moosic"
 
-gsutil cp gs://cloud-setup/server/.env /home/phandavina/moosic/server/
-gsutil cp gs://cloud-setup/server/serviceAccountKey.json /home/phandavina/moosic/server/src/main/resources/
+project_dir="$HOME/moosic"
 
-cd /home/phandavina/moosic
-git pull
-cd server
-nohup mvn spring-boot:run &
+if [ ! -d "$project_dir" ]; then
+    sudo -u phandavina git clone https://github.com/Phaandaa/moosic.git "$project_dir"
+fi
+
+sudo -u phandavina git -C "$project_dir" pull origin main
+
+sudo -u phandavina gsutil cp gs://cloud-setup/server/.env "$project_dir/server/"
+sudo -u phandavina gsutil cp gs://cloud-setup/server/serviceAccountKey.json "$project_dir/server/src/main/resources/"
+
+cd "$project_dir/server"
+nohup sh -c 'JAVA_HOME="/home/phandavina/.sdkman/candidates/java/current" mvn spring-boot:run' &

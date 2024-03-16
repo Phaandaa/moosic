@@ -4,6 +4,7 @@ import { MultipleSelectList } from 'react-native-dropdown-select-list';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import IP_ADDRESS from '../../constants/ip_address_temp';
+import Colors from '../../constants/colors';
 
 const StudentDropdown = ({ onSelectionChange }) => {
     const [selected, setSelected] = useState([]);
@@ -91,7 +92,7 @@ const styles = StyleSheet.create({
         color: '#CCCCCC', // Light grey text while loading
     },
     badgeStyles: {
-        backgroundColor: '#4664EA', // Blue background for selected items
+        backgroundColor: Colors.mainPurple,
     },
     badgeTextStyles: {
         color: 'white', // White text for selected items

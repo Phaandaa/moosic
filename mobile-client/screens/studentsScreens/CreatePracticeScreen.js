@@ -10,14 +10,22 @@ import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCache, clearCache } from '../../cacheSlice';
-
-function CreatePracticeScreen({}){
+import Colors from '../../constants/colors';
+import SuccessModal from '../../components/ui/SuccessModal';
+function CreatePracticeScreen({navigation}){
     // const dispatch = useDispatch();
     const [title, setTitle] = useState('');
     const [comment, setComment] = useState('');
     const [videos, setVideos] = useState([]);
     const [teacher, setTeacher] = useState({});
     const [loadingstates, setLoadingStates] = useState(false);
+
+    const [isModalVisible, setModalVisible] = useState(false);
+
+    const handleModalButtonPress = () => {
+      navigation.navigate('Home');
+      setModalVisible(false);
+    };
 
     useEffect(() => {
       const fetchTeacher = async () => {
@@ -71,25 +79,7 @@ function CreatePracticeScreen({}){
           return;
         }
 
-        // Fetch teacher using studentID
-
-        // try {
-        //   const response = await fetch(`${IP_ADDRESS}/teachers/student/${parsedData.userId}`, {
-        //       method: 'GET',
-        //   });
-            
-        //   if (!response.ok) {
-        //     const errorText = response.statusText || 'Unknown error occurred';
-        //     throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-        //   }
-        //   const responseData = await response.json();
-        //   setTeacher(responseData);
-        //   console.log('teacher', responseData);
-
-        // } catch (error) {
-        //   console.error('Error fetching teacher:', error);
-        //   Alert.alert('Error', `Failed to fetch teacher. ${error.response?.data?.message || 'Please try again.'}`);
-        // }
+       
 
         const formData = new FormData();
 
@@ -137,7 +127,7 @@ function CreatePracticeScreen({}){
             console.log(responseData);
             // dispatch(setCache({ key: 'practiceData', value: practiceData })); 
             // navigation.navigate('PracticeListStudentScreen');
-            Alert.alert('Success', 'Practice created successfully!');
+            setModalVisible(true);
         } catch (error) {
             console.error('Error recording practice:', error);
             Alert.alert('Error', `Failed to create practice. ${error.response?.data?.message || 'Please try again.'}`);
@@ -201,7 +191,7 @@ function CreatePracticeScreen({}){
             {/* <View style={styles.uploadButtons}> */}
                 <View style={styles.attachFilesSection}>
                 <TouchableOpacity style={styles.attachButton} onPress={() => uploadVideo('gallery')}>
-                    <Ionicons name="images" size={24} color="#4664EA" />
+                    <Ionicons name="images" size={24} color={Colors.mainPurple} />
                     {videos.length === 0 ? (
                         <Text style={styles.attachText}>Upload Video</Text>
                     ) : (
@@ -229,24 +219,23 @@ function CreatePracticeScreen({}){
                 </TouchableOpacity>
                 </View>
             </View>
-{/* 
-            <View style={styles.imageContainer}>
-                <View style={styles.imageWrapper}>
-                    <Video source={{ uri: videos[0].uri }} style={styles.image} />
-                    <TouchableOpacity onPress={removeVideo} style={styles.removeButton}>
-                        
-                        <Ionicons name="close-circle" size={24} color="red" />
-                    </TouchableOpacity>
-                </View>
-            </View> */}
           </>
         )}
-            {/* Submit button */}
-            <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={submitHandler}>
-                <Text style={styles.buttonText}>Submit Recording</Text>
-            </TouchableOpacity>
-            </ScrollView>
 
+      <SuccessModal 
+        isModalVisible={isModalVisible} 
+        imageSource={require('../../assets/happynote.png')}
+        textMessage="Submitted Successfully!"
+        buttonText="Back to Home"
+        onButtonPress={handleModalButtonPress}
+      />
+
+      {/* Submit button */}
+      <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={submitHandler}>
+          <Text style={styles.buttonText}>Submit Recording</Text>
+      </TouchableOpacity>
+
+      </ScrollView>
     )
 };
 export default CreatePracticeScreen;
@@ -305,19 +294,12 @@ const styles = StyleSheet.create({
     attachText: {
       marginLeft: 10,
       fontSize: 16,
-      color: '#4664EA',
+      color: Colors.mainPurple,
       alignItems:'center'
     },
     textArea: {
       minHeight: 100,
       textAlignVertical: 'top',
-    },
-    button: {
-      backgroundColor: '#4664EA',
-      padding: 15,
-      borderRadius: 15,
-      alignItems: 'center',
-      marginBottom: 10,
     },
     buttonText: {
       color: '#ffffff',
@@ -377,36 +359,8 @@ const styles = StyleSheet.create({
     submitButton: {
       marginTop: 20,
     },
-    deadlineContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginBottom: 20,
-      padding: 10,
-      backgroundColor: '#F7F7F7', // Light gray background
-      borderRadius: 8,
-    },
-    dueDateLabel: {
-      fontSize: 16,
-      color: '#8E8E93', // Light gray text
-    },
-    dateDisplay: {
-      flex: 1,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginLeft: 10,
-      paddingVertical: 8,
-      paddingHorizontal: 12,
-      backgroundColor: '#FFFFFF', // White background for date display
-      borderRadius: 8,
-    },
-    dateText: {
-      fontSize: 16,
-      color: '#000000', // Black text for the date
-    },
-    // Update existing button styles if necessary
     button: {
-      backgroundColor: '#4664EA',
+      backgroundColor: Colors.mainPurple,
       padding: 15,
       borderRadius: 15,
       alignItems: 'center',

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { TextInput, View, ScrollView, TouchableOpacity, Text, Button, Image, Alert, StyleSheet, Platform } from 'react-native';
+import { TextInput, View, ScrollView, TouchableOpacity, Text, Button, Image, Alert, StyleSheet, Platform, Linking } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -9,10 +9,13 @@ import { setCache } from '../../cacheSlice';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import theme from '../../styles/theme';
+import Colors from '../../constants/colors';
+import SuccessModal from '../../components/ui/SuccessModal';
 
 const getFileNameFromUrl = (url) => {
   return url.split('/').pop().slice(37);
 };
+
 function EditAssignmentScreen({ route, navigation }) {
   const { assignment } = route.params;
 
@@ -25,6 +28,14 @@ function EditAssignmentScreen({ route, navigation }) {
 
   const [images, setImages] = useState([]);
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
+
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const handleModalButtonPress = () => {
+    navigation.navigate('Home');
+    setModalVisible(false);
+  };
+
 
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
@@ -189,8 +200,8 @@ function EditAssignmentScreen({ route, navigation }) {
       const responseData = await response.json();
       console.log(responseData);
       dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
-      navigation.navigate('Home');
-      Alert.alert('Success', 'Assignment edited successfully!');
+      setModalVisible(true);
+
     } catch (error) {
       console.error('Error editing assignment:', error);
       Alert.alert('Error', `Failed to edit assignment. ${error.response?.data?.message || 'Please try again.'}`);
@@ -202,16 +213,6 @@ function EditAssignmentScreen({ route, navigation }) {
     <ScrollView style={styles.container}>
       <View style={styles.formContainer}>
         <Text style={styles.header}>Edit Assignment</Text>
-{/* 
-        <View style={styles.inputContainer}>
-          <TextInput
-            placeholder="Add a Title"
-            value={assignmentName}
-            onChangeText={setAssignmentName}
-            style={styles.input}
-          />
-          {errors.assignmentName && <Text style={styles.errorText}>{errors.assignmentName}</Text>}
-        </View> */}
 
         <Text style={theme.cardTitle}>{assignment.title}</Text>
 
@@ -230,7 +231,7 @@ function EditAssignmentScreen({ route, navigation }) {
           <Text style={styles.dueDateLabel}>Due date</Text>
           <TouchableOpacity onPress={toggleDatepicker} style={styles.dateDisplay}>
             <Text style={styles.dateText}>{assignmentDeadline || 'Select date'}</Text>
-            <Ionicons name="calendar" size={24} color="#4664EA" />
+            <Ionicons name="calendar" size={24} color={Colors.mainPurple}/>
           </TouchableOpacity>
         </View>
 
@@ -247,14 +248,14 @@ function EditAssignmentScreen({ route, navigation }) {
         <View style={styles.uploadButtons}>
         <View style={styles.attachFilesSection}>
           <TouchableOpacity style={styles.attachButton} onPress={() => uploadImage('gallery')}>
-            <Ionicons name="images" size={24} color="#4664EA" />
+            <Ionicons name="images" size={24} color={Colors.mainPurple} />
             <Text style={styles.attachText}>Upload Image</Text>
           </TouchableOpacity>
         </View>
 
           <View style={styles.attachFilesSection}>
             <TouchableOpacity style={styles.attachButton} onPress={uploadDocument}>
-              <Ionicons name="attach" size={24} color="#4664EA" />
+              <Ionicons name="attach" size={24} color={Colors.mainPurple} />
               <Text style={styles.attachText}>Attach Files</Text>
             </TouchableOpacity>
           </View>
@@ -303,10 +304,15 @@ function EditAssignmentScreen({ route, navigation }) {
           </>
         )}
 
-
 {/* <StudentDropdown onSelectionChange={handleStudentSelectionChange} style={styles.dropdown} /> */}
+      <SuccessModal 
+        isModalVisible={isModalVisible} 
+        imageSource={require('../../assets/happynote.png')}
+        textMessage="Edited Successfully!"
+        buttonText="Back to Home"
+        onButtonPress={handleModalButtonPress}
+      />
   
-
         <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={submitHandler}>
           <Text style={styles.buttonText}>Edit Assignment</Text>
         </TouchableOpacity>
@@ -337,7 +343,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#525F7F',
+    color: Colors.fontPrimary,
   },
   inputContainer: {
     backgroundColor: '#F7F7F7',
@@ -367,18 +373,11 @@ const styles = StyleSheet.create({
   attachText: {
     marginLeft: 10,
     fontSize: 16,
-    color: '#4664EA',
+    color: Colors.mainPurple,
   },
   textArea: {
     minHeight: 100,
     textAlignVertical: 'top',
-  },
-  button: {
-    backgroundColor: '#4664EA',
-    padding: 15,
-    borderRadius: 15,
-    alignItems: 'center',
-    marginBottom: 10,
   },
   buttonText: {
     color: '#ffffff',
@@ -467,7 +466,7 @@ const styles = StyleSheet.create({
   },
   // Update existing button styles if necessary
   button: {
-    backgroundColor: '#4664EA',
+    backgroundColor: Colors.mainPurple,
     padding: 15,
     borderRadius: 15,
     alignItems: 'center',

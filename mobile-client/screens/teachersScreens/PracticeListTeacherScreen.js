@@ -4,9 +4,10 @@ import theme from '../../styles/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import AssignmentSearchBar from '../../components/ui/assignmentSearchBar';
+import trimDate from '../../components/ui/trimDate';
 
 function PracticeListTeacherScreen({route, navigation}){
-    const { studentID }  = route.params;
+    const { studentID, studentName }  = route.params;
 
     const [teacherID, setTeacherID] = useState('');
     const [practiceData, setPracticeData] = useState([]);
@@ -54,8 +55,17 @@ function PracticeListTeacherScreen({route, navigation}){
                     throw new Error(`Request failed with status ${response.status}: ${errorText}`);
                 }
                 const responseData = await response.json();
-                setPracticeData(responseData); // Set the state with the response data
-                setSearchResults(responseData);
+
+                const sortedData = responseData.sort((a, b) => {
+                    // Assuming the deadline is in a format that can be directly compared, like 'YYYY-MM-DD'
+                    // If the date format is different, you may need to parse it to a Date object first
+                    return new Date(b.submissionTimestamp) - new Date(a.submissionTimestamp);
+                });
+                console.log(sortedData);
+
+                setPracticeData(sortedData); // Set the state with the response data
+                setSearchResults(sortedData);
+
                 console.log(practiceData[0])
             } catch (error) {
                 console.error('Error fetching practice:', error);
@@ -81,27 +91,33 @@ function PracticeListTeacherScreen({route, navigation}){
     };
     
     return (
-        <ScrollView style={theme.container}>
+        <View style={theme.container}>
             {/* <Text style={[theme.textTitle, { marginTop: 50, verticalAlign: 'middle' }]}>Your Assignments</Text> */}
                     {/* Search bar */}
-            <AssignmentSearchBar onSearch={handleSearch} />
-            {searchResults.length > 0 ? ( // Use searchResults here
-                searchResults.map((practice, index) => (
-                    <TouchableOpacity key={index} style={theme.card2} onPress={() => navigation.navigate('ViewPracticeTeacherScreen', { practice: practice })}>
-                        <View style={theme.cardTextContainer}>
-                            <Text style={theme.cardTitle}>{practice.title}</Text>
-                        </View>
-                        <TouchableOpacity style={theme.smallButton}>
-                            <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ViewPracticeTeacherScreen', { practice: practice })}>View</Text>
+            <View style={{marginBottom: 10}}>
+                <Text style={theme.cardTitle}>Practice Log for {studentName}</Text>
+                <AssignmentSearchBar onSearch={handleSearch} />
+            </View>
+            <ScrollView> 
+                {searchResults.length > 0 ? ( // Use searchResults here
+                    searchResults.map((practice, index) => (
+                        <TouchableOpacity key={index} style={theme.card2} onPress={() => navigation.navigate('ViewPracticeTeacherScreen', { practice: practice })}>
+                            <View style={theme.cardTextContainer}>
+                                <Text style={theme.cardTitle}>{practice.title}</Text>
+                                <Text style={theme.cardTextSecondary}>Created on: {trimDate(practice.submissionTimestamp)}</Text>
+                            </View>
+                            <TouchableOpacity style={theme.smallButton}>
+                                <Text style={theme.smallButtonText} onPress={() => navigation.navigate('ViewPracticeTeacherScreen', { practice: practice })}>View</Text>
+                            </TouchableOpacity>
                         </TouchableOpacity>
-                    </TouchableOpacity>
-                ))
-            ) : (
-                <View style={theme.card2}>
-                  <Text>No practice found.</Text>
-                </View>
-              )}
-        </ScrollView>
+                    ))
+                ) : (
+                    <View style={theme.card2}>
+                    <Text>No practice found.</Text>
+                    </View>
+                )}
+            </ScrollView>
+        </View>
     );
 }
 export default PracticeListTeacherScreen;

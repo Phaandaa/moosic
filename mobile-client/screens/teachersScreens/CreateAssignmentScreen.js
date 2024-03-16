@@ -10,6 +10,9 @@ import { setCache } from '../../cacheSlice';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import Colors from '../../constants/colors';
+import SuccessModal from '../../components/ui/SuccessModal';
+
 
 function CreateAssignmentScreen({ navigation }) {
   const dispatch = useDispatch();
@@ -22,6 +25,13 @@ function CreateAssignmentScreen({ navigation }) {
 
   const [images, setImages] = useState([]);
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
+
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const handleModalButtonPress = () => {
+    navigation.navigate('Home');
+    setModalVisible(false);
+  };
 
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
@@ -187,12 +197,11 @@ function CreateAssignmentScreen({ navigation }) {
         throw new Error(`Request failed with status ${response.status}: ${errorText}`);
       }
       
-
       const responseData = await response.json();
       console.log(responseData);
       dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
-      navigation.navigate('Home');
-      Alert.alert('Success', 'Assignment created successfully!');
+      setModalVisible(true);
+
     } catch (error) {
       console.error('Error creating assignment:', error);
       Alert.alert('Error', `Failed to create assignment. ${error.response?.data?.message || 'Please try again.'}`);
@@ -230,7 +239,7 @@ function CreateAssignmentScreen({ navigation }) {
           <Text style={styles.dueDateLabel}>Due date</Text>
           <TouchableOpacity onPress={toggleDatepicker} style={styles.dateDisplay}>
             <Text style={styles.dateText}>{assignmentDeadline || 'Select date'}</Text>
-            <Ionicons name="calendar" size={24} color="#4664EA" />
+            <Ionicons name="calendar" size={24} color={Colors.mainPurple} />
           </TouchableOpacity>
         </View>
 
@@ -247,14 +256,14 @@ function CreateAssignmentScreen({ navigation }) {
         <View style={styles.uploadButtons}>
         <View style={styles.attachFilesSection}>
           <TouchableOpacity style={styles.attachButton} onPress={() => uploadImage('gallery')}>
-            <Ionicons name="images" size={24} color="#4664EA" />
+            <Ionicons name="images" size={24} color={Colors.mainPurple} />
             <Text style={styles.attachText}>Upload Image</Text>
           </TouchableOpacity>
         </View>
 
           <View style={styles.attachFilesSection}>
             <TouchableOpacity style={styles.attachButton} onPress={uploadDocument}>
-              <Ionicons name="attach" size={24} color="#4664EA" />
+              <Ionicons name="attach" size={24} color={Colors.mainPurple} />
               <Text style={styles.attachText}>Attach Files</Text>
             </TouchableOpacity>
           </View>
@@ -295,9 +304,15 @@ function CreateAssignmentScreen({ navigation }) {
           </>
         )}
 
+        <StudentDropdown onSelectionChange={handleStudentSelectionChange} style={styles.dropdown} />
 
-<StudentDropdown onSelectionChange={handleStudentSelectionChange} style={styles.dropdown} />
-  
+      <SuccessModal 
+        isModalVisible={isModalVisible} 
+        imageSource={require('../../assets/happynote.png')}
+        textMessage="Created Successfully!"
+        buttonText="Back to Home"
+        onButtonPress={handleModalButtonPress}
+      />
 
         <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={submitHandler}>
           <Text style={styles.buttonText}>Create Assignment</Text>
@@ -329,7 +344,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#525F7F',
+    color: Colors.fontPrimary,
   },
   inputContainer: {
     backgroundColor: '#F7F7F7',
@@ -359,18 +374,11 @@ const styles = StyleSheet.create({
   attachText: {
     marginLeft: 10,
     fontSize: 16,
-    color: '#4664EA',
+    color: Colors.mainPurple,
   },
   textArea: {
     minHeight: 100,
     textAlignVertical: 'top',
-  },
-  button: {
-    backgroundColor: '#4664EA',
-    padding: 15,
-    borderRadius: 15,
-    alignItems: 'center',
-    marginBottom: 10,
   },
   buttonText: {
     color: '#ffffff',
@@ -459,7 +467,7 @@ const styles = StyleSheet.create({
   },
   // Update existing button styles if necessary
   button: {
-    backgroundColor: '#4664EA',
+    backgroundColor: Colors.mainPurple,
     padding: 15,
     borderRadius: 15,
     alignItems: 'center',
@@ -471,5 +479,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-
 export default CreateAssignmentScreen;

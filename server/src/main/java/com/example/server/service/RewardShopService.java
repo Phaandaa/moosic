@@ -1,6 +1,7 @@
 package com.example.server.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -9,10 +10,19 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.server.dao.PointsLogRepository;
+import com.example.server.dao.PurchaseHistoryRepository;
 import com.example.server.dao.RewardShopRepository;
+import com.example.server.dao.StudentInventoryRepository;
+import com.example.server.dao.StudentRepository;
+import com.example.server.entity.PointsLog;
+import com.example.server.entity.PurchaseHistory;
 import com.example.server.entity.RewardShop;
+import com.example.server.entity.Student;
+import com.example.server.entity.StudentInventory;
 import com.example.server.models.RewardShopItemDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -23,6 +33,18 @@ public class RewardShopService {
     
     @Autowired
     private RewardShopRepository rewardShopRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
+    private PointsLogRepository pointsLogRepository;
+
+    @Autowired
+    private StudentInventoryRepository studentInventoryRepository;
+    
+    @Autowired
+    private PurchaseHistoryRepository purchaseHistoryRepository;
 
     @Autowired
     private CloudStorageService cloudStorageService;
@@ -97,7 +119,7 @@ public class RewardShopService {
         }
     }
 
-    public String addNewRewardShopItem(String rewardShopItemJSON, MultipartFile file) {
+    public RewardShop addNewRewardShopItem(String rewardShopItemJSON, MultipartFile file) {
         try {
             RewardShopItemDTO rewardShopItemDTO = objectMapper.readValue(rewardShopItemJSON, RewardShopItemDTO.class);
             String imageURL = cloudStorageService.uploadFileToGCS(file, "shop");
@@ -107,9 +129,9 @@ public class RewardShopService {
             Integer limiation = rewardShopItemDTO.getLimitation();
             String Subtype = rewardShopItemDTO.getSubtype();
             String type = rewardShopItemDTO.getType();
-            RewardShop createdRewardShopItem = new RewardShop(description, points, stock, limiation, imageURL, type, Subtype);
+            RewardShop createdRewardShopItem = new RewardShop(description, points, stock, limiation, imageURL, type, Subtype, new Date());
             rewardShopRepository.save(createdRewardShopItem);
-            return "Create new item in reward shop successfully";
+            return createdRewardShopItem;
         } catch (RuntimeException e) {
             throw new RuntimeException("Error creating item in reward shop: " + e.getMessage());
         } catch (JsonMappingException e) {
@@ -121,7 +143,7 @@ public class RewardShopService {
         }
     }
 
-    public String addNewRewardShopItemWithoutPic(RewardShopItemDTO rewardShopItemDTO) {
+    public RewardShop addNewRewardShopItemWithoutPic(RewardShopItemDTO rewardShopItemDTO) {
         try {
             String description = rewardShopItemDTO.getDescription();
             Integer points = rewardShopItemDTO.getPoints();
@@ -129,9 +151,9 @@ public class RewardShopService {
             Integer limiation = rewardShopItemDTO.getLimitation();
             String type = rewardShopItemDTO.getType();
             String subtype = rewardShopItemDTO.getSubtype();
-            RewardShop createdRewardShopItem = new RewardShop(description, points, stock, limiation, null, type, subtype);
+            RewardShop createdRewardShopItem = new RewardShop(description, points, stock, limiation, null, type, subtype, new Date());
             rewardShopRepository.save(createdRewardShopItem);
-            return "Create new item in reward shop successfully";
+            return createdRewardShopItem;
         } catch (RuntimeException e) {
             throw new RuntimeException("Error creating item in reward shop: " + e.getMessage());
         } catch (Exception e) {
@@ -182,7 +204,110 @@ public class RewardShopService {
         }
     }
 
-    // TODO: verify purchase from admin side, requires inventory entity
+    @Transactional
+    public RewardShop verifyPhysicalPurchase(String id, String studentId, Integer purchaseAmount) {
+        try {          
+            RewardShop rewardShopItem = rewardShopRepository.findById(id).orElseThrow(()->
+                new NoSuchElementException("Reward Shop item not found with the ID " + id));
 
+            // check if student has exceeded limitation count
+            Integer itemLimitCount = rewardShopItem.getLimitation();
+            List<PurchaseHistory> studentPurchaseHistories = purchaseHistoryRepository.findByStudentIdAndItemId(studentId, id);
+            PurchaseHistory.hasExceededLimit(purchaseAmount, itemLimitCount, studentPurchaseHistories);
+
+            // kurangin stock
+            rewardShopItem.deductStock(purchaseAmount);
+            rewardShopRepository.save(rewardShopItem);
+
+            // kurangin points murid
+            Student student = studentRepository.findById(studentId).orElseThrow(()->
+                new NoSuchElementException("Student not found with the ID " + id));
+            Integer totalPrice = rewardShopItem.getPoints() * purchaseAmount;
+            student.deductPoints(totalPrice);
+            studentRepository.save(student);
+
+            // add to inventory if not physical
+
+            // tambahin points log murid
+            String pointsLogDesc = "Bought " + rewardShopItem.getDescription() + " from shop";
+            PointsLog pointsLog = new PointsLog(studentId, pointsLogDesc, -totalPrice);
+            pointsLogRepository.save(pointsLog);
+
+            // tambahin purchase history murid 
+            PurchaseHistory purchaseHistory = new PurchaseHistory(
+                studentId, 
+                student.getName(), 
+                rewardShopItem.getId(), 
+                purchaseAmount, 
+                totalPrice);
+            purchaseHistoryRepository.save(purchaseHistory);
+            
+            return rewardShopItem;
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error verifying physical purchase: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to verify physical purchase: " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public RewardShop verifyDigitalPurchase(String id, String studentId, Integer purchaseAmount) {
+        try {          
+            if (!purchaseAmount.equals(1)) {
+                throw new IllegalArgumentException("Digital Item purchase amount should only be 1");
+            }
+            RewardShop rewardShopItem = rewardShopRepository.findById(id).orElseThrow(()->
+                new NoSuchElementException("Reward Shop item not found with the ID " + id));
+
+            // check if student has exceeded limitation count
+            Integer itemLimitCount = rewardShopItem.getLimitation();
+            List<PurchaseHistory> studentPurchaseHistories = purchaseHistoryRepository.findByStudentIdAndItemId(studentId, id);
+            PurchaseHistory.hasExceededLimit(purchaseAmount, itemLimitCount, studentPurchaseHistories);
+
+            // kurangin stock
+            rewardShopItem.deductStock(purchaseAmount); // sebenrnya g perlu si buat digital tp bebas la hahahah
+            rewardShopRepository.save(rewardShopItem);
+
+            // kurangin points murid
+            Student student = studentRepository.findById(studentId).orElseThrow(()->
+                new NoSuchElementException("Student not found with the ID " + studentId));
+            Integer totalPrice = rewardShopItem.getPoints();
+            student.deductPoints(totalPrice);
+            studentRepository.save(student);
+
+            // add to inventory if not physical
+            StudentInventory studentInventory = studentInventoryRepository.findByStudentId(studentId).orElseThrow(()->
+                new NoSuchElementException("Student Inventory not found for student ID " + studentId));
+            studentInventory.addInventoryItem(rewardShopItem.getSubtype(), rewardShopItem.getImageLink());
+
+            // tambahin points log murid
+            String pointsLogDesc = "Bought " + rewardShopItem.getDescription() + " from shop";
+            PointsLog pointsLog = new PointsLog(studentId, pointsLogDesc, -totalPrice);
+            pointsLogRepository.save(pointsLog);
+
+            // tambahin purchase history murid 
+            PurchaseHistory purchaseHistory = new PurchaseHistory(
+                studentId, 
+                student.getName(), 
+                rewardShopItem.getId(), 
+                purchaseAmount, 
+                totalPrice);
+            purchaseHistoryRepository.save(purchaseHistory);
+            
+            return rewardShopItem;
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error verifying physical purchase: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to verify physical purchase: " + e.getMessage());
+        }
+    }
 }
 

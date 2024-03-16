@@ -64,3 +64,9 @@ export const deleteAsync = (url, token = null) => {
     headers,
   });
 };
+
+export function convertArrayToCSV(array) {
+  const header = Object.keys(array[0]).join(',');
+  const rows = array.map(obj => Object.values(obj).join(','));
+  return [header, ...rows].join('\n');
+}

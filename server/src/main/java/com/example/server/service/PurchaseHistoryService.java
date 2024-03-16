@@ -17,7 +17,7 @@ public class PurchaseHistoryService {
 
     public List<PurchaseHistory> findAllPurchaseHistory() {
         try {
-            List<PurchaseHistory> purchaseHistories = purchaseHistoryRepository.findAll();
+            List<PurchaseHistory> purchaseHistories = purchaseHistoryRepository.findAllSorted();
             if (purchaseHistories.isEmpty() || purchaseHistories == null) {
                 throw new NoSuchElementException("No purchase histories found");
             }

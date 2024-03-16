@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState, useEffect } from "react";
 import Head from "next/head";;
-import ArrowDownOnSquareIcon from "@heroicons/react/24/solid/ArrowDownOnSquareIcon";
+import ArrowUpOnSquareIcon from "@heroicons/react/24/solid/ArrowUpOnSquareIcon";
 import { Box, Button, Container, Stack, SvgIcon, Typography, Card } from "@mui/material";
 import { useSelection } from "src/hooks/use-selection";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
@@ -11,6 +11,7 @@ import TeachersModal from "src/sections/teachers/teachers-modal";
 import { getAsync } from "src/utils/utils";
 import * as XLSX from "xlsx";
 import TrashIcon from "@heroicons/react/24/solid/TrashIcon";
+import { convertArrayToCSV } from "src/utils/utils";
 
 const Page = () => {
   const [teacherData, setTeacherData] = useState([]);
@@ -83,29 +84,17 @@ const Page = () => {
     );
   };
 
-  const handleExport = useCallback(() => {
-    // Define a workbook and a worksheet
-    const wb = XLSX.utils.book_new();
-    const wsName = "TeachersData";
-
-    // Convert your student data into a format suitable for a worksheet
-    const wsData = [
-      ["Name", "Email"], // Header row
-      ...teacherData.map((teacher) => [
-        teacher.name,
-        teacher.email,
-      ]),
-    ];
-
-    // Create a worksheet
-    const ws = XLSX.utils.aoa_to_sheet(wsData);
-
-    // Add the worksheet to the workbook
-    XLSX.utils.book_append_sheet(wb, ws, wsName);
-
-    // Generate XLSX file and trigger download
-    XLSX.writeFile(wb, "TeachersData.xlsx");
-  }, [teacherData]);
+  const handleExport = () => {
+    const csvData = convertArrayToCSV(teacherData);
+    const blob = new Blob([csvData], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'teachers-data.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
 
   return (
@@ -136,7 +125,7 @@ const Page = () => {
                   color="inherit"
                   startIcon={
                     <SvgIcon fontSize="small">
-                      <ArrowDownOnSquareIcon />
+                      <ArrowUpOnSquareIcon />
                     </SvgIcon>
                   }
                   onClick={handleExport}

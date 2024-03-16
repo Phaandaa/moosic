@@ -1,5 +1,8 @@
 package com.example.server.entity;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -30,11 +33,18 @@ public class PointsLog {
     @Field(name = "date")
     private String date;
 
-    public PointsLog(String studentId, String description, Integer changeAmount, String date) {
+    @Field(name = "creation_time")
+    private Date creationTime;
+
+    public PointsLog(String studentId, String description, Integer changeAmount) {
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy");
+        Date currentDate = new Date();
+        String formattedDate = sdf.format(currentDate);
         this.studentId = studentId;
         this.description = description;
         this.changeAmount = changeAmount;
-        this.date = date;
+        this.date = formattedDate;
+        this.creationTime = currentDate;
     }
 
 }
