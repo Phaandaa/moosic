@@ -1,6 +1,7 @@
 package com.example.server.entity;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -21,8 +22,8 @@ public class Teacher extends User{
 
     }
 
-    public Teacher(String id, String name, String email, String avatar, ArrayList<String> studentIds, String phone, String instrument) {
-        super(id, name, email, "Teacher");
+    public Teacher(String id, String name, String email, String avatar, ArrayList<String> studentIds, String phone, String instrument, Date creationTime) {
+        super(id, name, email, "Teacher", creationTime);
         this.studentIds = studentIds;
         this.avatar = avatar;
         this.phone = phone;

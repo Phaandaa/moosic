@@ -1,6 +1,8 @@
 package com.example.server.entity;
 
 import java.util.ArrayList;
+import java.util.Date;
+
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Getter;
@@ -25,8 +27,12 @@ public class Student extends User{
 
     }
 
-    public Student(String id, String name, String email, Integer pointsCounter, String teacherId, ArrayList<String> purchaseHistory, String instrument, String grade, String avatar, String teacherName, String avatarFrame) {
-        super(id, name, email, "Student");
+    public Student(
+        String id, String name, String email, Integer pointsCounter, 
+        String teacherId, ArrayList<String> purchaseHistory, String instrument, 
+        String grade, String avatar, String teacherName, String avatarFrame, Date creationTime
+        ) {
+        super(id, name, email, "Student", creationTime);
         this.pointsCounter = pointsCounter;
         this.teacherId = teacherId;
         this.purchaseHistory = purchaseHistory;

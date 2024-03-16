@@ -1,6 +1,7 @@
 package com.example.server.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -128,7 +129,7 @@ public class RewardShopService {
             Integer limiation = rewardShopItemDTO.getLimitation();
             String Subtype = rewardShopItemDTO.getSubtype();
             String type = rewardShopItemDTO.getType();
-            RewardShop createdRewardShopItem = new RewardShop(description, points, stock, limiation, imageURL, type, Subtype);
+            RewardShop createdRewardShopItem = new RewardShop(description, points, stock, limiation, imageURL, type, Subtype, new Date());
             rewardShopRepository.save(createdRewardShopItem);
             return createdRewardShopItem;
         } catch (RuntimeException e) {
@@ -150,7 +151,7 @@ public class RewardShopService {
             Integer limiation = rewardShopItemDTO.getLimitation();
             String type = rewardShopItemDTO.getType();
             String subtype = rewardShopItemDTO.getSubtype();
-            RewardShop createdRewardShopItem = new RewardShop(description, points, stock, limiation, null, type, subtype);
+            RewardShop createdRewardShopItem = new RewardShop(description, points, stock, limiation, null, type, subtype, new Date());
             rewardShopRepository.save(createdRewardShopItem);
             return createdRewardShopItem;
         } catch (RuntimeException e) {

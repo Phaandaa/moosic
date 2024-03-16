@@ -82,15 +82,16 @@ public class UserService {
             }
             FirebaseToken firebaseResponse = firebaseAuthService.signUpWithEmailAndPassword(email, password);
             String id = firebaseResponse.getLocalId();
-            User newUser = new User(id, name, email, role);
+            Date creationTime = new Date();
+            User newUser = new User(id, name, email, role, creationTime);
             userRepository.save(newUser);
 
             switch (role) {
                 case "Student":
-                    return createStudent(id, name, email, userDTO);
+                    return createStudent(id, name, email, userDTO, creationTime);
                     // break;
                 case "Teacher":
-                    return createTeacher(id, name, email, userDTO);
+                    return createTeacher(id, name, email, userDTO, creationTime);
                     // break;
                 default:
                     return newUser;
@@ -117,7 +118,7 @@ public class UserService {
             isNotEmptyOrNull(name, "Name");
             FirebaseToken firebaseResponse = firebaseAuthService.signUpWithEmailAndPassword(email, password);
             String id = firebaseResponse.getLocalId();
-            User newUser = new User(id, name, email, "Admin");
+            User newUser = new User(id, name, email, "Admin", new Date());
             userRepository.save(newUser);
             return newUser;
         } catch (IllegalArgumentException e) {
@@ -144,11 +145,11 @@ public class UserService {
     }
 
     @Transactional
-    private Student createStudent(String id, String name, String email, CreateUserDTO userDTO) {
+    private Student createStudent(String id, String name, String email, CreateUserDTO userDTO, Date creationTime) {
         try {
             String instrument = userDTO.getInfo().get("instrument");
             String grade = userDTO.getInfo().get("grade");
-            Student newStudent = new Student(id, name, email, 0, null, new ArrayList<>(), instrument, grade, null,null, null);
+            Student newStudent = new Student(id, name, email, 0, null, new ArrayList<>(), instrument, grade, null,null, null, creationTime);
             studentRepository.save(newStudent);
             Goal newGoal = new Goal(id, name, null, 0, 0, 3, 1, "Not done", 20, false);
             goalRepository.save(newGoal);
@@ -164,11 +165,11 @@ public class UserService {
         
     }
 
-    private Teacher createTeacher(String id, String name, String email, CreateUserDTO userDTO) {
+    private Teacher createTeacher(String id, String name, String email, CreateUserDTO userDTO, Date creationTime) {
         try {
             String instrument = userDTO.getInfo().get("instrument");
             String phoneNumber = userDTO.getInfo().get("phone");
-            Teacher newTeacher = new Teacher(id, name, email, null, new ArrayList<>(), phoneNumber, instrument);
+            Teacher newTeacher = new Teacher(id, name, email, null, new ArrayList<>(), phoneNumber, instrument, creationTime);
             teacherRepository.save(newTeacher);
             return newTeacher;
         } catch (IllegalArgumentException e) {
