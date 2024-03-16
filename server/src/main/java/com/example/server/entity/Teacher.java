@@ -14,7 +14,7 @@ import lombok.Setter;
 public class Teacher extends User{
     private ArrayList<String> studentIds; // References to Students' User IDs
     private String avatar;
-    private String phoneNumber;
+    private String phoneNumber; // TODO: Ini nomor telfonnya? Can just add expoPushToken buat store push tokennya 
     private String instrument;
 
     public Teacher() {
