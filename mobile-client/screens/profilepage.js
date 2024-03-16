@@ -24,8 +24,11 @@ const ProfileScreen = ({ navigation }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [ownedAvatars, setOwnedAvatars] = useState([]);
   const [ownedFrames, setOwnedFrames] = useState([]);
+  const [ownedBadges, setOwnedBadges] = useState([]); // Assuming badges are fetched from the API
+  
   const [selectedAvatarId, setSelectedAvatarId] = useState('');
   const [selectedFrameId, setSelectedFrameId] = useState('');
+
   
   
 
@@ -171,6 +174,7 @@ const ProfileScreen = ({ navigation }) => {
         await axios.put(`${IP_ADDRESS}/students/${userId}/update-avatar-frame?avatarFrame=${selectedFrameId}`);
 
       }
+
 
       await fetchLatestUserData();
       

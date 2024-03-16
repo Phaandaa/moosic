@@ -35,9 +35,9 @@ const BoxComponent = ({
       {iconName && (
         <Ionicons
           name={iconName}
-          size={170}
+          size={120}
           color={iconColor}
-          style={{ position: 'absolute', bottom: -10, right: -20 }}
+          style={{ position: 'absolute', bottom: -5, right: 0 }}
         />
       )}
 
@@ -53,7 +53,7 @@ const BoxComponent = ({
       <Text
         style={[
           theme.textSubtitle,
-          { textAlign: 'left', color: 'white', fontSize: 20, fontStyle: 'italic',  width: '75%' },
+          { textAlign: 'left', color: 'white', fontSize: 20, fontStyle: 'italic',  width: '60%' },
         ]}
       >
         {subtitle}
@@ -64,8 +64,7 @@ const BoxComponent = ({
         style={[
           theme.button,
           {
-            marginTop: 20,
-            marginBottom: 20,
+            marginVertical: 10,
             width: '40%',
             backgroundColor: 'white',
             borderRadius: 25,

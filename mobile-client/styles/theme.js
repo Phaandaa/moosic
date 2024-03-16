@@ -59,7 +59,7 @@ const theme = StyleSheet.create({
     borderRadius: 15,
     marginTop: 20,
     width: '100%',
-    
+    height: 200,
     
   },
   button: {
