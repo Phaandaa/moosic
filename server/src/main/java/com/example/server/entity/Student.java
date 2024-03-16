@@ -39,7 +39,7 @@ public class Student extends User{
         this.avatar = avatar;
         this.teacherName = teacherName;
         this.avatarFrame = avatarFrame;
-        this.phoneNumber = phoneNumber;
+        this.phoneNumber = phoneNumber; // TODO: rename to expoPushToken
         this.tuitionDay = tuitionDay;
     }
 
