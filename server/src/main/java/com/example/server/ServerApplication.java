@@ -20,11 +20,10 @@ public class ServerApplication {
 		String mongodbURI = dotenv.get("MONGODB_URI");
 		String mongodbDB = dotenv.get("MONGODB_DB");
 		String firebaseApiKey = dotenv.get("FIREBASE_API_KEY");
-
-		// Print out the loaded environment variables
-        System.out.println("MONGODB_URI: " + mongodbURI);
-        System.out.println("MONGODB_DB: " + mongodbDB);
-        System.out.println("FIREBASE_API_KEY: " + firebaseApiKey);
+		String gcpProjectId = dotenv.get("GCP_PROJECT_ID");
+		String pubSubTopicName = dotenv.get("PUB_SUB_TOPIC_NAME");
+		String googleApplicationCredentials = dotenv.get("GOOGLE_APPLICATION_CREDENTIALS");
+		String gcsBucketName = dotenv.get("GCS_BUCKET_NAME");
 
 		System.setProperty("spring.data.mongodb.uri", mongodbURI);
 		System.setProperty("spring.data.mongodb.database", mongodbDB);
