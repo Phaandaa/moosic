@@ -33,13 +33,18 @@ public class PointsLog {
     @Field(name = "date")
     private String date;
 
+    @Field(name = "creation_time")
+    private Date creationTime;
+
     public PointsLog(String studentId, String description, Integer changeAmount) {
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy");
-        String formattedDate = sdf.format(new Date());
+        Date currentDate = new Date();
+        String formattedDate = sdf.format(currentDate);
         this.studentId = studentId;
         this.description = description;
         this.changeAmount = changeAmount;
         this.date = formattedDate;
+        this.creationTime = currentDate;
     }
 
 }
