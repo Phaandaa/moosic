@@ -293,6 +293,7 @@ const styles = StyleSheet.create({
     color: '#333',
     marginLeft: 12,
     flex: 2,
+    textAlign: 'center',
   },
   currentGoalsContainer: {
     marginBottom: 20,
