@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.example.server.models.AuthRequest;
 import com.example.server.models.FirebaseToken;
+import com.example.server.models.ChangePasswordRequest;
 
 import jakarta.annotation.PostConstruct;
 
@@ -69,10 +70,11 @@ public class FirebaseAuthService {
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<FirebaseToken> responseEntity = restTemplate.exchange(
                 url, HttpMethod.POST, entity, FirebaseToken.class);
-
             return responseEntity.getBody();
        } catch (Exception e) {
            throw new RuntimeException("Error occurred while signing in. Please try again later" + e.getMessage());
         }
     }
+
+    public FirebaseToken changePassword()
 }
