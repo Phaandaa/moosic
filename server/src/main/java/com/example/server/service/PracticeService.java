@@ -178,4 +178,17 @@ public class PracticeService {
             throw new RuntimeException("Failed to update practice log: " + e.getMessage());
         }
     }
+
+    @Transactional
+    public void deletePractice(String practiceId) {
+        try {
+            Practice practice = practiceRepository.findById(practiceId).orElseThrow(()->
+                new NoSuchElementException("No practice log found with the ID " + practiceId));
+            practiceRepository.deleteById(practiceId);
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error deleting practice log: " + e.getMessage());
+        }
+    }
 }
