@@ -10,11 +10,8 @@ import org.springframework.web.client.RestTemplate;
 
 import com.example.server.models.AuthRequest;
 import com.example.server.models.FirebaseToken;
-import com.google.api.Http;
-import com.example.server.models.ChangePasswordRequest;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.HttpSession;
 
 import java.util.HashMap;
 import java.util.Map;
