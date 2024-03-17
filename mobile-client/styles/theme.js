@@ -74,6 +74,12 @@ const theme = StyleSheet.create({
     borderRadius: 15,
     marginTop: 10,
   },
+  buttonBlue: {
+    backgroundColor: Colors.accentBlue,
+    padding: 15,
+    borderRadius: 15,
+    marginTop: 10,
+  },
   button2: {
     backgroundColor: Colors.mainPurple,
     padding: 15,
@@ -220,6 +226,13 @@ const theme = StyleSheet.create({
     flexDirection:'row',
     flex:1,
     justifyContent: "space-between"
+  },
+  buttonsOneRow:{
+    flexDirection: 'row', // Align children in a row
+    justifyContent: 'space-between', // Distribute children evenly, adding space around them
+    alignItems: 'center', // Align children vertically in the center
+    marginTop: 10, // Add space above the row
+    marginBottom: 10, // Add space below the row
   },
   assignmentImage: {
     width: 150,

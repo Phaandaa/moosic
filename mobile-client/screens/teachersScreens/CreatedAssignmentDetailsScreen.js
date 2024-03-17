@@ -20,7 +20,10 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
         deleteAssignment();
         setModalVisible(false);
     };
-
+    const handleModalButtonPressCancel = () => {
+        setModalVisible(false);
+    };
+    
     const deleteAssignment = async() => {
         console.log('assignmentId', assignment.assignmentId)
         try {
@@ -64,7 +67,7 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
                                 <TouchableOpacity style={theme.smallButtonLeftMargin} onPress={() => navigation.navigate('EditAssignmentScreen', { assignment })}>
                                     <Text style={theme.smallButtonText}>Edit <Ionicons name="pencil" size={16} color="#ffffff" /></Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={theme.smallButtonLeftMargin} onPress={setModalVisible(true)}>
+                                <TouchableOpacity style={theme.smallButtonLeftMargin} onPress={() => setModalVisible(true)}>
                                     <Text style={theme.smallButtonText}>Delete <Ionicons name="trash-bin" size={16} color="#ffffff" /></Text>
                                 </TouchableOpacity>
                             </View>
@@ -143,14 +146,11 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
                         isModalVisible={isModalVisible} 
                         imageSource={require('../../assets/deletenote.png')}
                         textMessage="Are you sure you want to delete this assignment?"
-                        buttonText="Delete"
-                        onButtonPress={handleModalButtonPress}
+                        buttonText1="Cancel"
+                        buttonText2="Delete"
+                        onButton1Press={handleModalButtonPressCancel}
+                        onButton2Press={handleModalButtonPress}
                     />
-
-                    
-
-
-
         </ScrollView>
     );
 }
