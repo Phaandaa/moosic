@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef  } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Dimensions,Image } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Dimensions,Image, ScrollView } from 'react-native';
 import BoxComponent from '../components/ui/homepageModuleBoxes';
 import theme from '../styles/theme';
 import HomepageSearchBar from '../components/ui/homepageSearchbar';
@@ -109,15 +109,15 @@ const HomeScreen = ({ navigation }) => {
         
         <View style={styles.goalsRow}>
           <View style={[styles.goalCard, {backgroundColor: '#466CFF'}]}>
-            <Text style={styles.goalLabel}>Practice Goal</Text>
+            <Text style={styles.goalLabel}>Practices Completed</Text>
             <Text style={styles.goalValue}>{completedPractice} / {currentPracticeGoalCount}</Text>
           </View>
           <View style={[styles.goalCard, {backgroundColor: '#EE97BC'}]}>
-            <Text style={styles.goalLabel}>Assignment Goal</Text>
+            <Text style={styles.goalLabel}>Assignments Completed</Text>
             <Text style={styles.goalValue}>{completedAssignment} / {currentAssignmentGoalCount}</Text>
           </View>
           <View style={[styles.goalCard, {backgroundColor: '#686BFF'}]}>
-            <Text style={styles.goalLabel}>Points Allocated</Text>
+            <Text style={styles.goalLabel}>Points Upon Completion</Text>
             <Text style={styles.goalValue}>{currentPoints}</Text>
           </View>
         </View>
@@ -140,6 +140,7 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const isGoalsSet = !goals.length > 0;
+  
 
   const teacherModules = [
     { id: 'assignment', color: '#466CFF', title: 'Assignment', subtitle: 'Create an assignment', iconName: 'musical-notes', navigationPage: 'CreateAssignmentScreen', iconColor: 'white', buttonText: 'Create' },
@@ -152,9 +153,7 @@ const HomeScreen = ({ navigation }) => {
     // { id: 'practice', color: '#EE97BC', title: 'Practice', subtitle: 'Record My Practice Sessions', iconName: 'musical-notes', navigationPage: 'CreatePracticeScreen', iconColor: 'white', buttonText: 'View' },
     { id: 'assignments', color: '#466CFF', title: 'Assignments', subtitle: 'View My Assignments', iconName: 'people', navigationPage: 'AssignmentListScreen', iconColor: 'white', buttonText: 'View' },
     { id: 'practicelog', color: '#EE97BC', title: 'Practice Log', subtitle: 'View My Practice Sessions', iconName: 'musical-notes', navigationPage: 'PracticeListStudentScreen', iconColor: 'white', buttonText: 'View' },
-    // { id: 'rewardsshop', color: '#466CFF', title: 'Rewards Shop', subtitle: 'Rewards Shop', iconName: 'people', navigationPage: 'RewardsShopScreen', iconColor: 'white', buttonText: 'View' },
-
-    // Add more modules specific to student
+ 
   ];
 
   const modules = userRole === 'Teacher' ? teacherModules : studentModules;
@@ -176,10 +175,10 @@ const HomeScreen = ({ navigation }) => {
   };
   
 
-  
+  const ITEM_HEIGHT = 200; // Example height, adjust as needed
 
   return (
-    <View style={[theme.container, {paddingBottom: 0}]}>
+    <ScrollView style={[theme.container, {paddingBottom: 0}]}>
 
       <Header />
       <Text style={[theme.textTitle]}> Welcome, {user?.name?.split(" ")[0]}! </Text>
@@ -193,33 +192,26 @@ const HomeScreen = ({ navigation }) => {
       )}
 
 
-      {/* Display modules or search results */}
+      {/* Display Images */}
       <FlatList
         ref={flatListRef}
+        style= {{height: 200}}
         data={searchResults.length > 0 ? searchResults : modules}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.boxContainer}>
-            <BoxComponent
-              color={item.color}
-              title={item.title}
-              subtitle={item.subtitle}
-              iconName={item.iconName}
-              navigation={navigation}
-              navigationPage={item.navigationPage}
-              iconColor={item.iconColor}
-              buttonText={item.buttonText}
-              id={item.id}
-              />
+          <View style={[styles.boxContainer, { height: ITEM_HEIGHT }]}>
+            
           </View>
             )}
             horizontal
             showsHorizontalScrollIndicator={false}
             pagingEnabled
+            contentContainerStyle ={{ height: ITEM_HEIGHT }}
             onScroll={(event) => {
               setProgress(event.nativeEvent.contentOffset.x);
             }}
-          />
+      />
+      
 
         {userRole === 'Student' && (
             isGoalsSet ? (
@@ -235,10 +227,33 @@ const HomeScreen = ({ navigation }) => {
             )
           )}
 
+
+           <FlatList
+            style={{height: 400}}
+            numColumns={2}
+            data={searchResults.length > 0 ? searchResults : modules}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <BoxComponent
+              color={item.color}
+              title={item.title}
+              subtitle={item.subtitle}
+              iconName={item.iconName}
+              navigation={navigation}
+              navigationPage={item.navigationPage}
+              iconColor={item.iconColor}
+              buttonText={item.buttonText}
+              id={item.id}
+              />
+                )}
+
+          />
+        
+
       
       
           
-    </View>
+    </ScrollView>
   );
 };
 
@@ -281,22 +296,27 @@ const styles = StyleSheet.create({
     textAlign: 'center', // Center the text
   },
   boxContainer: {
+    
     width: width * 0.8, // Each item will take up 80% of the screen width, adjust as needed
     marginRight: width * 0.05, // Spacing between items, adjust as needed
+    height: 200, // Adjust the height as needed
+    verticalAlign: 'center',
     // If your BoxComponent has its own padding or margins adjust this accordingly
   },
   currentGoalsContainer: {
     marginBottom: 20,
+    marginVertical: 20,
   },
   currentGoalsText: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 'bold',
+    marginBottom: 20,
   },
   goalsRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: '100%',
-    paddingHorizontal: 20,
+    
   },
   goalCard: {
     backgroundColor: 'white',
