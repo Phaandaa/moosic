@@ -7,14 +7,20 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
-
-import com.example.server.security.FirebaseTokenFilter;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfiguration {
 
     private final FirebaseTokenFilter firebaseTokenFilter;
+
+    private static final String[] AUTH_WHITELIST = {
+        "/api/auth/signin",
+        "/api/v1/auth/register",
+        "/api/v1/auth/forgotpassword",
+        "/swagger-ui/**",
+        "/swagger-ui.html",
+        "/users/create"
+};
 
     public SecurityConfig(FirebaseTokenFilter firebaseTokenFilter) {
         this.firebaseTokenFilter = firebaseTokenFilter;
@@ -22,19 +28,18 @@ public class SecurityConfig extends WebSecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        CsrfTokenRequestAttributeHandler requestAttributeHandler = new CsrfTokenRequestAttributeHandler();
-        requestHandler.setCsrfRequestAttributeName("_csrf");
-        
         http
-            .csrf(csrf -> csrf.disable())
-            // .csrf(csrf -> csrf.ignoringRequestMatchers("/api/auth/signin")) 
+            .csrf(csrf -> csrf.disable()) 
             .sessionManagement(sessionManagement ->
                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .addFilterBefore(firebaseTokenFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/users/create", "/api/auth/signin").permitAll()
-                .anyRequest().authenticated()
+                .requestMatchers(AUTH_WHITELIST)
+                .permitAll()
+                .anyRequest()
+                .authenticated()
             );
         return http.build();
     }
+
 }

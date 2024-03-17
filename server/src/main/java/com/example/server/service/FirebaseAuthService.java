@@ -10,11 +10,8 @@ import org.springframework.web.client.RestTemplate;
 
 import com.example.server.models.AuthRequest;
 import com.example.server.models.FirebaseToken;
-import com.google.api.Http;
-import com.example.server.models.ChangePasswordRequest;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.HttpSession;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,18 +33,15 @@ public class FirebaseAuthService {
         try{
             String url = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key="+ firebaseApiKey;
 
-            // set up http request headers and indicate the content being sent in request body is JSON format
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
     
             AuthRequest request = new AuthRequest();
             request.setEmail(email);
             request.setPassword(password);
-    
-            // completes http request entity
+
             HttpEntity<AuthRequest> entity = new HttpEntity<>(request, headers);
     
-            // A RestTemplate is a class in Spring Framework used for making HTTP requests
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<FirebaseToken> responseEntity = restTemplate.exchange(url, HttpMethod.POST, entity, FirebaseToken.class);
     
@@ -83,21 +77,17 @@ public class FirebaseAuthService {
 
     public void sendPasswordResetEmail(String email) {
         try {
-            // Firebase endpoint for sending a password reset email
             String url = "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=" + firebaseApiKey;
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            
-            // Constructing the request body
+
             Map<String, String> requestBody = new HashMap<>();
             requestBody.put("requestType", "PASSWORD_RESET");
             requestBody.put("email", email);
 
-            // Wrapping the request body and headers in an HttpEntity
             HttpEntity<Map<String, String>> entity = new HttpEntity<>(requestBody, headers);
 
-            // Using RestTemplate to send the POST request
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
         } catch (Exception e) {

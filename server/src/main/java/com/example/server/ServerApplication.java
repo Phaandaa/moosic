@@ -1,8 +1,10 @@
 package com.example.server;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.slf4j.Logger;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
@@ -15,8 +17,11 @@ import jakarta.annotation.PostConstruct;
 @EnableScheduling
 public class ServerApplication {
 
+	private static final Logger log = LoggerFactory.getLogger(ServerApplication.class);
+
 	public static void main(String[] args) {
 		Dotenv dotenv = Dotenv.load();
+
 		String mongodbURI = dotenv.get("MONGODB_URI");
 		String mongodbDB = dotenv.get("MONGODB_DB");
 		String firebaseApiKey = dotenv.get("FIREBASE_API_KEY");
@@ -52,7 +57,7 @@ public class ServerApplication {
 				FirebaseApp.initializeApp(options);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Failed to initialize FirebaseApp: " + e.getMessage());
 		}
 	}
 }
