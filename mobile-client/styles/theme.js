@@ -68,6 +68,12 @@ const theme = StyleSheet.create({
     borderRadius: 15,
     marginTop: 10,
   },
+  buttonRed: {
+    backgroundColor: Colors.accentRed,
+    padding: 15,
+    borderRadius: 15,
+    marginTop: 10,
+  },
   button2: {
     backgroundColor: Colors.mainPurple,
     padding: 15,
