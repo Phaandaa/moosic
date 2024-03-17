@@ -10,7 +10,7 @@ const theme = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: '#ffffff',
     width: '100%',
-    
+    height: '100%',
     
   },
   textThin: {

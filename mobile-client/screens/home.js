@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import IP_ADDRESS from '../constants/ip_address_temp';
+import Colors from '../constants/colors';
 
 const { width } = Dimensions.get('window');
 
@@ -74,20 +75,23 @@ const HomeScreen = ({ navigation }) => {
 
   useEffect(() => {
     intervalId.current = setInterval(() => {
-      if (flatListRef.current && modules && modules.length > 0) {
-        const newProgress = progress + width;
-        const maxOffset = width * (searchResults.length > 0 ? searchResults.length : modules.length - 1);
-        const nextOffset = newProgress > maxOffset ? 0 : newProgress;
+      if (flatListRef.current) {
+        let nextIndex = Math.floor(progress / width) + 1;
+        if (nextIndex >= bannerImages.length) {
+          nextIndex = 0; // Reset to the first image if we've reached the end
+        }
+        const nextOffset = nextIndex * width;
         flatListRef.current.scrollToOffset({
           offset: nextOffset,
           animated: true,
         });
+        // Use the nextOffset to calculate the new progress value
         setProgress(nextOffset);
       }
-    }, 3000); // Scrolls to the next item every 3 seconds
-    
+    }, 3000);
+  
     return () => clearInterval(intervalId.current); // Clear interval on unmount
-  }, [progress, searchResults, modules]);
+  }, [progress]);
   
   useEffect(() => {
     const totalGoals = goals.practiceGoalCount + goals.assignmentGoalCount;
@@ -105,15 +109,15 @@ const HomeScreen = ({ navigation }) => {
         <Text style={styles.currentGoalsText}>Goals At a Glance</Text>
         
         <View style={styles.goalsRow}>
-          <View style={[styles.goalCard, {backgroundColor: '#466CFF'}]}>
+          <View style={[styles.goalCard, {backgroundColor: Colors.green}]}>
             <Text style={styles.goalLabel}>Practices Completed</Text>
             <Text style={styles.goalValue}>{completedPractice} / {currentPracticeGoalCount}</Text>
           </View>
-          <View style={[styles.goalCard, {backgroundColor: '#EE97BC'}]}>
-            <Text style={styles.goalLabel}>Assignments Completed</Text>
+          <View style={[styles.goalCard, {backgroundColor:  Colors.orange}]}>
+            <Text style={styles.goalLabel}>Assignment Completed</Text>
             <Text style={styles.goalValue}>{completedAssignment} / {currentAssignmentGoalCount}</Text>
           </View>
-          <View style={[styles.goalCard, {backgroundColor: '#686BFF'}]}>
+          <View style={[styles.goalCard, {backgroundColor:  Colors.pink}]}>
             <Text style={styles.goalLabel}>Points Upon Completion</Text>
             <Text style={styles.goalValue}>{currentPoints}</Text>
           </View>
@@ -140,17 +144,23 @@ const HomeScreen = ({ navigation }) => {
   
 
   const teacherModules = [
-    { id: 'assignment', color: '#466CFF', title: 'Assignment', subtitle: 'Create an assignment', iconName: 'musical-notes', navigationPage: 'CreateAssignmentScreen', iconColor: 'white', buttonText: 'Create' },
-    { id: 'students', color: '#EE97BC', title: 'View My Students', subtitle: 'My lovely students', iconName: 'people', navigationPage: 'MyStudentsScreen', iconColor: 'white', buttonText: 'View' },
-    { id: 'setGoals', color: '#686BFF', title: 'Set Goals', subtitle: 'Set goals for students', iconName: 'golf', navigationPage: 'ViewCreatedGoalsForStudents', iconColor: 'white', buttonText: 'Create' },
+    { id: 'assignment', color: Colors.blue, title: 'Assignment', subtitle: 'Create an assignment', iconName: 'musical-notes', navigationPage: 'CreateAssignmentScreen', iconColor: 'white', buttonText: 'Create' },
+    { id: 'students', color: Colors.green, title: 'View My Students', subtitle: 'My students', iconName: 'people', navigationPage: 'MyStudentsScreen', iconColor: 'white', buttonText: 'View' },
+    { id: 'setGoals', color: Colors.red, title: 'Set Goals', subtitle: 'Set goals for students', iconName: 'golf', navigationPage: 'ViewCreatedGoalsForStudents', iconColor: 'white', buttonText: 'Create' },
     // Add more modules specific to teacher
   ];
 
   const studentModules = [
     // { id: 'practice', color: '#EE97BC', title: 'Practice', subtitle: 'Record My Practice Sessions', iconName: 'musical-notes', navigationPage: 'CreatePracticeScreen', iconColor: 'white', buttonText: 'View' },
-    { id: 'assignments', color: '#466CFF', title: 'Assignments', subtitle: 'View My Assignments', iconName: 'people', navigationPage: 'AssignmentListScreen', iconColor: 'white', buttonText: 'View' },
-    { id: 'practicelog', color: '#EE97BC', title: 'Practice Log', subtitle: 'View My Practice Sessions', iconName: 'musical-notes', navigationPage: 'PracticeListStudentScreen', iconColor: 'white', buttonText: 'View' },
+    { id: 'assignments', color: Colors.turquoise, title: 'Assignments', subtitle: 'View My Assignments', iconName: 'documents', navigationPage: 'AssignmentListScreen', iconColor: 'white', buttonText: 'View' },
+    { id: 'practicelog', color: Colors.babyPurple, title: 'Practice Log', subtitle: 'View My Practice Sessions', iconName: 'musical-notes', navigationPage: 'PracticeListStudentScreen', iconColor: 'white', buttonText: 'View' },
  
+  ];
+
+  const bannerImages = [
+    require('../assets/homepage-banners/cowbanner.png'),
+    require('../assets/homepage-banners/notebanner.png'),
+    require('../assets/homepage-banners/treblecleffbanner.png'),
   ];
 
   const modules = userRole === 'Teacher' ? teacherModules : studentModules;
@@ -193,22 +203,23 @@ const HomeScreen = ({ navigation }) => {
       {/* Display Images */}
       <FlatList
         ref={flatListRef}
-        style= {{height: 200}}
-        data={searchResults.length > 0 ? searchResults : modules}
-        keyExtractor={(item) => item.id}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        data={bannerImages}
+        keyExtractor={(item, index) => String(index)}
         renderItem={({ item }) => (
-          <View style={[styles.boxContainer, { height: ITEM_HEIGHT }]}>
-            
+          <View style={styles.imageContainer}>
+            <Image source={item} style={styles.bannerImage} />
           </View>
-            )}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            pagingEnabled
-            contentContainerStyle ={{ height: ITEM_HEIGHT }}
-            onScroll={(event) => {
-              setProgress(event.nativeEvent.contentOffset.x);
-            }}
+        )}
+        onScroll={(event) => {
+          setProgress(event.nativeEvent.contentOffset.x);
+        }}
+        style={{ height: 200 }} // Set the height of the FlatList itself
+        contentContainerStyle={{ alignItems: 'center' }} // Ensure items are centered
       />
+
       
 
         {userRole === 'Student' && (
@@ -367,6 +378,22 @@ progressText: {
     padding: 20,
     color: 'black',
 },
+imageContainer: {
+  width: width, // full width of the screen
+  height: 200, // the height of the carousel
+  justifyContent: 'center',
+  alignItems: 'center', // center the image within the container
+},
+bannerImage: {
+  // height will be less than or equal to 200 to maintain aspect ratio
+  // width will scale accordingly
+  height: '100%',
+  borderRadius: 15,
+  resizeMode: 'cover', // the image will be scaled to fit within the view
+  aspectRatio: 1.9, // aspect ratio of the image
+  marginRight: 30, // space between images
+},
+
 
   
 });
