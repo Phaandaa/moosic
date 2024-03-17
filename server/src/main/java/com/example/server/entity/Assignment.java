@@ -2,6 +2,7 @@ package com.example.server.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -36,12 +37,16 @@ public class Assignment {
     private String studentComment;
     private Date submissionTimestamp;
     private Date feedbackTimestamp;
+
+    @Field(name = "creation_time")
+    private Date creationTime;
     
 
     
     public Assignment(String title, List<String> assignmentDocumentLinks, String description, String deadline,
             String studentId, String studentName, List<String> submissionLinks, String teacherId, String teacherName,
-            String teacherFeedback, Integer points, List<String> feedbackDocumentLinks, String studentComment) {
+            String teacherFeedback, Integer points, List<String> feedbackDocumentLinks, String studentComment,
+            Date creationTime) {
         this.title = title;
         this.assignmentDocumentLinks = assignmentDocumentLinks;
         this.description = description;
@@ -58,6 +63,7 @@ public class Assignment {
         this.studentComment = studentComment;
         this.submissionTimestamp = null;
         this.feedbackTimestamp = null;
+        this.creationTime = creationTime;
     }
 
 

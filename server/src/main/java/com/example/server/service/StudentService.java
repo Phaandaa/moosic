@@ -32,7 +32,7 @@ public class StudentService {
 
     public List<Student> getAllStudents() {
         try {
-            List<Student> students = studentRepository.findAll();
+            List<Student> students = studentRepository.findAllSortedByCreationTime();
             if (students == null || students.isEmpty()) {
                 throw new NoSuchElementException("No students found");
             }

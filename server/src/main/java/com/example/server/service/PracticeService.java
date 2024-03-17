@@ -40,7 +40,7 @@ public class PracticeService {
     @Transactional
     public Practice createPractice(CreatePracticeDTO practiceDTO, MultipartFile video) {
         try {
-            String videoURL = cloudStorageService.uploadFileToGCS(video, "preactice");
+            String videoURL = cloudStorageService.uploadFileToGCS(video, "practice");
             String studentId = practiceDTO.getStudentId();
             String studentName = practiceDTO.getStudentName();
             String teacherId = practiceDTO.getTeacherId();
@@ -48,7 +48,7 @@ public class PracticeService {
             String title = practiceDTO.getTitle();
             String comment = practiceDTO.getComment();
             Practice createdPractice = new Practice(studentId, studentName, teacherId, teacherName, videoURL, title,
-                    comment,null,null);
+                    comment,null,null, new Date());
 
             Date timestamp = new Date();
             createdPractice.setSubmissionTimestamp(timestamp);
@@ -118,7 +118,7 @@ public class PracticeService {
                 new NoSuchElementException("No practice log found with the ID " + practiceId));
 
             if (video != null && !video.isEmpty()) {;
-                String videoURL = cloudStorageService.uploadFileToGCS(video, "preactice");
+                String videoURL = cloudStorageService.uploadFileToGCS(video, "practice");
                 practice.setFeedbackLinks(videoURL);
             } 
             

@@ -68,7 +68,7 @@ public class AssignmentService {
                 String studentName = studentEntity.getName();
 
                 Assignment newAssignment = new Assignment(title, publicUrls, description, deadline, studentId,
-                        studentName, null, teacherId, teacherName, null, points, null, null);
+                        studentName, null, teacherId, teacherName, null, points, null, null, new Date());
                 newAssignments.add(newAssignment);
             }
             return assignmentRepository.saveAll(newAssignments);

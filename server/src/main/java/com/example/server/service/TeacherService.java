@@ -28,7 +28,7 @@ public class TeacherService {
 
     public List <Teacher> getAllTeachers() {
         try {
-            List<Teacher> teachers = teacherRepository.findAll();
+            List<Teacher> teachers = teacherRepository.findAllSortedByCreationTime();
             if (teachers.isEmpty() || teachers == null) {
                 throw new NoSuchElementException("No teachers found");
             }
