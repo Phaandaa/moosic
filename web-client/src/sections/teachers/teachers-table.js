@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import { format } from 'date-fns';
 import {
   Avatar,
   Box,
@@ -17,7 +16,7 @@ import {
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
 import TeachersEditModal from './teachers-edit-modal';
-
+import { format } from 'date-fns';
 
 export const TeachersTable = (props) => {
   const {
@@ -71,6 +70,9 @@ export const TeachersTable = (props) => {
                   Phone Number
                 </TableCell>
                 <TableCell>
+                  Created At
+                </TableCell>
+                <TableCell>
                   Actions
                 </TableCell>
               </TableRow>
@@ -78,7 +80,7 @@ export const TeachersTable = (props) => {
             <TableBody>
               {items.map((customer) => {
                 const isSelected = selected.includes(customer.id);
-                // const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
+                const createdAt = customer.creationTime ? format(new Date(customer.creationTime), 'dd/MM/yyyy HH:mm:ss') : 'N/A';
 
                 return (
                   <TableRow
@@ -108,18 +110,21 @@ export const TeachersTable = (props) => {
                           {getInitials(customer.name ? customer.name : "?")}
                         </Avatar>
                         <Typography variant="subtitle2">
-                          {customer.name}
+                          {customer.name ? customer.name : "N/A"}
                         </Typography>
                       </Stack>
                     </TableCell>
                     <TableCell>
-                      {customer.email}
+                      {customer.email ? customer.email : "N/A"}
                     </TableCell>
                     <TableCell>
-                      {customer.instrument}
+                      {customer.instrument ? customer.instrument : "N/A"}
                     </TableCell>
                     <TableCell>
-                      {customer.phone}
+                      {customer.phoneNumber ? customer.phoneNumber : "N/A"}
+                    </TableCell>
+                    <TableCell>
+                      {createdAt}
                     </TableCell>
                     <TableCell>
                       <TeachersEditModal teacher={customer} onEditTeacher={onEditTeacher}/>

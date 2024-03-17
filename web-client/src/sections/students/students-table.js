@@ -101,9 +101,9 @@ export const StudentsTable = (props) => {
                     </TableCell>
                     <TableCell>{customer.email}</TableCell>
                     <TableCell>{customer.instrument}</TableCell>
-                    <TableCell>{customer.grade}</TableCell>
+                    <TableCell>{customer.grade ? customer.grade : "N/A"}</TableCell>
                     <TableCell>{customer.teacherName ? customer.teacherName : "-"}</TableCell>
-                    <TableCell>{customer.pointsCounter}</TableCell>
+                    <TableCell>{customer.pointsCounter ? customer.pointsCounter : "N/A"}</TableCell>
                     {/* <TableCell>
                       {createdAt}
                     </TableCell> */}
