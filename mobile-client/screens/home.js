@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef  } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Dimensions,Image, ScrollView } from 'react-native';
 import BoxComponent from '../components/ui/homepageModuleBoxes';
 import theme from '../styles/theme';
-import HomepageSearchBar from '../components/ui/homepageSearchbar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
@@ -60,7 +59,18 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
-
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const authData = await checkStoredData();
+        setUserRole(authData.role);
+        await checkStoredUserData(); // This now correctly sets user state
+      } catch (error) {
+        console.error('Error processing stored data', error);
+      }
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     intervalId.current = setInterval(() => {
@@ -80,26 +90,13 @@ const HomeScreen = ({ navigation }) => {
   }, [progress, searchResults, modules]);
   
   useEffect(() => {
-    if (goals.practiceGoalCount + goals.assignmentGoalCount > 0) {
-      const newProgress = ((goals.practiceCount + goals.assignmentCount) / (goals.practiceGoalCount + goals.assignmentGoalCount)) * 100;
-      setProgressBar(Math.round(newProgress)); // Round to nearest whole number
-    } else {
-      setProgressBar(0); // Reset progress if there are no goals
-    }
+    const totalGoals = goals.practiceGoalCount + goals.assignmentGoalCount;
+    const completedGoals = goals.practiceCount + goals.assignmentCount;
+    const newProgress = totalGoals > 0 ? (completedGoals / totalGoals) * 100 : 0;
+    setProgressBar(Math.round(newProgress));
   }, [goals]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const authData = await checkStoredData();
-        setUserRole(authData.role);
-        await checkStoredUserData(); // This now correctly sets user state
-      } catch (error) {
-        console.error('Error processing stored data', error);
-      }
-    };
-    fetchData();
-  }, []);
+  
 
   const CurrentGoals = ({ completedPractice, completedAssignment, currentPracticeGoalCount, currentAssignmentGoalCount, currentPoints }) => {
     
@@ -181,6 +178,7 @@ const HomeScreen = ({ navigation }) => {
     <ScrollView style={[theme.container, {paddingBottom: 0}]}>
 
       <Header />
+
       <Text style={[theme.textTitle]}> Welcome, {user?.name?.split(" ")[0]}! </Text>
       {userRole === 'Student' && (
         <>
