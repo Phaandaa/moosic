@@ -1,7 +1,17 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import theme from '../../styles/theme'
+
+// Get the screen width
+const { width } = Dimensions.get('window');
+// Define the desired space between items and the padding around the FlatList
+const MARGIN = 10; // Margin on each side of a box
+const BOXES_PER_ROW = 2; // We want two boxes per row
+const FLATLIST_PADDING = 20; // Padding on the sides of the FlatList
+
+// Calculate the item width, taking into account margins and FlatList padding
+const ITEM_WIDTH = (width - (FLATLIST_PADDING * 2) - (MARGIN * (BOXES_PER_ROW + 1))) / BOXES_PER_ROW;
 
 const BoxComponent = ({
   color,
@@ -14,77 +24,74 @@ const BoxComponent = ({
   buttonText,
 }) => {
   const handleStart = () => {
-    // Navigation logic to the other page (replace 'OtherPage' with your actual page name)
     navigation.navigate(navigationPage);
   };
 
-  const calculateFontSize = () => {
-    // Adjust these values based on your preferences
-    const baseFontSize = 20;
-    const maxButtonWidth = 200; // Maximum width of the button
-
-    const buttonTextLength = buttonText.length;
-    const calculatedFontSize = Math.min(baseFontSize, maxButtonWidth / buttonTextLength);
-
-    return calculatedFontSize;
-  };
-
   return (
-    <View style={[theme.box, { backgroundColor: color, overflow: 'hidden', position: 'relative'}]}>
-      {/* Icon (conditional rendering) */}
-      {iconName && (
-        <Ionicons
-          name={iconName}
-          size={170}
-          color={iconColor}
-          style={{ position: 'absolute', bottom: -10, right: -20 }}
-        />
-      )}
+    <TouchableOpacity onPress={handleStart} >
+      <View style={[styles.box, { backgroundColor: color }]}>
+        {/* Icon centered */}
+        {iconName && (
+          <View style={styles.iconContainer}>
+            <Ionicons
+              name={iconName}
+              size={80} // Adjust the size as needed
+              color={iconColor}
+            />
+          </View>
+        )}
 
-      {/* Title */}
-      <Text
-        style={[
-          theme.textBold,
-          { textAlign: 'left', color: 'white', fontSize: 16, fontStyle: 'italic' },
-        ]}
-      >
-        {title}
-      </Text>
-      <Text
-        style={[
-          theme.textSubtitle,
-          { textAlign: 'left', color: 'white', fontSize: 20, fontStyle: 'italic',  width: '75%' },
-        ]}
-      >
-        {subtitle}
-      </Text>
-
-      {/* Start Button */}
-      <TouchableOpacity
-        style={[
-          theme.button,
-          {
-            marginTop: 20,
-            marginBottom: 20,
-            width: '40%',
-            backgroundColor: 'white',
-            borderRadius: 25,
-            padding: 5,
-          },
-        ]}
-        onPress={handleStart}
-      >
-        <Text
-          style={[
-            theme.buttonText,
-            { color: color, fontSize: calculateFontSize() },
-          ]}
-        >
-          {buttonText}
-        </Text>
-      </TouchableOpacity>
-    </View>
+        {/* Title and subtitle container */}
+        <View style={styles.textContainer}>
+          <Text style={styles.title}>
+            {title}
+          </Text>
+          <Text style={styles.subtitle}>
+            {subtitle}
+          </Text>
+        </View>
+      </View>
+    </TouchableOpacity>
   );
 };
+
+// Adjust the styles as needed
+const styles = StyleSheet.create({
+  box: {
+    marginHorizontal: MARGIN / 2,
+    alignItems: 'center', // Center children horizontally
+    justifyContent: 'center', // Center children vertically
+    padding: 10, // Add padding as needed
+    borderRadius: 15, // Add border radius
+    height: 200, // Fixed height for the box
+    width: ITEM_WIDTH, // Width calculated based on the screen width
+    
+  },
+  iconContainer: {
+    // Container for the icon to center it properly
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 100, // Set a fixed height for the icon container
+  },
+  textContainer: {
+    alignItems: 'center', // Center text horizontally
+    marginTop: 10, // Space between icon and text
+  },
+  title: {
+    // ... Your existing title styles
+    fontSize: 16,
+    color: 'white',
+    fontStyle: 'italic',
+    fontWeight: 'bold',
+  },
+  subtitle: {
+    // ... Your existing subtitle styles
+    fontSize: 10,
+    color: 'white',
+    fontStyle: 'italic',
+    width: '50%', 
+    textAlign: 'center', 
+  },
+});
 
 export default BoxComponent;

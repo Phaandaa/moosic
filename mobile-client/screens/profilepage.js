@@ -24,8 +24,11 @@ const ProfileScreen = ({ navigation }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [ownedAvatars, setOwnedAvatars] = useState([]);
   const [ownedFrames, setOwnedFrames] = useState([]);
+  const [ownedBadges, setOwnedBadges] = useState([]); // Assuming badges are fetched from the API
+  
   const [selectedAvatarId, setSelectedAvatarId] = useState('');
   const [selectedFrameId, setSelectedFrameId] = useState('');
+
   
   
 
@@ -172,6 +175,7 @@ const ProfileScreen = ({ navigation }) => {
 
       }
 
+
       await fetchLatestUserData();
       
     } catch (error) {
@@ -182,6 +186,10 @@ const ProfileScreen = ({ navigation }) => {
       setIsModalVisible(false); // Optionally close modal
     }
   };
+
+  const renderBadges = async() => {
+    
+  }
 
   const InventoryModal = () => {
     const [selectedTab, setSelectedTab] = useState('avatars'); // 'avatars' or 'frames'
@@ -294,6 +302,7 @@ const ProfileScreen = ({ navigation }) => {
     );
 
   };
+
 
 
   const onRefresh = async () => {
