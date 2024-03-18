@@ -87,9 +87,17 @@ function SetReminderScreen({navigation}){
 
     const onChange = (time, selectedTime) => {
         const currentTime = selectedTime || time;
+        console.log('currentTime', currentTime)
         setShowPicker(Platform.OS === 'ios');
         setTime(currentTime);
+
+        if(Platform.OS === 'android'){
+          setTime(currentTime.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }));
+          console.log('android time', time)
+        }
+
         setNotificationTime(currentTime);
+        console.log('time', time)
 
         // Use date-fns to format the time
         let formattedTime = format(currentTime, 'p'); // 'p' is the time format in locales aware manner
