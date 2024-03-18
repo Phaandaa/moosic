@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.server.service.NotificationService;
@@ -21,7 +22,10 @@ public class NotificationTestController {
     
     @Operation(summary = "Test notification message")
     @GetMapping("/test")
-    public ResponseEntity<?> testSendMessage() {
-        return ResponseEntity.ok(notificationService.testPublishMessage());
+    public ResponseEntity<?> testSendMessage(
+        @RequestParam String expoPushToken,
+        @RequestParam String title,
+        @RequestParam String body) {
+        return ResponseEntity.ok(notificationService.testPublishMessage(expoPushToken, title, body));
     }
 }
