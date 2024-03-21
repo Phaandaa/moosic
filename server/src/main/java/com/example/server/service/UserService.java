@@ -129,14 +129,43 @@ public class UserService {
         
     }
 
-    public SignInResponseDTO signInWithEmailAndPassword(String email, String password) {
+    public SignInResponseDTO signInWithEmailAndPassword(String email, String password, String expoPushToken) {
         try {
             FirebaseToken firebaseToken = firebaseAuthService.signInWithEmailAndPassword(email, password);
             User selectedUser = userRepository.findById(firebaseToken.getLocalId()).orElseThrow(()->
                 new NoSuchElementException("No user found with ID " + firebaseToken.getLocalId()));
+            
+            switch (selectedUser.getRole()) {
+                case "Student":
+                    Student selectedStudent = studentRepository.findById(firebaseToken.getLocalId()).orElseThrow(()->
+                        new NoSuchElementException("No student found with ID " + firebaseToken.getLocalId()));
+                    if (!selectedStudent.getPhoneNumber().equals("")) {
+                        throw new IllegalArgumentException("Please logout from previous device first.");
+                    }
+                    selectedStudent.setPhoneNumber(expoPushToken);
+                    break;
+                
+                case "Teacher":
+                    Teacher selectedTeacher = teacherRepository.findById(firebaseToken.getLocalId()).orElseThrow(()->
+                        new NoSuchElementException("No teacher found with ID " + firebaseToken.getLocalId()));
+                    if (!selectedTeacher.getPhoneNumber().equals("")) {
+                        throw new IllegalArgumentException("Please logout from previous device first.");
+                    }
+                    selectedTeacher.setPhoneNumber(expoPushToken);
+                    break;
+                
+                case "Admin":
+                    break;
+            
+                default:
+                    throw new NoSuchElementException("User is neither a student, teacher, or admin.");
+            }
+            
             SignInResponseDTO signInResponseDTO = new SignInResponseDTO(firebaseToken, selectedUser.getName(), selectedUser.getRole());
             return signInResponseDTO;
         } catch (NoSuchElementException e) {
+            throw e;
+        } catch (IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Error signing in: " + e.getMessage());

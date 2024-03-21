@@ -36,12 +36,13 @@ public class AuthController {
     // public AuthController(FirebaseAuthService firebaseAuthService) {
     //     this.firebaseAuthService = firebaseAuthService;
     // }
-
+    
+    // TODO: Add expo push token here
     @Operation(summary = "User sign in with email and password")
     @PostMapping("/signin")
     public ResponseEntity<SignInResponseDTO> signInWithEmailAndPassword(@RequestBody AuthRequest authRequest) {
         return ResponseEntity.ok(
-                userService.signInWithEmailAndPassword(authRequest.getEmail(), authRequest.getPassword())
+                userService.signInWithEmailAndPassword(authRequest.getEmail(), authRequest.getPassword(), authRequest.getExpoPushToken());
             );
     }
 
