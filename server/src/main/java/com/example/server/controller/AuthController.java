@@ -2,6 +2,7 @@ package com.example.server.controller;
 
 
 import com.example.server.models.SignInResponseDTO;
+import com.example.server.models.SignOutDTO;
 import com.example.server.service.FirebaseAuthService;
 import com.example.server.service.UserService;
 
@@ -37,13 +38,18 @@ public class AuthController {
     //     this.firebaseAuthService = firebaseAuthService;
     // }
     
-    // TODO: Add expo push token here
     @Operation(summary = "User sign in with email and password")
     @PostMapping("/signin")
     public ResponseEntity<SignInResponseDTO> signInWithEmailAndPassword(@RequestBody AuthRequest authRequest) {
         return ResponseEntity.ok(
-                userService.signInWithEmailAndPassword(authRequest.getEmail(), authRequest.getPassword(), authRequest.getExpoPushToken());
+                userService.signInWithEmailAndPassword(authRequest.getEmail(), authRequest.getPassword(), authRequest.getExpoPushToken())
             );
+    }
+
+    @Operation(summary = "User sign out")
+    @PostMapping("/signout")
+    public ResponseEntity<?> signOut(@RequestBody SignOutDTO signOutDTO) {
+        return ResponseEntity.ok();
     }
 
     @Operation(summary = "User change password via email")

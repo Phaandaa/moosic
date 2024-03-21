@@ -129,6 +129,7 @@ public class UserService {
         
     }
 
+    @Transactional
     public SignInResponseDTO signInWithEmailAndPassword(String email, String password, String expoPushToken) {
         try {
             FirebaseToken firebaseToken = firebaseAuthService.signInWithEmailAndPassword(email, password);
@@ -172,6 +173,45 @@ public class UserService {
         }
         
     }
+
+    @Transactional
+    public String signOut(String userId, String expoPushToken) {
+        try {
+            User selectedUser = userRepository.findById(userId).orElseThrow(()->
+                new NoSuchElementException("No user found with ID " + userId));
+            
+            switch (selectedUser.getRole()) {
+                case "Student":
+                    Student selectedStudent = studentRepository.findById(userId).orElseThrow(()->
+                        new NoSuchElementException("No student found with ID " + userId));
+                    selectedStudent.setPhoneNumber("");
+                    break;
+                
+                case "Teacher":
+                    Teacher selectedTeacher = teacherRepository.findById(userId).orElseThrow(()->
+                        new NoSuchElementException("No teacher found with ID " + userId));
+                    selectedTeacher.setPhoneNumber("");
+                    break;
+                
+                case "Admin":
+                    break;
+            
+                default:
+                    throw new NoSuchElementException("User is neither a student, teacher, or admin.");
+            }
+            
+            return "Successfully signed out";
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error signing out: " + e.getMessage());
+        }
+        
+    }
+
+    
 
     @Transactional
     private Student createStudent(String id, String name, String email, CreateUserDTO userDTO, Date creationTime) {
