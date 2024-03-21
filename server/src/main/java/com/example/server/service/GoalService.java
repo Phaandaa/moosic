@@ -95,11 +95,11 @@ public class GoalService {
         }
     }
 
-    @Scheduled(cron = "0 0 0 * * *") // Runs every day at midnight
+    @Scheduled(cron = "0 0 0 * * *") 
     public void resetPreviousDayGoals() {
         LocalDate today = LocalDate.now();
         DayOfWeek yesterday = today.minusDays(1).getDayOfWeek(); 
-        String yesterdayText = yesterday.getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+        String yesterdayText = yesterday.getDisplayName(TextStyle.FULL, Locale.ENGLISH).toLowerCase();
         System.out.println(yesterdayText);
 
         System.out.println("Resetting goals for students who had tuition on " + yesterdayText + "...");
@@ -120,7 +120,5 @@ public class GoalService {
             System.out.println("Error doing goal reset for " + yesterdayText + ": " + e.getMessage());
             e.printStackTrace();
         }
-
-
     }
 }
