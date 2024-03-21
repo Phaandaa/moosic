@@ -16,5 +16,7 @@ public interface GoalRepository extends MongoRepository<Goal, String>{
     public List<Goal> findAllByTeacherId(String teacherId);
 
     public List<Goal> findAll();
+
+    public List<Goal> findByStudentIdIn(List<String> studentIds);
     
 }
