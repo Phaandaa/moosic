@@ -1,6 +1,4 @@
 package com.example.server.service;
-
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 
 import java.io.BufferedReader;
@@ -22,8 +20,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 public class VerifyIdTokenService {
+    private static final Logger logger = LoggerFactory.getLogger(VerifyIdTokenService.class);
+
     public void verifyIdToken(String idToken) throws Exception {
 
        // Fetch public keys from Google's x509 certificates URL
@@ -41,13 +44,22 @@ public class VerifyIdTokenService {
     PublicKey publicKey = convertPemToPublicKey(publicKeyPem);
 
     // Parse and validate the token
-    Claims claims = Jwts.parserBuilder()
-        .setSigningKey(publicKey)
-        .build()
-        .parseClaimsJws(idToken)
-        .getBody();
-    }
+    try {
+        Jwts.parserBuilder()
+            .setSigningKey(publicKey)
+            .build()
+            .parseClaimsJws(idToken);
+    } catch (Exception e) {
+        logger.error("Invalid token: " + e.getMessage());
+        throw new Exception("Invalid token");
 
+    }}
+    // Claims claims = Jwts.parserBuilder()
+    //     .setSigningKey(publicKey)
+    //     .build()
+    //     .parseClaimsJws(idToken)
+    //     .getBody();
+    // }
 
     private PublicKey convertPemToPublicKey(String publicKeyPem) throws Exception {
         publicKeyPem = publicKeyPem.replace("-----BEGIN PUBLIC KEY-----", "")
