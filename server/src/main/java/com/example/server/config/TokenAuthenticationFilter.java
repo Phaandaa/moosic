@@ -2,45 +2,192 @@ package com.example.server.config;
 
 import org.springframework.stereotype.Component;
 
-import com.example.server.service.VerifyIdTokenService;
+// import com.example.server.service.VerifyIdTokenService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import jakarta.servlet.Filter;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwsHeader;
+import io.jsonwebtoken.Jwts;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.web.filter.OncePerRequestFilter;
+
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
+import java.security.PublicKey;
+import java.security.cert.CertificateFactory;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Base64;
+import java.security.KeyFactory;
+
+import java.security.cert.X509Certificate;
+import java.io.ByteArrayInputStream;
 
 @Component
-public class TokenAuthenticationFilter implements Filter{
-    private final VerifyIdTokenService verifyIdTokenService;
+public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
-    public TokenAuthenticationFilter(VerifyIdTokenService verifyIdTokenService) {
-        this.verifyIdTokenService = verifyIdTokenService;
-    }
+    private Map<String, PublicKey> publicKeys; // Map to store public keys
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        String authToken = httpRequest.getHeader("Authorization");
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+        System.out.println("TokenAuthenticationFilter: Filtering request...");
 
-        try {
-            if (authToken != null && !authToken.isEmpty()) {
-                verifyIdTokenService.verifyIdToken(authToken.replace("Bearer ", ""));
+        String token = extractToken(request);
+        if (token != null && !token.isEmpty()) {
+            System.out.println("TokenAuthenticationFilter: Token found, processing...");
+            try {
+                // Assuming retrievePublicKeys() method is implemented to fetch and cache the keys
+                decodeTokenHeader(token);
+                if (publicKeys == null) {
+                    System.out.println("TokenAuthenticationFilter: Retrieving public keys...");
+                    publicKeys = retrievePublicKeys();
+                }
+
+                System.err.println(token);
+                
+                // Parse the token
+                System.out.println("TokenAuthenticationFilter: Parsing token...");
+                Claims claims = Jwts.parserBuilder()
+                    .setSigningKeyResolver(new SigningKeyResolver(publicKeys))
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+                System.out.println(claims);
+                System.out.println(claims.getSubject());
+
+                // Extract user details and create Authentication
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    claims.getSubject(), null, null);
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                System.out.println("TokenAuthenticationFilter: Authentication successful.");
+            } catch (Exception e) {
+                // Handle invalid token
+                System.out.println("TokenAuthenticationFilter: Authentication failed - " + e.getMessage());
+                SecurityContextHolder.clearContext();
             }
-            chain.doFilter(request, response);
-        } catch (Exception e) {
-            throw new ServletException("Invalid token.");
+        } else {
+            System.out.println("TokenAuthenticationFilter: No token found.");
+        }
+        filterChain.doFilter(request, response);
+    }
+
+    private String extractToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            System.out.println("TokenAuthenticationFilter: Extracted token from request.");
+            return bearerToken.substring(7); // Remove "Bearer " prefix
+        }
+        System.out.println("TokenAuthenticationFilter: No Authorization header found.");
+        return null;
+    }
+
+    // private Map<String, PublicKey> retrievePublicKeys() throws Exception {
+    //     System.out.println("TokenAuthenticationFilter: Fetching public keys...");
+    //     Map<String, PublicKey> publicKeys = new HashMap<>();
+    //     URI uri = new URI("https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com");
+    //     URL url = uri.toURL();
+    //     InputStream inputStream = url.openStream();
+    //     ObjectMapper mapper = new ObjectMapper();
+    //     Map<String, String> keys = mapper.readValue(inputStream, Map.class);
+    
+    //     for (Map.Entry<String, String> entry : keys.entrySet()) {
+    //         String publicKeyPEM = entry.getValue()
+    //                                    .replace("-----BEGIN PUBLIC KEY-----", "")
+    //                                    .replaceAll(System.lineSeparator(), "")
+    //                                    .replace("-----END PUBLIC KEY-----", "")
+    //                                    .replace("-", "+") // Replace URL-safe Base64 characters
+    //                                    .replace("_", "/");
+    //         byte[] encoded;
+    //         try {
+    //             encoded = Base64.getDecoder().decode(publicKeyPEM);
+    //         } catch (IllegalArgumentException e) {
+    //             System.out.println("TokenAuthenticationFilter: Error decoding public key - " + e.getMessage());
+    //             continue;
+    //         }
+    
+    //         X509EncodedKeySpec spec = new X509EncodedKeySpec(encoded);
+    //         KeyFactory kf = KeyFactory.getInstance("RSA");
+    //         PublicKey publicKey = kf.generatePublic(spec);
+    //         publicKeys.put(entry.getKey(), publicKey);
+    //     }
+    
+    //     System.out.println("TokenAuthenticationFilter: Public keys fetched and processed.");
+    //     return publicKeys;
+    // }
+
+    private Map<String, PublicKey> retrievePublicKeys() throws Exception {
+    System.out.println("TokenAuthenticationFilter: Fetching public keys...");
+    Map<String, PublicKey> publicKeys = new HashMap<>();
+    ObjectMapper mapper = new ObjectMapper();
+    URI uri = new URI("https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com");
+    URL url = uri.toURL();
+    Map<String, String> keys = mapper.readValue(url, Map.class);
+
+    CertificateFactory factory = CertificateFactory.getInstance("X.509");
+
+    for (Map.Entry<String, String> entry : keys.entrySet()) {
+        String certString = entry.getValue();
+
+        // Remove the "BEGIN" and "END" lines
+        String publicKeyPEM = certString
+            .replace("-----BEGIN CERTIFICATE-----\n", "")
+            .replace("-----END CERTIFICATE-----", "")
+            .replace("\n", "");
+
+        byte[] encoded = Base64.getDecoder().decode(publicKeyPEM);
+        X509Certificate certificate = (X509Certificate) factory.generateCertificate(new ByteArrayInputStream(encoded));
+        PublicKey publicKey = certificate.getPublicKey();
+
+        publicKeys.put(entry.getKey(), publicKey);
+    }
+
+    System.out.println("TokenAuthenticationFilter: Public keys fetched and processed.");
+    // System.err.println(publicKeys);
+    return publicKeys;
+}
+    
+
+    // Implement a custom SigningKeyResolver using the public keys
+    private static class SigningKeyResolver extends io.jsonwebtoken.SigningKeyResolverAdapter {
+        private final Map<String, PublicKey> publicKeys;
+
+        public SigningKeyResolver(Map<String, PublicKey> publicKeys) {
+            this.publicKeys = publicKeys;
+        }
+
+        @Override
+        public PublicKey resolveSigningKey(JwsHeader header, Claims claims) {
+            return publicKeys.get(header.getKeyId());
         }
     }
 
-    @Override
-    public void init(FilterConfig filterConfig) {}
-
-    @Override
-    public void destroy() {}
+    private void decodeTokenHeader(String token) {
+        try {
+            String[] parts = token.split("\\.");
+            if (parts.length != 3) {
+                throw new IllegalArgumentException("Invalid JWT token.");
+            }
+    
+            String headerJson = new String(Base64.getUrlDecoder().decode(parts[0]));
+            System.out.println("Decoded JWT header: " + headerJson);
+        } catch (Exception e) {
+            System.out.println("Error decoding token header: " + e.getMessage());
+        }
+    }
+    
 }

@@ -4,32 +4,28 @@ import java.util.Base64;
 import org.json.JSONObject;
 
 public class JWTValidator {
-    public static void main(String[] args) {
-        if (args.length != 1) {
-            System.out.println("Usage: java JWTValidator <JWT token>");
+    public static void validateJWT(String jwtToken) {
+        // Split the JWT token into its components
+        String[] parts = jwtToken.split("\\.");
+        if (parts.length != 3) {
+            System.out.println("Invalid JWT structure: JWT should have 3 parts separated by dots.");
             return;
         }
-        
-        // Example JWT token
-        String jwtToken = args[0];
 
-        // Extract header from the JWT token
-        String[] parts = jwtToken.split("\\.");
-        String encodedHeader = parts[0];
-        
-        // Decode the Base64-encoded header
-        byte[] decodedHeader = Base64.getDecoder().decode(encodedHeader);
-        String headerJson = new String(decodedHeader);
+        // Decode the Base64-encoded header and payload
+        String headerJson = new String(Base64.getUrlDecoder().decode(parts[0]));
+        String payloadJson = new String(Base64.getUrlDecoder().decode(parts[1]));
 
-        // Parse the header JSON
+        // Parse the header and payload JSON
         JSONObject headerObject = new JSONObject(headerJson);
+        JSONObject payloadObject = new JSONObject(payloadJson);
+
+        // Display the decoded header and payload
+        System.out.println("Header: " + headerObject.toString(4));
+        System.out.println("Payload: " + payloadObject.toString(4));
 
         // Check the algorithm used for signing
         String algorithm = headerObject.optString("alg");
-        if ("RS256".equals(algorithm)) {
-            System.out.println("JWT token is signed using RS256 algorithm");
-        } else {
-            System.out.println("JWT token is not signed using RS256 algorithm");
-        }
+        System.out.println("JWT token is signed using " + algorithm + " algorithm");
     }
 }
