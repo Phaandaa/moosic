@@ -11,6 +11,7 @@ import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Colors from '../../constants/colors';
 import SuccessModal from '../../components/ui/SuccessModal';
+import DeleteModal from '../../components/ui/DeleteModal';
 import * as Notifications from 'expo-notifications';
 import { format } from 'date-fns';
 import theme from '../../styles/theme';
@@ -72,10 +73,25 @@ function SetReminderScreen({navigation}){
     const [errors, setErrors] = useState({});
 
     const [isModalVisible, setModalVisible] = useState(false);
+    const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
 
     const handleModalButtonPress = () => {
       navigation.navigate('Home');
       setModalVisible(false);
+    };
+
+    const handleDeleteModalButtonPress = () => {
+        deleteReminder();
+        setDeleteModalVisible(false);
+    };
+    const handleModalButtonPressCancel = () => {
+      setDeleteModalVisible(false);
+    };
+    
+    const deleteReminder = async() => {
+      Notifications.cancelAllScheduledNotificationsAsync();
+      navigation.navigate('Home');
+      setDeleteModalVisible(false);
     };
 
     const [time, setTime] = useState(new Date());
@@ -133,6 +149,9 @@ function SetReminderScreen({navigation}){
             return;
         }
 
+        // Cancel all existing notifications first
+        await Notifications.cancelAllScheduledNotificationsAsync();
+
         let triggerDate = new Date(); // Start with the current date/time
         triggerDate.setHours(time.getHours(), time.getMinutes(), 0, 0); // Set to the user's selected time
 
@@ -166,6 +185,7 @@ function SetReminderScreen({navigation}){
         <ScrollView style={styles.container}>
         <View style={styles.formContainer}>
             <Text style={styles.header}>Schedule Practice Reminder</Text>
+            {/* <Text style={styles.normalText}>Current Reminder: every {frequency} day(s) at {notificationTime}</Text> */}
 
             {/* <View style={styles.inputContainer}>
             <TextInput
@@ -245,8 +265,21 @@ function SetReminderScreen({navigation}){
               onButtonPress={handleModalButtonPress}
             />
 
+            <DeleteModal 
+              isModalVisible={isDeleteModalVisible} 
+              imageSource={require('../../assets/deletenote.png')}
+              textMessage="Are you sure you want to remove all reminders?"
+              buttonText1="Cancel"
+              buttonText2="Remove"
+              onButton1Press={handleModalButtonPressCancel}
+              onButton2Press={handleDeleteModalButtonPress}
+            />
+
             <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={() => scheduleUserDefinedNotification(time, parseInt(frequency, 10))}>
               <Text style={styles.buttonText}>Schedule Reminder</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[theme.buttonRed, {alignItems: 'center'}]} onPress={() => setDeleteModalVisible(true)}>
+              <Text style={styles.buttonText}>Remove All Reminders</Text>
             </TouchableOpacity>
 
         </View>
@@ -277,7 +310,12 @@ const styles = StyleSheet.create({
       fontSize: 22,
       fontWeight: 'bold',
       marginTop: 20,
-      marginBottom: 40,
+      marginBottom: 20,
+      color: Colors.fontPrimary,
+    },
+    normalText: {
+      fontSize: 18,
+      marginBottom: 20,
       color: Colors.fontPrimary,
     },
     inputContainer: {
