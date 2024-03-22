@@ -20,6 +20,7 @@ import com.example.server.entity.UserType;
 import com.example.server.models.CreateUserDTO;
 import com.example.server.models.FirebaseToken;
 import com.example.server.models.SignInResponseDTO;
+import com.example.server.models.SignOutDTO;
 
 
 // TODO: Handle possible exceptions, please check with example from OOP project
@@ -175,7 +176,7 @@ public class UserService {
     }
 
     @Transactional
-    public String signOut(String userId, String expoPushToken) {
+    public String signOut(String userId) {
         try {
             User selectedUser = userRepository.findById(userId).orElseThrow(()->
                 new NoSuchElementException("No user found with ID " + userId));
