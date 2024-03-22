@@ -115,6 +115,21 @@ public class StudentService {
     }
 
     @Transactional
+    public void updateStudentTuitionDay(String studentId, String tuitionDay) {
+        try {
+            Student student = studentRepository.findById(studentId).orElseThrow(()->
+                new NoSuchElementException("Student not found with the ID " + studentId));
+            student.setTuitionDay(tuitionDay);
+            studentRepository.save(student);
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating tuition day for student ID: " + studentId + ": " + e.getMessage());
+        }
+        
+    }
+
+    @Transactional
     public void updateStudentAvatarFrame(String studentId, String avatarFrame) {
         try {
             Student student = studentRepository.findById(studentId).orElseThrow(()->

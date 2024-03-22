@@ -76,6 +76,20 @@ public class StudentController {
         }
     }
 
+     // Change student's tuition day
+     @Operation(summary = "Update student's tuition day")
+     @PutMapping("/{studentId}/update-tuition-day")
+     public ResponseEntity<String> updateStudentTiotionDay(
+             @PathVariable String studentId,
+             @RequestParam String tuitionDay) {
+         try {
+             studentService.updateStudentTuitionDay(studentId, tuitionDay);
+             return new ResponseEntity<>("Student's tuition day updated successfully.", HttpStatus.OK);
+         } catch (NoSuchElementException e) {
+             return new ResponseEntity<>("Failed to update student's teacher: "+e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+         }
+     }
+
     @Operation(summary = "Update student's avatar")
     @PutMapping("/{studentId}/update-avatar")
     public ResponseEntity<String> updateStudentAvatar(

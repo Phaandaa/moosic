@@ -18,4 +18,6 @@ public interface StudentRepository extends MongoRepository<Student, String> {
     @Query(value = "{}", sort = "{ 'creation_time' : -1 }")
     public List<Student> findAllSortedByCreationTime();
 
+    public List<Student> findAllByTuitionDay(String tuitionDay);
+
 }
