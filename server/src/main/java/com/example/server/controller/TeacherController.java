@@ -22,7 +22,7 @@ import com.example.server.service.TeacherService;
 import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/teachers")
 public class TeacherController {
     
