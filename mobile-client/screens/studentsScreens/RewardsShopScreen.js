@@ -168,8 +168,12 @@ function RewardsShopScreen() {
           <Text style={styles.itemTitle}>{description}</Text>
         </View>
         <View style={styles.pointsContainer}>
+          <Image 
+            source={require('../../assets/currency.png')} 
+            style={styles.currencyImage}
+          />
           <Text style={styles.itemPoints}>
-            <Ionicons name="star" size={16} color="#ffffff" /> {points}
+            {points}
           </Text>
         </View>
       </TouchableOpacity>
@@ -195,11 +199,18 @@ function RewardsShopScreen() {
           <Text style={styles.headerText}>
             {filteredResults?.length ? filteredResults.length : 0} Items Found
           </Text>
-          <Text style={styles.headerText}>
-            Current Points:{" "}
-            <Ionicons name="star" size={16} color={Colors.fontSecondary} />{" "}
-            {userData.pointsCounter}
-          </Text>
+          <View style={styles.currentPointsContainer}> 
+            <Text style={styles.headerText}>
+              Current Points:{"  "}
+            </Text>
+            <Image 
+                source={require('../../assets/currency.png')} 
+                style={styles.currencyImage}
+              />
+            <Text style={[styles.itemPoints, {color: Colors.fontSecondary}]}>
+              {userData.pointsCounter}
+            </Text>
+          </View>
         </View>
       </View>
 
@@ -306,15 +317,32 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: Colors.fontSecondary,
   },
+  currentPointsContainer: {
+    backgroundColor: '#fffff',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    width: "100%",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
   pointsContainer: {
     backgroundColor: Colors.primary500, // Button background
     paddingVertical: 10,
     paddingHorizontal: 20,
     width: "100%",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   itemPoints: {
     color: "#fff",
     fontWeight: "bold",
     textAlign: "center",
+    marginLeft: 5
   },
+  currencyImage:{
+    height: 30,
+    width: 30
+  }
 });
