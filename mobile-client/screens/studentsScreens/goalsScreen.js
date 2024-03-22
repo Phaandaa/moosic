@@ -34,17 +34,17 @@ const GoalsScreen = () => {
       const userId = parsedData.id;
       setPoints(parsedData.pointsCounter);
       
+      // Fetch student's goals
+      const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/student/${userId}`;
+      const goalsResponse = await axios.get(fetchStudentsGoalsUrl);
+      setGoals(goalsResponse.data ? goalsResponse.data : []);
+      console.log(goals)
+
       // Fetch student data
       const fetchPointsLog = `${IP_ADDRESS}/points-logs/student/${userId}`;
       console.log(fetchPointsLog)
       const PointsLogresponse = await axios.get(fetchPointsLog);
       setPointsLog(PointsLogresponse.data ? PointsLogresponse.data : []);
-      
-      // Fetch student's goals
-      const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/student/${userId}`;
-      const goalsResponse = await axios.get(fetchStudentsGoalsUrl);
-      setGoals(goalsResponse.data ? goalsResponse.data : []);
-
 
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -148,17 +148,14 @@ const GoalsScreen = () => {
   };
 
   const isGoalsSet = !goals.length > 0;
+  console.log(goals);
 
   return (
     <LoadingComponent isLoading={loadingstate}>
       
         <View style={styles.container}>
           <Text style={[theme.textTitle, {marginTop: 50, marginHorizontal: 15}]}>Your Goals</Text>  
-          <View style={[styles.balanceContainer, { backgroundColor: '#007AFF', overflow: 'hidden', position: 'relative'}]}>
-            <Ionicons name="trophy" size={170} color='#FFFFFF' style={{ position: 'absolute', bottom: 0, right: 0 }} />
-            <Text style={styles.balanceText}>Your Points</Text>
-            <Text style={styles.pointsIndicator}>{points}</Text>
-          </View>
+          
 
           {isGoalsSet ? (
               <CurrentGoals
@@ -171,6 +168,12 @@ const GoalsScreen = () => {
           ) : (
               <Text style={styles.createGoalPrompt}>Aim High, Start your Goals!</Text>
           )}
+
+          <View style={[styles.balanceContainer, { backgroundColor: '#007AFF', overflow: 'hidden', position: 'relative'}]}>
+            <Ionicons name="trophy" size={180} color='#FFFFFF' style={{ position: 'absolute', bottom: 0, right: 0 }} />
+            <Text style={styles.balanceText}>Your Points</Text>
+            <Text style={styles.pointsIndicator}>{points}</Text>
+          </View>
 
           <FlatList
             data={pointsLog}
@@ -291,6 +294,7 @@ const styles = StyleSheet.create({
     color: '#333',
     marginLeft: 12,
     flex: 2,
+    textAlign: 'center',
   },
   currentGoalsContainer: {
     marginBottom: 20,
@@ -346,7 +350,7 @@ progressTrack: {
 },
 
 progressBar: {
-    backgroundColor: '#007AFF',
+    backgroundColor: 'lightgreen', // Primary color for the filled track
     height: '100%',
     borderRadius: 20,
     minWidth: 20, // Minimum visibility

@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState, useEffect } from "react";
-import Head from "next/head";;
-import ArrowDownOnSquareIcon from "@heroicons/react/24/solid/ArrowDownOnSquareIcon";
+import Head from "next/head";
+import ArrowUpOnSquareIcon from "@heroicons/react/24/solid/ArrowUpOnSquareIcon";
 import { Box, Button, Container, Stack, SvgIcon, Typography, Card } from "@mui/material";
 import { useSelection } from "src/hooks/use-selection";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
@@ -9,12 +9,81 @@ import { TeachersSearch } from "src/sections/teachers/teachers-search";
 import { applyPagination } from "src/utils/apply-pagination";
 import TeachersModal from "src/sections/teachers/teachers-modal";
 import { getAsync } from "src/utils/utils";
-import * as XLSX from "xlsx";
 import TrashIcon from "@heroicons/react/24/solid/TrashIcon";
+import { convertArrayToCSV } from "src/utils/utils";
+import AccConfirmDeletionModal from "src/sections/teachers/teacher-confirm-delete";
+import { deleteAsync } from "src/utils/utils";
+import SnackbarAlert from "src/components/alert";
 
 const Page = () => {
   const [teacherData, setTeacherData] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // confirm deletion modal states
+  const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [teachersToDelete, setTeachersToDelete] = useState([]);
+
+  // snackbar alert states
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
+  const handleDeleteConfirmationOpen = () => {
+    setTeachersToDelete(teachersSelection.selected);
+    setConfirmModalOpen(true);
+  };
+
+  const handleDeleteConfirmationClose = () => {
+    setConfirmModalOpen(false);
+  };
+
+  const onTriggerSnackbar = (message, severity) => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
+
+  const handleDeleteConfirmed = async (accounts) => {
+    // Promise.all will execute all delete requests in parallel
+    const deletePromises = accounts.map((teacherId) =>
+      deleteAsync(`teachers/${teacherId}`)
+    );
+
+    try {
+      // Wait for all delete requests to finish
+      const response = await Promise.all(deletePromises);
+
+      if (!response.ok) {
+        throw new Error("Failed to delete teachers.");
+      }
+      
+
+      // Filter out the deleted teachers from the state.
+      setTeacherData((currentTeacherData) =>
+        currentTeacherData.filter((teacher) => !accounts.includes(teacher.id))
+      );
+
+      // Clear the selection state and close the modal
+      teachersSelection.handleDeselectAll();
+      // Show a success message
+      // Assuming you have a method to show toast notifications
+      onTriggerSnackbar("Teachers deleted successfully.", "success");
+    } catch (error) {
+      // If any request fails, you may decide to stop the deletion process
+      // and show an error message
+      // Or handle the individual failures accordingly
+      console.error("Error deleting teachers:", error);
+      onTriggerSnackbar("Failed to delete teachers.", "error");
+    } finally {
+      // Close the modal
+      setConfirmModalOpen(false);
+      setTeachersToDelete([]);
+    }
+  };
 
   useEffect(() => {
     const fetchTeachers = async () => {
@@ -36,12 +105,13 @@ const Page = () => {
   const useTeachers = (page, rowsPerPage) => {
     return useMemo(() => {
       const filteredData = searchTerm
-        ? teacherData.filter((teacher) => 
-            teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            teacher.email.toLowerCase().includes(searchTerm.toLowerCase())
+        ? teacherData.filter(
+            (teacher) =>
+              teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              teacher.email.toLowerCase().includes(searchTerm.toLowerCase())
           )
         : teacherData;
-  
+
       return applyPagination(filteredData, page, rowsPerPage);
     }, [teacherData, page, rowsPerPage, searchTerm]);
   };
@@ -69,44 +139,28 @@ const Page = () => {
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
-  
 
   const handleAddTeacher = (newTeacher) => {
-    setTeacherData((prevTeachers) => [...prevTeachers, newTeacher]);
+    setTeacherData((prevTeachers) => [newTeacher, ...prevTeachers]);
   };
 
   const handleEditTeacher = (updatedTeacher) => {
     setTeacherData((prevTeachers) =>
-      prevTeachers.map((teacher) =>
-        teacher.id === updatedTeacher.id ? updatedTeacher : teacher
-      )
+      prevTeachers.map((teacher) => (teacher.id === updatedTeacher.id ? updatedTeacher : teacher))
     );
   };
 
-  const handleExport = useCallback(() => {
-    // Define a workbook and a worksheet
-    const wb = XLSX.utils.book_new();
-    const wsName = "TeachersData";
-
-    // Convert your student data into a format suitable for a worksheet
-    const wsData = [
-      ["Name", "Email"], // Header row
-      ...teacherData.map((teacher) => [
-        teacher.name,
-        teacher.email,
-      ]),
-    ];
-
-    // Create a worksheet
-    const ws = XLSX.utils.aoa_to_sheet(wsData);
-
-    // Add the worksheet to the workbook
-    XLSX.utils.book_append_sheet(wb, ws, wsName);
-
-    // Generate XLSX file and trigger download
-    XLSX.writeFile(wb, "TeachersData.xlsx");
-  }, [teacherData]);
-
+  const handleExport = () => {
+    const csvData = convertArrayToCSV(teacherData);
+    const blob = new Blob([csvData], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "teachers-data.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <>
@@ -127,37 +181,37 @@ const Page = () => {
                 <Typography variant="h4">Teachers</Typography>
               </Stack>
               <div>
-                <TeachersModal onAddTeacher={handleAddTeacher}/>
+                <TeachersModal onAddTeacher={handleAddTeacher} />
               </div>
             </Stack>
             <Card sx={{ p: 2, display: "flex", width: "100%" }}>
-              <TeachersSearch handleSearchChange={handleSearchChange}/>
+              <TeachersSearch handleSearchChange={handleSearchChange} />
               <Button
-                  color="inherit"
-                  startIcon={
-                    <SvgIcon fontSize="small">
-                      <ArrowDownOnSquareIcon />
-                    </SvgIcon>
-                  }
-                  onClick={handleExport}
-                  style={{ marginLeft: "15px" }}
-                >
-                  Export
-                </Button>
-                <Button
+                color="inherit"
+                startIcon={
+                  <SvgIcon fontSize="small">
+                    <ArrowUpOnSquareIcon />
+                  </SvgIcon>
+                }
+                onClick={handleExport}
+                style={{ marginLeft: "15px" }}
+              >
+                Export
+              </Button>
+              <Button
                 color="inherit"
                 startIcon={
                   <SvgIcon fontSize="small">
                     <TrashIcon />
                   </SvgIcon>
                 }
-                // onClick={handleDelete}
+                onClick={handleDeleteConfirmationOpen}
                 style={{ marginLeft: "15px" }}
               >
                 Delete
               </Button>
             </Card>
-            
+
             <TeachersTable
               count={teacherData.length}
               items={teachers}
@@ -175,6 +229,18 @@ const Page = () => {
           </Stack>
         </Container>
       </Box>
+      <AccConfirmDeletionModal
+        open={isConfirmModalOpen}
+        onClose={handleDeleteConfirmationClose}
+        onConfirm={handleDeleteConfirmed}
+        accounts={teachersToDelete}
+      />
+      <SnackbarAlert
+        open={snackbarOpen}
+        severity={snackbarSeverity}
+        message={snackbarMessage}
+        handleClose={handleCloseSnackbar}
+      />
     </>
   );
 };

@@ -10,7 +10,8 @@ const theme = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: '#ffffff',
     width: '100%',
-    height : '100%',    
+    height: '100%',
+    
   },
   textThin: {
     fontSize: 24,
@@ -57,10 +58,9 @@ const theme = StyleSheet.create({
   box:{
     padding: 20,
     borderRadius: 15,
-    marginTop: 20,
-    width: '100%',
-    
-    
+    height: 150,
+    width : '50%',
+
   },
   button: {
     backgroundColor: Colors.mainPurple,

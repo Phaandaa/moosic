@@ -1,10 +1,13 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import { View, Button, Alert,TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoadingScreen from './components/ui/loadingstate';
 import { Ionicons } from '@expo/vector-icons';
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
+import * as Device from 'expo-device';
 
 // Pages
 import LoginPage from './screens/login';
@@ -12,7 +15,6 @@ import HomeScreen from './screens/home';
 import ProfileScreen from './screens/profilepage';
 import NotificationsScreen from './screens/notificationspage';
 import CustomTabBarButton from './components/navbar/CustomTabBarButton';
-
 
 //Student Pages
 import GoalsScreen from './screens/studentsScreens/goalsScreen';
@@ -48,6 +50,15 @@ import store from './store';
 import { AuthProvider, useAuth } from './context/Authcontext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => {
+    return {
+      shouldPlaySound: false,
+      shouldSetBadge: false,
+      shouldShowAlert: true,
+    };
+  },
+});
 
 
 const Stack = createNativeStackNavigator();
@@ -55,6 +66,40 @@ const Tab = createBottomTabNavigator();
 
 function AddPlaceholderScreen() {
   return <View />;
+}
+
+async function registerForPushNotificationsAsync() {
+  let token;
+
+  if (Platform.OS === 'android') {
+    Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+
+  if (Device.isDevice) {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+    token = await Notifications.getExpoPushTokenAsync({
+      projectId: "8a3ecb5d-642c-499a-a2ce-f56543481503",
+    });
+    console.log(token);
+  } else {
+    alert('Must use physical device for Push Notifications');
+  }
+
+  return token.data;
 }
 
 
@@ -75,8 +120,8 @@ function StudentTabs() {
             case 'New':
               iconName = focused ? 'add-circle' : 'add-circle-outline';
               break;
-            case 'Notifications':
-              iconName = focused ? 'notifications' : 'notifications-outline';
+            case 'Rewards Shop':
+              iconName = focused ? 'cart' : 'cart-outline';
               break;
             case 'Profile':
               iconName = focused ? 'person' : 'person-outline';
@@ -107,7 +152,7 @@ function StudentTabs() {
           
         }}
       />
-      <Tab.Screen name="Notifications" component={NotificationsScreen} />
+      <Tab.Screen name="Rewards Shop" component={RewardsShopScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
@@ -169,6 +214,7 @@ function TeacherTabs() {
 }
 
 const App = () => {
+    
   return (
     <AuthProvider>
       <Provider store={store}>
@@ -182,6 +228,10 @@ const App = () => {
 
 const RootNavigator = () => {
   const { state } = useAuth();
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
   const [userRole, setUserRole] = useState('');
   const [isLoading, setIsLoading] = useState(true); // Added state to track loading status
 
@@ -201,6 +251,20 @@ const RootNavigator = () => {
       }
     };
     fetchData();
+    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      setNotification(notification);
+    });
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      console.log(response);
+    });
+
+    return () => {
+      Notifications.removeNotificationSubscription(notificationListener.current);
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
   }, []);
 
   if (isLoading || state.isLoading) {

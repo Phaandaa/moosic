@@ -32,7 +32,7 @@ public class StudentService {
 
     public List<Student> getAllStudents() {
         try {
-            List<Student> students = studentRepository.findAll();
+            List<Student> students = studentRepository.findAllSortedByCreationTime();
             if (students == null || students.isEmpty()) {
                 throw new NoSuchElementException("No students found");
             }
@@ -110,6 +110,21 @@ public class StudentService {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Error updating student avatar for student ID: " + studentId + ": " + e.getMessage());
+        }
+        
+    }
+
+    @Transactional
+    public void updateStudentTuitionDay(String studentId, String tuitionDay) {
+        try {
+            Student student = studentRepository.findById(studentId).orElseThrow(()->
+                new NoSuchElementException("Student not found with the ID " + studentId));
+            student.setTuitionDay(tuitionDay);
+            studentRepository.save(student);
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating tuition day for student ID: " + studentId + ": " + e.getMessage());
         }
         
     }

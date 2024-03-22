@@ -28,7 +28,7 @@ public class TeacherService {
 
     public List <Teacher> getAllTeachers() {
         try {
-            List<Teacher> teachers = teacherRepository.findAll();
+            List<Teacher> teachers = teacherRepository.findAllSortedByCreationTime();
             if (teachers.isEmpty() || teachers == null) {
                 throw new NoSuchElementException("No teachers found");
             }
@@ -86,7 +86,7 @@ public class TeacherService {
             Teacher teacher = teacherRepository.findById(teacherId).orElseThrow(()->
                 new NoSuchElementException("No teacher found with ID " + teacherId)
                 );        
-            teacher.setPhone(phone);
+            teacher.setPhoneNumber(phone);
             teacherRepository.save(teacher);
         } catch (NoSuchElementException e) {
             throw e;

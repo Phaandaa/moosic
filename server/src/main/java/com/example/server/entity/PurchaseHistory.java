@@ -40,16 +40,21 @@ public class PurchaseHistory {
     @Field(name = "puchase_date")
     private String purchaseDate;
 
+    @Field(name = "creation_time")
+    private Date creationTime;
+
     public PurchaseHistory(String studentId, String studentName, String itemId, Integer purchaseAmount,
             Integer totalPrice) {
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy");
-        String formattedDate = sdf.format(new Date());
+        Date currentDate = new Date();
+        String formattedDate = sdf.format(currentDate);
         this.studentId = studentId;
         this.studentName = studentName;
         this.itemId = itemId;
         this.purchaseAmount = purchaseAmount;
         this.totalPrice = totalPrice;
         this.purchaseDate = formattedDate;
+        this.creationTime = currentDate;
     }
 
     public static void hasExceededLimit(Integer amount, Integer limit, List<PurchaseHistory> purchaseHistories) {

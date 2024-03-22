@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState, useEffect } from "react";
 import Head from "next/head";
-import ArrowDownOnSquareIcon from "@heroicons/react/24/solid/ArrowDownOnSquareIcon";
+import ArrowUpOnSquareIcon from "@heroicons/react/24/solid/ArrowUpOnSquareIcon";
 import TrashIcon from "@heroicons/react/24/solid/TrashIcon";
 import { Box, Button, Container, Stack, SvgIcon, Typography } from "@mui/material";
 import { useSelection } from "src/hooks/use-selection";
@@ -12,7 +12,7 @@ import StudentsModal from "src/sections/students/students-modal";
 import { getAsync } from "src/utils/utils";
 import * as XLSX from "xlsx";
 import { Card } from "@mui/material";
-import { set } from "nprogress";
+import { convertArrayToCSV } from "src/utils/utils";
 
 const Page = () => {
   const [studentData, setStudentData] = useState([]);
@@ -74,7 +74,7 @@ const Page = () => {
   };
 
   const handleAddStudent = (newStudent) => {
-    setStudentData((prevStudents) => [...prevStudents, newStudent]);
+    setStudentData((prevStudents) => [newStudent,...prevStudents]);
   };
 
   const handleEditStudent = (updatedStudent) => {
@@ -85,32 +85,17 @@ const Page = () => {
     );
   };
 
-  const handleExport = useCallback(() => {
-    // Define a workbook and a worksheet
-    const wb = XLSX.utils.book_new();
-    const wsName = "StudentsData";
-
-    // Convert your student data into a format suitable for a worksheet
-    const wsData = [
-      ["Name", "Email", "Instrument", "Grade", "Points"], // Header row
-      ...studentData.map((student) => [
-        student.name,
-        student.email,
-        student.instrument,
-        student.grade,
-        student.pointsCounter,
-      ]),
-    ];
-
-    // Create a worksheet
-    const ws = XLSX.utils.aoa_to_sheet(wsData);
-
-    // Add the worksheet to the workbook
-    XLSX.utils.book_append_sheet(wb, ws, wsName);
-
-    // Generate XLSX file and trigger download
-    XLSX.writeFile(wb, "StudentsData.xlsx");
-  }, [studentData]);
+  const handleExport = () => {
+    const csvData = convertArrayToCSV(studentData);
+    const blob = new Blob([csvData], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'students-data.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <>
@@ -142,7 +127,7 @@ const Page = () => {
                 color="inherit"
                 startIcon={
                   <SvgIcon fontSize="small">
-                    <ArrowDownOnSquareIcon />
+                    <ArrowUpOnSquareIcon />
                   </SvgIcon>
                 }
                 onClick={handleExport}

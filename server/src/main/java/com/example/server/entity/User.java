@@ -1,5 +1,7 @@
 package com.example.server.entity;
 
+import java.util.Date;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -24,15 +26,19 @@ public class User implements UserType{
     @Field(name = "role")
     private String role;
 
+    @Field(name = "creation_time")
+    private Date creationTime;
+
     public User() {
 
     }
 
-    public User(String id, String name, String email, String role) {
+    public User(String id, String name, String email, String role, Date creationTime) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.role = role;
+        this.creationTime = creationTime;
     }
  
 }

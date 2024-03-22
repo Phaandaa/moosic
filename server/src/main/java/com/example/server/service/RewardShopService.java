@@ -1,6 +1,7 @@
 package com.example.server.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -118,7 +119,7 @@ public class RewardShopService {
         }
     }
 
-    public String addNewRewardShopItem(String rewardShopItemJSON, MultipartFile file) {
+    public RewardShop addNewRewardShopItem(String rewardShopItemJSON, MultipartFile file) {
         try {
             RewardShopItemDTO rewardShopItemDTO = objectMapper.readValue(rewardShopItemJSON, RewardShopItemDTO.class);
             String imageURL = cloudStorageService.uploadFileToGCS(file, "shop");
@@ -128,9 +129,9 @@ public class RewardShopService {
             Integer limiation = rewardShopItemDTO.getLimitation();
             String Subtype = rewardShopItemDTO.getSubtype();
             String type = rewardShopItemDTO.getType();
-            RewardShop createdRewardShopItem = new RewardShop(description, points, stock, limiation, imageURL, type, Subtype);
+            RewardShop createdRewardShopItem = new RewardShop(description, points, stock, limiation, imageURL, type, Subtype, new Date());
             rewardShopRepository.save(createdRewardShopItem);
-            return "Create new item in reward shop successfully";
+            return createdRewardShopItem;
         } catch (RuntimeException e) {
             throw new RuntimeException("Error creating item in reward shop: " + e.getMessage());
         } catch (JsonMappingException e) {
@@ -142,7 +143,7 @@ public class RewardShopService {
         }
     }
 
-    public String addNewRewardShopItemWithoutPic(RewardShopItemDTO rewardShopItemDTO) {
+    public RewardShop addNewRewardShopItemWithoutPic(RewardShopItemDTO rewardShopItemDTO) {
         try {
             String description = rewardShopItemDTO.getDescription();
             Integer points = rewardShopItemDTO.getPoints();
@@ -150,9 +151,9 @@ public class RewardShopService {
             Integer limiation = rewardShopItemDTO.getLimitation();
             String type = rewardShopItemDTO.getType();
             String subtype = rewardShopItemDTO.getSubtype();
-            RewardShop createdRewardShopItem = new RewardShop(description, points, stock, limiation, null, type, subtype);
+            RewardShop createdRewardShopItem = new RewardShop(description, points, stock, limiation, null, type, subtype, new Date());
             rewardShopRepository.save(createdRewardShopItem);
-            return "Create new item in reward shop successfully";
+            return createdRewardShopItem;
         } catch (RuntimeException e) {
             throw new RuntimeException("Error creating item in reward shop: " + e.getMessage());
         } catch (Exception e) {

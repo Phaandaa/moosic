@@ -7,11 +7,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.server.dao.GoalRepository;
+import com.example.server.dao.StudentInventoryRepository;
 import com.example.server.dao.StudentRepository;
 import com.example.server.dao.TeacherRepository;
 import com.example.server.dao.UserRepository;
 import com.example.server.entity.Goal;
 import com.example.server.entity.Student;
+import com.example.server.entity.StudentInventory;
 import com.example.server.entity.Teacher;
 import com.example.server.entity.User;
 import com.example.server.entity.UserType;
@@ -39,6 +41,9 @@ public class UserService {
 
     @Autowired
     private GoalRepository goalRepository;
+
+    @Autowired
+    private StudentInventoryRepository studentInventoryRepository;
 
     private void isNotEmptyOrNull(String variable, String attributeName) {
         if (variable == null || variable.isEmpty()) {
@@ -77,15 +82,16 @@ public class UserService {
             }
             FirebaseToken firebaseResponse = firebaseAuthService.signUpWithEmailAndPassword(email, password);
             String id = firebaseResponse.getLocalId();
-            User newUser = new User(id, name, email, role);
+            Date creationTime = new Date();
+            User newUser = new User(id, name, email, role, creationTime);
             userRepository.save(newUser);
 
             switch (role) {
                 case "Student":
-                    return createStudent(id, name, email, userDTO);
+                    return createStudent(id, name, email, userDTO, creationTime);
                     // break;
                 case "Teacher":
-                    return createTeacher(id, name, email, userDTO);
+                    return createTeacher(id, name, email, userDTO, creationTime);
                     // break;
                 default:
                     return newUser;
@@ -112,7 +118,7 @@ public class UserService {
             isNotEmptyOrNull(name, "Name");
             FirebaseToken firebaseResponse = firebaseAuthService.signUpWithEmailAndPassword(email, password);
             String id = firebaseResponse.getLocalId();
-            User newUser = new User(id, name, email, "Admin");
+            User newUser = new User(id, name, email, "Admin", new Date());
             userRepository.save(newUser);
             return newUser;
         } catch (IllegalArgumentException e) {
@@ -139,14 +145,18 @@ public class UserService {
     }
 
     @Transactional
-    private Student createStudent(String id, String name, String email, CreateUserDTO userDTO) {
+    private Student createStudent(String id, String name, String email, CreateUserDTO userDTO, Date creationTime) {
         try {
             String instrument = userDTO.getInfo().get("instrument");
             String grade = userDTO.getInfo().get("grade");
-            Student newStudent = new Student(id, name, email, 0, null, new ArrayList<>(), instrument, grade, null,null, null);
+            String phoneNumber = userDTO.getInfo().get("phone");
+            String tuitionDay = userDTO.getInfo().get("tuition_day");
+            Student newStudent = new Student(id, name, email, 0, null, new ArrayList<>(), instrument, phoneNumber ,grade, null,null, null, creationTime,tuitionDay);
             studentRepository.save(newStudent);
             Goal newGoal = new Goal(id, name, null, 0, 0, 3, 1, "Not done", 20, false);
             goalRepository.save(newGoal);
+            StudentInventory studentInventory = new StudentInventory(id, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+            studentInventoryRepository.save(studentInventory);
             return newStudent;
         } catch (IllegalArgumentException e) {
             throw e;
@@ -156,11 +166,11 @@ public class UserService {
         
     }
 
-    private Teacher createTeacher(String id, String name, String email, CreateUserDTO userDTO) {
+    private Teacher createTeacher(String id, String name, String email, CreateUserDTO userDTO, Date creationTime) {
         try {
             String instrument = userDTO.getInfo().get("instrument");
             String phoneNumber = userDTO.getInfo().get("phone");
-            Teacher newTeacher = new Teacher(id, name, email, null, new ArrayList<>(), phoneNumber, instrument);
+            Teacher newTeacher = new Teacher(id, name, email, null, new ArrayList<>(), phoneNumber, instrument, creationTime);
             teacherRepository.save(newTeacher);
             return newTeacher;
         } catch (IllegalArgumentException e) {
@@ -198,11 +208,22 @@ public class UserService {
         
     }
 
+    @Transactional
     public void deleteUserById(String userId) {
         try {
             User toBeDeletedUser = userRepository.findById(userId).orElseThrow(()->
-            new NoSuchElementException("No user found with ID " + userId));
+                new NoSuchElementException("No user found with ID " + userId));
+            if (toBeDeletedUser.getRole().equals("Student")) {
+                Goal toBeDeletedGoal = goalRepository.findByStudentId(userId).orElseThrow(()->
+                    new NoSuchElementException("No goal found with student ID " + userId));
+                goalRepository.delete(toBeDeletedGoal);
+
+                StudentInventory toBeDeletedStudentInventory = studentInventoryRepository.findByStudentId(userId).orElseThrow(()->
+                    new NoSuchElementException("No student inventory found with student ID " + userId));
+                studentInventoryRepository.delete(toBeDeletedStudentInventory);
+            }
             userRepository.delete(toBeDeletedUser);
+
         } catch (NoSuchElementException e) {
             throw e;
         } catch (Exception e) {
