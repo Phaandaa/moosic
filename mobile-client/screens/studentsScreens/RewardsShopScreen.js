@@ -339,10 +339,11 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
     textAlign: "center",
-    marginLeft: 5
+    marginLeft: 5,
+    fontSize: 18
   },
   currencyImage:{
-    height: 30,
-    width: 30
+    height: 22,
+    width: 22
   }
 });
