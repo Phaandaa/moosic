@@ -135,4 +135,15 @@ public class StudentController {
             return new ResponseEntity<>("Failed to update student's information: "+e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @Operation(summary = "Delete student by student id")
+    @PutMapping("/{studentId}/delete")
+    public ResponseEntity<String> deleteStudent(@PathVariable String studentId) {
+        try {
+            studentService.deleteStudent(studentId);
+            return new ResponseEntity<>("Student deleted successfully.", HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("Failed to delete student: "+e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
