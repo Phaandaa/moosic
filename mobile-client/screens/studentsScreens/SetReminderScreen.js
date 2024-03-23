@@ -15,6 +15,8 @@ import DeleteModal from '../../components/ui/DeleteModal';
 import * as Notifications from 'expo-notifications';
 import { format } from 'date-fns';
 import theme from '../../styles/theme';
+import saveNotification from '../../context/notificationsContext';
+
 
 Notifications.setNotificationHandler({
   handleNotification: async () => {
@@ -48,6 +50,7 @@ const allowsNotificationsAsync = async () => {
   //// END: NEWLY ADDED FUNCTIONS ////
 
 function SetReminderScreen({navigation}){
+  
     useEffect(() => {
         const subscription1 = Notifications.addNotificationReceivedListener((notification)=> {
             console.log('NOTIF RECEIVED');
@@ -101,24 +104,16 @@ function SetReminderScreen({navigation}){
         setShowPicker(!showPicker);
     };
 
-    const onChange = (time, selectedTime) => {
-        const currentTime = selectedTime || time;
-        console.log('currentTime', currentTime)
-        setShowPicker(Platform.OS === 'ios');
-        setTime(currentTime);
-
-        if(Platform.OS === 'android'){
-          setTime(currentTime.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }));
-          console.log('android time', time)
-        }
-
-        setNotificationTime(currentTime);
-        console.log('time', time)
-
-        // Use date-fns to format the time
-        let formattedTime = format(currentTime, 'p'); // 'p' is the time format in locales aware manner
-        setNotificationTime(formattedTime);
-    };
+    const onChange = (event, selectedTime) => {
+      const currentTime = selectedTime || time;
+      setShowPicker(Platform.OS === 'ios');
+      setTime(currentTime);
+  
+      // Format the time to a string format before setting it
+      const formattedTime = format(currentTime, 'p'); // Use 'p' for localized time format
+      setNotificationTime(formattedTime);
+  };
+  
 
     // const scheduleNotificationHandler = async () => {
     //     console.log('scheduleNotificationHandler')
@@ -140,8 +135,39 @@ function SetReminderScreen({navigation}){
     //     }
     //     });
     // }
+
+    const validateInputs = () => {
+      let isValid = true;
+      let errors = {};
+  
+      // Check if frequency is set
+      if (!frequency || frequency < 1) {
+        errors.frequency = 'Please set a valid frequency.';
+        isValid = false;
+      }
+  
+      // Check if notificationTime is set (assuming notificationTime being empty string means it's not set)
+      if (!notificationTime) {
+        errors.notificationTime = 'Please select a time.';
+        isValid = false;
+      }
+  
+      setErrors(errors); // Update the error messages state
+      return isValid; // Return the validity status
+    };
+
     const scheduleUserDefinedNotification = async (time, frequency) => {
-        console.log("Scheduling notification with time:", time, "and frequency:", frequency);
+        // Clear previous errors
+        setErrors({});
+
+        // Validate inputs before proceeding
+        if (!validateInputs()) {
+          console.log('Validation failed. Missing values.');
+          return; // Stop execution if validation fails
+        }
+
+      // Proceed with scheduling the notification if validation is successful
+      console.log("Scheduling notification with time:", time, "and frequency:", frequency);
 
         // Ensure 'time' is a Date object and 'frequency' is an integer
         if (!(time instanceof Date) || isNaN(frequency)) {
@@ -201,7 +227,7 @@ function SetReminderScreen({navigation}){
               <View style={styles.counterDisplay}>
                   <View style={styles.counter}>
                       <TouchableOpacity
-                        onPress={() => setFrequency(Math.max(0, frequency - 1))}>
+                        onPress={() => setFrequency(Math.max(1, frequency - 1))}>
                         <Ionicons name="remove-circle" size={40} color={Colors.mainPurple}/>
                       </TouchableOpacity>
                       <View style={styles.countDisplay}>
@@ -211,8 +237,10 @@ function SetReminderScreen({navigation}){
                         onPress={() => setFrequency(frequency + 1)}>
                         <Ionicons name="add-circle" size={40} color={Colors.mainPurple}/>
                       </TouchableOpacity>
+
                   </View>
               </View>
+              {errors.frequency && <Text style={styles.errorText}> {errors.frequency}</Text>}
             </View>
 
 
@@ -238,10 +266,11 @@ function SetReminderScreen({navigation}){
             
             <View style={styles.deadlineContainer}>
             <Text style={styles.dueDateLabel}>Time</Text>
-            <TouchableOpacity onPress={toggleDatepicker} style={styles.dateDisplay}>
-                <Text style={styles.dateText}>{notificationTime || 'Select time'}</Text>
-                <Ionicons name="calendar" size={24} color={Colors.mainPurple} />
-            </TouchableOpacity>
+              <TouchableOpacity onPress={toggleDatepicker} style={styles.dateDisplay}>
+                  <Text style={styles.dateText}>{notificationTime || 'Select time'}</Text>
+                  <Ionicons name="calendar" size={24} color={Colors.mainPurple} />
+              </TouchableOpacity>
+              {errors.notificationTime && <Text style={styles.errorText}>{errors.notificationTime}</Text>}
             </View>
 
             {showPicker && (
