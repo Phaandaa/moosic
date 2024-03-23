@@ -99,6 +99,7 @@ const ProfileScreen = ({ navigation }) => {
   
   useEffect(() => {
     loadAvatarAndFrame();
+    renderBadges();
   }, [selectedAvatarId, selectedFrameId]);
   
 
@@ -150,6 +151,7 @@ const ProfileScreen = ({ navigation }) => {
       await AsyncStorage.setItem('userData', JSON.stringify(userData));
       
       loadAvatarAndFrame(); 
+      renderBadges();
     } catch (error) {
       console.error('Error fetching latest user data:', error);
     } finally {
@@ -188,7 +190,14 @@ const ProfileScreen = ({ navigation }) => {
   };
 
   const renderBadges = async() => {
-    
+    setIsLoading(true);
+    try {
+      const response = await axios.get(`${IP_ADDRESS}/student-inventory/${userId}/badge-details`);
+      setOwnedBadges(response.data);
+      console.log(ownedBadges);
+    } catch (error) {
+      console.error('Error fetching badges:', error);
+    }
   }
 
   const InventoryModal = () => {
@@ -355,14 +364,19 @@ const ProfileScreen = ({ navigation }) => {
         </View>
 
         {userRole !== 'Teacher' && (
-        <View style={styles.statsContainer}>
-          {/* Render stats using StatsCard component */}
-          <StatsCard iconName="local-fire-department" value="2" label="Day Streak" />
+        <><View style={styles.statsContainer}>
+            {/* Render stats using StatsCard component */}
+            <StatsCard iconName="local-fire-department" value="2" label="Day Streak" />
             <StatsCard iconName="star" value={userPoints} label="Points" />
             <StatsCard iconName="emoji-events" value="5" label="Total crowns" />
             <StatsCard iconName="military-tech" value="Bronze" label="League" />
-          
-        </View>
+
+          </View>
+          <View style={styles.badgesContainer}>
+            <Text style={styles.sectionTitle}> Your Badges</Text>
+            
+            </View>
+            </>
         )}
 
         <TouchableOpacity style={styles.addButton} onPress={handleSignOut}>
@@ -621,6 +635,9 @@ const styles = StyleSheet.create({
     color: '#FF0000',
     textAlign: 'center', // ensure text is centered
     // You might need to adjust the padding or margins if the text doesn't fit well
+  },
+  badgesContainer: {
+
   },
 });
 

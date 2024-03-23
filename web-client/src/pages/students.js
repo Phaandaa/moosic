@@ -74,7 +74,7 @@ const Page = () => {
   };
 
   const handleAddStudent = (newStudent) => {
-    setStudentData((prevStudents) => [...prevStudents, newStudent]);
+    setStudentData((prevStudents) => [newStudent,...prevStudents]);
   };
 
   const handleEditStudent = (updatedStudent) => {

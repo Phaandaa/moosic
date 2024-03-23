@@ -165,19 +165,64 @@ const HomeScreen = ({ navigation }) => {
 
   const modules = userRole === 'Teacher' ? teacherModules : studentModules;
 
-  const Header = () => {
+  const Header = () => (
+    <View style={styles.headerContainer}>
+      <Image 
+        source={require('../assets/learn2playlogo.png')} 
+        style={styles.logoStyle}
+      />
+      <TouchableOpacity 
+        style={styles.notificationButton} 
+        onPress={() => navigation.navigate('Notifications')}>
+        <Ionicons name="notifications-outline" size={30} color="black" />
+      </TouchableOpacity>
+    </View>
+  );
+
+  const renderHeader = () => {
     return (
-      <View style={styles.headerContainer}>
-        <Image 
-          source={require('../assets/learn2playlogo.png')} 
-          style={styles.logoStyle}
+      <>
+        <Text style={[theme.textTitle]}> Welcome, {user?.name?.split(" ")[0]}! </Text>
+        {userRole === 'Student' && (
+          <>
+            <Text style={[theme.textSubtitle, { marginBottom: 10 }]}>
+              Your current points: {user?.pointsCounter ? user.pointsCounter : 0}
+            </Text>
+          </>
+        )}
+        {/* Display Images */}
+        <FlatList
+          ref={flatListRef}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          data={bannerImages}
+          keyExtractor={(item, index) => String(index)}
+          renderItem={({ item }) => (
+            <View style={styles.imageContainer}>
+              <Image source={item} style={styles.bannerImage} />
+            </View>
+          )}
+          onScroll={(event) => {
+            setProgress(event.nativeEvent.contentOffset.x);
+          }}
+          style={{ height: 200 }} // Set the height of the FlatList itself
+          contentContainerStyle={{ alignItems: 'center' }} // Ensure items are centered
         />
-        <TouchableOpacity 
-          style={styles.notificationButton} 
-          onPress={() => navigation.navigate('Notifications')}>
-          <Ionicons name="notifications-outline" size={30} color="black" />
-        </TouchableOpacity>
-      </View>
+        {userRole === 'Student' && (
+          isGoalsSet ? (
+            <CurrentGoals
+              completedPractice={goals.practiceCount}
+              completedAssignment={goals.assignmentCount}
+              currentPracticeGoalCount={goals.practiceGoalCount}
+              currentAssignmentGoalCount={goals.assignmentGoalCount}
+              currentPoints={goals.points}
+            />
+          ) : (
+            <Text style={styles.createGoalPrompt}>Aim High, Start your Goals!</Text>
+          )
+        )}
+      </>
     );
   };
   
@@ -185,84 +230,26 @@ const HomeScreen = ({ navigation }) => {
   const ITEM_HEIGHT = 200; // Example height, adjust as needed
 
   return (
-    <ScrollView style={[theme.container, {paddingBottom: 0}]}>
-
-      <Header />
-
-      <Text style={[theme.textTitle]}> Welcome, {user?.name?.split(" ")[0]}! </Text>
-      {userRole === 'Student' && (
-        <>
-        <Text style={[theme.textSubtitle, { marginBottom: 10 }]}>
-          Your current points: {user?.pointsCounter ? user.pointsCounter : 0}
-        </Text>
-      
-        </>
+    <><Header /><FlatList
+      ListHeaderComponent={renderHeader}
+      style={[theme.container, { height: '100%', marginBottom:0 }]}
+      contentContainerStyle={{ paddingBottom: 50 }} 
+      data={searchResults.length > 0 ? searchResults : modules}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item }) => (
+        <BoxComponent
+          color={item.color}
+          title={item.title}
+          subtitle={item.subtitle}
+          iconName={item.iconName}
+          navigation={navigation}
+          navigationPage={item.navigationPage}
+          iconColor={item.iconColor}
+          buttonText={item.buttonText}
+          id={item.id} />
       )}
-
-
-      {/* Display Images */}
-      <FlatList
-        ref={flatListRef}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        data={bannerImages}
-        keyExtractor={(item, index) => String(index)}
-        renderItem={({ item }) => (
-          <View style={styles.imageContainer}>
-            <Image source={item} style={styles.bannerImage} />
-          </View>
-        )}
-        onScroll={(event) => {
-          setProgress(event.nativeEvent.contentOffset.x);
-        }}
-        style={{ height: 200 }} // Set the height of the FlatList itself
-        contentContainerStyle={{ alignItems: 'center' }} // Ensure items are centered
-      />
-
-      
-
-        {userRole === 'Student' && (
-            isGoalsSet ? (
-              <CurrentGoals
-                completedPractice={goals.practiceCount}
-                completedAssignment={goals.assignmentCount}
-                currentPracticeGoalCount={goals.practiceGoalCount}
-                currentAssignmentGoalCount={goals.assignmentGoalCount}
-                currentPoints={goals.points}
-              />
-            ) : (
-              <Text style={styles.createGoalPrompt}>Aim High, Start your Goals!</Text>
-            )
-          )}
-
-
-           <FlatList
-            style={{height: 400}}
-            numColumns={2}
-            data={searchResults.length > 0 ? searchResults : modules}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <BoxComponent
-              color={item.color}
-              title={item.title}
-              subtitle={item.subtitle}
-              iconName={item.iconName}
-              navigation={navigation}
-              navigationPage={item.navigationPage}
-              iconColor={item.iconColor}
-              buttonText={item.buttonText}
-              id={item.id}
-              />
-                )}
-
-          />
-        
-
-      
-      
-          
-    </ScrollView>
+      numColumns={2} // Adjust based on your content
+    /></>
   );
 };
 
