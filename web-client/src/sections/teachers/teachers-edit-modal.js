@@ -45,7 +45,7 @@ export default function TeachersEditModal({ teacher, onEditTeacher }) {
           );
           throw new Error("Server error");
         }
-        const updatedTeacher = { ...teacher, phone: phone };
+        const updatedTeacher = { ...teacher, phoneNumber: phone };
         console.log("Form submitted successfully");
         setSnackbarMessage("Information updated successfully!");
         setSnackbarSeverity("success");

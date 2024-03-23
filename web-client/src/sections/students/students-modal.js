@@ -21,6 +21,7 @@ export default function StudentsModal({ onAddStudent }) {
   const [studentEmail, setStudentEmail] = React.useState("");
   const [instrument, setInstrument] = React.useState("");
   const [gradeLevel, setGradeLevel] = React.useState("");
+  const [tuitionDay, setTuitionDay] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [passwordCfm, setPasswordCfm] = React.useState("");
 
@@ -42,6 +43,10 @@ export default function StudentsModal({ onAddStudent }) {
 
   const handleGradeLevelChange = (event) => {
     setGradeLevel(event.target.value);
+  };
+
+  const handleTuitionDayChange = (event) => {
+    setTuitionDay(event.target.value);
   };
 
   const handlePasswordChange = (event) => {
@@ -83,6 +88,7 @@ export default function StudentsModal({ onAddStudent }) {
           info: {
             instrument: instrument,
             grade: gradeLevel,
+            tuitionDay: tuitionDay,
           },
         });
         if (!response.ok) {
@@ -207,6 +213,25 @@ export default function StudentsModal({ onAddStudent }) {
                 onChange={handleGradeLevelChange} // Add onChange
                 value={gradeLevel} // Control the component
               />
+              <FormControl fullWidth variant="standard" margin="dense">
+                <InputLabel id="tuition-day-label">Tuition Day</InputLabel>
+                <Select
+                  labelId="tuition-day-label"
+                  id="tuition-day"
+                  name="tuition-day"
+                  value={tuitionDay}
+                  onChange={handleTuitionDayChange}
+                  required
+                >
+                  <MenuItem value="monday">Monday</MenuItem>
+                  <MenuItem value="tuesday">Tuesday</MenuItem>
+                  <MenuItem value="wednesday">Wednesday</MenuItem>
+                  <MenuItem value="thursday">Thursday</MenuItem>
+                  <MenuItem value="friday">Friday</MenuItem>
+                  <MenuItem value="saturday">Saturday</MenuItem>
+                  <MenuItem value="sunday">Sunday</MenuItem>
+                </Select>
+              </FormControl>
             </>
           )}
 

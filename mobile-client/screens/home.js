@@ -165,20 +165,23 @@ const HomeScreen = ({ navigation }) => {
 
   const modules = userRole === 'Teacher' ? teacherModules : studentModules;
 
+  const Header = () => (
+    <View style={styles.headerContainer}>
+      <Image 
+        source={require('../assets/learn2playlogo.png')} 
+        style={styles.logoStyle}
+      />
+      <TouchableOpacity 
+        style={styles.notificationButton} 
+        onPress={() => navigation.navigate('Notifications')}>
+        <Ionicons name="notifications-outline" size={30} color="black" />
+      </TouchableOpacity>
+    </View>
+  );
+
   const renderHeader = () => {
     return (
       <>
-        <View style={styles.headerContainer}>
-          <Image 
-            source={require('../assets/learn2playlogo.png')} 
-            style={styles.logoStyle}
-          />
-          <TouchableOpacity 
-            style={styles.notificationButton} 
-            onPress={() => navigation.navigate('Notifications')}>
-            <Ionicons name="notifications-outline" size={30} color="black" />
-          </TouchableOpacity>
-        </View>
         <Text style={[theme.textTitle]}> Welcome, {user?.name?.split(" ")[0]}! </Text>
         {userRole === 'Student' && (
           <>
@@ -227,9 +230,10 @@ const HomeScreen = ({ navigation }) => {
   const ITEM_HEIGHT = 200; // Example height, adjust as needed
 
   return (
-    <FlatList
+    <><Header /><FlatList
       ListHeaderComponent={renderHeader}
-      style={[theme.container, {height: '100%'}]}
+      style={[theme.container, { height: '100%', marginBottom:0 }]}
+      contentContainerStyle={{ paddingBottom: 50 }} 
       data={searchResults.length > 0 ? searchResults : modules}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
@@ -242,13 +246,10 @@ const HomeScreen = ({ navigation }) => {
           navigationPage={item.navigationPage}
           iconColor={item.iconColor}
           buttonText={item.buttonText}
-          id={item.id}
-        />
+          id={item.id} />
       )}
       numColumns={2} // Adjust based on your content
-      
-      // Adjust these styles according to your needs
-    />
+    /></>
   );
 };
 

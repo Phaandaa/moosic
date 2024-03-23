@@ -63,19 +63,17 @@ export const StudentsTable = (props) => {
                 <TableCell>Grade</TableCell>
                 <TableCell>Teacher</TableCell>
                 <TableCell>Points</TableCell>
-                {/* <TableCell>
-                  Phone
-                </TableCell>
-                <TableCell>
-                  Signed Up
-                </TableCell> */}
+                <TableCell>Tuition Day</TableCell>
+                <TableCell>Created At</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {items.map((customer) => {
                 const isSelected = selected.includes(customer.id);
-                // const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
+                const createdAt = customer.creationTime
+                  ? format(new Date(customer.creationTime), "dd/MM/yyyy HH:mm:ss")
+                  : "N/A";
 
                 return (
                   <TableRow hover key={customer.id} selected={isSelected}>
@@ -101,14 +99,13 @@ export const StudentsTable = (props) => {
                     </TableCell>
                     <TableCell>{customer.email}</TableCell>
                     <TableCell>{customer.instrument}</TableCell>
-                    <TableCell>{customer.grade}</TableCell>
+                    <TableCell>{customer.grade ? customer.grade : "N/A"}</TableCell>
                     <TableCell>{customer.teacherName ? customer.teacherName : "-"}</TableCell>
-                    <TableCell>{customer.pointsCounter}</TableCell>
-                    {/* <TableCell>
-                      {createdAt}
-                    </TableCell> */}
+                    <TableCell>{customer.pointsCounter ? customer.pointsCounter : 0}</TableCell>
+                    <TableCell>{customer.tuitionDay ? customer.tuitionDay : "N/A"}</TableCell>
+                    <TableCell>{createdAt}</TableCell>
                     <TableCell>
-                      <StudentsEditModal student={customer} onEditStudent={onEditStudent}/>
+                      <StudentsEditModal student={customer} onEditStudent={onEditStudent} />
                     </TableCell>
                   </TableRow>
                 );

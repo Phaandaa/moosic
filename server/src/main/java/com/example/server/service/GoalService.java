@@ -1,14 +1,22 @@
 package com.example.server.service;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.TextStyle;
+import java.util.Locale;
 import java.util.List;
+import java.util.Locale;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.example.server.dao.GoalRepository;
+import com.example.server.dao.StudentRepository;
 import com.example.server.entity.Goal;
+import com.example.server.entity.Student;
 import com.example.server.models.UpdateGoalDTO;
 
 @Service
@@ -16,6 +24,9 @@ public class GoalService {
 
     @Autowired
     private GoalRepository goalRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
 
     // edit goal practice, assignment and 
     public Goal updateGoalByStudentId(String studentId, UpdateGoalDTO updateGoalDTO) {
@@ -84,4 +95,30 @@ public class GoalService {
         }
     }
 
+    @Scheduled(cron = "0 0 0 * * *") 
+    public void resetPreviousDayGoals() {
+        LocalDate today = LocalDate.now();
+        DayOfWeek yesterday = today.minusDays(1).getDayOfWeek(); 
+        String yesterdayText = yesterday.getDisplayName(TextStyle.FULL, Locale.ENGLISH).toLowerCase();
+        System.out.println(yesterdayText);
+
+        System.out.println("Resetting goals for students who had tuition on " + yesterdayText + "...");
+
+        try {
+            List<Student> studentsWithYesterdayTuition = studentRepository.findAllByTuitionDay(yesterdayText);
+
+            List<String> studentIds = studentsWithYesterdayTuition.stream()
+                                                                .map(Student::getId)
+                                                                .collect(Collectors.toList());
+
+            List<Goal> goals = goalRepository.findByStudentIdIn(studentIds);
+
+            goals.forEach(Goal::weeklyReset);
+            goalRepository.saveAll(goals);
+
+        } catch (Exception e) {
+            System.out.println("Error doing goal reset for " + yesterdayText + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 }

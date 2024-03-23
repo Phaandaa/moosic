@@ -10,7 +10,9 @@
     "start": "next start",
     "export": "next export",
     "lint": "next lint",
-    "lint-fix": "next lint --fix"
+    "lint-fix": "next lint --fix",
+    "start:prod": "cross-env NODE_ENV=production next start -p 3000",
+    "start:dev": "cross-env NODE_ENV=development next dev"
   },
   "dependencies": {
     "@emotion/cache": "11.11.0",
@@ -46,6 +48,7 @@
     "@types/numeral": "2.0.5",
     "@types/react": "18.2.43",
     "@types/react-dom": "18.2.17",
+    "cross-env": "^7.0.3",
     "eslint": "8.55.0",
     "eslint-config-next": "14.0.4"
   }
