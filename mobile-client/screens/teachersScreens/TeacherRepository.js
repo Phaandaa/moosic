@@ -21,8 +21,8 @@ function TeacherRepository({ navigation }) {
   const [submissionDate, setSubmissionDate] = useState(new Date());
   const [errors, setErrors] = useState({});
 
-  const [images, setImages] = useState([]);
-  const [uploadedDocuments, setUploadedDocuments] = useState([]);
+  const [image, setImage] = useState(null);
+  const [uploadedDocument, setUploadedDocument] = useState(null);
 
   const [isModalVisible, setModalVisible] = useState(false);
 
@@ -46,8 +46,9 @@ function TeacherRepository({ navigation }) {
       });
       if (!result.canceled) {
         console.log('result.assets[0]:', result.assets[0])
-        saveImage(result.assets[0]); 
-        console.log(images);
+        setImage(result.assets[0]); 
+        setUploadedDocument(null);
+        console.log(image);
       }
     }
   };
@@ -56,28 +57,24 @@ function TeacherRepository({ navigation }) {
     try {
       const result = await DocumentPicker.getDocumentAsync({
         type: '*/*',
-        multiple: true,
+        multiple: false,
       });
       if (!result.canceled && result.assets) {
-        setUploadedDocuments(currentDocs => [...currentDocs, ...result.assets]);
-        console.log('uploadedDocuments',uploadedDocuments);
+        setUploadedDocument(result.assets[0]);
+        setImage(null);
+        console.log('uploadedDocument',uploadedDocument);
       }
     } catch (error) {
       Alert.alert('Error picking document:', error.message);
     }
   };
   
-  
-  const saveImage = (newImage) => {
-    setImages((currentImages) => [...currentImages, newImage]);
+  const removeImage = () => {
+    setImage(null);
   };
 
-  const removeImage = (index) => {
-    setImages(currentImages => currentImages.filter((_, i) => i !== index));
-  };
-
-  const removeDocument = (index) => {
-    setUploadedDocuments(currentDocs => currentDocs.filter((_, i) => i !== index));
+  const removeDocument = () => {
+    setUploadedDocument(null);
   };
 
   const validateForm = () => {
@@ -124,7 +121,7 @@ function TeacherRepository({ navigation }) {
     console.log('assignmentData:', assignmentData)
     
   
-    images.forEach((image, index) => {
+    image.forEach((image, index) => {
       const { uri, fileName } = image
 
       if (typeof image.uri === 'string') { // Check if image.uri is a string
@@ -222,36 +219,35 @@ function TeacherRepository({ navigation }) {
         </View>
 
         {/* Display Images and Document Names */}
-        {images.length === 0 && uploadedDocuments.length === 0 ? (
+        {image == null && uploadedDocument == null ? (
           <View style={styles.emptyContainer}>
             <Ionicons name="cloud-upload-outline" size={50} color="#cccccc" />
-            <Text style={styles.emptyText}>Upload an image or file to the central repository</Text>
+            <Text style={styles.emptyText}>Upload either an image or file to the central repository.</Text>
           </View>
         ) : (
           <>
             <View style={styles.imageContainer}>
               
-                {images.map((image, index) => (
-                      <View key={image.uri} style={styles.imageWrapper}>
-                          <Image source={{ uri: image.uri }} style={styles.image} />
-                          <TouchableOpacity onPress={() => removeImage(index)} style={styles.removeButton}>
-                              
-                              <Ionicons name="close-circle" size={24} color="red" />
-                          </TouchableOpacity>
-                      </View>
-                ))}
+                {image && (
+                  <View key={image.uri} style={styles.imageWrapper}>
+                      <Image source={{ uri: image.uri }} style={styles.image} />
+                      <TouchableOpacity onPress={() => removeImage()} style={styles.removeButton}>
+                          <Ionicons name="close-circle" size={24} color="red" />
+                      </TouchableOpacity>
+                  </View>
+                )}
             </View>
 
             <View style={styles.documentContainer}>
-              {uploadedDocuments.map((doc, index) => (
-                <View key={index} style={styles.documentItem}>
+              {uploadedDocument && (
+                <View style={styles.documentItem}>
                   <Ionicons name="document-attach" size={24} color="#4F8EF7" />
-                  <Text style={styles.documentName}>{doc.name}</Text>
-                  <TouchableOpacity onPress={() => removeDocument(index)} style={styles.removeButton}>
+                  <Text style={styles.documentName}>{uploadedDocument.name}</Text>
+                  <TouchableOpacity onPress={() => removeDocument()} style={styles.removeButton}>
                     <Ionicons name="close-circle" size={24} color="red" />
                   </TouchableOpacity>
                 </View>
-              ))}
+              )}
             </View>
           </>
         )}
