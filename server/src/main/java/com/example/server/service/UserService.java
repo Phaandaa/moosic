@@ -59,16 +59,19 @@ public class UserService {
             }
             String email = userDTO.getEmail();
             isNotEmptyOrNull(email, "Email");
+
             User user = userRepository.findByEmail(email);
             if (user != null) {
                 throw new IllegalArgumentException("User with email " + email + " existed");
             }
+
             String password = userDTO.getPassword();
             isNotEmptyOrNull(password, "Password");
             String name = userDTO.getName();
             isNotEmptyOrNull(name, "Name");
             String role = userDTO.getRole();
             isNotEmptyOrNull(role, "Role");
+
             if (role.equals("Teacher")) {
                 System.out.println("masuk");
                 String instrument = userDTO.getInfo().get("instrument");
@@ -80,9 +83,11 @@ public class UserService {
                 String grade = userDTO.getInfo().get("grade");
                 isNotEmptyOrNull(grade, "Grade");
             }
+
             FirebaseToken firebaseResponse = firebaseAuthService.signUpWithEmailAndPassword(email, password);
             String id = firebaseResponse.getLocalId();
             Date creationTime = new Date();
+            
             User newUser = new User(id, name, email, role, creationTime);
             userRepository.save(newUser);
 

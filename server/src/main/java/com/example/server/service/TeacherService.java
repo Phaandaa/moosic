@@ -95,15 +95,12 @@ public class TeacherService {
         }
     }
 
+    @Transactional
     public void deleteTeacher(String teacherId) {
         try {
             Teacher selectedTeacher = teacherRepository.findById(teacherId).orElse(null);
-            User selectedUser = userRepository.findById(teacherId).orElse(null);
             if (selectedTeacher == null) {
                 throw new NoSuchElementException("No teacher is found with ID " + teacherId);
-            }
-            if (selectedUser == null) {
-                throw new NoSuchElementException("No user is found with ID " + teacherId);
             }
             teacherRepository.deleteById(teacherId);
             userRepository.deleteById(teacherId);
@@ -115,22 +112,13 @@ public class TeacherService {
         
     }
 
-    public Teacher getTeacherByStudentId(String studentId) {
+    public Optional<Teacher> getTeacherByStudentId(String studentId) {
         Optional<Student> studentOptional = studentRepository.findById(studentId);
 
-        if (studentOptional.isPresent()){
+        if (studentOptional.isPresent()) {
             Student student = studentOptional.get();
             String teacherId = student.getTeacherId();
-            
-            try {
-                return teacherRepository.findById(teacherId).orElseThrow(() ->
-                    new NoSuchElementException("No teacher found with ID " + teacherId)
-                );
-            } catch (NoSuchElementException e) {
-                throw new RuntimeException("Teacher not found for student with ID " + studentId);
-            } catch (Exception e) {
-                throw new RuntimeException("Error fetching teacher with ID " + teacherId);
-            }
+            return teacherRepository.findById(teacherId);
         } else {
             throw new RuntimeException("Student with ID " + studentId + " not found");
         }

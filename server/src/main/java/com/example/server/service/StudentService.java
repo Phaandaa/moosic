@@ -163,17 +163,16 @@ public class StudentService {
 
     public void deleteTeacherIdForAllStudent(String teacherId) {
         try {
+
             List<Student> students = findStudentsByTeacherId(teacherId);
-            if (students == null || students.isEmpty()) {
-                throw new NoSuchElementException("No students found for teacher ID " + teacherId);
-            }
-            for (Student student : students) {
-                student.setTeacherId(null);
-                student.setTeacherName(null);
-                studentRepository.save(student);
+            if (students != null && !students.isEmpty()) {
+                for (Student student : students) {
+                    student.setTeacherId(null);
+                    student.setTeacherName(null);
+                    studentRepository.save(student);
+                }
             }
         } catch (NoSuchElementException e) {
-            throw e;
         } catch (Exception e) {
             throw new RuntimeException(
                     "Error fetching students for teacher ID: " + teacherId + " " + e.getMessage());
@@ -191,7 +190,6 @@ public class StudentService {
             studentRepository.deleteById(studentId);
             userRepository.deleteById(studentId);
         } catch (NoSuchElementException e) {
-            throw e;
         } catch (Exception e) {
             throw new RuntimeException(
                     "Error deleting student for student ID: " + studentId + " " + e.getMessage());
