@@ -24,7 +24,8 @@ const useChartOptions = (labels) => {
     colors: [
       theme.palette.primary.main,
       theme.palette.success.main,
-      theme.palette.warning.main
+      theme.palette.warning.main,
+      theme.palette.info.main
     ],
     dataLabels: {
       enabled: false
@@ -81,12 +82,14 @@ const iconMap = {
 };
 
 export const OverviewTraffic = (props) => {
-  const { chartSeries, labels, sx } = props;
+  const { chartSeries, labels, sx, title } = props;
   const chartOptions = useChartOptions(labels);
+
+  const total = chartSeries.reduce((acc, item) => acc + item, 0);
 
   return (
     <Card sx={sx}>
-      <CardHeader title="Traffic Source" />
+      <CardHeader title={title} />
       <CardContent>
         <Chart
           height={300}
@@ -125,7 +128,7 @@ export const OverviewTraffic = (props) => {
                   color="text.secondary"
                   variant="subtitle2"
                 >
-                  {item}%
+                  {item != 0 ? (item/total).toFixed(2)*100 : 0}%
                 </Typography>
               </Box>
             );
