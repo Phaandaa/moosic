@@ -64,7 +64,7 @@ export const OverviewLatestProducts = (props) => {
               <ListItemText
                 primary={product.description}
                 primaryTypographyProps={{ variant: "subtitle1" }}
-                secondary={`Updated ${ago} ago`}
+                secondary={`Created ${ago} ago`}
                 secondaryTypographyProps={{ variant: "body2" }}
               />
             </ListItem>
