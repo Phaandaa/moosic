@@ -10,7 +10,6 @@ import { StudentsSearch } from "src/sections/students/students-search";
 import { applyPagination } from "src/utils/apply-pagination";
 import StudentsModal from "src/sections/students/students-modal";
 import { getAsync } from "src/utils/utils";
-import * as XLSX from "xlsx";
 import { Card } from "@mui/material";
 import { convertArrayToCSV } from "src/utils/utils";
 
