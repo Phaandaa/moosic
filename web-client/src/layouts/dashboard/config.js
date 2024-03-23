@@ -1,6 +1,7 @@
 import ChartBarIcon from '@heroicons/react/24/solid/ChartBarIcon';
 import ShoppingBagIcon from '@heroicons/react/24/solid/ShoppingBagIcon';
 import AcademicCapIcon from '@heroicons/react/24/solid/AcademicCapIcon';
+import FolderOpenIcon from '@heroicons/react/24/solid/FolderOpenIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import XCircleIcon from '@heroicons/react/24/solid/XCircleIcon';
 import { SvgIcon } from '@mui/material';
@@ -17,7 +18,6 @@ export const items = [
   },
   {
     title: 'Students',
-    // path: '/customers',
     path: '/students',
     icon: (
       <SvgIcon fontSize="small">
@@ -27,7 +27,6 @@ export const items = [
   },
   {
     title: 'Teachers',
-    // path: '/customers',
     path: '/teachers',
     icon: (
       <SvgIcon fontSize="small">
@@ -41,6 +40,15 @@ export const items = [
     icon: (
       <SvgIcon fontSize="small">
         <ShoppingBagIcon />
+      </SvgIcon>
+    ),
+  },
+  {
+    title: 'Repository',
+    path: '/repository',
+    icon: (
+      <SvgIcon fontSize="small">
+        <FolderOpenIcon />
       </SvgIcon>
     ),
   },
