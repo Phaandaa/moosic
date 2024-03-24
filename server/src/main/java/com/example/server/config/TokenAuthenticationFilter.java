@@ -1,8 +1,6 @@
 package com.example.server.config;
 
 import org.springframework.stereotype.Component;
-
-// import com.example.server.service.VerifyIdTokenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Claims;
@@ -20,24 +18,21 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+
 import java.net.URI;
 import java.net.URL;
 import java.security.PublicKey;
 import java.security.cert.CertificateFactory;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Base64;
-import java.security.KeyFactory;
 
 import java.security.cert.X509Certificate;
-import java.io.ByteArrayInputStream;
 
 @Component
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
-    private Map<String, PublicKey> publicKeys; // Map to store public keys
+    private Map<String, PublicKey> publicKeys; 
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -96,40 +91,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 
-    // private Map<String, PublicKey> retrievePublicKeys() throws Exception {
-    //     System.out.println("TokenAuthenticationFilter: Fetching public keys...");
-    //     Map<String, PublicKey> publicKeys = new HashMap<>();
-    //     URI uri = new URI("https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com");
-    //     URL url = uri.toURL();
-    //     InputStream inputStream = url.openStream();
-    //     ObjectMapper mapper = new ObjectMapper();
-    //     Map<String, String> keys = mapper.readValue(inputStream, Map.class);
-    
-    //     for (Map.Entry<String, String> entry : keys.entrySet()) {
-    //         String publicKeyPEM = entry.getValue()
-    //                                    .replace("-----BEGIN PUBLIC KEY-----", "")
-    //                                    .replaceAll(System.lineSeparator(), "")
-    //                                    .replace("-----END PUBLIC KEY-----", "")
-    //                                    .replace("-", "+") // Replace URL-safe Base64 characters
-    //                                    .replace("_", "/");
-    //         byte[] encoded;
-    //         try {
-    //             encoded = Base64.getDecoder().decode(publicKeyPEM);
-    //         } catch (IllegalArgumentException e) {
-    //             System.out.println("TokenAuthenticationFilter: Error decoding public key - " + e.getMessage());
-    //             continue;
-    //         }
-    
-    //         X509EncodedKeySpec spec = new X509EncodedKeySpec(encoded);
-    //         KeyFactory kf = KeyFactory.getInstance("RSA");
-    //         PublicKey publicKey = kf.generatePublic(spec);
-    //         publicKeys.put(entry.getKey(), publicKey);
-    //     }
-    
-    //     System.out.println("TokenAuthenticationFilter: Public keys fetched and processed.");
-    //     return publicKeys;
-    // }
-
     private Map<String, PublicKey> retrievePublicKeys() throws Exception {
     System.out.println("TokenAuthenticationFilter: Fetching public keys...");
     Map<String, PublicKey> publicKeys = new HashMap<>();
@@ -157,7 +118,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     }
 
     System.out.println("TokenAuthenticationFilter: Public keys fetched and processed.");
-    // System.err.println(publicKeys);
     return publicKeys;
 }
     
