@@ -49,6 +49,8 @@ import { Provider } from 'react-redux';
 import store from './store';
 import { AuthProvider, useAuth } from './context/Authcontext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getNotifications } from './context/notificationsContext';
+import { saveNotification } from './context/notificationsContext';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => {
@@ -92,7 +94,7 @@ async function registerForPushNotificationsAsync() {
       return;
     }
     token = await Notifications.getExpoPushTokenAsync({
-      projectId: "8a3ecb5d-642c-499a-a2ce-f56543481503",
+      projectId: "266a78dd-0994-4876-8ba9-92801ff17fb2",
     });
     console.log(token);
   } else {
@@ -253,8 +255,30 @@ const RootNavigator = () => {
     fetchData();
     registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
 
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      setNotification(notification);
+    notificationListener.current = Notifications.addNotificationReceivedListener(async notification => {
+      console.log('Notification received:', notification);
+  
+      // Save the received notification to AsyncStorage
+      const newNotificationData = {
+        id: notification.request.identifier, // Example identifier
+        content: notification.request.content.data, // Assuming you want to save the entire content
+        time: new Date().toISOString(), // Save the time the notification was received
+      };
+  
+      try {
+        // Retrieve the current list of notifications from AsyncStorage
+        const existingNotificationsJson = await getNotifications();
+        const existingNotifications = existingNotificationsJson ? JSON.parse(existingNotificationsJson) : [];
+  
+        // Add the new notification data to the list
+        const updatedNotifications = [...existingNotifications, newNotificationData];
+  
+        // Save the updated list back to AsyncStorage
+        await saveNotification (updatedNotifications);
+        console.log('Notification data saved to cache.');
+      } catch (error) {
+        console.error('Error saving notification to cache:', error);
+      }
     });
 
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {

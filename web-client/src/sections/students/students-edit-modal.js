@@ -19,6 +19,7 @@ export default function StudentsEditModal({ student, onEditStudent }) {
   const [teachers, setTeachers] = React.useState([]);
   const [selectedTeacher, setSelectedTeacher] = React.useState({});
   const [grade, setGrade] = React.useState("");
+  const [tuitionDay, setTuitionDay] = React.useState("");
 
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState("");
@@ -62,11 +63,24 @@ export default function StudentsEditModal({ student, onEditStudent }) {
           }
         }
 
+        if (tuitionDay !== "") {
+          const responseTuitionDay = await putAsync(`students/${student.id}/update-tuition-day?tuitionDay=${tuitionDay}`);
+          if (!responseTuitionDay.ok) {
+            console.error(
+              "Server error when updating tuition day:",
+              responseTuitionDay.status,
+              responseTuitionDay.statusText
+            );
+            throw new Error("Server error");
+          }
+        }
+
         const updatedStudent = {
           ...student, // Copy all existing student data
           teacherId: Object.keys(selectedTeacher).length != 0 ? selectedTeacher.id : student.teacherId, // Update with the new teacher ID
           teacherName: Object.keys(selectedTeacher).length != 0 ? selectedTeacher.name : student.teacherName, // Update with the new teacher name
           grade: grade != "" ? grade : student.grade, // Update with the new grade
+          tuitionDay: tuitionDay != "" ? tuitionDay : student.tuitionDay, // Update with the new tuition day
         };
 
         console.log("Form submitted successfully");
@@ -103,6 +117,10 @@ export default function StudentsEditModal({ student, onEditStudent }) {
 
   const handleChangeGrade = (event) => {
     setGrade(event.target.value);
+  };
+
+  const handleTuitionDayChange = (event) => {
+    setTuitionDay(event.target.value);
   };
 
   useEffect(() => {
@@ -173,13 +191,32 @@ export default function StudentsEditModal({ student, onEditStudent }) {
               onChange={handleChangeGrade}
               value={grade}
             />
+            <FormControl fullWidth variant="standard" margin="dense">
+                <InputLabel id="tuition-day-label">Tuition Day</InputLabel>
+                <Select
+                  labelId="tuition-day-label"
+                  id="tuition-day"
+                  name="tuition-day"
+                  value={tuitionDay}
+                  onChange={handleTuitionDayChange}
+                  required
+                >
+                  <MenuItem value="monday">Monday</MenuItem>
+                  <MenuItem value="tuesday">Tuesday</MenuItem>
+                  <MenuItem value="wednesday">Wednesday</MenuItem>
+                  <MenuItem value="thursday">Thursday</MenuItem>
+                  <MenuItem value="friday">Friday</MenuItem>
+                  <MenuItem value="saturday">Saturday</MenuItem>
+                  <MenuItem value="sunday">Sunday</MenuItem>
+                </Select>
+              </FormControl>
           </>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button 
             type="submit"
-            disabled={Object.keys(selectedTeacher).length === 0 && grade === ""}
+            disabled={Object.keys(selectedTeacher).length === 0 && grade === "" && tuitionDay === ""}
           >Submit</Button>
         </DialogActions>
       </Dialog>

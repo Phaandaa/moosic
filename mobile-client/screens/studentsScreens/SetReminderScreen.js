@@ -11,8 +11,12 @@ import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Colors from '../../constants/colors';
 import SuccessModal from '../../components/ui/SuccessModal';
+import DeleteModal from '../../components/ui/DeleteModal';
 import * as Notifications from 'expo-notifications';
 import { format } from 'date-fns';
+import theme from '../../styles/theme';
+import saveNotification from '../../context/notificationsContext';
+
 
 Notifications.setNotificationHandler({
   handleNotification: async () => {
@@ -45,7 +49,8 @@ const allowsNotificationsAsync = async () => {
   };
   //// END: NEWLY ADDED FUNCTIONS ////
 
-function SetReminderScreen(){
+function SetReminderScreen({navigation}){
+  
     useEffect(() => {
         const subscription1 = Notifications.addNotificationReceivedListener((notification)=> {
             console.log('NOTIF RECEIVED');
@@ -66,9 +71,31 @@ function SetReminderScreen(){
     }, []);
 
     const dispatch = useDispatch();
-    const [frequency, setFrequency] = useState('');
+    const [frequency, setFrequency] = useState(1);
     const [notificationTime, setNotificationTime] = useState('');
     const [errors, setErrors] = useState({});
+
+    const [isModalVisible, setModalVisible] = useState(false);
+    const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
+
+    const handleModalButtonPress = () => {
+      navigation.navigate('Home');
+      setModalVisible(false);
+    };
+
+    const handleDeleteModalButtonPress = () => {
+        deleteReminder();
+        setDeleteModalVisible(false);
+    };
+    const handleModalButtonPressCancel = () => {
+      setDeleteModalVisible(false);
+    };
+    
+    const deleteReminder = async() => {
+      Notifications.cancelAllScheduledNotificationsAsync();
+      navigation.navigate('Home');
+      setDeleteModalVisible(false);
+    };
 
     const [time, setTime] = useState(new Date());
     const [showPicker, setShowPicker] = useState(false);
@@ -77,16 +104,16 @@ function SetReminderScreen(){
         setShowPicker(!showPicker);
     };
 
-    const onChange = (time, selectedTime) => {
-        const currentTime = selectedTime || time;
-        setShowPicker(Platform.OS === 'ios');
-        setTime(currentTime);
-        setNotificationTime(currentTime);
-
-        // Use date-fns to format the time
-        let formattedTime = format(currentTime, 'p'); // 'p' is the time format in locales aware manner
-        setNotificationTime(formattedTime);
-    };
+    const onChange = (event, selectedTime) => {
+      const currentTime = selectedTime || time;
+      setShowPicker(Platform.OS === 'ios');
+      setTime(currentTime);
+  
+      // Format the time to a string format before setting it
+      const formattedTime = format(currentTime, 'p'); // Use 'p' for localized time format
+      setNotificationTime(formattedTime);
+  };
+  
 
     // const scheduleNotificationHandler = async () => {
     //     console.log('scheduleNotificationHandler')
@@ -108,14 +135,48 @@ function SetReminderScreen(){
     //     }
     //     });
     // }
+
+    const validateInputs = () => {
+      let isValid = true;
+      let errors = {};
+  
+      // Check if frequency is set
+      if (!frequency || frequency < 1) {
+        errors.frequency = 'Please set a valid frequency.';
+        isValid = false;
+      }
+  
+      // Check if notificationTime is set (assuming notificationTime being empty string means it's not set)
+      if (!notificationTime) {
+        errors.notificationTime = 'Please select a time.';
+        isValid = false;
+      }
+  
+      setErrors(errors); // Update the error messages state
+      return isValid; // Return the validity status
+    };
+
     const scheduleUserDefinedNotification = async (time, frequency) => {
-        console.log("Scheduling notification with time:", time, "and frequency:", frequency);
+        // Clear previous errors
+        setErrors({});
+
+        // Validate inputs before proceeding
+        if (!validateInputs()) {
+          console.log('Validation failed. Missing values.');
+          return; // Stop execution if validation fails
+        }
+
+      // Proceed with scheduling the notification if validation is successful
+      console.log("Scheduling notification with time:", time, "and frequency:", frequency);
 
         // Ensure 'time' is a Date object and 'frequency' is an integer
         if (!(time instanceof Date) || isNaN(frequency)) {
             console.error("Invalid time or frequency");
             return;
         }
+
+        // Cancel all existing notifications first
+        await Notifications.cancelAllScheduledNotificationsAsync();
 
         let triggerDate = new Date(); // Start with the current date/time
         triggerDate.setHours(time.getHours(), time.getMinutes(), 0, 0); // Set to the user's selected time
@@ -131,17 +192,16 @@ function SetReminderScreen(){
             repeats: true // Note: This might not precisely match the user-defined frequency for iOS
         };
         
-    
-
         // Schedule the notification
         await Notifications.scheduleNotificationAsync({
             content: {
-                title: "Custom Reminder",
-                body: "This is your custom scheduled reminder.",
+                title: "🎵 Tune Time 🎵",
+                body: "Grab your instrument & let the fun begin 🤪",
                 data: { withSome: "data" },
             },
             trigger,
         });      
+        setModalVisible(true); 
         // Due to limitations in setting custom frequencies, especially for iOS,
         // you might need to manually reschedule the notification upon receipt
         // to accurately adhere to the user-defined frequency.
@@ -151,23 +211,66 @@ function SetReminderScreen(){
         <ScrollView style={styles.container}>
         <View style={styles.formContainer}>
             <Text style={styles.header}>Schedule Practice Reminder</Text>
+            {/* <Text style={styles.normalText}>Current Reminder: every {frequency} day(s) at {notificationTime}</Text> */}
 
-            <View style={styles.inputContainer}>
+            {/* <View style={styles.inputContainer}>
             <TextInput
                 placeholder="Frequency"
                 value={frequency}
                 onChangeText={setFrequency}
                 style={styles.input}
             />
-            {errors.assignmentName && <Text style={styles.errorText}>{errors.assignmentName}</Text>}
+            {errors.frequency && <Text style={styles.errorText}>{errors.frequency}</Text>}
+            </View> */}
+            <View style={styles.deadlineContainer}>
+              <Text style={styles.dueDateLabel}>Frequency (days)</Text>
+              <View style={styles.counterDisplay}>
+                  <View style={styles.counter}>
+                      <TouchableOpacity
+                        onPress={() => setFrequency(Math.max(1, frequency - 1))}>
+                        <Ionicons name="remove-circle" size={40} color={Colors.mainPurple}/>
+                      </TouchableOpacity>
+                      <View style={styles.countDisplay}>
+                        <Text style={styles.counterText}>{frequency}</Text>
+                      </View>
+                      <TouchableOpacity
+                        onPress={() => setFrequency(frequency + 1)}>
+                        <Ionicons name="add-circle" size={40} color={Colors.mainPurple}/>
+                      </TouchableOpacity>
+
+                  </View>
+              </View>
+              {errors.frequency && <Text style={styles.errorText}> {errors.frequency}</Text>}
             </View>
+
+
+            {/* COUNTER */}
+            {/* <View style={styles.goalCounterContainer}>
+              <Text style={styles.label}>Frequency (days)</Text>
+              <View style={styles.counter}>
+                <TouchableOpacity
+                  style={styles.counterButton}
+                  onPress={() => setFrequency(Math.max(0, frequency - 1))}>
+                  <Text style={styles.counterButtonText}>-</Text>
+                </TouchableOpacity>
+                <View style={styles.countDisplay}>
+                  <Text style={styles.counterText}>{frequency}</Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.counterButton}
+                  onPress={() => setFrequency(frequency + 1)}>
+                  <Text style={styles.counterButtonText}>+</Text>
+                </TouchableOpacity>
+              </View>
+            </View> */}
             
             <View style={styles.deadlineContainer}>
             <Text style={styles.dueDateLabel}>Time</Text>
-            <TouchableOpacity onPress={toggleDatepicker} style={styles.dateDisplay}>
-                <Text style={styles.dateText}>{notificationTime || 'Select time'}</Text>
-                <Ionicons name="calendar" size={24} color={Colors.mainPurple} />
-            </TouchableOpacity>
+              <TouchableOpacity onPress={toggleDatepicker} style={styles.dateDisplay}>
+                  <Text style={styles.dateText}>{notificationTime || 'Select time'}</Text>
+                  <Ionicons name="calendar" size={24} color={Colors.mainPurple} />
+              </TouchableOpacity>
+              {errors.notificationTime && <Text style={styles.errorText}>{errors.notificationTime}</Text>}
             </View>
 
             {showPicker && (
@@ -179,9 +282,35 @@ function SetReminderScreen(){
             />
             )}
 
+            <View style={{alignItems: 'center'}}>
+              <Image source={require('../../assets/musicclock.png')}/>
+            </View>
+
+            <SuccessModal 
+              isModalVisible={isModalVisible} 
+              imageSource={require('../../assets/musicclock.png')}
+              textMessage= {`Practice reminder is set for every ${frequency} day(s) at ${notificationTime}.`}
+              buttonText="Back to Home"
+              onButtonPress={handleModalButtonPress}
+            />
+
+            <DeleteModal 
+              isModalVisible={isDeleteModalVisible} 
+              imageSource={require('../../assets/deletenote.png')}
+              textMessage="Are you sure you want to remove all reminders?"
+              buttonText1="Cancel"
+              buttonText2="Remove"
+              onButton1Press={handleModalButtonPressCancel}
+              onButton2Press={handleDeleteModalButtonPress}
+            />
+
             <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={() => scheduleUserDefinedNotification(time, parseInt(frequency, 10))}>
-            <Text style={styles.buttonText}>Schedule Notification</Text>
+              <Text style={styles.buttonText}>Schedule Reminder</Text>
             </TouchableOpacity>
+            <TouchableOpacity style={[theme.buttonRed, {alignItems: 'center'}]} onPress={() => setDeleteModalVisible(true)}>
+              <Text style={styles.buttonText}>Remove All Reminders</Text>
+            </TouchableOpacity>
+
         </View>
         </ScrollView>
     );
@@ -209,6 +338,12 @@ const styles = StyleSheet.create({
     header: {
       fontSize: 22,
       fontWeight: 'bold',
+      marginTop: 20,
+      marginBottom: 20,
+      color: Colors.fontPrimary,
+    },
+    normalText: {
+      fontSize: 18,
       marginBottom: 20,
       color: Colors.fontPrimary,
     },
@@ -343,5 +478,39 @@ const styles = StyleSheet.create({
       color: '#ffffff',
       fontSize: 16,
       fontWeight: 'bold',
+    },
+    goalCounterContainer: {
+      alignItems: 'center',
+      marginBottom: 20
+    },
+    counter: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    countDisplay: {
+      paddingVertical: 6,
+      paddingHorizontal: 15,
+      borderWidth: 1,
+      borderColor: 'lightgrey',
+      borderRadius: 5,
+      margin: 5,
+    },
+    counterText: {
+      fontSize: 25,
+    },
+    label: {
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
+    counterDisplay: {
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'center', // Center children along the main axis
+      alignItems: 'center', // Center children along the cross axis
+      marginLeft: 10,
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      backgroundColor: '#FFFFFF', // White background for date display
+      borderRadius: 8,
     },
 });
