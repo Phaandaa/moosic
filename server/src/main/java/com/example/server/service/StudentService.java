@@ -151,23 +151,22 @@ public class StudentService {
         return students;
     }
         
-
     @Transactional
-public void deleteTeacherIdForAllStudent(String teacherId) {
-    try {
-        List<Student> students = findStudentsByTeacherId(teacherId);
-        for (Student student : students) {
-            student.setTeacherId(null);
-            student.setTeacherName(null);
-            studentRepository.save(student);
+    public void deleteTeacherIdForAllStudent(String teacherId) {
+        try {
+            List<Student> students = findStudentsByTeacherId(teacherId);
+            for (Student student : students) {
+                student.setTeacherId(null);
+                student.setTeacherName(null);
+                studentRepository.save(student);
+            }
+        } catch (NoSuchElementException e) {
+            System.out.println("No students found for teacher ID " + teacherId);
+            // No further action needed, just logging the absence of students.
+        } catch (Exception e) {
+            throw new RuntimeException("Error processing students for teacher ID: " + teacherId + " " + e.getMessage());
         }
-    } catch (NoSuchElementException e) {
-        System.out.println("No students found for teacher ID " + teacherId);
-        // No further action needed, just logging the absence of students.
-    } catch (Exception e) {
-        throw new RuntimeException("Error processing students for teacher ID: " + teacherId + " " + e.getMessage());
     }
-}
 
     @Transactional
     public void deleteStudentById(String studentId) {
@@ -183,7 +182,6 @@ public void deleteTeacherIdForAllStudent(String teacherId) {
             throw new RuntimeException(
                     "Error deleting student for student ID: " + studentId + " " + e.getMessage());
         }
-        
     }
 
     @Transactional
