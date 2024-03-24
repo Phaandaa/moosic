@@ -124,7 +124,6 @@ export const AuthProvider = ({ children }) => {
 
   const signIn = async (email, password, expoPushToken) => {
     try {
-        console.log("SUPPOSED TO BE EXPO PUSH TOKEN" + expoPushToken);
         const response = await axios.post(`${IP_ADDRESS}/api/auth/signin`, { email, password, expoPushToken });
         const { data } = response;
         
@@ -160,8 +159,9 @@ export const AuthProvider = ({ children }) => {
 };
 
 
-  const signOut = async () => {
+  const signOut = async (userId) => {
     try {
+      const response = await axios.post(`${IP_ADDRESS}/api/auth/signout?userId=${userId}`, {});
       await clearAuthDataFromCache(); // This function should remove auth data from AsyncStorage
       dispatch({ type: LOGOUT });
       
