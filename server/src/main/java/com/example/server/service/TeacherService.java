@@ -26,6 +26,9 @@ public class TeacherService {
     @Autowired
     private StudentRepository studentRepository;
 
+    @Autowired
+    private StudentService studentService;
+
     public List <Teacher> getAllTeachers() {
         try {
             List<Teacher> teachers = teacherRepository.findAllSortedByCreationTime();
@@ -99,11 +102,15 @@ public class TeacherService {
     public void deleteTeacher(String teacherId) {
         try {
             Teacher selectedTeacher = teacherRepository.findById(teacherId).orElse(null);
+
             if (selectedTeacher == null) {
                 throw new NoSuchElementException("No teacher is found with ID " + teacherId);
             }
             teacherRepository.deleteById(teacherId);
             userRepository.deleteById(teacherId);
+            
+            // Delete teachers from students entity
+            studentService.deleteTeacherIdForAllStudent(teacherId);
         } catch (NoSuchElementException e) {
             throw e;
         } catch (Exception e) {

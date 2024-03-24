@@ -196,5 +196,28 @@ public class StudentService {
         }
         
     }
+
+    @Transactional
+    public void deleteStudent (String studentId) {
+        try {
+            Student student = studentRepository.findById(studentId).orElse(null);
+
+            if (student == null) {
+                throw new NoSuchElementException("No student is found with ID " + studentId);
+            }
+
+            studentRepository.deleteById(studentId);
+            userRepository.deleteById(studentId);
+
+            teacherRepository.findById(student.getId()).ifPresent(teacher -> {
+                teacher.deleteStudent(studentId);
+                teacherRepository.save(teacher);
+            });
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error deleting student");
+        }
     
+    }
 }
