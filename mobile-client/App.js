@@ -332,7 +332,7 @@ const RootNavigator = () => {
            </>
         )
       ) : (
-        <Stack.Screen name="LoginScreen" component={LoginPage} options={{ headerShown: false }}/>
+        <Stack.Screen name="LoginScreen" component={LoginPage} options={{ headerShown: false }} initialParams={{ expoPushToken }}/>
       )}
     </Stack.Navigator>
   );

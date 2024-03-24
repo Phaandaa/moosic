@@ -122,9 +122,10 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
 
-  const signIn = async (email, password) => {
+  const signIn = async (email, password, expoPushToken) => {
     try {
-        const response = await axios.post(`${IP_ADDRESS}/api/auth/signin`, { email, password });
+        console.log("SUPPOSED TO BE EXPO PUSH TOKEN" + expoPushToken);
+        const response = await axios.post(`${IP_ADDRESS}/api/auth/signin`, { email, password, expoPushToken });
         const { data } = response;
         
         console.log(data.userId, data.role); // Confirm these values are correctly logged
