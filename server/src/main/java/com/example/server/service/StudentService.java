@@ -161,6 +161,7 @@ public class StudentService {
         }
     }
 
+    @Transactional
     public void deleteTeacherIdForAllStudent(String teacherId) {
         try {
 
@@ -173,6 +174,7 @@ public class StudentService {
                 }
             }
         } catch (NoSuchElementException e) {
+            System.out.println("No students found for teacher ID " + teacherId);
         } catch (Exception e) {
             throw new RuntimeException(
                     "Error fetching students for teacher ID: " + teacherId + " " + e.getMessage());

@@ -181,15 +181,15 @@ public class StudentInventoryService {
 
             List<String> ownedBadgeList = studentInventory.getOwnedBadgeList();
 
-            if (ownedBadgeList.isEmpty() || ownedBadgeList == null) {
+            if (ownedBadgeList == null || ownedBadgeList.isEmpty()) {
                     throw new NoSuchElementException("No badge found in student inventory with student ID " + studentId);
-            } else {
-                List<RewardShop> ownedBadgeDetails = rewardShopService.getAllRewardShopItem();
-                return ownedBadgeDetails.stream()
-                    .filter(item ->  ownedBadgeDetails.contains(item.getId()))
-                    .collect(Collectors.toList());
             }
-
+            
+            List<RewardShop> ownedBadgeDetails = rewardShopService.getAllRewardShopItem();
+            return ownedBadgeDetails.stream()
+                .filter(item ->  ownedBadgeList.contains(item.getId()))
+                .collect(Collectors.toList());
+    
         } catch (NoSuchElementException e) {
             throw e;
 

@@ -17,6 +17,8 @@ const LoginPage = ({ navigation }) => {
     setIsLoading(true);
     try {
       const response = await signIn(email, password);
+
+      console.log("Response:", response);
       
       if (response != null){
         await checkStoredData();
@@ -41,6 +43,11 @@ const LoginPage = ({ navigation }) => {
         const parsedData = JSON.parse(storedData);
         console.log("Stored Auth Data:", parsedData);
         console.log("Stored User Data:", parsedUserData);
+
+        // Print out the idToken
+        const idToken = parsedData.idToken;
+        console.log("Stored idToken:", idToken);
+
         return parsedData; // Return it if you need to use it
       } else {
         console.log("No data stored in AsyncStorage");
