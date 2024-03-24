@@ -35,31 +35,32 @@ export const ShopCard = (props) => {
             }}
           >
             {item.imageLink ? (
-                <img
-                  src={item?.imageLink || ""}
-                  alt={item?.description || "N/A"}
-                  style={{ maxHeight: "300px", maxWidth: "100%", height: "auto", width: "auto" }}
-                />
-              ) : (
-                <Lottie
-                  options={{
-                    loop: true,
-                    autoplay: true,
-                    animationData: noImage,
-                    rendererSettings: {
-                      preserveAspectRatio: "xMidYMid slice",
-                    },
-                  }}
-                  height={300}
-                  width={300}
-                />
-              )}
+              <img
+                src={item?.imageLink || ""}
+                alt={item?.description || "N/A"}
+                style={{ maxHeight: "300px", maxWidth: "100%", height: "auto", width: "auto" }}
+              />
+            ) : (
+              <Lottie
+                options={{
+                  loop: true,
+                  autoplay: true,
+                  animationData: noImage,
+                  rendererSettings: {
+                    preserveAspectRatio: "xMidYMid slice",
+                  },
+                }}
+                height={300}
+                width={300}
+              />
+            )}
           </Box>
           <Typography align="center" gutterBottom variant="h5">
             {item?.description ? item.description : "N/A"}
           </Typography>
           <Typography align="center" variant="body1">
-            {item?.type ? item.type : "-"}
+            {item?.type ? item.type.charAt(0) + item.type.slice(1).toLowerCase() : "-"}{" "}
+            {item?.type === "DIGITAL" ? "(" + item?.subtype + ")" : ""}
           </Typography>
         </CardContent>
         <Box sx={{ flexGrow: 1 }} />
