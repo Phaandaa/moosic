@@ -43,12 +43,14 @@ export const ItemDetailModal = ({
   const [limitation, setLimitation] = useState(item?.limitation || 0);
   const [stock, setStock] = useState(item?.stock || 0);
   const [type, setType] = useState(item?.type || "");
+  const [subtype, setSubtype] = useState(item?.subtype || "");
   const [description, setDescription] = useState(item?.description || "");
 
   // confirm delete modal state
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
-  const itemTypeOptions = ["physical", "digital"];
+  const itemTypeOptions = ["PHYSICAL", "DIGITAL"];
+  const itemSubtypeOptions = ["badge", "frame", "avatar"];
 
   useEffect(() => {
     if (!open) {
@@ -62,6 +64,10 @@ export const ItemDetailModal = ({
 
   const handleTypeChange = (event) => {
     setType(event.target.value);
+  };
+
+  const handleSubtypeChange = (event) => {
+    setSubtype(event.target.value);
   };
 
   const handlePointsChange = (event) => {
@@ -138,6 +144,7 @@ export const ItemDetailModal = ({
     const updatedItem = {
       ...item,
       type,
+      subtype,
       points: Number(points),
       stock: Number(stock),
       limitation: Number(limitation),
@@ -273,20 +280,37 @@ export const ItemDetailModal = ({
           <Box display={"flex"} justifyContent={"space-between"} alignItems={"center"} mt={2}>
             <DialogContentText>Item Details</DialogContentText>
           </Box>
-          <Grid container spacing={1} sx={{ my: 2, justifyContent: "center" }}>
-            <Grid item xs={12} md={12} lg={12}>
-              <TextField
-                label="Name/Description"
-                id="desc"
-                fullWidth
-                variant="filled"
-                disabled={disabled}
-                value={description}
-                onChange={handleDescriptionChange}
-              />
+          {item?.type === "PHYSICAL" && (
+            <Grid container spacing={1} sx={{ mt: 2, justifyContent: "center" }}>
+              <Grid item xs={12} md={12}>
+                <TextField
+                  label="Name/Description"
+                  id="desc"
+                  fullWidth
+                  variant="filled"
+                  disabled={disabled}
+                  value={description}
+                  onChange={handleDescriptionChange}
+                  sx={{ width: "53.35ch" }}
+                />
+              </Grid>
             </Grid>
-          </Grid>
-          <Grid container spacing={2} sx={{ mb: 2, justifyContent: "center" }}>
+          )}
+          <Grid container spacing={2} sx={{ mb: 2, justifyContent: "center" }} marginTop={item.type === 'DIGITAL' ? 1 : 0}>
+            {item?.type === "DIGITAL" && (
+              <Grid item xs={12} md={6}>
+                <TextField
+                  label="Name/Description"
+                  id="desc"
+                  fullWidth
+                  variant="filled"
+                  disabled={disabled}
+                  value={description}
+                  onChange={handleDescriptionChange}
+                  sx={{ width: "26ch" }}
+                />
+              </Grid>
+            )}
             <Grid item xs={12} md={6}>
               <FormControl variant="filled" fullWidth>
                 <InputLabel id="type-select-label">Type</InputLabel>
@@ -294,10 +318,32 @@ export const ItemDetailModal = ({
                   labelId="type-select-label"
                   id="type-select"
                   value={type}
+                  sx={{ width: "26ch" }}
                   onChange={handleTypeChange}
                   disabled={disabled}
                 >
                   {itemTypeOptions.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option.charAt(0) + option.slice(1).toLowerCase()}{" "}
+                      {/* Capitalize the first letter */}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            {item?.type === "DIGITAL" && (
+              <Grid item xs={12} md={6}>
+              <FormControl variant="filled" fullWidth>
+                <InputLabel id="subtype-select-label">Subtype</InputLabel>
+                <Select
+                  labelId="subtype-select-label"
+                  id="subtype-select"
+                  value={subtype}
+                  sx={{ width: "26ch" }}
+                  onChange={handleSubtypeChange}
+                  disabled={type === "PHYSICAL" || disabled}
+                >
+                  {itemSubtypeOptions.map((option) => (
                     <MenuItem key={option} value={option}>
                       {option.charAt(0).toUpperCase() + option.slice(1)}{" "}
                       {/* Capitalize the first letter */}
@@ -306,6 +352,7 @@ export const ItemDetailModal = ({
                 </Select>
               </FormControl>
             </Grid>
+            )}
             <Grid item xs={12} md={6}>
               <TextField
                 label="Points"
