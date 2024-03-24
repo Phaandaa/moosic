@@ -13,7 +13,7 @@ import axios from 'axios';
 import Colors from '../../constants/colors';
 import SuccessModal from '../../components/ui/SuccessModal';
 
-function TeacherRepository({ navigation }) {
+function UploadResourceScreen({ navigation }) {
   
   const dispatch = useDispatch();
   const [assignmentName, setAssignmentName] = useState('');
@@ -427,4 +427,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TeacherRepository;
+export default UploadResourceScreen;

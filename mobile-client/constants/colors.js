@@ -41,6 +41,10 @@ const Colors = {
     accentRed: '#EE4242',
     accentOrange: '#F1934B',
 
+    // pastel colors for chips
+    pastelPink: '#FFD6E0',
+    pastelBlue: '#D7EEFF',
+    pastelGreen: '#C9FFC1'
 };
   
 export default Colors;
