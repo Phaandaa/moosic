@@ -138,6 +138,8 @@ public class UserService {
     @Transactional
     public SignInResponseDTO signInWithEmailAndPassword(String email, String password, String expoPushToken) {
         try {
+            System.out.println("Hello from sign in backend");
+            System.out.println(expoPushToken);
             FirebaseToken firebaseToken = firebaseAuthService.signInWithEmailAndPassword(email, password);
             User selectedUser = userRepository.findById(firebaseToken.getLocalId()).orElseThrow(()->
                 new NoSuchElementException("No user found with ID " + firebaseToken.getLocalId()));
@@ -146,19 +148,21 @@ public class UserService {
                 case "Student":
                     Student selectedStudent = studentRepository.findById(firebaseToken.getLocalId()).orElseThrow(()->
                         new NoSuchElementException("No student found with ID " + firebaseToken.getLocalId()));
-                    if (!selectedStudent.getPhoneNumber().equals("")) {
+                    if (!selectedStudent.getExpoPushToken().equals("")) {
                         throw new IllegalArgumentException("Please logout from previous device first.");
                     }
-                    selectedStudent.setPhoneNumber(expoPushToken);
+                    selectedStudent.setExpoPushToken(expoPushToken);
+                    studentRepository.save(selectedStudent);
                     break;
                 
                 case "Teacher":
                     Teacher selectedTeacher = teacherRepository.findById(firebaseToken.getLocalId()).orElseThrow(()->
                         new NoSuchElementException("No teacher found with ID " + firebaseToken.getLocalId()));
-                    if (!selectedTeacher.getPhoneNumber().equals("")) {
+                    if (!selectedTeacher.getExpoPushToken().equals("")) {
                         throw new IllegalArgumentException("Please logout from previous device first.");
                     }
-                    selectedTeacher.setPhoneNumber(expoPushToken);
+                    selectedTeacher.setExpoPushToken(expoPushToken);
+                    teacherRepository.save(selectedTeacher);
                     break;
                 
                 case "Admin":
@@ -190,13 +194,15 @@ public class UserService {
                 case "Student":
                     Student selectedStudent = studentRepository.findById(userId).orElseThrow(()->
                         new NoSuchElementException("No student found with ID " + userId));
-                    selectedStudent.setPhoneNumber("");
+                    selectedStudent.setExpoPushToken("");
+                    studentRepository.save(selectedStudent);
                     break;
                 
                 case "Teacher":
                     Teacher selectedTeacher = teacherRepository.findById(userId).orElseThrow(()->
                         new NoSuchElementException("No teacher found with ID " + userId));
-                    selectedTeacher.setPhoneNumber("");
+                    selectedTeacher.setExpoPushToken("");
+                    teacherRepository.save(selectedTeacher);
                     break;
                 
                 case "Admin":
@@ -226,7 +232,7 @@ public class UserService {
             String grade = userDTO.getInfo().get("grade");
             String phoneNumber = userDTO.getInfo().get("phone");
             String tuitionDay = userDTO.getInfo().get("tuition_day");
-            Student newStudent = new Student(id, name, email, 0, null, new ArrayList<>(), instrument, phoneNumber ,grade, null,null, null, creationTime,tuitionDay);
+            Student newStudent = new Student(id, name, email, 0, null, new ArrayList<>(), instrument, phoneNumber ,grade, null,null, null, creationTime,tuitionDay, "");
             studentRepository.save(newStudent);
             Goal newGoal = new Goal(id, name, null, 0, 0, 3, 1, "Not done", 20, false);
             goalRepository.save(newGoal);
@@ -245,7 +251,7 @@ public class UserService {
         try {
             String instrument = userDTO.getInfo().get("instrument");
             String phoneNumber = userDTO.getInfo().get("phone");
-            Teacher newTeacher = new Teacher(id, name, email, null, new ArrayList<>(), phoneNumber, instrument, creationTime);
+            Teacher newTeacher = new Teacher(id, name, email, null, new ArrayList<>(), phoneNumber, instrument, creationTime, "");
             teacherRepository.save(newTeacher);
             return newTeacher;
         } catch (IllegalArgumentException e) {
