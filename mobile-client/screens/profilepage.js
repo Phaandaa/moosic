@@ -66,6 +66,7 @@ const ProfileScreen = ({ navigation }) => {
 
       if (userData.role !== 'Teacher') {
         await fetchInventoryData(userData.id);
+        // can add renderBadges() here instead in useEffect
       }
     } catch (error) {
       console.error('Error processing stored data:', error);
