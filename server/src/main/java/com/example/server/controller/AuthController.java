@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +22,7 @@ import com.example.server.dao.UserRepository;
 import com.example.server.entity.User;
 import com.example.server.models.AuthRequest;
 
+@CrossOrigin
 @RestController
 @RequestMapping("api/auth")
 public class AuthController {

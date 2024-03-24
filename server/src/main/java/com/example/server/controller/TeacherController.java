@@ -1,6 +1,7 @@
 package com.example.server.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ import com.example.server.service.TeacherService;
 import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/teachers")
 public class TeacherController {
     
@@ -91,21 +92,21 @@ public class TeacherController {
     @Operation(summary = "Delete a teacher by teacher id")
     @DeleteMapping("/{teacherId}")
     public ResponseEntity<String> deleteTeacher(String teacherId) {
-        teacherService.deleteTeacher(teacherId);
         studentService.deleteTeacherIdForAllStudent(teacherId);
+        teacherService.deleteTeacher(teacherId);
         return new ResponseEntity<>("Teacher deleted successfully.", HttpStatus.OK);
     }
 
     @Operation(summary = "Get teacher by student ID")
     @GetMapping("/student/{studentId}")
-    public ResponseEntity<Teacher> getTeacherByStudentId(@PathVariable String studentId){
-        try {
-            Teacher teacher = teacherService.getTeacherByStudentId(studentId);
-            return ResponseEntity.ok(teacher);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
-        }
+    public ResponseEntity<Teacher> getTeacherByStudentId(@PathVariable String studentId) {
+        Optional<Teacher> teacher = teacherService.getTeacherByStudentId(studentId);
+    if (teacher.isPresent()) {
+        return ResponseEntity.ok(teacher.get());
+    } else {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
+}
 }   
 
 

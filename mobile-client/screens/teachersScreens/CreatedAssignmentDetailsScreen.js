@@ -4,6 +4,7 @@ import theme from '../../styles/theme';
 import { Ionicons } from '@expo/vector-icons';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import trimDate from '../../components/ui/trimDate';
+import DeleteModal from '../../components/ui/DeleteModal';
 
 const getFileNameFromUrl = (url) => {
     return url.split('/').pop().slice(37);
@@ -13,6 +14,16 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
     const { assignment } = route.params;
     console.log('createdassignment', assignment)
 
+    const [isModalVisible, setModalVisible] = useState(false);
+
+    const handleModalButtonPress = () => {
+        deleteAssignment();
+        setModalVisible(false);
+    };
+    const handleModalButtonPressCancel = () => {
+        setModalVisible(false);
+    };
+    
     const deleteAssignment = async() => {
         console.log('assignmentId', assignment.assignmentId)
         try {
@@ -56,7 +67,7 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
                                 <TouchableOpacity style={theme.smallButtonLeftMargin} onPress={() => navigation.navigate('EditAssignmentScreen', { assignment })}>
                                     <Text style={theme.smallButtonText}>Edit <Ionicons name="pencil" size={16} color="#ffffff" /></Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={theme.smallButtonLeftMargin} onPress={deleteAssignment}>
+                                <TouchableOpacity style={theme.smallButtonLeftMargin} onPress={() => setModalVisible(true)}>
                                     <Text style={theme.smallButtonText}>Delete <Ionicons name="trash-bin" size={16} color="#ffffff" /></Text>
                                 </TouchableOpacity>
                             </View>
@@ -131,10 +142,15 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
                     </View>
                     )}
 
-                    
-
-
-
+                    <DeleteModal 
+                        isModalVisible={isModalVisible} 
+                        imageSource={require('../../assets/deletenote.png')}
+                        textMessage="Are you sure you want to delete this assignment?"
+                        buttonText1="Cancel"
+                        buttonText2="Delete"
+                        onButton1Press={handleModalButtonPressCancel}
+                        onButton2Press={handleModalButtonPress}
+                    />
         </ScrollView>
     );
 }

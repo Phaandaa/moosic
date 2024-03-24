@@ -1,3 +1,3 @@
-const IP_ADDRESS = 'http://35.187.234.63:8080'; // Replace with your own IP address
+const IP_ADDRESS = 'https://learn2play-moosic.com';
 
 export default IP_ADDRESS;

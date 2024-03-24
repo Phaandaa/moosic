@@ -22,7 +22,7 @@ const HomeScreen = ({ navigation }) => {
   const [progressbar, setProgressBar] = useState(0);
 
   const flatListRef = useRef();
-  let intervalId = useRef(null);
+  const intervalId = useRef(null);
 
   const checkStoredData = async () => {
     try {
@@ -60,6 +60,12 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
+   const bannerImages = [
+    require('../assets/homepage-banners/cowbanner.png'),
+    require('../assets/homepage-banners/notebanner.png'),
+    require('../assets/homepage-banners/treblecleffbanner.png'),
+  ];
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -74,24 +80,21 @@ const HomeScreen = ({ navigation }) => {
   }, []);
 
   useEffect(() => {
-    intervalId.current = setInterval(() => {
+    const changeBanner = () => {
       if (flatListRef.current) {
-        let nextIndex = Math.floor(progress / width) + 1;
-        if (nextIndex >= bannerImages.length) {
-          nextIndex = 0; // Reset to the first image if we've reached the end
-        }
-        const nextOffset = nextIndex * width;
-        flatListRef.current.scrollToOffset({
-          offset: nextOffset,
+        const currentIndex = Math.round(progress / width);
+        const nextIndex = (currentIndex + 1) % bannerImages.length; // Using bannerImages.length directly
+        flatListRef.current.scrollToIndex({
+          index: nextIndex,
           animated: true,
         });
-        // Use the nextOffset to calculate the new progress value
-        setProgress(nextOffset);
       }
-    }, 3000);
-  
+    };
+
+    intervalId.current = setInterval(changeBanner, 3000);
+
     return () => clearInterval(intervalId.current); // Clear interval on unmount
-  }, [progress]);
+  }, [progress, bannerImages.length]); 
   
   useEffect(() => {
     const totalGoals = goals.practiceGoalCount + goals.assignmentGoalCount;
@@ -157,28 +160,27 @@ const HomeScreen = ({ navigation }) => {
  
   ];
 
-  const bannerImages = [
-    require('../assets/homepage-banners/cowbanner.png'),
-    require('../assets/homepage-banners/notebanner.png'),
-    require('../assets/homepage-banners/treblecleffbanner.png'),
-  ];
+ 
 
   const modules = userRole === 'Teacher' ? teacherModules : studentModules;
+
+  const Header = () => (
+    <View style={styles.headerContainer}>
+      <Image 
+        source={require('../assets/learn2playlogo.png')} 
+        style={styles.logoStyle}
+      />
+      <TouchableOpacity 
+        style={styles.notificationButton} 
+        onPress={() => navigation.navigate('Notifications')}>
+        <Ionicons name="notifications-outline" size={30} color="black" />
+      </TouchableOpacity>
+    </View>
+  );
 
   const renderHeader = () => {
     return (
       <>
-        <View style={styles.headerContainer}>
-          <Image 
-            source={require('../assets/learn2playlogo.png')} 
-            style={styles.logoStyle}
-          />
-          <TouchableOpacity 
-            style={styles.notificationButton} 
-            onPress={() => navigation.navigate('Notifications')}>
-            <Ionicons name="notifications-outline" size={30} color="black" />
-          </TouchableOpacity>
-        </View>
         <Text style={[theme.textTitle]}> Welcome, {user?.name?.split(" ")[0]}! </Text>
         {userRole === 'Student' && (
           <>
@@ -227,9 +229,10 @@ const HomeScreen = ({ navigation }) => {
   const ITEM_HEIGHT = 200; // Example height, adjust as needed
 
   return (
-    <FlatList
+    <><Header /><FlatList
       ListHeaderComponent={renderHeader}
-      style={[theme.container, {height: '100%'}]}
+      style={[theme.container, { height: '100%', marginBottom:0 }]}
+      contentContainerStyle={{ paddingBottom: 50 }} 
       data={searchResults.length > 0 ? searchResults : modules}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
@@ -242,13 +245,10 @@ const HomeScreen = ({ navigation }) => {
           navigationPage={item.navigationPage}
           iconColor={item.iconColor}
           buttonText={item.buttonText}
-          id={item.id}
-        />
+          id={item.id} />
       )}
       numColumns={2} // Adjust based on your content
-      
-      // Adjust these styles according to your needs
-    />
+    /></>
   );
 };
 

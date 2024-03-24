@@ -34,8 +34,8 @@ public class Teacher extends User{
         studentIds.add(string);
     }
 
-    public void deleteStudent(String string) {
-        studentIds.remove(string);
+    public void deleteStudent(String studentId) {
+        this.studentIds.remove(studentId);
     }
 
 }
