@@ -121,9 +121,14 @@ export const AuthProvider = ({ children }) => {
       }
       const data = await response.json(); // Assuming the response body will be in JSON format
       console.log("signIn response", data);
+      console.log("idToken", data.idToken);
+      setCookie("idToken", data.idToken, { path: "/" })
 
       setCookie("authenticated", "true", { path: "/" });
       setCookie('user', JSON.stringify(data), { path: '/' });
+
+      console.log("idToken cookies", cookies.idToken);
+
       dispatch({
         type: HANDLERS.SIGN_IN,
         payload: data || { email, ...data }, // Adjust according to what your API returns
@@ -154,6 +159,7 @@ export const AuthProvider = ({ children }) => {
 
       setCookie("authenticated", "true", { path: "/" });
       setCookie('user', JSON.stringify(data), { path: '/' });
+      setCookie("idToken", data.idToken, { path: "/" });
 
       dispatch({
         type: HANDLERS.SIGN_UP,
@@ -168,6 +174,7 @@ export const AuthProvider = ({ children }) => {
   const signOut = () => {
     removeCookie('authenticated', { path: '/' });
     removeCookie('user', { path: '/' });
+    removeCookie("idToken", data.idToken, { path: "/" });
     dispatch({
       type: HANDLERS.SIGN_OUT,
     });
