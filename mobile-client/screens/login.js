@@ -7,18 +7,17 @@ import { useAuth } from '../context/Authcontext';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const LoginPage = ({ navigation }) => {
+const LoginPage = ({ route, navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { signIn } = useAuth(); 
   const [isLoading, setIsLoading] = useState(false);
+  const { expoPushToken } = route.params;
 
   const handleLogin = async () => {
     setIsLoading(true);
     try {
-      const response = await signIn(email, password);
-
-      console.log("Response:", response);
+      const response = await signIn(email, password, expoPushToken);
       
       if (response != null){
         await checkStoredData();

@@ -20,6 +20,7 @@ import com.example.server.entity.UserType;
 import com.example.server.models.CreateUserDTO;
 import com.example.server.models.FirebaseToken;
 import com.example.server.models.SignInResponseDTO;
+import com.example.server.models.SignOutDTO;
 
 
 // TODO: Handle possible exceptions, please check with example from OOP project
@@ -142,14 +143,48 @@ public class UserService {
         
     }
 
-    public SignInResponseDTO signInWithEmailAndPassword(String email, String password) {
+    @Transactional
+    public SignInResponseDTO signInWithEmailAndPassword(String email, String password, String expoPushToken) {
         try {
+            System.out.println("Hello from sign in backend");
+            System.out.println(expoPushToken);
             FirebaseToken firebaseToken = firebaseAuthService.signInWithEmailAndPassword(email, password);
             User selectedUser = userRepository.findById(firebaseToken.getLocalId()).orElseThrow(()->
                 new NoSuchElementException("No user found with ID " + firebaseToken.getLocalId()));
+            
+            switch (selectedUser.getRole()) {
+                case "Student":
+                    Student selectedStudent = studentRepository.findById(firebaseToken.getLocalId()).orElseThrow(()->
+                        new NoSuchElementException("No student found with ID " + firebaseToken.getLocalId()));
+                    if (!selectedStudent.getExpoPushToken().equals("")) {
+                        throw new IllegalArgumentException("Please logout from previous device first.");
+                    }
+                    selectedStudent.setExpoPushToken(expoPushToken);
+                    studentRepository.save(selectedStudent);
+                    break;
+                
+                case "Teacher":
+                    Teacher selectedTeacher = teacherRepository.findById(firebaseToken.getLocalId()).orElseThrow(()->
+                        new NoSuchElementException("No teacher found with ID " + firebaseToken.getLocalId()));
+                    if (!selectedTeacher.getExpoPushToken().equals("")) {
+                        throw new IllegalArgumentException("Please logout from previous device first.");
+                    }
+                    selectedTeacher.setExpoPushToken(expoPushToken);
+                    teacherRepository.save(selectedTeacher);
+                    break;
+                
+                case "Admin":
+                    break;
+            
+                default:
+                    throw new NoSuchElementException("User is neither a student, teacher, or admin.");
+            }
+            
             SignInResponseDTO signInResponseDTO = new SignInResponseDTO(firebaseToken, selectedUser.getName(), selectedUser.getRole());
             return signInResponseDTO;
         } catch (NoSuchElementException e) {
+            throw e;
+        } catch (IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Error signing in: " + e.getMessage());
@@ -158,13 +193,54 @@ public class UserService {
     }
 
     @Transactional
+    public String signOut(String userId) {
+        try {
+            User selectedUser = userRepository.findById(userId).orElseThrow(()->
+                new NoSuchElementException("No user found with ID " + userId));
+            
+            switch (selectedUser.getRole()) {
+                case "Student":
+                    Student selectedStudent = studentRepository.findById(userId).orElseThrow(()->
+                        new NoSuchElementException("No student found with ID " + userId));
+                    selectedStudent.setExpoPushToken("");
+                    studentRepository.save(selectedStudent);
+                    break;
+                
+                case "Teacher":
+                    Teacher selectedTeacher = teacherRepository.findById(userId).orElseThrow(()->
+                        new NoSuchElementException("No teacher found with ID " + userId));
+                    selectedTeacher.setExpoPushToken("");
+                    teacherRepository.save(selectedTeacher);
+                    break;
+                
+                case "Admin":
+                    break;
+            
+                default:
+                    throw new NoSuchElementException("User is neither a student, teacher, or admin.");
+            }
+            
+            return "Successfully signed out";
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error signing out: " + e.getMessage());
+        }
+        
+    }
+
+    
+
+    @Transactional
     private Student createStudent(String id, String name, String email, CreateUserDTO userDTO, Date creationTime) {
         try {
             String instrument = userDTO.getInfo().get("instrument");
             String grade = userDTO.getInfo().get("grade");
             String phoneNumber = userDTO.getInfo().get("phone");
             String tuitionDay = userDTO.getInfo().get("tuition_day");
-            Student newStudent = new Student(id, name, email, 0, null, new ArrayList<>(), instrument, phoneNumber ,grade, null,null, null, creationTime,tuitionDay);
+            Student newStudent = new Student(id, name, email, 0, null, new ArrayList<>(), instrument, phoneNumber ,grade, null,null, null, creationTime,tuitionDay, "");
             studentRepository.save(newStudent);
             Goal newGoal = new Goal(id, name, null, 0, 0, 3, 1, "Not done", 20, false);
             goalRepository.save(newGoal);
@@ -183,7 +259,7 @@ public class UserService {
         try {
             String instrument = userDTO.getInfo().get("instrument");
             String phoneNumber = userDTO.getInfo().get("phone");
-            Teacher newTeacher = new Teacher(id, name, email, null, new ArrayList<>(), phoneNumber, instrument, creationTime);
+            Teacher newTeacher = new Teacher(id, name, email, null, new ArrayList<>(), phoneNumber, instrument, creationTime, "");
             teacherRepository.save(newTeacher);
             return newTeacher;
         } catch (IllegalArgumentException e) {
