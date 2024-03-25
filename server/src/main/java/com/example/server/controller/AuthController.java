@@ -50,9 +50,9 @@ public class AuthController {
     }
 
     @Operation(summary = "User sign out")
-    @PostMapping("/signout")
-    public ResponseEntity<?> signOut(@RequestParam String userId) {
-        return ResponseEntity.ok(userService.signOut(userId));
+    @PostMapping("/signout/{userId}")
+    public ResponseEntity<?> signOut(@PathVariable String userId, @RequestParam String expoPushToken) {
+        return ResponseEntity.ok(userService.signOut(userId, expoPushToken));
     }
 
     @Operation(summary = "User change password via email")

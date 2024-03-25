@@ -210,7 +210,7 @@ function TeacherTabs() {
         />
       <Tab.Screen name="Repository" component={TeacherRepository} options={{tabBarLabel: "Repository"}}/>
       {/* <Tab.Screen name="Notifications" component={NotificationsScreen} /> */}
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} initialParams={{ expoPushToken }} />
     </Tab.Navigator>
   );
 }
