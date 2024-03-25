@@ -6,8 +6,8 @@ import Ionicons from "@expo/vector-icons/Ionicons"; // make sure to import Ionic
 
 const data = [
   { label: "Theory", value: "theory" },
-  { label: "Sight Reading", value: "sightreading" },
-  { label: "Music Sheet", value: "musicsheet" },
+  { label: "Sight Reading", value: "sight reading" },
+  { label: "Music Sheet", value: "music sheet" },
 ];
 
 const TypeCategoryDropdown = (props) => {

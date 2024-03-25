@@ -29,7 +29,6 @@ function ResourceRepositoryScreen() {
     const [files, setFiles] = useState([]);
     const [userData, setUserData] = useState({});
     const [filteredResults, setFilteredResults] = useState([]);
-    const [selectedCategories, setSelectedCategories] = useState([]);
     const [searchText, setSearchText] = useState("");
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -79,7 +78,7 @@ function ResourceRepositoryScreen() {
     useEffect(() => {
         // Combine search and category filters
         applyFilters();
-    }, [files, searchText, selectedCategories]);
+    }, [files, searchText, selectedTypes, selectedInstruments, selectedGrades]);
 
     const applyFilters = () => {
         let result = files;
@@ -87,16 +86,28 @@ function ResourceRepositoryScreen() {
         // Filter by search text
         if (searchText) {
         result = result.filter((file) =>
-            files.fileName.toLowerCase().includes(searchText.toLowerCase())
+            file.fileName.toLowerCase().includes(searchText.toLowerCase())
         );
         }
 
-        // Filter by selected categories
-        if (selectedCategories.length > 0) {
-        result = result.filter((file) =>
-            selectedCategories.includes(file.type.toLowerCase())
-        );
+        // Filter by selected types
+        if (selectedTypes.length > 0) {
+            result = result.filter((file) =>
+                file.type.some(type => selectedTypes.includes(type.toLowerCase()))
+            );
         }
+    
+        // Filter by selected instruments
+        if (selectedInstruments.length > 0) {
+            result = result.filter((file) =>
+            file.instrument.some(instrument => selectedInstruments.includes(instrument.toLowerCase()))
+        )};
+
+        // Filter by selected instruments
+        if (selectedGrades.length > 0) {
+            result = result.filter((file) =>
+            file.grade.some(grade => selectedGrades.includes(grade.toLowerCase()))
+        )};
         setFilteredResults(result);
     };
 
@@ -104,17 +115,20 @@ function ResourceRepositoryScreen() {
         setSearchText(text);
     };
 
-    const handleTypeSelectionChange = useCallback((types) => {
-        setSelectedTypes(types);
-    }, [setSelectedTypes]); // Assuming setSelectedStudents doesn't change, this function is now stable
+    // const handleTypeSelectionChange = (types) => {
+    //     setSelectedTypes(types);
+    //     console.log('selectedTypes', selectedTypes);
+    // }; // Assuming setSelectedStudents doesn't change, this function is now stable
 
-    const handleInstrumentSelectionChange = useCallback((instruments) => {
-        setSelectedInstruments(instruments);
-    }, [setSelectedInstruments]); // Assuming setSelectedStudents doesn't change, this function is now stable
+    // const handleInstrumentSelectionChange = ((instruments) => {
+    //     setSelectedInstruments(instruments);
+    //     console.log('selectedInstruments', selectedInstruments)
+    // }, [setSelectedInstruments]); // Assuming setSelectedStudents doesn't change, this function is now stable
 
-    const handleGradeSelectionChange = useCallback((grades) => {
-        setSelectedGrades(grades);
-    }, [setSelectedGrades]); // Assuming setSelectedStudents doesn't change, this function is now stable
+    // const handleGradeSelectionChange = ((grades) => {
+    //     setSelectedGrades(grades);
+    //     console.log('selectedGrades', selectedGrades)
+    // }, [setSelectedGrades]); // Assuming setSelectedStudents doesn't change, this function is now stable
 
     useEffect(() => {
         const MockFiles = [{
@@ -131,8 +145,16 @@ function ResourceRepositoryScreen() {
             creationTime: '2024-03-21T16:54:31.761+00:00',
             fileLink:'https://storage.googleapis.com/moosicfyp/shop/5040a13d-c236-467d-87cd-1649456aad45_8.png',
             type: ['Theory', 'Sight Reading'],
-            instrument: ['Piano', 'Guitar'],
+            instrument: ['Piano'],
             grade: ['3']
+        }, {
+            id: '3',
+            fileName: 'Let It Go.png',
+            creationTime: '2024-03-21T16:54:31.761+00:00',
+            fileLink:'https://storage.googleapis.com/moosicfyp/shop/5040a13d-c236-467d-87cd-1649456aad45_8.png',
+            type: ['Music Sheet'],
+            instrument: ['Violin'],
+            grade: ['1']
         }];
         
         setFiles(MockFiles);
@@ -184,9 +206,20 @@ function ResourceRepositoryScreen() {
                 <HomepageSearchBar onSearch={handleSearch} />
                 {/* <RewardsCategoryDropdown1 onCategoryChange={setSelectedCategories} /> */}
                 <View style={styles.dropdownContainer}> 
-                    <TypeCategoryDropdown onSelectionChange={handleTypeSelectionChange}/>
-                    <InstrumentCategoryDropdown onSelectionChange={handleInstrumentSelectionChange}/>
-                    <GradeCategoryDropdown onSelectionChange={handleGradeSelectionChange}/>
+                    <TypeCategoryDropdown onCategoryChange={setSelectedTypes}/>
+                    <InstrumentCategoryDropdown onCategoryChange={setSelectedInstruments}/>
+                    <GradeCategoryDropdown onCategoryChange={setSelectedGrades}/>
+                </View>
+                <View style={styles.selectedChipsContainer}>
+                    <View style={styles.selectedChip}>
+                        <Text style={styles.pinkSelectedChipText}>{`${selectedTypes.length} Selected`}</Text>
+                    </View>
+                    <View style={[styles.selectedChip, styles.instrumentChip]}>
+                        <Text style={styles.blueSelectedChipText}>{`${selectedInstruments.length} Selected`}</Text>
+                    </View>
+                    <View style={[styles.selectedChip, styles.gradeChip]}>
+                        <Text style={styles.greenSelectedChipText}>{`${selectedGrades.length} Selected`}</Text>
+                    </View>
                 </View>
             </View>
             <View style={styles.header}>
@@ -339,6 +372,44 @@ const styles = StyleSheet.create({
         justifyContent: "space-around", // Try 'space-around' for equal spacing
         alignItems: 'center', // This centers the dropdowns vertically in the container
         height: 60,
-        marginVertical: 10
-    }
+        marginTop: 10
+    },
+    selectionCount: {
+        textAlign: 'center', // Center the text horizontally
+        color: Colors.fontSecondary, // Use your theme's secondary font color
+        fontSize: 12, // Adjust the size as needed
+        marginTop: 4, // Adjust the space between the dropdown and this text
+        fontWeight: 'bold', // Optional: if you want the text to be bold
+    },
+    selectedChip: {
+        backgroundColor: Colors.pastelPink,
+        borderColor: Colors.accentPink,
+        borderWidth: 1,
+        borderRadius: 10,
+        paddingHorizontal: 18,
+        paddingVertical: 5,
+        margin: 2,
+    },
+    selectedChipsContainer:{
+        flexDirection: 'row',
+        justifyContent: "space-around", // Try 'space-around' for equal spacing
+        alignItems: 'center', // This centers the dropdowns vertically in the container
+        marginVertical: 5
+    },
+    pinkSelectedChipText:{
+        color: Colors.accentPink,
+        fontWeight: '500',
+        fontSize: 16
+    },
+    blueSelectedChipText:{
+        color: Colors.accentBlue,
+        fontWeight: '500',
+        fontSize: 16
+    },
+    greenSelectedChipText:{
+        color: Colors.accentGreen,
+        fontWeight: '500',
+        fontSize: 16
+    },
+
 });
