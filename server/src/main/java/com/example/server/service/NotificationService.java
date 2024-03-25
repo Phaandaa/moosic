@@ -36,9 +36,9 @@ public class NotificationService {
         this.notificationRepository = notificationRepository;
     }
 
-    public String testPublishMessage(String expoPushToken, String title, String body, String message) {
+    public String testPublishMessage(String expoPushToken, String title, String body) {
         try {
-            NotificationDTO payload = new NotificationDTO(expoPushToken, title, body, message);
+            NotificationDTO payload = new NotificationDTO(expoPushToken, title, body);
             String jsonString = objectMapper.writeValueAsString(payload);
             pubSubTemplate.publish(this.topicName, jsonString);
             return "Ok";
