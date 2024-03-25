@@ -12,6 +12,7 @@ const ProfileScreen = ({ navigation }) => {
 
   const { signOut } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [cacheUserData, setCacheUserData] = useState('');
   const [userToken, setUserToken] = useState('');
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
@@ -29,9 +30,27 @@ const ProfileScreen = ({ navigation }) => {
   
   const [selectedAvatarId, setSelectedAvatarId] = useState('');
   const [selectedFrameId, setSelectedFrameId] = useState('');
+  
+  
+  const fetchCache = async() => {
+    try{
+      const storedData = await AsyncStorage.getItem('userData');
+      const storedAuthData = await AsyncStorage.getItem('authData');
 
+      if (storedAuthData && storedData) {
+        const authData = JSON.parse(storedAuthData);
+        setUserToken(authData.idToken);  // Set the token from stored auth data
+        setCacheUserData(JSON.parse(storedData));
+        console.log(userToken)
+
+      }
+      
+    }catch{
+      console.log('No stored data found');
+    }
+  }
   
-  
+  const authHeader = { headers: { Authorization: `Bearer ${userToken}` } };
 
   // Fetch inventory data
   const fetchInventoryData = async (userId) => {
@@ -41,10 +60,7 @@ const ProfileScreen = ({ navigation }) => {
         console.log('No user token available.');
         return;
       }
-
-      // Setting up the Authorization header with the userToken
-      const authHeader = { headers: { Authorization: `Bearer ${userToken}` } };
-
+      
       const avatarResponse = await axios.get(`${IP_ADDRESS}/student-inventory/${userId}/avatar-details`, authHeader);
       setOwnedAvatars(avatarResponse.data);
 
@@ -60,28 +76,18 @@ const ProfileScreen = ({ navigation }) => {
     setRefreshing(true);
     setIsLoading(true);
     try {
-      const storedData = await AsyncStorage.getItem('userData');
-      const storedAuthData = await AsyncStorage.getItem('authData');
+      await fetchCache();
+      setUserName(cacheUserData.name);
+      setUserEmail(cacheUserData.email);
+      setUserId(cacheUserData.id);
+      setUserRole(cacheUserData.role);
+      setSelectedAvatarId(cacheUserData.avatar);
+      setSelectedFrameId(cacheUserData.avatarFrame);
+      setUserInstrument(cacheUserData.instrument); 
+      setUserPoints(cacheUserData.pointsCounter);
 
-      if (!storedData) throw new Error("No stored user data found");
-      
-      const userData = JSON.parse(storedData);
-      setUserName(userData.name);
-      setUserEmail(userData.email);
-      setUserId(userData.id);
-      setUserRole(userData.role);
-      setSelectedAvatarId(userData.avatar);
-      setSelectedFrameId(userData.avatarFrame);
-      setUserInstrument(userData.instrument); 
-      setUserPoints(userData.pointsCounter);
-      
-      if (storedAuthData) {
-        const authData = JSON.parse(storedAuthData);
-        setUserToken(authData.idToken);  // Set the token from stored auth data
-      }
-
-      if (userData.role !== 'Teacher') {
-        await fetchInventoryData(userData.id);
+      if (cacheUserData.role !== 'Teacher') {
+        await fetchInventoryData(cacheUserData.id);
         // can add renderBadges() here instead in useEffect
       }
     } catch (error) {
@@ -104,7 +110,7 @@ const ProfileScreen = ({ navigation }) => {
       }
 
       // Setting up the Authorization header with the userToken
-      const authHeader = { headers: { Authorization: `Bearer ${userToken}` } };
+      
 
       const [avatarResponse, frameResponse] = await Promise.all([
         axios.get(`${IP_ADDRESS}/reward-shop/${selectedAvatarId}`, authHeader),
@@ -166,7 +172,6 @@ const ProfileScreen = ({ navigation }) => {
   const fetchLatestUserData = async () => {
     setIsLoading(true); // Show loading indicator during data fetch
     try {
-      const authHeader = { headers: { Authorization: `Bearer ${userToken}` } };
       const response = await axios.get(`${IP_ADDRESS}/students/${userId}`, authHeader);
       const userData = response.data;
       // Update the state with the latest fetched data
@@ -195,8 +200,6 @@ const ProfileScreen = ({ navigation }) => {
     console.log('selectedFrameId', selectedFrameId)
     console.log('userId', userId)
 
-    const authHeader = { headers: { Authorization: `Bearer ${userToken}` } };
-
     try {
       // Update Avatar if selected
       if (selectedAvatarId) {
@@ -208,8 +211,6 @@ const ProfileScreen = ({ navigation }) => {
         await axios.put(`${IP_ADDRESS}/students/${userId}/update-avatar-frame?avatarFrame=${selectedFrameId}`, authHeader);
 
       }
-
-
       await fetchLatestUserData();
       
     } catch (error) {
@@ -223,7 +224,6 @@ const ProfileScreen = ({ navigation }) => {
 
   const renderBadges = async() => {
     setIsLoading(true);
-    const authHeader = { headers: { Authorization: `Bearer ${userToken}` } };
 
     try {
       const response = await axios.get(`${IP_ADDRESS}/student-inventory/${userId}/badge-details`, authHeader);
@@ -240,7 +240,7 @@ const ProfileScreen = ({ navigation }) => {
     const renderAvatarItem = ({ item, index }) => (
       <TouchableOpacity
         key={index}
-        style={styles.itemOptiwooon}
+        style={styles.itemOption}
         onPress={() => onAvatarSelect(item)}
       >
         <Image source={{ uri: item.imageLink }} style={styles.itemImage} />
