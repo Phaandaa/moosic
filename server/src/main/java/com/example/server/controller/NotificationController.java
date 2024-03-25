@@ -31,7 +31,7 @@ public class NotificationController {
         return ResponseEntity.ok(notificationService.testPublishMessage(expoPushToken, title, body, message));
     }
 
-    @Operation(summary = "Retrieve Notifications based on recipient id");
+    @Operation(summary = "Retrieve Notifications based on recipient id")
     @GetMapping("/{recipientId}")
     public ResponseEntity<?> getNotificationsByRecipientId(@PathVariable String recipientId) {
         return ResponseEntity.ok(notificationService.getNotificationsByRecipientId(recipientId));
