@@ -1,5 +1,6 @@
 package com.example.server.dao;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -11,5 +12,8 @@ public interface NotificationRepository extends MongoRepository<Notification, St
 
     @Query(value = "{ 'recipient_id' : ?0 }", sort = "{ 'creation_time' : -1 }")
     public List<Notification> findByRecipientId(String studentId);
+
+    @Query("{ 'creation_time' : { $lt: ?0 } }")
+    List<Notification> findAllOlderThanAWeek(Instant oneWeekAgo);
     
 }
