@@ -48,6 +48,7 @@ const Page = () => {
   };
 
   const handleDeleteConfirmed = async (accounts) => {
+    console.log("Deleting teachers:", accounts);
     // Promise.all will execute all delete requests in parallel
     const deletePromises = accounts.map((teacherId) =>
       deleteAsync(`teachers/${teacherId}`)
@@ -55,13 +56,8 @@ const Page = () => {
 
     try {
       // Wait for all delete requests to finish
-      const response = await Promise.all(deletePromises);
-
-      if (!response.ok) {
-        throw new Error("Failed to delete teachers.");
-      }
+      await Promise.all(deletePromises);
       
-
       // Filter out the deleted teachers from the state.
       setTeacherData((currentTeacherData) =>
         currentTeacherData.filter((teacher) => !accounts.includes(teacher.id))
@@ -207,6 +203,7 @@ const Page = () => {
                 }
                 onClick={handleDeleteConfirmationOpen}
                 style={{ marginLeft: "15px" }}
+                disabled={teachersSelection.selected.length === 0}
               >
                 Delete
               </Button>
