@@ -79,6 +79,9 @@ public class NotificationService {
             for (String expoPushToken : expoPushTokens) {
                 publishMessage(expoPushToken, title, body);
             }
+
+            Notification newNotif = new Notification(title, body, userId);
+            notificationRepository.save(newNotif);
            
         } catch (NoSuchElementException e) {
             throw e;

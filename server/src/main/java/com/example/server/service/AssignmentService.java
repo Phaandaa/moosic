@@ -43,6 +43,9 @@ public class AssignmentService {
     @Autowired
     private StudentRepository studentRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     @Transactional
     public List<Assignment> createAssignment(CreateAssignmentDTO createAssignmentDTO, List<MultipartFile> files) {
         try {
@@ -70,6 +73,14 @@ public class AssignmentService {
                 Assignment newAssignment = new Assignment(title, publicUrls, description, deadline, studentId,
                         studentName, null, teacherId, teacherName, null, points, null, null, new Date());
                 newAssignments.add(newAssignment);
+                
+                // Send notification to student
+                notificationService.sendNotification(
+                    "Student", 
+                    "New Assignment", 
+                    String.format("You have new assignment: %s. Please do and submit it on time", title), 
+                    studentId
+                );
             }
             return assignmentRepository.saveAll(newAssignments);
         } catch (NoSuchElementException e) { 
@@ -136,7 +147,7 @@ public class AssignmentService {
                 List<String> publicUrls = cloudStorageService.uploadFilesToGCS(files, "assignments");
                 assignment.setSubmissionLinks(publicUrls);
             } else {
-                throw new IllegalArgumentException("Please updload files to submit assignment");
+                throw new IllegalArgumentException("Please upload files to submit assignment");
             }
 
             if (studentComment != null) {
@@ -145,6 +156,13 @@ public class AssignmentService {
 
             Date timestamp = new Date();
             assignment.setSubmissionTimestamp(timestamp);
+
+            notificationService.sendNotification(
+                "Teacher", 
+                String.format("%s's assignment is submitted", assignment.getStudentName()),
+                String.format("%s has submitted the assignment %s", assignment.getStudentName(), assignment.getTitle()),
+                assignment.getTeacherId()
+            );
 
             return assignmentRepository.save(assignment);
         } catch (NoSuchElementException e) {
@@ -199,6 +217,15 @@ public class AssignmentService {
             }
             goalRepository.save(goal);
             studentRepository.save(student);
+
+            // Send notification to student
+            notificationService.sendNotification(
+                "Student", 
+                String.format("Assignment %s marked", assignment.getTitle()), 
+                String.format("Your assignment %s has been marked and reviewed. Please read the feedback :)", assignment.getTitle()), 
+                studentId
+            );
+
             return assignmentRepository.save(assignment);
         } catch (NoSuchElementException e) {
             throw e;

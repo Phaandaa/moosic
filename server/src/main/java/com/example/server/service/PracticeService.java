@@ -37,6 +37,9 @@ public class PracticeService {
     @Autowired
     private GoalRepository goalRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     @Transactional
     public Practice createPractice(CreatePracticeDTO practiceDTO, MultipartFile video) {
         try {
@@ -53,6 +56,14 @@ public class PracticeService {
             Date timestamp = new Date();
             createdPractice.setSubmissionTimestamp(timestamp);
             practiceRepository.save(createdPractice);
+
+            notificationService.sendNotification(
+                "Teacher",
+                String.format("%s Practice Upload", studentName),
+                String.format("%s has uploaded a practice log. You can start reviewing it and give feedback!", studentName),
+                teacherId
+            );
+
             return createdPractice;
         } catch (RuntimeException e) {
             if (e.getMessage() != null || e.getMessage() != "") {
@@ -164,6 +175,12 @@ public class PracticeService {
             }
             goalRepository.save(goal);
             studentRepository.save(student);
+
+            notificationService.sendNotification(
+                "Student", 
+                String.format("Practice %s feedback"), 
+                String.format("Your practice %s has been reviewed and marked. Check out the feedback :)"),
+                studentId);
 
             return practice;
         } catch (NoSuchElementException e) {
