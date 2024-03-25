@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   ScrollView,
   TouchableOpacity,
@@ -15,8 +15,12 @@ import HomepageSearchBar from "../../components/ui/homepageSearchbar";
 import IP_ADDRESS from "../../constants/ip_address_temp";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "../../constants/colors";
-import RewardsCategoryDropdown1 from "../../components/ui/RewardsCategoryDropdown1";
 import theme from "../../styles/theme";
+
+import TypeCategoryDropdown from "../../components/ui/TypeCategoryDropdown";
+import GradeCategoryDropdown from "../../components/ui/GradeCategoryDropdown";
+import InstrumentCategoryDropdown from "../../components/ui/InstrumentCategoryDropdown";
+
 
 // Dimensions to calculate the window width
 const { width } = Dimensions.get("window");
@@ -28,6 +32,11 @@ function ResourceRepositoryScreen() {
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [searchText, setSearchText] = useState("");
     const [modalVisible, setModalVisible] = useState(false);
+
+    const [selectedTypes, setSelectedTypes] = useState([]); 
+    const [selectedInstruments, setSelectedInstruments] = useState([]);
+    const [selectedGrades, setSelectedGrades] = useState([]); 
+
     // const [selectedItem, setSelectedItem] = useState(null);
 
     // useEffect(() => {
@@ -95,6 +104,18 @@ function ResourceRepositoryScreen() {
         setSearchText(text);
     };
 
+    const handleTypeSelectionChange = useCallback((types) => {
+        setSelectedTypes(types);
+    }, [setSelectedTypes]); // Assuming setSelectedStudents doesn't change, this function is now stable
+
+    const handleInstrumentSelectionChange = useCallback((instruments) => {
+        setSelectedInstruments(instruments);
+    }, [setSelectedInstruments]); // Assuming setSelectedStudents doesn't change, this function is now stable
+
+    const handleGradeSelectionChange = useCallback((grades) => {
+        setSelectedGrades(grades);
+    }, [setSelectedGrades]); // Assuming setSelectedStudents doesn't change, this function is now stable
+
     useEffect(() => {
         const MockFiles = [{
             id: '1', 
@@ -160,8 +181,13 @@ function ResourceRepositoryScreen() {
         <View style={styles.container}>
         <View style={styles.shadowContainer}>
             <View style={styles.headerButtons}>
-            <HomepageSearchBar onSearch={handleSearch} />
-            <RewardsCategoryDropdown1 onCategoryChange={setSelectedCategories} />
+                <HomepageSearchBar onSearch={handleSearch} />
+                {/* <RewardsCategoryDropdown1 onCategoryChange={setSelectedCategories} /> */}
+                <View style={styles.dropdownContainer}> 
+                    <TypeCategoryDropdown onSelectionChange={handleTypeSelectionChange}/>
+                    <InstrumentCategoryDropdown onSelectionChange={handleInstrumentSelectionChange}/>
+                    <GradeCategoryDropdown onSelectionChange={handleGradeSelectionChange}/>
+                </View>
             </View>
             <View style={styles.header}>
             <Text style={styles.headerText}>
@@ -307,5 +333,12 @@ const styles = StyleSheet.create({
         color: Colors.accentGreen,
         fontWeight: '600',
         fontSize: 12
+    },
+    dropdownContainer:{
+        flexDirection: 'row',
+        justifyContent: "space-around", // Try 'space-around' for equal spacing
+        alignItems: 'center', // This centers the dropdowns vertically in the container
+        height: 60,
+        marginVertical: 10
     }
 });
