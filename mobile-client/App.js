@@ -257,7 +257,13 @@ const RootNavigator = () => {
 
     notificationListener.current = Notifications.addNotificationReceivedListener(async notification => {
       console.log('Notification received:', notification);
-  
+      if (notification.remote) {
+        console.log('Push notification received:', notification);
+        console.log(notification.request.content.data.message);
+      } else {
+        console.log('Local notification received:', notification);
+        // Handle local notification
+      } 
       // Save the received notification to AsyncStorage
       const newNotificationData = {
         id: notification.request.identifier, // Example identifier
