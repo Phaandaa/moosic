@@ -23,7 +23,7 @@ public class WebSecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests((authz) -> authz
-            .requestMatchers("/api/auth/signin", "/swagger-ui/**", "/users/create", "/users/create-admin", "/v3/api-docs/**").permitAll()
+            .requestMatchers("/api/auth/signin", "/swagger-ui/**", "/users/create", "/users/create-admin", "/v3/api-docs/**", "/api/auth/signout").permitAll()
             .anyRequest().authenticated())
         .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
