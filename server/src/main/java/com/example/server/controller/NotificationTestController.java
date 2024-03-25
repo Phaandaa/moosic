@@ -25,7 +25,8 @@ public class NotificationTestController {
     public ResponseEntity<?> testSendMessage(
         @RequestParam String expoPushToken,
         @RequestParam String title,
-        @RequestParam String body) {
-        return ResponseEntity.ok(notificationService.testPublishMessage(expoPushToken, title, body));
+        @RequestParam String body,
+        @RequestParam String message) {
+        return ResponseEntity.ok(notificationService.testPublishMessage(expoPushToken, title, body, message));
     }
 }

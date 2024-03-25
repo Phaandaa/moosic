@@ -18,4 +18,6 @@ public class NotificationDTO {
 
     private String body;
 
+    private String message;
+
 }

@@ -26,10 +26,10 @@ public class NotificationService {
         this.objectMapper = objectMapper;
     }
 
-    public String testPublishMessage(String expoPushToken, String title, String body) {
+    public String testPublishMessage(String expoPushToken, String title, String body, String message) {
         try {
-            NotificationDTO message = new NotificationDTO(expoPushToken, title, body);
-            String jsonString = objectMapper.writeValueAsString(message);
+            NotificationDTO payload = new NotificationDTO(expoPushToken, title, body, message);
+            String jsonString = objectMapper.writeValueAsString(payload);
             pubSubTemplate.publish(this.topicName, jsonString);
             return "Ok";
         } catch (Exception e) {
