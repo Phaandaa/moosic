@@ -66,6 +66,7 @@ const ProfileScreen = ({ navigation }) => {
 
       if (userData.role !== 'Teacher') {
         await fetchInventoryData(userData.id);
+        // can add renderBadges() here instead in useEffect
       }
     } catch (error) {
       console.error('Error processing stored data:', error);
@@ -107,7 +108,7 @@ const ProfileScreen = ({ navigation }) => {
   const handleSignOut = async () => {
     setIsLoading(true);
     try {
-      await signOut();
+      await signOut(userId);
     } catch (error) {
       console.error('Error signing out', error);
     } finally {

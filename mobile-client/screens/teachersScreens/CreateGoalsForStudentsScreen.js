@@ -23,6 +23,8 @@ function CreateGoalsForStudents({ route }) {
               const fetchStudentGoalsUrl = `${IP_ADDRESS}/goals/student/${studentID}`;
               const response = await axios.get(fetchStudentGoalsUrl);
               if (response.data) {
+                  setPracticeGoalCount(response.data.practiceGoalCount);
+                  setAssignmentGoalCount(response.data.assignmentGoalCount);
                   setCurrentPracticeGoalCount(response.data.practiceGoalCount);
                   setCurrentAssignmentGoalCount(response.data.assignmentGoalCount);
                   SetCurrentpoints(response.data.points);
