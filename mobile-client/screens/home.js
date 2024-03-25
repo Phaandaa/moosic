@@ -21,6 +21,9 @@ const HomeScreen = ({ navigation }) => {
   const [userToken, setUserToken] = useState('');
 
   const [progressbar, setProgressBar] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0); // Track the current index with state
+  
+  
 
   const flatListRef = useRef();
   const intervalId = useRef(null);
@@ -30,6 +33,9 @@ const HomeScreen = ({ navigation }) => {
       const storedData = await AsyncStorage.getItem('authData');
       if (storedData !== null) {
         const parsedData = JSON.parse(storedData);
+        console.log('Parsed data:', parsedData.idToken);
+        setUserToken(parsedData.idToken);
+        console.log('User Token:', userToken);
         return parsedData;
       }
     } catch (error) {
@@ -47,21 +53,24 @@ const HomeScreen = ({ navigation }) => {
       }
       const userData = JSON.parse(storedData);
       setUser(userData); // Set user with userData including points
-      setUserToken(userData.idToken);
-      
+  
+      // Use userData.idToken directly for the authHeader
+      const authHeader = { headers: { Authorization: `Bearer ${userData.idToken}` } };
+  
       // Fetch student's goals
-      const authHeader = { headers: { Authorization: `Bearer ${userToken}` } };
       const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/student/${userData.id}`;
+      console.log('Fetching student goals from:', fetchStudentsGoalsUrl);
       const goalsResponse = await axios.get(fetchStudentsGoalsUrl, authHeader);
       setGoals(goalsResponse.data ? goalsResponse.data : []);
-      console.log(goals)
-
+      console.log(goals);
+  
     } catch (error) {
       console.error('Error retrieving data from AsyncStorage', error);
     } finally {
       setLoadingState(false);
     }
   };
+  
 
    const bannerImages = [
     require('../assets/homepage-banners/cowbanner.png'),
@@ -80,24 +89,24 @@ const HomeScreen = ({ navigation }) => {
       }
     };
     fetchData();
-  }, []);
+  }, [userToken]);
 
   useEffect(() => {
-    const changeBanner = () => {
-      if (flatListRef.current) {
-        const currentIndex = Math.round(progress / width);
-        const nextIndex = (currentIndex + 1) % bannerImages.length; // Using bannerImages.length directly
-        flatListRef.current.scrollToIndex({
-          index: nextIndex,
-          animated: true,
-        });
-      }
-    };
+    const interval = setInterval(() => {
+      const nextIndex = (currentIndex + 1) % bannerImages.length;
+      flatListRef.current?.scrollToIndex({
+        animated: true,
+        index: nextIndex,
+      });
+      setCurrentIndex(nextIndex); // Update current index
+    }, 3000); // Change banner every 3 seconds
 
-    intervalId.current = setInterval(changeBanner, 3000);
+    return () => clearInterval(interval); // Clean up on unmount
+  }, [currentIndex]); // Depend on currentIndex to calculate the next index
 
-    return () => clearInterval(intervalId.current); // Clear interval on unmount
-  }, [progress, bannerImages.length]); 
+  const renderItem = ({ item }) => (
+    <Image source={item} style={{ width, height: 200 }} resizeMode="cover" />
+  );
   
   useEffect(() => {
     const totalGoals = goals.practiceGoalCount + goals.assignmentGoalCount;
@@ -106,7 +115,7 @@ const HomeScreen = ({ navigation }) => {
     setProgressBar(Math.round(newProgress));
   }, [goals]);
 
-  
+ 
 
   const CurrentGoals = ({ completedPractice, completedAssignment, currentPracticeGoalCount, currentAssignmentGoalCount, currentPoints }) => {
     
@@ -193,24 +202,23 @@ const HomeScreen = ({ navigation }) => {
           </>
         )}
         {/* Display Images */}
-        <FlatList
-          ref={flatListRef}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          data={bannerImages}
-          keyExtractor={(item, index) => String(index)}
-          renderItem={({ item }) => (
-            <View style={styles.imageContainer}>
-              <Image source={item} style={styles.bannerImage} />
-            </View>
-          )}
-          onScroll={(event) => {
-            setProgress(event.nativeEvent.contentOffset.x);
-          }}
-          style={{ height: 200 }} // Set the height of the FlatList itself
-          contentContainerStyle={{ alignItems: 'center' }} // Ensure items are centered
-        />
+        <View style={{ flex: 1 }}>
+      <FlatList
+        ref={flatListRef}
+        data={bannerImages}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScrollToIndexFailed={info => {
+          const wait = new Promise(resolve => setTimeout(resolve, 500));
+          wait.then(() => {
+            flatListRef.current?.scrollToIndex({ index: info.index, animated: true });
+          });
+        }}
+      />
+    </View>
         {userRole === 'Student' && (
           isGoalsSet ? (
             <CurrentGoals

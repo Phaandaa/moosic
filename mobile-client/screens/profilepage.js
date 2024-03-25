@@ -51,7 +51,7 @@ const ProfileScreen = ({ navigation }) => {
   }
   
   const authHeader = { headers: { Authorization: `Bearer ${userToken}` } };
-
+  
   // Fetch inventory data
   const fetchInventoryData = async (userId) => {
     try {
