@@ -257,20 +257,26 @@ const RootNavigator = () => {
 
     notificationListener.current = Notifications.addNotificationReceivedListener(async notification => {
       console.log('Notification received:', notification);
+
+      if (notification.remote) {
+        console.log('Push notification received:', notification);
+        console.log(notification.request.content.data.message);
+      } else {
+        console.log('Local notification received:', notification);
+        // Handle local notification
+      }
   
       // Save the received notification to AsyncStorage
       const newNotificationData = {
-        id: notification.request.identifier, // Example identifier
-        content: notification.request.content.data, // Assuming you want to save the entire content
-        time: new Date().toISOString(), // Save the time the notification was received
+        id: notification.request.identifier, 
+        message: notification.request.content.data.message,
+        time: new Date().toISOString(),
       };
   
       try {
-        // Retrieve the current list of notifications from AsyncStorage
         const existingNotificationsJson = await getNotifications();
         const existingNotifications = existingNotificationsJson ? JSON.parse(existingNotificationsJson) : [];
   
-        // Add the new notification data to the list
         const updatedNotifications = [...existingNotifications, newNotificationData];
   
         // Save the updated list back to AsyncStorage
