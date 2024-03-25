@@ -45,6 +45,7 @@ import ViewPracticeTeacherScreen from './screens/teachersScreens/ViewPracticeTea
 import UploadResourceScreen from './screens/teachersScreens/UploadResourceScreen';
 import ResourceRepositoryScreen from './screens/teachersScreens/ResourceRepositoryScreen';
 import ResourcesUploadedListScreen from './screens/teachersScreens/ResourcesUploadedListScreen';
+import SelectFilesFromRepositoryScreen from './screens/teachersScreens/SelectFilesFromRepositoryScreen';
 
 // Cache and Context
 import { Provider } from 'react-redux';
@@ -334,6 +335,8 @@ const RootNavigator = () => {
           <Stack.Screen name="ResourceRepositoryScreen" component={ResourceRepositoryScreen} options={{ title: 'Teaching Resources' }} />
           <Stack.Screen name="ResourcesUploadedListScreen" component={ResourcesUploadedListScreen} options={{ title: 'Resources Uploaded' }} />
           <Stack.Screen name="UploadResourceScreen" component={UploadResourceScreen} options={{ title: 'Upload Resources' }} />
+          <Stack.Screen name="SelectFilesFromRepositoryScreen" component={SelectFilesFromRepositoryScreen} options={{ title: 'Select Files' }} />
+
            </>
         )
       ) : (

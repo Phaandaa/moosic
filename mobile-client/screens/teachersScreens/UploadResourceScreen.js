@@ -312,7 +312,10 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center', // Center horizontally
     padding: 15,
+    flex: 1,
+    marginHorizontal: 10
   },
   attachButton: {
     flexDirection: 'row',

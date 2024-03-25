@@ -269,6 +269,15 @@ function CreateAssignmentScreen({ navigation }) {
           </View>
         </View>
 
+        {/* <View style={styles.repoContainer}> */}
+          <View style={styles.attachFilesSection}>
+            <TouchableOpacity style={styles.attachButton} onPress={() => navigation.navigate('SelectFilesFromRepositoryScreen')}>
+              <Ionicons name="file-tray-full" size={24} color={Colors.mainPurple} />
+              <Text style={styles.attachText}>Choose Files from Repository</Text>
+            </TouchableOpacity>
+          </View>
+        {/* </View> */}
+
         {/* Display Images and Document Names */}
         {images.length === 0 && uploadedDocuments.length === 0 ? (
           <View style={styles.emptyContainer}>
@@ -364,12 +373,16 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 15,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'center',    
+    justifyContent: 'center', // Center horizontally
     padding: 15,
+    flex: 1,
+    marginHorizontal: 10
   },
   attachButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center'
   },
   attachText: {
     marginLeft: 10,
@@ -388,7 +401,11 @@ const styles = StyleSheet.create({
   uploadButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 20,
+    marginBottom: 10,
+  },
+  repoContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   imageContainer: {
     flexDirection: 'row',
