@@ -109,6 +109,7 @@ const ProfileScreen = ({ navigation, route }) => {
   const handleSignOut = async () => {
     setIsLoading(true);
     try {
+      console.log(userId);
       await signOut(userId, expoPushToken);
     } catch (error) {
       console.error('Error signing out', error);

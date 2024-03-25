@@ -26,9 +26,8 @@ public class NotificationController {
     public ResponseEntity<?> testSendMessage(
         @RequestParam String expoPushToken,
         @RequestParam String title,
-        @RequestParam String body,
-        @RequestParam String message) {
-        return ResponseEntity.ok(notificationService.testPublishMessage(expoPushToken, title, body, message));
+        @RequestParam String body) {
+        return ResponseEntity.ok(notificationService.testPublishMessage(expoPushToken, title, body));
     }
 
     @Operation(summary = "Retrieve Notifications based on recipient id")

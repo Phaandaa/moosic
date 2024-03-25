@@ -160,7 +160,8 @@ function StudentTabs() {
   );
 }
 
-function TeacherTabs() {
+function TeacherTabs({ route }) {
+  const { expoPushToken } = route.params;
   return (
     <Tab.Navigator 
       screenOptions={({ route }) => ({
@@ -323,7 +324,7 @@ const RootNavigator = () => {
           </>
         ) : (
           <>
-          <Stack.Screen name="TeacherTabs" component={TeacherTabs} options={{ headerShown: false }}/>
+          <Stack.Screen name="TeacherTabs" component={TeacherTabs} options={{ headerShown: false }} initialParams={{ expoPushToken }} /> 
           <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ title: 'Notifications' }} />
           <Stack.Screen name="CreateAssignmentScreen" component={CreateAssignmentScreen} options={{ title: 'Create Assignment' }} />
           <Stack.Screen name="EditAssignmentScreen" component={EditAssignmentScreen} options={{ title: 'Edit Assignment' }} />
