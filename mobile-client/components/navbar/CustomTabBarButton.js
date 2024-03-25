@@ -83,6 +83,12 @@ const CustomTabBarButton = ({ children }) => {
                         >
                           <Text style={styles.optionText}>Create Goals</Text>
                         </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() => navigateToScreen('UploadResourceScreen')}
+                          style={styles.optionButton}
+                        >
+                          <Text style={styles.optionText}>Upload Resource</Text>
+                        </TouchableOpacity>
                       </>
                     )}
                     {userRole === 'Student' && (

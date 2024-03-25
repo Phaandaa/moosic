@@ -5,12 +5,12 @@ import Colors from "../../constants/colors";
 import Ionicons from "@expo/vector-icons/Ionicons"; // make sure to import Ionicons
 
 const data = [
-  { label: "Piano", value: "piano" },
-  { label: "Guitar", value: "guitar" },
-  { label: "Violin", value: "violin" },
+  { label: "Pending", value: "pending" },
+  { label: "Approved", value: "approved" },
+  { label: "Rejected", value: "rejected" },
 ];
 
-const InstrumentCategoryDropdown = (props) => {
+const StatusDropdown = (props) => {
   const [selected, setSelected] = useState([]);
   const dropdownRef = useRef(null);
 
@@ -51,7 +51,7 @@ const InstrumentCategoryDropdown = (props) => {
         <Ionicons
           name={isItemSelected(item.value) ? "checkbox" : "square-outline"}
           size={20}
-          color={Colors.accentBlue}
+          color={Colors.mainPurple}
         />
       </TouchableOpacity>
     );
@@ -69,7 +69,7 @@ const InstrumentCategoryDropdown = (props) => {
         data={data}
         labelField="label"
         valueField="value"
-        placeholder="Instruments"
+        placeholder="Status"
         value={selected}
         onChange={handleSelection}
         alwaysRenderSelectedItem={false}
@@ -80,17 +80,17 @@ const InstrumentCategoryDropdown = (props) => {
   );
 };
 
-export default InstrumentCategoryDropdown;
+export default StatusDropdown;
 
 const styles = StyleSheet.create({
   container: { 
     paddingVertical: 16,
     flex: 1, // Takes up equal space within the container
-    marginHorizontal: 5, // Gives some space between the dropdowns
+    marginHorizontal: 5, // Gives some space between the dropdowns 
   },
   dropdown: {
     height: 40,
-    backgroundColor: Colors.accentBlue,
+    backgroundColor: Colors.mainPurple,
     borderRadius: 12,
     padding: 12,
     shadowColor: "#000",
@@ -100,7 +100,6 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
-
     elevation: 2,
   },
   placeholderStyle: {

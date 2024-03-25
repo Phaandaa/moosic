@@ -44,6 +44,7 @@ import ViewPracticeTeacherScreen from './screens/teachersScreens/ViewPracticeTea
 
 import UploadResourceScreen from './screens/teachersScreens/UploadResourceScreen';
 import ResourceRepositoryScreen from './screens/teachersScreens/ResourceRepositoryScreen';
+import ResourcesUploadedListScreen from './screens/teachersScreens/ResourcesUploadedListScreen';
 
 // Cache and Context
 import { Provider } from 'react-redux';
@@ -209,7 +210,7 @@ function TeacherTabs() {
             tabBarLabel: () => {return null},
           }}
         />
-      <Tab.Screen name="Repository" component={UploadResourceScreen} options={{tabBarLabel: "Repository"}}/>
+      <Tab.Screen name="Repository" component={ResourceRepositoryScreen} options={{tabBarLabel: "Repository"}}/>
       {/* <Tab.Screen name="Notifications" component={NotificationsScreen} /> */}
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
@@ -331,7 +332,8 @@ const RootNavigator = () => {
            <Stack.Screen name="PracticeListTeacherScreen" component={PracticeListTeacherScreen} options={{ title: 'Practice Log' }} />
           <Stack.Screen name="ProvidePracticeFeedbackScreen" component={ProvidePracticeFeedbackScreen} options={{ title: 'Provide Feedback' }} />
           <Stack.Screen name="ResourceRepositoryScreen" component={ResourceRepositoryScreen} options={{ title: 'Teaching Resources' }} />
-
+          <Stack.Screen name="ResourcesUploadedListScreen" component={ResourcesUploadedListScreen} options={{ title: 'Resources Uploaded' }} />
+          <Stack.Screen name="UploadResourceScreen" component={UploadResourceScreen} options={{ title: 'Upload Resources' }} />
            </>
         )
       ) : (

@@ -44,7 +44,8 @@ const Colors = {
     // pastel colors for chips
     pastelPink: '#FFD6E0',
     pastelBlue: '#D7EEFF',
-    pastelGreen: '#C9FFC1'
+    pastelGreen: '#C9FFC1',
+    pastelPurple: '#DED4FC'
 };
   
 export default Colors;

@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5, // Gives some space between the dropdowns 
   },
   dropdown: {
-    height: 50,
+    height: 40,
     backgroundColor: Colors.accentPink,
     borderRadius: 12,
     padding: 12,

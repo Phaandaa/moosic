@@ -151,6 +151,7 @@ const HomeScreen = ({ navigation }) => {
     { id: 'students', color: Colors.green, title: 'My Students', subtitle: 'View my students', iconName: 'people', navigationPage: 'MyStudentsScreen', iconColor: 'white', buttonText: 'View' },
     { id: 'setGoals', color: Colors.red, title: 'Set Goals', subtitle: 'Set goals for students', iconName: 'golf', navigationPage: 'ViewCreatedGoalsForStudents', iconColor: 'white', buttonText: 'Create' },
     { id: 'repository', color: Colors.pink, title: 'Repository', subtitle: 'View teaching resources', iconName: 'file-tray-full', navigationPage: 'ResourceRepositoryScreen', iconColor: 'white', buttonText: 'View' },
+    { id: 'repository', color: Colors.mainPurple, title: 'My Uploads', subtitle: 'View resources uploaded', iconName: 'file-tray-full', navigationPage: 'ResourcesUploadedListScreen', iconColor: 'white', buttonText: 'View' },
     // Add more modules specific to teacher
   ];
 

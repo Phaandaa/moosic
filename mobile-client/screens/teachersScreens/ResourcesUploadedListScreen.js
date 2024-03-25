@@ -20,12 +20,12 @@ import theme from "../../styles/theme";
 import TypeCategoryDropdown from "../../components/ui/TypeCategoryDropdown";
 import GradeCategoryDropdown from "../../components/ui/GradeCategoryDropdown";
 import InstrumentCategoryDropdown from "../../components/ui/InstrumentCategoryDropdown";
-
+import StatusDropdown from "../../components/ui/StatusDropdown";
 
 // Dimensions to calculate the window width
 const { width } = Dimensions.get("window");
 
-function ResourceRepositoryScreen() {
+function ResourcesUploadedListScreen() {
     const [files, setFiles] = useState([]);
     const [userData, setUserData] = useState({});
     const [filteredResults, setFilteredResults] = useState([]);
@@ -35,6 +35,7 @@ function ResourceRepositoryScreen() {
     const [selectedTypes, setSelectedTypes] = useState([]); 
     const [selectedInstruments, setSelectedInstruments] = useState([]);
     const [selectedGrades, setSelectedGrades] = useState([]); 
+    const [selectedStatus, setSelectedStatus] = useState([]); 
 
     // const [selectedItem, setSelectedItem] = useState(null);
 
@@ -107,6 +108,13 @@ function ResourceRepositoryScreen() {
         if (selectedGrades.length > 0) {
             result = result.filter((file) =>
             file.grade.some(grade => selectedGrades.includes(grade.toLowerCase()))
+        )};
+        setFilteredResults(result);
+
+        // Filter by selected status
+        if (selectedStatus.length > 0) {
+            result = result.filter((file) =>
+            file.status.some(status => selectedStatus.includes(status.toLowerCase()))
         )};
         setFilteredResults(result);
     };
@@ -221,6 +229,7 @@ function ResourceRepositoryScreen() {
                     <TypeCategoryDropdown onCategoryChange={setSelectedTypes}/>
                     <InstrumentCategoryDropdown onCategoryChange={setSelectedInstruments}/>
                     <GradeCategoryDropdown onCategoryChange={setSelectedGrades}/>
+                    <StatusDropdown onCategoryChange={setSelectedStatus}/>
                 </View>
                 <View style={styles.selectedChipsContainer}>
                     <View style={styles.selectedChip}>
@@ -231,6 +240,9 @@ function ResourceRepositoryScreen() {
                     </View>
                     <View style={[styles.selectedChip, styles.gradeChip]}>
                         <Text style={styles.greenSelectedChipText}>{`${selectedGrades.length} Selected`}</Text>
+                    </View>
+                    <View style={[styles.selectedChip, styles.statusChip]}>
+                        <Text style={styles.purpleSelectedChipText}>{`${selectedStatus.length} Selected`}</Text>
                     </View>
                 </View>
             </View>
@@ -252,7 +264,7 @@ function ResourceRepositoryScreen() {
         </View>
     );
 };
-export default ResourceRepositoryScreen;
+export default ResourcesUploadedListScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -262,7 +274,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   shadowContainer: {
-    padding: 15, // Optional: If you want some space inside the container
+    paddingHorizontal: 15, 
+    paddingBottom: 15,
     backgroundColor: "#fff", // A background color is required
     // iOS shadow styles
     shadowColor: "#000",
@@ -364,6 +377,10 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.pastelGreen,
         borderColor: Colors.accentGreen
     },
+    statusChip:{
+        backgroundColor: Colors.pastelPurple,
+        borderColor: Colors.mainPurple
+    },
     pinkChipText: {
         color: Colors.accentPink,
         fontWeight: '500',
@@ -398,7 +415,7 @@ const styles = StyleSheet.create({
         borderColor: Colors.accentPink,
         borderWidth: 1,
         borderRadius: 10,
-        paddingHorizontal: 18,
+        paddingHorizontal: 5,
         paddingVertical: 5,
         margin: 2,
     },
@@ -423,5 +440,10 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         fontSize: 16
     },
-
+    purpleSelectedChipText:{
+        color: Colors.mainPurple,
+        fontWeight: '500',
+        fontSize: 16
+    }
+    
 });
