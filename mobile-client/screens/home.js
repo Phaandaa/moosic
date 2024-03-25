@@ -18,6 +18,7 @@ const HomeScreen = ({ navigation }) => {
   const [goals, setGoals] = useState([]);
   const [loadingstate, setLoadingState] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [userToken, setUserToken] = useState('');
 
   const [progressbar, setProgressBar] = useState(0);
 
@@ -46,10 +47,12 @@ const HomeScreen = ({ navigation }) => {
       }
       const userData = JSON.parse(storedData);
       setUser(userData); // Set user with userData including points
+      setUserToken(userData.idToken);
       
       // Fetch student's goals
+      const authHeader = { headers: { Authorization: `Bearer ${userToken}` } };
       const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/student/${userData.id}`;
-      const goalsResponse = await axios.get(fetchStudentsGoalsUrl);
+      const goalsResponse = await axios.get(fetchStudentsGoalsUrl, authHeader);
       setGoals(goalsResponse.data ? goalsResponse.data : []);
       console.log(goals)
 
