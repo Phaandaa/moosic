@@ -91,7 +91,7 @@ public class TeacherController {
 
     @Operation(summary = "Delete a teacher by teacher id")
     @DeleteMapping("/{teacherId}")
-    public ResponseEntity<String> deleteTeacher(String teacherId) {
+    public ResponseEntity<String> deleteTeacher(@PathVariable String teacherId) {
         studentService.deleteTeacherIdForAllStudent(teacherId);
         teacherService.deleteTeacher(teacherId);
         return new ResponseEntity<>("Teacher deleted successfully.", HttpStatus.OK);
