@@ -103,7 +103,7 @@ function ResourceRepositoryScreen() {
             file.instrument.some(instrument => selectedInstruments.includes(instrument.toLowerCase()))
         )};
 
-        // Filter by selected instruments
+        // Filter by selected grades
         if (selectedGrades.length > 0) {
             result = result.filter((file) =>
             file.grade.some(grade => selectedGrades.includes(grade.toLowerCase()))

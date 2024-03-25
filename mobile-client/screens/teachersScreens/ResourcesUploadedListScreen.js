@@ -25,6 +25,7 @@ import StatusDropdown from "../../components/ui/StatusDropdown";
 // Dimensions to calculate the window width
 const { width } = Dimensions.get("window");
 
+
 function ResourcesUploadedListScreen() {
     const [files, setFiles] = useState([]);
     const [userData, setUserData] = useState({});
@@ -36,8 +37,6 @@ function ResourcesUploadedListScreen() {
     const [selectedInstruments, setSelectedInstruments] = useState([]);
     const [selectedGrades, setSelectedGrades] = useState([]); 
     const [selectedStatus, setSelectedStatus] = useState([]); 
-
-    // const [selectedItem, setSelectedItem] = useState(null);
 
     // useEffect(() => {
     //     const fetchUserData = async () => {
@@ -79,7 +78,7 @@ function ResourcesUploadedListScreen() {
     useEffect(() => {
         // Combine search and category filters
         applyFilters();
-    }, [files, searchText, selectedTypes, selectedInstruments, selectedGrades]);
+    }, [files, searchText, selectedTypes, selectedInstruments, selectedGrades, selectedStatus]);
 
     const applyFilters = () => {
         let result = files;
@@ -104,39 +103,34 @@ function ResourcesUploadedListScreen() {
             file.instrument.some(instrument => selectedInstruments.includes(instrument.toLowerCase()))
         )};
 
-        // Filter by selected instruments
+        // Filter by selected grades
         if (selectedGrades.length > 0) {
             result = result.filter((file) =>
             file.grade.some(grade => selectedGrades.includes(grade.toLowerCase()))
         )};
-        setFilteredResults(result);
 
         // Filter by selected status
         if (selectedStatus.length > 0) {
-            result = result.filter((file) =>
-            file.status.some(status => selectedStatus.includes(status.toLowerCase()))
-        )};
-        setFilteredResults(result);
+            result = result.filter((file) => {
+                const doesMatchStatus = selectedStatus.includes(file.status.toLowerCase());
+                
+                // Log for debugging
+                // console.log(`Checking file: ${file.fileName}, Status: ${file.status}, Matches: ${doesMatchStatus}`);
+                
+                return doesMatchStatus;
+            });
+        }
+        setFilteredResults(result)
     };
+
+    useEffect(() => {
+        console.log('Selected Statuses:', selectedStatus);
+    }, [selectedStatus]);
+      
 
     const handleSearch = (text) => {
         setSearchText(text);
     };
-
-    // const handleTypeSelectionChange = (types) => {
-    //     setSelectedTypes(types);
-    //     console.log('selectedTypes', selectedTypes);
-    // }; // Assuming setSelectedStudents doesn't change, this function is now stable
-
-    // const handleInstrumentSelectionChange = ((instruments) => {
-    //     setSelectedInstruments(instruments);
-    //     console.log('selectedInstruments', selectedInstruments)
-    // }, [setSelectedInstruments]); // Assuming setSelectedStudents doesn't change, this function is now stable
-
-    // const handleGradeSelectionChange = ((grades) => {
-    //     setSelectedGrades(grades);
-    //     console.log('selectedGrades', selectedGrades)
-    // }, [setSelectedGrades]); // Assuming setSelectedStudents doesn't change, this function is now stable
 
     useEffect(() => {
         const MockFiles = [{
@@ -180,16 +174,31 @@ function ResourcesUploadedListScreen() {
         setFiles(MockFiles);
         setFilteredResults(MockFiles);
         console.log('files: ', files);
-    }, []); // Empty dependency array ensures this effect runs only once on mount
+    }, []);
 
     useEffect(() => {
         console.log('files: ', files); // This will now log the updated state, but only after re-renders.
     }, [files]); // Log the `files` state when it changes
 
-    const RepoFile = ({ fileName, instrument, type, grade, fileLink }) => {
+    useEffect(() => {
+        console.log('Filtered Results:', filteredResults);
+    }, [filteredResults]);
+
+    const RepoFile = ({ fileName, instrument, type, grade, fileLink, status }) => {
         return (
         <TouchableOpacity style={styles.item}>
             <View style={styles.itemImageContainer}> 
+                {/* <View style={styles.itemHeader}>
+                    <Text style={styles.itemType}>{status}</Text>
+                </View> */}
+                <View style={styles.statusHeader}>
+                    <Ionicons
+                        name={status === 'Approved' ? "checkmark-circle" : status === 'Rejected' ? "close-circle" : "timer"}
+                        size={30}
+                        color={status === 'Approved' ? Colors.accentGreen : status === 'Rejected' ? Colors.accentRed : Colors.accentBlue}
+                        style={styles.statusLogo}
+                    />
+                </View>
                 <Image
                     source={{ uri: fileLink }}
                     style={styles.itemImage}
@@ -316,6 +325,34 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         overflow: 'hidden',
         justifyContent: 'space-between',
+    },
+    itemHeader: {
+        backgroundColor: Colors.pastelPurple,
+        borderColor: Colors.mainPurple,
+        borderWidth: 1,
+        borderRadius: 15,
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+
+        marginTop: 0,
+        position: "absolute",
+        top: 0,
+        left: 0,
+        zIndex: 1,
+    },
+    itemType: {
+        color: Colors.mainPurple,
+        fontWeight: '500',
+        fontSize: 12
+    },
+    statusHeader: {
+        position: "absolute",
+        top: 0,
+        right: 0,
+        zIndex: 1,
+        backgroundColor: '#ffffff',        
+        borderRadius: 50,
+        paddingHorizontal: 2,
     },
     itemImageContainer:{
         backgroundColor: Colors.accentGrey, // Light grey background
