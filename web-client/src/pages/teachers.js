@@ -14,6 +14,7 @@ import { convertArrayToCSV } from "src/utils/utils";
 import AccConfirmDeletionModal from "src/sections/teachers/teacher-confirm-delete";
 import { deleteAsync } from "src/utils/utils";
 import SnackbarAlert from "src/components/alert";
+import { alpha } from '@mui/material/styles';
 
 const Page = () => {
   const [teacherData, setTeacherData] = useState([]);
@@ -194,8 +195,8 @@ const Page = () => {
               >
                 Export
               </Button>
-              <Button
-                color="inherit"
+              {teachersSelection.selected.length !== 0 && (
+                <Button
                 startIcon={
                   <SvgIcon fontSize="small">
                     <TrashIcon />
@@ -204,9 +205,20 @@ const Page = () => {
                 onClick={handleDeleteConfirmationOpen}
                 style={{ marginLeft: "15px" }}
                 disabled={teachersSelection.selected.length === 0}
+                sx={{
+                  backgroundColor: "#EE4242",
+                  color: "#ffffff",
+                  '&:hover': {
+                    backgroundColor: alpha("#EE4242",0.2), // lighter red on hover
+                    color: "#000000", // black font color on hover
+                  },
+                  marginLeft: "15px"
+                }}
               >
                 Delete
               </Button>
+              )}
+              
             </Card>
 
             <TeachersTable
