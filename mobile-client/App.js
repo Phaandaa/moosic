@@ -106,7 +106,8 @@ async function registerForPushNotificationsAsync() {
 
 
 
-function StudentTabs() {
+function StudentTabs({ route }) {
+  const { expoPushToken } = route.params;
   return (
     <Tab.Navigator 
       screenOptions={({ route }) => ({
@@ -155,7 +156,7 @@ function StudentTabs() {
         }}
       />
       <Tab.Screen name="Rewards Shop" component={RewardsShopScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} initialParams={{ expoPushToken }} />
     </Tab.Navigator>
   );
 }
@@ -309,7 +310,7 @@ const RootNavigator = () => {
       ) : state.isLoggedIn ? (
         userRole === 'Student' ? (
           <>
-          <Stack.Screen name="StudentTabs" component={StudentTabs} options={{ headerShown: false }}/>
+          <Stack.Screen name="StudentTabs" component={StudentTabs} options={{ headerShown: false }} initialParams={{ expoPushToken }}/>
           
           <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ title: 'Notifications' }} />
           <Stack.Screen name="AssignmentListScreen" component={AssignmentListScreen} options={{ title: 'Assignment List'}} />
