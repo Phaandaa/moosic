@@ -127,19 +127,27 @@ export const AuthProvider = ({ children }) => {
         const response = await axios.post(`${IP_ADDRESS}/api/auth/signin`, { email, password, expoPushToken });
         const { data } = response;
         
-        console.log(data.userId, data.role); // Confirm these values are correctly logged
+        // console.log(data.userId, data.role); // Confirm these values are correctly logged
+        // console.log(data.idToken);
         
         if (response.status === 200 && data.userId) {
             await saveAuthDataToCache(data);
             
             // Using a dynamic URL based on the role to simplify the fetch logic
             const userRolePath = data.role === 'Teacher' ? 'teachers' : 'students';
-            const userDetailsResponse = await axios.get(`${IP_ADDRESS}/${userRolePath}/${data.userId}`);
+
+            const authHeader = { headers: { Authorization: `Bearer ${data.idToken}` } };
+            console.log('Auth header:', authHeader)
+
+            const userDetailsResponse = await axios.get(`${IP_ADDRESS}/${userRolePath}/${data.userId}`,authHeader);
+            console.log('User Details Response:', userDetailsResponse);
 
             if (userDetailsResponse.status === 200) {
                 console.log(userDetailsResponse.data); // Log the fetched user details
                 await saveUserCache(userDetailsResponse.data);
                 dispatch({ type: LOGIN_SUCCESS, payload: data });
+
+                // console.log('User Data:', userDetailsResponse.data);
                 return data; // Return or handle the successful login and data fetch
             } else {
                 console.error('Failed to fetch user details');

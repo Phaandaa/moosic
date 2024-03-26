@@ -50,7 +50,7 @@ const HomeScreen = ({ navigation }) => {
       setUserToken(authData.idToken); // Assuming idToken is part of your authData
       setUserRole(authData.role); // Update userRole state with role
       console.log('User role:', authData.role);
-      console.log('idTOken data:', authData.idToken);
+      console.log('idToken data:', authData.idToken);
       setUser(userData); // Update user state with userData
       
       // Prepare the auth header using the idToken

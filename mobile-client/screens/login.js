@@ -21,7 +21,7 @@ const LoginPage = ({ route, navigation }) => {
       const response = await signIn(email, password, expoPushToken);
       
       if (response != null){
-        await checkStoredData();
+        // await checkStoredData();
         navigation.navigate('Home');
       }
       
