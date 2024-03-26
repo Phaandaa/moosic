@@ -231,6 +231,7 @@ const App = () => {
 };
 
 const RootNavigator = () => {
+  
   const { state } = useAuth();
   const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState(false);
@@ -240,21 +241,6 @@ const RootNavigator = () => {
   const [isLoading, setIsLoading] = useState(true); // Added state to track loading status
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true); // Start loading
-        const storedData = await AsyncStorage.getItem('authData');
-        if (storedData !== null) {
-          const parsedData = JSON.parse(storedData);
-          setUserRole(parsedData.role); // Set user role based on fetched data
-        }
-      } catch (error) {
-        console.error('Error retrieving data from AsyncStorage', error);
-      } finally {
-        setIsLoading(false); // End loading
-      }
-    };
-    fetchData();
     registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
 
     notificationListener.current = Notifications.addNotificationReceivedListener(async notification => {
@@ -293,6 +279,8 @@ const RootNavigator = () => {
       console.log(response);
     });
 
+    setIsLoading(false); 
+
     return () => {
       Notifications.removeNotificationSubscription(notificationListener.current);
       Notifications.removeNotificationSubscription(responseListener.current);
@@ -308,7 +296,7 @@ const RootNavigator = () => {
       {state.isLoading ? (
         <Stack.Screen name="Loading" component={LoadingScreen} />
       ) : state.isLoggedIn ? (
-        userRole === 'Student' ? (
+        state.role === 'Student' ? (
           <>
           <Stack.Screen name="StudentTabs" component={StudentTabs} options={{ headerShown: false }} initialParams={{ expoPushToken }}/>
           

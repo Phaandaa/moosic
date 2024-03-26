@@ -5,7 +5,7 @@ import IP_ADDRESS from '../constants/ip_address_temp';
 
 
 const AuthContext = createContext({
-  state: { isLoggedIn: false, user: null, error: null },
+  state: { isLoggedIn: false, user: null, error: null, role: null },
 });
 
 // Action Types
@@ -19,11 +19,11 @@ const STORE_USER_DATA = 'STORE_USER_DATA';
 const authReducer = (state, action) => {
   switch (action.type) {
     case LOGIN_SUCCESS:
-      return { ...state, isLoggedIn: true, user: action.payload };
+      return { ...state, isLoggedIn: true, user: action.payload, role: action.payload.role };
     case LOGIN_ERROR:
       return { ...state, isLoggedIn: false, error: action.payload };
     case LOGOUT:
-      return { ...state, isLoggedIn: false, user: null, userData: null };
+      return { ...state, isLoggedIn: false, user: null, userData: null, role: null };
     case STORE_USER_DATA:
       return { ...state, userData: action.payload };
     default:
@@ -94,13 +94,14 @@ export const AuthProvider = ({ children }) => {
     isLoggedIn: false,
     user: null,
     error: null,
+    role: null,
   });
 
   useEffect(() => {
     const loadAuthData = async () => {
       const cachedData = await getAuthDataFromCache();
       if (cachedData) {
-        dispatch({ type: LOGIN_SUCCESS, payload: cachedData });
+        dispatch({ type: LOGIN_SUCCESS, payload: { user: cachedData.user, role: cachedData.role } });
       }
       
     };
@@ -124,6 +125,7 @@ export const AuthProvider = ({ children }) => {
 
   const signIn = async (email, password, expoPushToken) => {
     try {
+        console.log("Here lies the expo push token" + expoPushToken);
         const response = await axios.post(`${IP_ADDRESS}/api/auth/signin`, { email, password, expoPushToken });
         const { data } = response;
         
@@ -139,7 +141,7 @@ export const AuthProvider = ({ children }) => {
             if (userDetailsResponse.status === 200) {
                 console.log(userDetailsResponse.data); // Log the fetched user details
                 await saveUserCache(userDetailsResponse.data);
-                dispatch({ type: LOGIN_SUCCESS, payload: data });
+                dispatch({ type: LOGIN_SUCCESS, payload: { ...data, role: userDetailsResponse.data.role } });
                 return data; // Return or handle the successful login and data fetch
             } else {
                 console.error('Failed to fetch user details');
@@ -161,13 +163,19 @@ export const AuthProvider = ({ children }) => {
 
   const signOut = async (userId, expoPushToken) => {
     try {
-      const response = await axios.post(`${IP_ADDRESS}/api/auth/signout/${userId}?expoPushToken=${expoPushToken}`, {});
-      console.log(expoPushToken);
+      const encodedExpoPushToken = encodeURIComponent(expoPushToken);
+      const url = `${IP_ADDRESS}/api/auth/signout/${userId}?expoPushToken=${encodedExpoPushToken}`;
+      console.log(url);
+      const response = await axios.post(url, {});
       await clearAuthDataFromCache(); // This function should remove auth data from AsyncStorage
       dispatch({ type: LOGOUT });
       
     } catch (error) {
-      console.error('Error during sign out:', error);
+      if (error.response) {
+        console.error('Error during sign out:', error.response.data);
+      } else {
+        console.error('Error during sign out:', error.message);
+      }
     }
   };
 
