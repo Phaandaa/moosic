@@ -28,48 +28,54 @@ const HomeScreen = ({ navigation }) => {
   const flatListRef = useRef();
   const intervalId = useRef(null);
 
-  const checkStoredData = async () => {
+  const fetchDataAndUpdateState = async () => {
+    setLoadingState(true);
     try {
-      const storedData = await AsyncStorage.getItem('authData');
-      if (storedData !== null) {
-        const parsedData = JSON.parse(storedData);
-        console.log('Parsed data:', parsedData.idToken);
-        setUserToken(parsedData.idToken);
-        console.log('User Token:', userToken);
-        return parsedData;
+      // Retrieve auth and user data from AsyncStorage
+      const authDataString = await AsyncStorage.getItem('authData');
+      const userDataString = await AsyncStorage.getItem('userData');
+      
+      if (!authDataString || !userDataString) {
+        throw new Error('Required data not found in AsyncStorage');
       }
-    } catch (error) {
-      console.error('Error retrieving data from AsyncStorage', error);
-    }
-    return '';
-  };
-
-  const checkStoredUserData = async () => {
-    try {
-      setLoadingState(true);
-      const storedData = await AsyncStorage.getItem('userData');
-      if (!storedData) {
-        throw new Error('No user data found.');
-      }
-      const userData = JSON.parse(storedData);
-      setUser(userData); // Set user with userData including points
-  
-      // Use userData.idToken directly for the authHeader
-      const authHeader = { headers: { Authorization: `Bearer ${userData.idToken}` } };
-  
-      // Fetch student's goals
+      
+      // Parse the retrieved strings to JSON
+      const authData = JSON.parse(authDataString);
+      const userData = JSON.parse(userDataString);
+      
+      console.log('Parsed auth data:', authData);
+      console.log('Parsed user data:', userData);
+      
+      // Update state with the retrieved data
+      setUserToken(authData.idToken); // Assuming idToken is part of your authData
+      setUserRole(authData.role); // Update userRole state with role
+      console.log('User role:', authData.role);
+      console.log('idTOken data:', authData.idToken);
+      setUser(userData); // Update user state with userData
+      
+      // Prepare the auth header using the idToken
+      const authHeader = { headers: { Authorization: `Bearer ${authData.idToken}` } };
+      console.log('Auth header:', authHeader)
+      // Fetch student's goals using the auth header
       const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/student/${userData.id}`;
       console.log('Fetching student goals from:', fetchStudentsGoalsUrl);
+      
       const goalsResponse = await axios.get(fetchStudentsGoalsUrl, authHeader);
+      
+      // Update state with the fetched goals
       setGoals(goalsResponse.data ? goalsResponse.data : []);
-      console.log(goals);
-  
+      
     } catch (error) {
-      console.error('Error retrieving data from AsyncStorage', error);
+      console.error('Error during data fetching and state updating', error);
     } finally {
       setLoadingState(false);
     }
   };
+  
+  useEffect(() => {
+    fetchDataAndUpdateState();
+  }, []); // Empty dependency array means this runs once on component mount
+  
   
 
    const bannerImages = [
@@ -78,18 +84,6 @@ const HomeScreen = ({ navigation }) => {
     require('../assets/homepage-banners/treblecleffbanner.png'),
   ];
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const authData = await checkStoredData();
-        setUserRole(authData.role);
-        await checkStoredUserData(); // This now correctly sets user state
-      } catch (error) {
-        console.error('Error processing stored data', error);
-      }
-    };
-    fetchData();
-  }, [userToken]);
 
   useEffect(() => {
     const interval = setInterval(() => {
