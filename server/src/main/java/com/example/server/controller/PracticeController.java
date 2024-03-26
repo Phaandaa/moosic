@@ -74,24 +74,20 @@ public class PracticeController {
         @RequestParam(value = "teacherFeedback") String teacherFeedback, 
         @RequestParam(value = "points") Integer points,
         @RequestPart(value="video", required = false) MultipartFile video) {
-        try {
-            Practice updatedPractice = practiceService.updatePractice(practiceId, teacherFeedback, points, video);
-            return ResponseEntity.ok(updatedPractice);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+        
+        Practice updatedPractice = practiceService.updatePractice(practiceId, teacherFeedback, points, video);
+        return ResponseEntity.ok(updatedPractice);
+        
     }
 
     // Delete practice by practice ID
     @Operation(summary = "Delete practice by practice ID")
     @DeleteMapping("/{practiceId}")
     public ResponseEntity<?> deletePractice(@PathVariable String practiceId) {
-        try {
-            practiceService.deletePractice(practiceId);
-            return ResponseEntity.ok("Practice deleted successfully");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+        
+        practiceService.deletePractice(practiceId);
+        return ResponseEntity.ok("Practice deleted successfully");
+        
     }
 
 }

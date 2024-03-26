@@ -178,8 +178,8 @@ public class PracticeService {
 
             notificationService.sendNotification(
                 "Student", 
-                String.format("Practice %s feedback"), 
-                String.format("Your practice %s has been reviewed and marked. Check out the feedback :)"),
+                String.format("Practice %s feedback", practice.getTitle()), 
+                String.format("Your practice %s has been reviewed and marked. Check out the feedback :)", practice.getTitle()),
                 studentId);
 
             return practice;
