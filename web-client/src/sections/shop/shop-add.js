@@ -24,12 +24,14 @@ export default function AddItem({ onAddItem }) {
 
   const [description, setDescription] = React.useState("");
   const [type, setType] = React.useState("");
+  const [subtype, setSubtype] = React.useState("");
   const [points, setPoints] = React.useState(0);
   const [limit, setLimit] = React.useState(0);
   const [stock, setStock] = React.useState(0);
   const [selectedFile, setSelectedFile] = React.useState(null);
   // You can define the options for the select dropdown
-  const itemTypeOptions = ["physical", "digital"];
+  const itemTypeOptions = ["PHYSICAL", "DIGITAL"];
+  const itemSubtypeOptions = ["badge", "frame", "avatar"];
 
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState("");
@@ -40,6 +42,9 @@ export default function AddItem({ onAddItem }) {
   };
   const handleTypeChange = (event) => {
     setType(event.target.value);
+  };
+  const handleSubtypeChange = (event) => {
+    setSubtype(event.target.value);
   };
   const handlePointsChange = (event) => {
     setPoints(event.target.value);
@@ -72,7 +77,7 @@ export default function AddItem({ onAddItem }) {
     setPoints(0);
     setLimit(0);
     setStock(0);
-  };  
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -91,6 +96,7 @@ export default function AddItem({ onAddItem }) {
         const newItem = {
           description: description,
           type: type,
+          subtype: subtype,
           points: points,
           limitation: limit,
           stock: stock,
@@ -186,12 +192,31 @@ export default function AddItem({ onAddItem }) {
               >
                 {itemTypeOptions.map((option) => (
                   <MenuItem key={option} value={option}>
-                    {option.charAt(0).toUpperCase() + option.slice(1)}{" "}
+                    {option.charAt(0) + option.slice(1).toLowerCase()}{" "}
                     {/* Capitalize the first letter */}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
+            {type === "DIGITAL" && (
+              <FormControl variant="filled" sx={{ mb: 2 }} fullWidth>
+                <InputLabel id="subtype-label">Item Subtype</InputLabel>
+                <Select
+                  labelId="subtype-label"
+                  id="subtype"
+                  value={subtype}
+                  onChange={handleSubtypeChange}
+                  label="Item Subtype"
+                >
+                  {itemSubtypeOptions.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option.charAt(0).toUpperCase() + option.slice(1)}{" "}
+                      {/* Capitalize the first letter */}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
             <TextField
               label="Points Required"
               id="points"
@@ -221,7 +246,7 @@ export default function AddItem({ onAddItem }) {
           </Box>
           <Box display={"flex"} justifyContent={"space-between"} mt={1} alignItems={"center"}>
             {selectedFile && (
-              <Box sx={{ flexGrow: 1, mr: 2}}>
+              <Box sx={{ flexGrow: 1, mr: 2 }}>
                 <Typography sx={{ flexGrow: 1, mr: 2, fontWeight: "bold" }}>Filename:</Typography>
                 <Typography sx={{ flexGrow: 1, mr: 2 }}>{selectedFile.name}</Typography>
               </Box>
@@ -234,12 +259,7 @@ export default function AddItem({ onAddItem }) {
               id="raised-button-file"
             />
             <label htmlFor="raised-button-file">
-              <Button
-                variant="contained"
-                color="success"
-                component="span"
-                sx={{ minHeight: 55 }}
-              >
+              <Button variant="contained" color="success" component="span" sx={{ minHeight: 55 }}>
                 Choose Image
               </Button>
             </label>

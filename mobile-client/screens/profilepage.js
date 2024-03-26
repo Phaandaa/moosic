@@ -8,9 +8,10 @@ import axios from 'axios';
 import IP_ADDRESS from '../constants/ip_address_temp';
 import Modal from 'react-native-modal'; // Import react-native-modal
 
-const ProfileScreen = ({ navigation }) => {
+const ProfileScreen = ({ navigation, route }) => {
 
   const { signOut } = useAuth();
+  const { expoPushToken } = route.params;
   const [isLoading, setIsLoading] = useState(false);
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
@@ -66,6 +67,7 @@ const ProfileScreen = ({ navigation }) => {
 
       if (userData.role !== 'Teacher') {
         await fetchInventoryData(userData.id);
+        // can add renderBadges() here instead in useEffect
       }
     } catch (error) {
       console.error('Error processing stored data:', error);
@@ -107,7 +109,8 @@ const ProfileScreen = ({ navigation }) => {
   const handleSignOut = async () => {
     setIsLoading(true);
     try {
-      await signOut();
+      console.log(userId);
+      await signOut(userId, expoPushToken);
     } catch (error) {
       console.error('Error signing out', error);
     } finally {

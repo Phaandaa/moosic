@@ -14,6 +14,7 @@ import { convertArrayToCSV } from "src/utils/utils";
 import AccConfirmDeletionModal from "src/sections/teachers/teacher-confirm-delete";
 import { deleteAsync } from "src/utils/utils";
 import SnackbarAlert from "src/components/alert";
+import { alpha } from '@mui/material/styles';
 
 const Page = () => {
   const [teacherData, setTeacherData] = useState([]);
@@ -48,6 +49,7 @@ const Page = () => {
   };
 
   const handleDeleteConfirmed = async (accounts) => {
+    console.log("Deleting teachers:", accounts);
     // Promise.all will execute all delete requests in parallel
     const deletePromises = accounts.map((teacherId) =>
       deleteAsync(`teachers/${teacherId}`)
@@ -55,13 +57,8 @@ const Page = () => {
 
     try {
       // Wait for all delete requests to finish
-      const response = await Promise.all(deletePromises);
-
-      if (!response.ok) {
-        throw new Error("Failed to delete teachers.");
-      }
+      await Promise.all(deletePromises);
       
-
       // Filter out the deleted teachers from the state.
       setTeacherData((currentTeacherData) =>
         currentTeacherData.filter((teacher) => !accounts.includes(teacher.id))
@@ -198,8 +195,8 @@ const Page = () => {
               >
                 Export
               </Button>
-              <Button
-                color="inherit"
+              {teachersSelection.selected.length !== 0 && (
+                <Button
                 startIcon={
                   <SvgIcon fontSize="small">
                     <TrashIcon />
@@ -207,9 +204,21 @@ const Page = () => {
                 }
                 onClick={handleDeleteConfirmationOpen}
                 style={{ marginLeft: "15px" }}
+                disabled={teachersSelection.selected.length === 0}
+                sx={{
+                  backgroundColor: "#EE4242",
+                  color: "#ffffff",
+                  '&:hover': {
+                    backgroundColor: alpha("#EE4242",0.2), // lighter red on hover
+                    color: "#000000", // black font color on hover
+                  },
+                  marginLeft: "15px"
+                }}
               >
                 Delete
               </Button>
+              )}
+              
             </Card>
 
             <TeachersTable

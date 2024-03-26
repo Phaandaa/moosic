@@ -2,6 +2,7 @@ package com.example.server.controller;
 
 
 import com.example.server.models.SignInResponseDTO;
+import com.example.server.models.SignOutDTO;
 import com.example.server.service.FirebaseAuthService;
 import com.example.server.service.UserService;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.server.dao.UserRepository;
@@ -38,13 +40,19 @@ public class AuthController {
     // public AuthController(FirebaseAuthService firebaseAuthService) {
     //     this.firebaseAuthService = firebaseAuthService;
     // }
-
+    
     @Operation(summary = "User sign in with email and password")
     @PostMapping("/signin")
     public ResponseEntity<SignInResponseDTO> signInWithEmailAndPassword(@RequestBody AuthRequest authRequest) {
         return ResponseEntity.ok(
-                userService.signInWithEmailAndPassword(authRequest.getEmail(), authRequest.getPassword())
+                userService.signInWithEmailAndPassword(authRequest.getEmail(), authRequest.getPassword(), authRequest.getExpoPushToken())
             );
+    }
+
+    @Operation(summary = "User sign out")
+    @PostMapping("/signout/{userId}")
+    public ResponseEntity<?> signOut(@PathVariable String userId, @RequestParam String expoPushToken) {
+        return ResponseEntity.ok(userService.signOut(userId, expoPushToken));
     }
 
     @Operation(summary = "User change password via email")

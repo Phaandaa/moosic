@@ -106,11 +106,12 @@ public class TeacherService {
             if (selectedTeacher == null) {
                 throw new NoSuchElementException("No teacher is found with ID " + teacherId);
             }
-            teacherRepository.deleteById(teacherId);
-            userRepository.deleteById(teacherId);
-            
+
             // Delete teachers from students entity
             studentService.deleteTeacherIdForAllStudent(teacherId);
+
+            teacherRepository.deleteById(teacherId);
+            userRepository.deleteById(teacherId);
         } catch (NoSuchElementException e) {
             throw e;
         } catch (Exception e) {

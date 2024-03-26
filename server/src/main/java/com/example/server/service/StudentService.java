@@ -2,6 +2,7 @@ package com.example.server.service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -143,41 +144,28 @@ public class StudentService {
         }}
 
     public List<Student> findStudentsByTeacherId(String teacherId) {
-        try {
-            teacherRepository.findById(teacherId).orElseThrow(()->
-                new IllegalArgumentException("Teacher not found with the ID " + teacherId));
-            List<Student> students = studentRepository.findAllByTeacherId(teacherId);
-            if (students == null || students.isEmpty()) {
-                throw new NoSuchElementException("No students found for teacher ID " + teacherId);
-            }
-            return students;
-        } catch (IllegalArgumentException e) {
-            throw e;
-        } catch (NoSuchElementException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(
-                    "Error fetching students for teacher ID: " + teacherId + " " + e.getMessage());
+        List<Student> students = studentRepository.findAllByTeacherId(teacherId);
+        if (students == null || students.isEmpty()) {
+            throw new NoSuchElementException("No students found for teacher ID " + teacherId);
         }
+        return students;
     }
-
+        
+    @Transactional
     public void deleteTeacherIdForAllStudent(String teacherId) {
         try {
-
             List<Student> students = findStudentsByTeacherId(teacherId);
-            if (students != null && !students.isEmpty()) {
-                for (Student student : students) {
-                    student.setTeacherId(null);
-                    student.setTeacherName(null);
-                    studentRepository.save(student);
-                }
+            for (Student student : students) {
+                student.setTeacherId(null);
+                student.setTeacherName(null);
+                studentRepository.save(student);
             }
         } catch (NoSuchElementException e) {
+            System.out.println("No students found for teacher ID " + teacherId);
+            // No further action needed, just logging the absence of students.
         } catch (Exception e) {
-            throw new RuntimeException(
-                    "Error fetching students for teacher ID: " + teacherId + " " + e.getMessage());
+            throw new RuntimeException("Error processing students for teacher ID: " + teacherId + " " + e.getMessage());
         }
-        
     }
 
     @Transactional
@@ -194,7 +182,6 @@ public class StudentService {
             throw new RuntimeException(
                     "Error deleting student for student ID: " + studentId + " " + e.getMessage());
         }
-        
     }
 
     @Transactional
