@@ -15,6 +15,10 @@ import {
   ListItem,
   ListItemText,
   Grid,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  AccordionActions,
 } from "@mui/material";
 import Head from "next/head";
 import RepoAdd from "src/sections/repository/repo-add";
@@ -25,6 +29,7 @@ import { RejectionModal } from "src/sections/repository/repo-modal";
 import { ApprovalModal } from "src/sections/repository/repo-modal";
 import { figmaColors } from "src/theme/colors";
 import Pagination from "@mui/material/Pagination";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const materialsMockData = [
   // Approved materials
@@ -175,20 +180,23 @@ const ApproveMaterialsSection = ({ pendingMaterials, onApprove, onReject }) => {
   // };
 
   return (
-    <Card sx={{ p: 2, display: "flex", width: "100%", flexDirection: "column" }}>
-      <Stack spacing={2}>
-        <Box
-          display="flex"
-          flexDirection="column"
-          justifyContent="space-between"
+    <>
+      <Accordion defaultExpanded>
+        {/* <Card sx={{ p: 2, display: "flex", width: "100%", flexDirection: "column" }}> */}
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1-content"
+          id="panel1-header"
+          sx={{ p: 2 }}
         >
-          <Typography variant="h5">Pending Approvals</Typography>
-          <Typography sx={{ fontSize: "14px", marginTop: 1, color: figmaColors.fontTertiary }}>
-            You have {pendingMaterials.length} pending approvals
-          </Typography>
-        </Box>
-
-        <Stack spacing={2}>
+          <Box display="flex" flexDirection="column" justifyContent="space-between">
+            <Typography variant="h5">Pending Approvals</Typography>
+            <Typography sx={{ fontSize: "14px", marginTop: 1, color: figmaColors.fontTertiary }}>
+              You have {pendingMaterials.length} pending approvals
+            </Typography>
+          </Box>
+        </AccordionSummary>
+        <AccordionDetails>
           {pendingMaterials.length === 0 ? (
             <Typography variant="body1">No pending materials to approve</Typography>
           ) : (
@@ -254,21 +262,22 @@ const ApproveMaterialsSection = ({ pendingMaterials, onApprove, onReject }) => {
               />
             </>
           )}
-        </Stack>
-      </Stack>
-      <RejectionModal
-        open={rejectionModalOpen}
-        onClose={() => setRejectionModalOpen(false)}
-        onSubmit={handleReject}
-        reason={rejectionReason}
-        setReason={setRejectionReason}
-      />
-      <ApprovalModal
-        open={approvalModalOpen}
-        onClose={() => setApprovalModalOpen(false)}
-        onConfirm={handleApprove}
-      />
-    </Card>
+        </AccordionDetails>
+        <RejectionModal
+          open={rejectionModalOpen}
+          onClose={() => setRejectionModalOpen(false)}
+          onSubmit={handleReject}
+          reason={rejectionReason}
+          setReason={setRejectionReason}
+        />
+        <ApprovalModal
+          open={approvalModalOpen}
+          onClose={() => setApprovalModalOpen(false)}
+          onConfirm={handleApprove}
+        />
+        {/* </Card> */}
+      </Accordion>
+    </>
   );
 };
 
@@ -414,39 +423,58 @@ const Page = () => {
               onApprove={fetchMaterials}
               pendingMaterials={pendingMaterials}
             />
-            <Card sx={{ p: 2, display: "flex", width: "100%" }}>
-              <RepoSearch handleSearchChange={handleSearchChange} />
-              <Button
-                color="inherit"
-                startIcon={
-                  <SvgIcon fontSize="small">
-                    <TrashIcon />
-                  </SvgIcon>
-                }
-                //   onClick={handleExport}
-                style={{ marginLeft: "15px" }}
+            <Accordion defaultExpanded>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1-content"
+                id="panel1-header"
+                sx={{ p: 2 }}
               >
-                Delete
-              </Button>
-            </Card>
-            <Box>
-              <Box display={"flex"} justifyContent={"center"}>
-                <ToggleButtonGroup
-                  value={viewType}
-                  exclusive
-                  onChange={(e, view) => setViewType(view)}
-                >
-                  <ToggleButton value="icons">Icons</ToggleButton>
-                  <ToggleButton value="list">List</ToggleButton>
-                </ToggleButtonGroup>
-              </Box>
-              <Box></Box>
-              {viewType === "icons" ? (
-                <MaterialsIconView materials={approvedMaterials} />
-              ) : (
-                <MaterialsListView materials={approvedMaterials} />
-              )}
-            </Box>
+                <Box display="flex" flexDirection="column" justifyContent="space-between">
+                  <Typography variant="h5">Approved Materials</Typography>
+                  <Typography
+                    sx={{ fontSize: "14px", marginTop: 1, color: figmaColors.fontTertiary }}
+                  >
+                    You have {approvedMaterials.length} approved materials
+                  </Typography>
+                </Box>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Card sx={{ p: 2, display: "flex", width: "100%" }}>
+                  <RepoSearch handleSearchChange={handleSearchChange} />
+                  <Button
+                    color="inherit"
+                    startIcon={
+                      <SvgIcon fontSize="small">
+                        <TrashIcon />
+                      </SvgIcon>
+                    }
+                    //   onClick={handleExport}
+                    style={{ marginLeft: "15px" }}
+                  >
+                    Delete
+                  </Button>
+                </Card>
+                <Box>
+                  <Box display={"flex"} justifyContent={"center"} mt={2}>
+                    <ToggleButtonGroup
+                      value={viewType}
+                      exclusive
+                      onChange={(e, view) => setViewType(view)}
+                    >
+                      <ToggleButton value="icons">Icons</ToggleButton>
+                      <ToggleButton value="list">List</ToggleButton>
+                    </ToggleButtonGroup>
+                  </Box>
+                  <Box></Box>
+                  {viewType === "icons" ? (
+                    <MaterialsIconView materials={approvedMaterials} />
+                  ) : (
+                    <MaterialsListView materials={approvedMaterials} />
+                  )}
+                </Box>
+              </AccordionDetails>
+            </Accordion>
           </Stack>
         </Container>
       </Box>

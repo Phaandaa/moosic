@@ -59,6 +59,17 @@ export function createComponents(config) {
         }
       }
     },
+    MuiAccordion: {
+      styleOverrides: {
+        root: {
+          borderRadius: 20,
+          boxShadow: '0px 5px 22px rgba(0, 0, 0, 0.04), 0px 0px 0px 0.5px rgba(0, 0, 0, 0.03)',
+          '&:before': {
+            display: 'none'
+          },
+        }
+      }
+    },
     MuiCardContent: {
       styleOverrides: {
         root: {
