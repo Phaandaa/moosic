@@ -338,6 +338,7 @@ const Page = () => {
         </Box>
       )}
       <Typography variant="h6">{material.fileName}</Typography>
+      <Typography variant="subtitle2">Type: {material.type}</Typography>
       <Typography variant="subtitle2">Instrument: {material.instrument}</Typography>
       <Typography variant="subtitle2">Grade: {material.grade}</Typography>
       <Typography variant="subtitle2">Created: {material.createdTime}</Typography>
