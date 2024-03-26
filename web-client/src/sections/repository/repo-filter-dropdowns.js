@@ -1,9 +1,17 @@
 import React from "react";
-import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { Box, Button, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { ArrowPathIcon } from "@heroicons/react/24/solid";
 
 // The filter dropdowns
 
-export const FilterDropdowns = ({ filters, types, instruments, grades, onFilterChange }) => (
+export const FilterDropdowns = ({
+  filters,
+  types,
+  instruments,
+  grades,
+  onFilterChange,
+  onResetFilters,
+}) => (
   <Box mt={2} display="flex" justifyContent="space-between" gap="20px">
     <FormControl fullWidth>
       <InputLabel>Type</InputLabel>
@@ -70,5 +78,12 @@ export const FilterDropdowns = ({ filters, types, instruments, grades, onFilterC
         ))}
       </Select>
     </FormControl>
+
+    <Button
+      variant="outlined"
+      onClick={onResetFilters} // Use the reset function when clicked
+    >
+      <ArrowPathIcon />
+    </Button>
   </Box>
 );

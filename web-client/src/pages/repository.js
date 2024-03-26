@@ -318,6 +318,14 @@ const Page = () => {
     });
   };
 
+  const handleRefreshFilters = () => {
+    setFilters({
+      type: "",
+      instrument: "",
+      grade: "",
+    });
+  };
+
   const filteredAndSearchedMaterials = approvedMaterials.filter((material) => {
     // Filter logic
     const filterMatch =
@@ -501,6 +509,7 @@ const Page = () => {
                     instruments={instruments}
                     grades={grades}
                     onFilterChange={handleFilterChange}
+                    onResetFilters={handleRefreshFilters}
                   />
                   <Box display={"flex"} justifyContent={"center"} mt={2}>
                     <ToggleButtonGroup
