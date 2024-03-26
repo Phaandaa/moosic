@@ -189,11 +189,6 @@ public class StudentInventoryService {
                     .filter(item ->  ownedBadgeList.contains(item.getId()))
                     .collect(Collectors.toList());
             }
-            
-            List<RewardShop> ownedBadgeDetails = rewardShopService.getAllRewardShopItem();
-            return ownedBadgeDetails.stream()
-                .filter(item ->  ownedBadgeList.contains(item.getId()))
-                .collect(Collectors.toList());
     
         } catch (NoSuchElementException e) {
             throw e;
