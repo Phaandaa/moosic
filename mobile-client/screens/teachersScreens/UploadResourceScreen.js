@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { TextInput, View, ScrollView, TouchableOpacity, Text, Button, Image, Alert, StyleSheet, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
-import StudentDropdown from '../../components/ui/StudentDropdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
 import { useDispatch } from 'react-redux';
@@ -12,6 +11,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Colors from '../../constants/colors';
 import SuccessModal from '../../components/ui/SuccessModal';
+
+import TypeCategoryDropdownGrey from "../../components/ui/TypeCategoryDropdownGrey";
+import GradeCategoryDropdownGrey from "../../components/ui/GradeCategoryDropdownGrey";
+import InstrumentCategoryDropdownGrey from "../../components/ui/InstrumentCategoryDropdownGrey";
 
 function UploadResourceScreen({ navigation }) {
   
@@ -23,6 +26,10 @@ function UploadResourceScreen({ navigation }) {
 
   const [image, setImage] = useState(null);
   const [uploadedDocument, setUploadedDocument] = useState(null);
+
+  const [selectedTypes, setSelectedTypes] = useState([]); 
+  const [selectedInstruments, setSelectedInstruments] = useState([]);
+  const [selectedGrades, setSelectedGrades] = useState([]); 
 
   const [isModalVisible, setModalVisible] = useState(false);
 
@@ -81,7 +88,7 @@ function UploadResourceScreen({ navigation }) {
     let newErrors = {};
     let isValid = true;
     if (!assignmentName.trim()) {
-      newErrors.assignmentName = 'Assignment name is required.';
+      newErrors.assignmentName = 'File name is required.';
       isValid = false;
     }
     if (!assignmentDesc.trim()) {
@@ -191,15 +198,10 @@ function UploadResourceScreen({ navigation }) {
           {errors.assignmentName && <Text style={styles.errorText}>{errors.assignmentName}</Text>}
         </View>
 
-        <View style={styles.inputContainer}>
-          <TextInput
-            placeholder="Description (for admin's approval)"
-            value={assignmentDesc}
-            onChangeText={setAssignmentDesc}
-            multiline
-            style={[styles.input, styles.textArea]}
-          />
-          {errors.assignmentDesc && <Text style={styles.errorText}>{errors.assignmentDesc}</Text>}
+        <View style={styles.dropdownContainer}> 
+            <TypeCategoryDropdownGrey onCategoryChange={setSelectedTypes}/>
+            <InstrumentCategoryDropdownGrey onCategoryChange={setSelectedInstruments}/>
+            <GradeCategoryDropdownGrey onCategoryChange={setSelectedGrades}/>
         </View>
 
         <View style={styles.uploadButtons}>
@@ -428,6 +430,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  dropdownContainer:{
+    // flexDirection: 'row',
+    // justifyContent: "space-between", // Try 'space-around' for equal spacing
+    // alignItems: 'center', // This centers the dropdowns vertically in the container
+    // height: 60,
+    // marginTop: 10
+    marginBottom: 20
+},
 });
 
 export default UploadResourceScreen;

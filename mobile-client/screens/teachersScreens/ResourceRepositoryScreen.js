@@ -133,46 +133,46 @@ function ResourceRepositoryScreen() {
     useEffect(() => {
         const MockFiles = [{
             id: '1', 
-            fileName: 'ABRSM Theory.png',
+            fileName: 'ABRSM Theory.pdf',
             creationTime: '2024-03-21T16:53:25.758+00:00',
-            fileLink:'https://storage.googleapis.com/moosicfyp/shop/438d678a-414d-47b3-a039-23f1de415879_6.png',
+            fileLink:'https://storage.googleapis.com/moosicfyp/assignments/d8b061f5-525c-4720-b375-cb040ea8b2e7_IMG_0651.jpg',
             type: ['Theory', 'Sight Reading'],
             instrument: ['Piano', 'Guitar'],
             grade: ['3'],
             status: 'Pending'
         }, {
             id: '2',
-            fileName: 'SightReadingG3.png',
+            fileName: 'SightReading5.png',
             creationTime: '2024-03-21T16:54:31.761+00:00',
-            fileLink:'https://storage.googleapis.com/moosicfyp/shop/5040a13d-c236-467d-87cd-1649456aad45_8.png',
+            fileLink:'https://storage.googleapis.com/moosicfyp/assignments/4428ebb0-9309-46c1-bc4f-e914d6c79d83_IMG_0653.jpg',
             type: ['Theory', 'Sight Reading'],
-            instrument: ['Piano'],
+            instrument: ['Piano', 'Violin'],
             grade: ['3'],
             status: 'Approved'
         }, {
             id: '3',
-            fileName: 'Let It Go.png',
+            fileName: 'Twinkle Twinkle Little Star.jpg',
             creationTime: '2024-03-21T16:54:31.761+00:00',
-            fileLink:'https://storage.googleapis.com/moosicfyp/shop/5040a13d-c236-467d-87cd-1649456aad45_8.png',
+            fileLink:'https://storage.googleapis.com/moosicfyp/assignments/40482763-d96c-4b8e-9fb0-0c92f8a57a3e_IMG_1845.jpg',
             type: ['Music Sheet'],
             instrument: ['Violin'],
             grade: ['1'],
             status: 'Rejected'
         }, {
             id: '4',
-            fileName: 'Beethoven.png',
+            fileName: 'Allegramente.jpg',
             creationTime: '2024-03-21T16:54:31.761+00:00',
-            fileLink:'https://storage.googleapis.com/moosicfyp/shop/5040a13d-c236-467d-87cd-1649456aad45_8.png',
+            fileLink:'https://storage.googleapis.com/moosicfyp/assignments/060d391c-d3a4-4adb-aa65-0e4b1933289c_IMG_1846.jpg',
             type: ['Music Sheet'],
             instrument: ['Violin'],
-            grade: ['4'],
+            grade: ['4', '5'],
             status: 'Rejected'
         }];
         
         setFiles(MockFiles);
         setFilteredResults(MockFiles);
         console.log('files: ', files);
-    }, []); // Empty dependency array ensures this effect runs only once on mount
+    }, []);
 
     useEffect(() => {
         console.log('files: ', files); // This will now log the updated state, but only after re-renders.
@@ -215,24 +215,22 @@ function ResourceRepositoryScreen() {
         <View style={styles.container}>
         <View style={styles.shadowContainer}>
             <View style={styles.headerButtons}>
+                <View style={styles.navigationRow}>
+                    <TouchableOpacity style={styles.pressedNavigationBtn}>
+                        <Text style={styles.pressedNavigationText}>Central Repository</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.navigationBtn}>
+                        <Text style={styles.navigationText}>My Uploaded Resources</Text>
+                    </TouchableOpacity>
+                </View>
                 <HomepageSearchBar onSearch={handleSearch} />
-                {/* <RewardsCategoryDropdown1 onCategoryChange={setSelectedCategories} /> */}
-                <View style={styles.dropdownContainer}> 
-                    <TypeCategoryDropdown onCategoryChange={setSelectedTypes}/>
-                    <InstrumentCategoryDropdown onCategoryChange={setSelectedInstruments}/>
-                    <GradeCategoryDropdown onCategoryChange={setSelectedGrades}/>
-                </View>
-                <View style={styles.selectedChipsContainer}>
-                    <View style={styles.selectedChip}>
-                        <Text style={styles.pinkSelectedChipText}>{`${selectedTypes.length} Selected`}</Text>
+                <ScrollView horizontal={true}> 
+                    <View style={styles.dropdownContainer}> 
+                        <TypeCategoryDropdown onCategoryChange={setSelectedTypes}/>
+                        <InstrumentCategoryDropdown onCategoryChange={setSelectedInstruments}/>
+                        <GradeCategoryDropdown onCategoryChange={setSelectedGrades}/>
                     </View>
-                    <View style={[styles.selectedChip, styles.instrumentChip]}>
-                        <Text style={styles.blueSelectedChipText}>{`${selectedInstruments.length} Selected`}</Text>
-                    </View>
-                    <View style={[styles.selectedChip, styles.gradeChip]}>
-                        <Text style={styles.greenSelectedChipText}>{`${selectedGrades.length} Selected`}</Text>
-                    </View>
-                </View>
+                </ScrollView>
             </View>
             <View style={styles.header}>
             <Text style={styles.headerText}>
@@ -282,7 +280,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     // padding: 10,
     alignItems: "center",
-    paddingTop: 18,
   },
   headerText: {
     fontSize: 14,
@@ -383,8 +380,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: "space-around", // Try 'space-around' for equal spacing
         alignItems: 'center', // This centers the dropdowns vertically in the container
-        height: 40,
-        marginTop: 10
+        marginVertical: 10
     },
     selectionCount: {
         textAlign: 'center', // Center the text horizontally
@@ -423,5 +419,39 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         fontSize: 16
     },
-
+    navigationRow:{
+        flexDirection: 'row',
+        justifyContent: 'center', 
+        width: '100%',
+    },
+    navigationBtn:{
+        padding: 5,
+        backgroundColor: Colors.accentGrey,
+        borderRadius: 12,
+        padding: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: 'auto',
+        paddingHorizontal: 30,
+        marginHorizontal: 10
+    },
+    pressedNavigationBtn:{
+        padding: 5,
+        backgroundColor: Colors.mainPurple,
+        borderRadius: 12,
+        padding: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: 'auto',
+        paddingHorizontal: 30,
+        marginHorizontal: 10
+    },
+    navigationText:{
+        fontSize: 12,
+        color: Colors.fontSecondary
+    },
+    pressedNavigationText:{
+        fontSize: 12,
+        color: Colors.bgWhite
+    }
 });

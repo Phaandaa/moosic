@@ -5,12 +5,12 @@ import Colors from "../../constants/colors";
 import Ionicons from "@expo/vector-icons/Ionicons"; // make sure to import Ionicons
 
 const data = [
-  { label: `Pending `, value: "pending" },
-  { label: `Approved `, value: "approved" },
-  { label: `Rejected `, value: "rejected" },
+  { label: "Theory", value: "theory" },
+  { label: "Sight Reading", value: "sight reading" },
+  { label: "Music Sheet", value: "music sheet" },
 ];
 
-const StatusDropdown = (props) => {
+const TypeCategoryDropdownGrey = (props) => {
   const [selected, setSelected] = useState([]);
   const dropdownRef = useRef(null);
 
@@ -42,46 +42,16 @@ const StatusDropdown = (props) => {
   };
 
   const renderItem = (item) => {
-    let iconName;
-    let iconColor;
-  
-    // Determine the icon and color based on the item's value
-    switch (item.value) {
-      case 'pending':
-        iconName = "timer";
-        iconColor = Colors.accentBlue;
-        break;
-      case 'approved':
-        iconName = "checkmark-circle";
-        iconColor = Colors.accentGreen;
-        break;
-      case 'rejected':
-        iconName = "close-circle";
-        iconColor = Colors.accentRed;
-        break;
-      default:
-        iconName = "square-outline";
-        iconColor = Colors.mainPurple;
-    }
-  
     return (
       <TouchableOpacity
         style={styles.item}
         onPress={() => handleSelection(item)}
       >
-        {/* Render the icon next to the label text */}
-        <Ionicons
-          name={iconName}
-          size={20}
-          color={iconColor}
-          style={{ marginRight: 8 }} // Add some spacing between the icon and the text
-        />
         <Text style={styles.selectedTextStyle}>{item.label}</Text>
-        {/* You might want to conditionally render a checkmark or other icon here to indicate selection */}
         <Ionicons
           name={isItemSelected(item.value) ? "checkbox" : "square-outline"}
           size={20}
-          color={Colors.mainPurple}
+          color={Colors.accentPink}
         />
       </TouchableOpacity>
     );
@@ -95,11 +65,11 @@ const StatusDropdown = (props) => {
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
         inputSearchStyle={styles.inputSearchStyle}
-        iconStyle={styles.iconStyle} 
+        iconStyle={styles.iconStyle}
         data={data}
         labelField="label"
         valueField="value"
-        placeholder={`Status (${selected.length})        `}
+        placeholder={`Types (${selected.length})`}
         value={selected}
         onChange={handleSelection}
         alwaysRenderSelectedItem={false}
@@ -110,18 +80,17 @@ const StatusDropdown = (props) => {
   );
 };
 
-export default StatusDropdown;
+export default TypeCategoryDropdownGrey;
 
 const styles = StyleSheet.create({
   container: { 
-    paddingVertical: 16,
+    paddingVertical: 10,
     flex: 1, // Takes up equal space within the container
     marginHorizontal: 5, // Gives some space between the dropdowns 
   },
   dropdown: {
-    flexDirection: 'row',
     height: 40,
-    backgroundColor: Colors.mainPurple,
+    backgroundColor: '#F7F7F7',
     borderRadius: 12,
     padding: 12,
     // shadowColor: "#000",
@@ -132,11 +101,10 @@ const styles = StyleSheet.create({
     // shadowOpacity: 0.2,
     // shadowRadius: 1.41,
     // elevation: 2,
-    alignItems: 'center',
   },
   placeholderStyle: {
     fontSize: 16,
-    color: Colors.bgWhite,
+    color: Colors.fontTertiary,
   },
   selectedTextStyle: {
     fontSize: 14,

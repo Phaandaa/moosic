@@ -135,39 +135,39 @@ function ResourcesUploadedListScreen() {
     useEffect(() => {
         const MockFiles = [{
             id: '1', 
-            fileName: 'ABRSM Theory.png',
+            fileName: 'ABRSM Theory.pdf',
             creationTime: '2024-03-21T16:53:25.758+00:00',
-            fileLink:'https://storage.googleapis.com/moosicfyp/shop/438d678a-414d-47b3-a039-23f1de415879_6.png',
+            fileLink:'https://storage.googleapis.com/moosicfyp/assignments/d8b061f5-525c-4720-b375-cb040ea8b2e7_IMG_0651.jpg',
             type: ['Theory', 'Sight Reading'],
             instrument: ['Piano', 'Guitar'],
             grade: ['3'],
             status: 'Pending'
         }, {
             id: '2',
-            fileName: 'SightReadingG3.png',
+            fileName: 'SightReading5.png',
             creationTime: '2024-03-21T16:54:31.761+00:00',
-            fileLink:'https://storage.googleapis.com/moosicfyp/shop/5040a13d-c236-467d-87cd-1649456aad45_8.png',
+            fileLink:'https://storage.googleapis.com/moosicfyp/assignments/4428ebb0-9309-46c1-bc4f-e914d6c79d83_IMG_0653.jpg',
             type: ['Theory', 'Sight Reading'],
             instrument: ['Piano'],
             grade: ['3'],
             status: 'Approved'
         }, {
             id: '3',
-            fileName: 'Let It Go.png',
+            fileName: 'Defying Gravity.jpg',
             creationTime: '2024-03-21T16:54:31.761+00:00',
-            fileLink:'https://storage.googleapis.com/moosicfyp/shop/5040a13d-c236-467d-87cd-1649456aad45_8.png',
+            fileLink:'https://storage.googleapis.com/moosicfyp/assignments/40482763-d96c-4b8e-9fb0-0c92f8a57a3e_IMG_1845.jpg',
             type: ['Music Sheet'],
             instrument: ['Violin'],
             grade: ['1'],
             status: 'Rejected'
         }, {
             id: '4',
-            fileName: 'Beethoven.png',
+            fileName: 'Sun and Moon.jpg',
             creationTime: '2024-03-21T16:54:31.761+00:00',
-            fileLink:'https://storage.googleapis.com/moosicfyp/shop/5040a13d-c236-467d-87cd-1649456aad45_8.png',
+            fileLink:'https://storage.googleapis.com/moosicfyp/assignments/060d391c-d3a4-4adb-aa65-0e4b1933289c_IMG_1846.jpg',
             type: ['Music Sheet'],
             instrument: ['Violin'],
-            grade: ['4'],
+            grade: ['4', '5'],
             status: 'Rejected'
         }];
         
