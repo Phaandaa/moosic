@@ -17,7 +17,8 @@ functions.cloudEvent('notificationPubSub', cloudEvent => {
     const pushPayload = {
       to: messageData.device_id,
       title: messageData.title,
-      body: messageData.body
+      body: messageData.body,
+      data: { message: messageData.message }
     };
 
     console.log("pushPayLoad:")

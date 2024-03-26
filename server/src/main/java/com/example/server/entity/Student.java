@@ -2,6 +2,7 @@ package com.example.server.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -23,14 +24,14 @@ public class Student extends User{
     private String teacherName;
     private String phoneNumber;
     private String tuitionDay;
-    private String expoPushToken;
+    private List<String> expoPushToken;
 
 
     public Student() {
 
     }
 
-    public Student(String id, String name, String email, Integer pointsCounter, String teacherId, ArrayList<String> purchaseHistory, String instrument, String phoneNumber, String grade, String avatar, String teacherName, String avatarFrame, Date creationTime, String tuitionDay, String expoPushToken) {
+    public Student(String id, String name, String email, Integer pointsCounter, String teacherId, ArrayList<String> purchaseHistory, String instrument, String phoneNumber, String grade, String avatar, String teacherName, String avatarFrame, Date creationTime, String tuitionDay, List<String> expoPushToken) {
         super(id, name, email, "Student",creationTime);
         this.pointsCounter = pointsCounter;
         this.teacherId = teacherId;
@@ -40,7 +41,7 @@ public class Student extends User{
         this.avatar = avatar;
         this.teacherName = teacherName;
         this.avatarFrame = avatarFrame;
-        this.phoneNumber = phoneNumber; // TODO: rename to expoPushToken
+        this.phoneNumber = phoneNumber;
         this.tuitionDay = tuitionDay;
         this.expoPushToken = expoPushToken;
     }
@@ -60,6 +61,14 @@ public class Student extends User{
             throw new IllegalArgumentException("Point amount cannot be negative");
         }
         pointsCounter = pointsCounter + pointAmount;
+    }
+
+    public void addDevice(String newExpoPushToken) {
+        if (!expoPushToken.contains(newExpoPushToken)) expoPushToken.add(newExpoPushToken);
+    }
+
+    public void removeDevice(String oldExpoPushToken) {
+        expoPushToken.remove(oldExpoPushToken);
     }
 
 }

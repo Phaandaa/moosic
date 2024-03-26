@@ -8,9 +8,10 @@ import axios from 'axios';
 import IP_ADDRESS from '../constants/ip_address_temp';
 import Modal from 'react-native-modal'; // Import react-native-modal
 
-const ProfileScreen = ({ navigation }) => {
+const ProfileScreen = ({ navigation, route }) => {
 
   const { signOut } = useAuth();
+  const { expoPushToken } = route.params;
   const [isLoading, setIsLoading] = useState(false);
   const [cacheUserData, setCacheUserData] = useState('');
   const [userToken, setUserToken] = useState('');
@@ -142,7 +143,10 @@ const ProfileScreen = ({ navigation }) => {
   const handleSignOut = async () => {
     setIsLoading(true);
     try {
-      await signOut(userId);
+      console.log(userId);
+      console.log(expoPushToken);
+      await signOut(userId, expoPushToken);
+      // await signOut();
     } catch (error) {
       console.error('Error signing out', error);
     } finally {

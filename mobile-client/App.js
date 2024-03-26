@@ -106,7 +106,8 @@ async function registerForPushNotificationsAsync() {
 
 
 
-function StudentTabs() {
+function StudentTabs({ route }) {
+  const { expoPushToken } = route.params;
   return (
     <Tab.Navigator 
       screenOptions={({ route }) => ({
@@ -155,12 +156,13 @@ function StudentTabs() {
         }}
       />
       <Tab.Screen name="Rewards Shop" component={RewardsShopScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} initialParams={{ expoPushToken }} />
     </Tab.Navigator>
   );
 }
 
-function TeacherTabs() {
+function TeacherTabs({ route }) {
+  const { expoPushToken } = route.params;
   return (
     <Tab.Navigator 
       screenOptions={({ route }) => ({
@@ -210,7 +212,7 @@ function TeacherTabs() {
         />
       <Tab.Screen name="Repository" component={TeacherRepository} options={{tabBarLabel: "Repository"}}/>
       {/* <Tab.Screen name="Notifications" component={NotificationsScreen} /> */}
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} initialParams={{ expoPushToken }} />
     </Tab.Navigator>
   );
 }
@@ -257,26 +259,26 @@ const RootNavigator = () => {
 
     notificationListener.current = Notifications.addNotificationReceivedListener(async notification => {
       console.log('Notification received:', notification);
+
       if (notification.remote) {
         console.log('Push notification received:', notification);
         console.log(notification.request.content.data.message);
       } else {
         console.log('Local notification received:', notification);
         // Handle local notification
-      } 
+      }
+  
       // Save the received notification to AsyncStorage
       const newNotificationData = {
-        id: notification.request.identifier, // Example identifier
-        content: notification.request.content.data, // Assuming you want to save the entire content
-        time: new Date().toISOString(), // Save the time the notification was received
+        id: notification.request.identifier, 
+        message: notification.request.content.data.message,
+        time: new Date().toISOString(),
       };
   
       try {
-        // Retrieve the current list of notifications from AsyncStorage
         const existingNotificationsJson = await getNotifications();
         const existingNotifications = existingNotificationsJson ? JSON.parse(existingNotificationsJson) : [];
   
-        // Add the new notification data to the list
         const updatedNotifications = [...existingNotifications, newNotificationData];
   
         // Save the updated list back to AsyncStorage
@@ -308,7 +310,7 @@ const RootNavigator = () => {
       ) : state.isLoggedIn ? (
         userRole === 'Student' ? (
           <>
-          <Stack.Screen name="StudentTabs" component={StudentTabs} options={{ headerShown: false }}/>
+          <Stack.Screen name="StudentTabs" component={StudentTabs} options={{ headerShown: false }} initialParams={{ expoPushToken }}/>
           
           <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ title: 'Notifications' }} />
           <Stack.Screen name="AssignmentListScreen" component={AssignmentListScreen} options={{ title: 'Assignment List'}} />
@@ -323,7 +325,7 @@ const RootNavigator = () => {
           </>
         ) : (
           <>
-          <Stack.Screen name="TeacherTabs" component={TeacherTabs} options={{ headerShown: false }}/>
+          <Stack.Screen name="TeacherTabs" component={TeacherTabs} options={{ headerShown: false }} initialParams={{ expoPushToken }} /> 
           <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ title: 'Notifications' }} />
           <Stack.Screen name="CreateAssignmentScreen" component={CreateAssignmentScreen} options={{ title: 'Create Assignment' }} />
           <Stack.Screen name="EditAssignmentScreen" component={EditAssignmentScreen} options={{ title: 'Edit Assignment' }} />

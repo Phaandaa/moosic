@@ -17,6 +17,7 @@ const LoginPage = ({ route, navigation }) => {
   const handleLogin = async () => {
     setIsLoading(true);
     try {
+      console.log(expoPushToken);
       const response = await signIn(email, password, expoPushToken);
       
       if (response != null){

@@ -159,9 +159,10 @@ export const AuthProvider = ({ children }) => {
 };
 
 
-  const signOut = async (userId) => {
+  const signOut = async (userId, expoPushToken) => {
     try {
-      const response = await axios.post(`${IP_ADDRESS}/api/auth/signout?userId=${userId}`, {});
+      const response = await axios.post(`${IP_ADDRESS}/api/auth/signout/${userId}?expoPushToken=${expoPushToken}`, {});
+      console.log(expoPushToken);
       await clearAuthDataFromCache(); // This function should remove auth data from AsyncStorage
       dispatch({ type: LOGOUT });
       
@@ -169,6 +170,16 @@ export const AuthProvider = ({ children }) => {
       console.error('Error during sign out:', error);
     }
   };
+
+  // const signOut = async () => {
+  //   try {
+  //     await clearAuthDataFromCache(); // This function should remove auth data from AsyncStorage
+  //     dispatch({ type: LOGOUT });
+      
+  //   } catch (error) {
+  //     console.error('Error during sign out:', error);
+  //   }
+  // };
   
 
   
