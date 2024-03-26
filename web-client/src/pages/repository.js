@@ -18,7 +18,6 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  AccordionActions,
 } from "@mui/material";
 import Head from "next/head";
 import RepoAdd from "src/sections/repository/repo-add";
@@ -30,6 +29,7 @@ import { ApprovalModal } from "src/sections/repository/repo-modal";
 import { figmaColors } from "src/theme/colors";
 import Pagination from "@mui/material/Pagination";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { FilterDropdowns } from "src/sections/repository/repo-filter-dropdowns";
 
 const materialsMockData = [
   // Approved materials
@@ -211,7 +211,6 @@ const ApproveMaterialsSection = ({ pendingMaterials, onApprove, onReject }) => {
                     <Button
                       component="a"
                       href={material.fileLink}
-                      target="_blank"
                       startIcon={
                         <SvgIcon>
                           <ArrowUpOnSquareIcon />
@@ -291,11 +290,52 @@ const Page = () => {
   const pendingMaterials = materials.filter((material) => material.status === "Pending");
 
   const [viewType, setViewType] = useState("icons"); // 'icons' or 'list'
+
+  // SEARCH FUNCTION
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
+
+  // FILTER FUNCTION
+  const [filters, setFilters] = useState({
+    type: "",
+    instrument: "",
+    grade: "",
+  });
+
+  // Unique values for types, instruments, and grades (you could derive these from your materials data)
+  const types = ["Image", "Document"];
+  const instruments = ["Piano", "Guitar", "Ukulele", "Violin"];
+  const grades = ["1", "2", "3", "4", "5", "6"];
+
+  // Update the state when filters are changed
+  const handleFilterChange = (event) => {
+    setFilters({
+      ...filters,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  const filteredAndSearchedMaterials = approvedMaterials.filter((material) => {
+    // Filter logic
+    const filterMatch =
+      (filters.type ? material.type === filters.type : true) &&
+      (filters.instrument ? material.instrument === filters.instrument : true) &&
+      (filters.grade ? material.grade === filters.grade : true);
+
+    // Search logic - checks if the search term is included in the material's fileName
+    // You can extend this logic to search in other attributes as well
+    const searchMatch =
+      material.fileName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      material.instrument.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      material.grade.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      material.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      material.createdTime.toLowerCase().includes(searchTerm.toLowerCase());
+
+    return filterMatch && searchMatch;
+  });
 
   const fetchMaterials = async () => {
     // Replace with actual API call
@@ -345,8 +385,7 @@ const Page = () => {
       <Box display={"flex"} justifyContent={"center"}>
         <Button
           component="a"
-          href={material.linkToGCP}
-          target="_blank"
+          href={material.fileLink}
           startIcon={
             <SvgIcon>
               <ArrowUpOnSquareIcon />
@@ -382,8 +421,7 @@ const Page = () => {
           />
           <Button
             component="a"
-            href={material.linkToGCP}
-            target="_blank"
+            href={material.fileLink}
             startIcon={
               <SvgIcon>
                 <ArrowUpOnSquareIcon />
@@ -457,6 +495,13 @@ const Page = () => {
                   </Button>
                 </Card>
                 <Box>
+                  <FilterDropdowns
+                    filters={filters}
+                    types={types}
+                    instruments={instruments}
+                    grades={grades}
+                    onFilterChange={handleFilterChange}
+                  />
                   <Box display={"flex"} justifyContent={"center"} mt={2}>
                     <ToggleButtonGroup
                       value={viewType}
@@ -467,11 +512,11 @@ const Page = () => {
                       <ToggleButton value="list">List</ToggleButton>
                     </ToggleButtonGroup>
                   </Box>
-                  <Box></Box>
+
                   {viewType === "icons" ? (
-                    <MaterialsIconView materials={approvedMaterials} />
+                    <MaterialsIconView materials={filteredAndSearchedMaterials} />
                   ) : (
-                    <MaterialsListView materials={approvedMaterials} />
+                    <MaterialsListView materials={filteredAndSearchedMaterials} />
                   )}
                 </Box>
               </AccordionDetails>
