@@ -340,7 +340,7 @@ const RootNavigator = () => {
            <Stack.Screen name="CreateGoalsForStudents" component={CreateGoalsForStudents} options={{ title: 'Create Goals' }} />
            <Stack.Screen name="PracticeListTeacherScreen" component={PracticeListTeacherScreen} options={{ title: 'Practice Log' }} />
           <Stack.Screen name="ProvidePracticeFeedbackScreen" component={ProvidePracticeFeedbackScreen} options={{ title: 'Provide Feedback' }} />
-          <Stack.Screen name="ResourceRepositoryScreen" component={ResourceRepositoryScreen} options={{ title: 'Teaching Resources' }} />
+          <Stack.Screen name="ResourceRepositoryScreen" component={ResourceRepositoryScreen} options={{ title: 'Central Resource Repository' }} />
           <Stack.Screen name="ResourcesUploadedListScreen" component={ResourcesUploadedListScreen} options={{ title: 'Resources Uploaded' }} />
           <Stack.Screen name="UploadResourceScreen" component={UploadResourceScreen} options={{ title: 'Upload Resources' }} />
           <Stack.Screen name="SelectFilesFromRepositoryScreen" component={SelectFilesFromRepositoryScreen} options={{ title: 'Select Files' }} />
