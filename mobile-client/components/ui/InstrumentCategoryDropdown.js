@@ -69,7 +69,7 @@ const InstrumentCategoryDropdown = (props) => {
         data={data}
         labelField="label"
         valueField="value"
-        placeholder="Instruments"
+        placeholder={`Instruments (${selected.length})`}
         value={selected}
         onChange={handleSelection}
         alwaysRenderSelectedItem={false}

@@ -207,7 +207,31 @@ function ResourcesUploadedListScreen() {
             </View>
             <Text style={styles.itemTitle}>{fileName}</Text>
             <Text style={styles.date}>{'24/03/2024' /* Replace with actual date if needed */}</Text>
-            <View style={styles.chipContainer}>
+            <View style={styles.categoryContainer}>
+                <Text style={styles.categoryText}>
+                    Types: {type.map((typeItem, index) => (
+                        <Text key={'type-' + index} style={styles.categoryTextLight}>
+                            {typeItem}{index < type.length - 1 ? ', ' : ''}
+                        </Text>
+                    ))}
+                </Text>
+                <Text style={styles.categoryText}>
+                    Instruments: {instrument.map((instrumentItem, index) => (
+                        <Text key={'instrument-' + index} style={styles.categoryTextLight}>
+                            {instrumentItem}{index < instrument.length - 1 ? ', ' : ''}
+                        </Text>
+                    ))}
+                </Text>
+                <Text style={styles.categoryText}>
+                    Grades: {grade.map((gradeItem, index) => (
+                        <Text key={'grade-' + index} style={styles.categoryTextLight}>
+                            {gradeItem}{index < grade.length - 1 ? ', ' : ''}
+                        </Text>
+                    ))}
+                </Text>
+            </View>
+
+            {/* <View style={styles.chipContainer}>
                 {type.map((typeItem, index) => (
                     <View key={index} style={styles.chip}>
                         <Text style={styles.pinkChipText}>{typeItem}</Text>
@@ -223,7 +247,7 @@ function ResourcesUploadedListScreen() {
                         <Text style={styles.greenChipText}>Grade {gradeItem}</Text>
                     </View>
                 ))}
-            </View>
+            </View> */}
         </TouchableOpacity>
         );
     };
@@ -234,26 +258,29 @@ function ResourcesUploadedListScreen() {
             <View style={styles.headerButtons}>
                 <HomepageSearchBar onSearch={handleSearch} />
                 {/* <RewardsCategoryDropdown1 onCategoryChange={setSelectedCategories} /> */}
-                <View style={styles.dropdownContainer}> 
-                    <TypeCategoryDropdown onCategoryChange={setSelectedTypes}/>
-                    <InstrumentCategoryDropdown onCategoryChange={setSelectedInstruments}/>
-                    <GradeCategoryDropdown onCategoryChange={setSelectedGrades}/>
-                    <StatusDropdown onCategoryChange={setSelectedStatus}/>
-                </View>
-                <View style={styles.selectedChipsContainer}>
-                    <View style={styles.selectedChip}>
-                        <Text style={styles.pinkSelectedChipText}>{`${selectedTypes.length} Selected`}</Text>
+                <ScrollView horizontal={true}> 
+                    <View style={styles.dropdownContainer}> 
+                        <TypeCategoryDropdown onCategoryChange={setSelectedTypes}/>
+                        <InstrumentCategoryDropdown onCategoryChange={setSelectedInstruments}/>
+                        <GradeCategoryDropdown onCategoryChange={setSelectedGrades}/>
+                        <StatusDropdown onCategoryChange={setSelectedStatus}/>
                     </View>
-                    <View style={[styles.selectedChip, styles.instrumentChip]}>
-                        <Text style={styles.blueSelectedChipText}>{`${selectedInstruments.length} Selected`}</Text>
-                    </View>
-                    <View style={[styles.selectedChip, styles.gradeChip]}>
-                        <Text style={styles.greenSelectedChipText}>{`${selectedGrades.length} Selected`}</Text>
-                    </View>
-                    <View style={[styles.selectedChip, styles.statusChip]}>
-                        <Text style={styles.purpleSelectedChipText}>{`${selectedStatus.length} Selected`}</Text>
-                    </View>
-                </View>
+
+                    {/* <View style={styles.selectedChipsContainer}>
+                        <View style={styles.selectedChip}>
+                            <Text style={styles.pinkSelectedChipText}>{`${selectedTypes.length} Selected`}</Text>
+                        </View>
+                        <View style={[styles.selectedChip, styles.instrumentChip]}>
+                            <Text style={styles.blueSelectedChipText}>{`${selectedInstruments.length} Selected`}</Text>
+                        </View>
+                        <View style={[styles.selectedChip, styles.gradeChip]}>
+                            <Text style={styles.greenSelectedChipText}>{`${selectedGrades.length} Selected`}</Text>
+                        </View>
+                        <View style={[styles.selectedChip, styles.statusChip]}>
+                            <Text style={styles.purpleSelectedChipText}>{`${selectedStatus.length} Selected`}</Text>
+                        </View>
+                    </View> */}
+                </ScrollView>
             </View>
             <View style={styles.header}>
             <Text style={styles.headerText}>
@@ -345,6 +372,16 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         fontSize: 12
     },
+    categoryContainer:{
+        margin:10
+    },
+    categoryText:{
+        fontWeight: '600',
+        marginBottom: 2
+    },
+    categoryTextLight:{
+        fontWeight: '300'
+    },
     statusHeader: {
         position: "absolute",
         top: 0,
@@ -433,11 +470,16 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         fontSize: 12
     },
+    filterBar:{
+        flexDirection:'row',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
     dropdownContainer:{
         flexDirection: 'row',
-        justifyContent: "space-around", // Try 'space-around' for equal spacing
-        alignItems: 'center', // This centers the dropdowns vertically in the container
-        height: 40,
+        // justifyContent: "space-between", // Try 'space-around' for equal spacing
+        // alignItems: 'center', // This centers the dropdowns vertically in the container
+        height: 60,
         marginTop: 10
     },
     selectionCount: {

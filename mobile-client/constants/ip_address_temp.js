@@ -1,3 +1,3 @@
-const IP_ADDRESS = 'https://172.20.10.3:8080'; // Replace with your own IP address
+const IP_ADDRESS = 'https://192.168.50.47:8080'; // Replace with your own IP address
 
 export default IP_ADDRESS;

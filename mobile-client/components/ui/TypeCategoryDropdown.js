@@ -69,7 +69,7 @@ const TypeCategoryDropdown = (props) => {
         data={data}
         labelField="label"
         valueField="value"
-        placeholder="Types"
+        placeholder={`Types (${selected.length})`}
         value={selected}
         onChange={handleSelection}
         alwaysRenderSelectedItem={false}

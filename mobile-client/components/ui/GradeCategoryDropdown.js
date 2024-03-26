@@ -74,7 +74,7 @@ const GradeCategoryDropdown = (props) => {
         data={data}
         labelField="label"
         valueField="value"
-        placeholder="Grades"
+        placeholder={`Grades (${selected.length})`}
         value={selected}
         onChange={handleSelection}
         alwaysRenderSelectedItem={false}

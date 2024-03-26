@@ -5,9 +5,9 @@ import Colors from "../../constants/colors";
 import Ionicons from "@expo/vector-icons/Ionicons"; // make sure to import Ionicons
 
 const data = [
-  { label: "Pending", value: "pending" },
-  { label: "Approved", value: "approved" },
-  { label: "Rejected", value: "rejected" },
+  { label: `Pending `, value: "pending" },
+  { label: `Approved `, value: "approved" },
+  { label: `Rejected `, value: "rejected" },
 ];
 
 const StatusDropdown = (props) => {
@@ -42,12 +42,42 @@ const StatusDropdown = (props) => {
   };
 
   const renderItem = (item) => {
+    let iconName;
+    let iconColor;
+  
+    // Determine the icon and color based on the item's value
+    switch (item.value) {
+      case 'pending':
+        iconName = "timer";
+        iconColor = Colors.accentBlue;
+        break;
+      case 'approved':
+        iconName = "checkmark-circle";
+        iconColor = Colors.accentGreen;
+        break;
+      case 'rejected':
+        iconName = "close-circle";
+        iconColor = Colors.accentRed;
+        break;
+      default:
+        iconName = "square-outline";
+        iconColor = Colors.mainPurple;
+    }
+  
     return (
       <TouchableOpacity
         style={styles.item}
         onPress={() => handleSelection(item)}
       >
+        {/* Render the icon next to the label text */}
+        <Ionicons
+          name={iconName}
+          size={20}
+          color={iconColor}
+          style={{ marginRight: 8 }} // Add some spacing between the icon and the text
+        />
         <Text style={styles.selectedTextStyle}>{item.label}</Text>
+        {/* You might want to conditionally render a checkmark or other icon here to indicate selection */}
         <Ionicons
           name={isItemSelected(item.value) ? "checkbox" : "square-outline"}
           size={20}
@@ -65,11 +95,11 @@ const StatusDropdown = (props) => {
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
         inputSearchStyle={styles.inputSearchStyle}
-        iconStyle={styles.iconStyle}
+        iconStyle={styles.iconStyle} 
         data={data}
         labelField="label"
         valueField="value"
-        placeholder="Status"
+        placeholder={`Status (${selected.length})        `}
         value={selected}
         onChange={handleSelection}
         alwaysRenderSelectedItem={false}
@@ -89,6 +119,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5, // Gives some space between the dropdowns 
   },
   dropdown: {
+    flexDirection: 'row',
     height: 40,
     backgroundColor: Colors.mainPurple,
     borderRadius: 12,
@@ -101,6 +132,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
     elevation: 2,
+    alignItems: 'center',
   },
   placeholderStyle: {
     fontSize: 16,
