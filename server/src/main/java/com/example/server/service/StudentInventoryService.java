@@ -186,7 +186,7 @@ public class StudentInventoryService {
             } else {
                 List<RewardShop> ownedBadgeDetails = rewardShopService.getAllRewardShopItem();
                 return ownedBadgeDetails.stream()
-                    .filter(item ->  ownedBadgeDetails.contains(item.getId()))
+                    .filter(item ->  ownedBadgeList.contains(item.getId()))
                     .collect(Collectors.toList());
             }
 
