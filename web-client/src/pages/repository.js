@@ -100,7 +100,31 @@ const materialsMockData = [
     grade: "3",
     type: "Image",
     teacherId: "teacher-224",
-  }
+  },
+  {
+    materialId: "file-pending-5",
+    fileName: "Music Theory 108",
+    createdTime: "2024-02-25T11:00:00Z",
+    fileLink:
+      "https://storage.googleapis.com/moosicfyp/assignments/2dac5872-5e26-40e9-80cf-6100dc0aec91_baseline_assesment_report_cover.png",
+    status: "Pending",
+    instrument: "Ukulele",
+    grade: "3",
+    type: "Image",
+    teacherId: "teacher-224",
+  },
+  {
+    materialId: "file-pending-6",
+    fileName: "Music Theory 109",
+    createdTime: "2024-02-25T11:00:00Z",
+    fileLink:
+      "https://storage.googleapis.com/moosicfyp/assignments/2dac5872-5e26-40e9-80cf-6100dc0aec91_baseline_assesment_report_cover.png",
+    status: "Pending",
+    instrument: "Ukulele",
+    grade: "3",
+    type: "Image",
+    teacherId: "teacher-224",
+  },
   // ... add more materials as needed
 ];
 
@@ -153,7 +177,17 @@ const ApproveMaterialsSection = ({ pendingMaterials, onApprove, onReject }) => {
   return (
     <Card sx={{ p: 2, display: "flex", width: "100%", flexDirection: "column" }}>
       <Stack spacing={2}>
-        <Typography variant="h5">Pending Approvals</Typography>
+        <Box
+          display="flex"
+          flexDirection="column"
+          justifyContent="space-between"
+        >
+          <Typography variant="h5">Pending Approvals</Typography>
+          <Typography sx={{ fontSize: "14px", marginTop: 1, color: figmaColors.fontTertiary }}>
+            You have {pendingMaterials.length} pending approvals
+          </Typography>
+        </Box>
+
         <Stack spacing={2}>
           {pendingMaterials.length === 0 ? (
             <Typography variant="body1">No pending materials to approve</Typography>
