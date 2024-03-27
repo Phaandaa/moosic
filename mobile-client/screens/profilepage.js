@@ -10,7 +10,7 @@ import Modal from 'react-native-modal'; // Import react-native-modal
 
 const ProfileScreen = ({ navigation, route }) => {
 
-  const { signOut } = useAuth();
+  const { signOut, state } = useAuth();
   const { expoPushToken } = route.params;
   const [isLoading, setIsLoading] = useState(false);
   const [cacheUserData, setCacheUserData] = useState('');
@@ -138,8 +138,10 @@ const ProfileScreen = ({ navigation, route }) => {
   
   useEffect(() => {
     loadAvatarAndFrame();
-    renderBadges();
-  }, [selectedAvatarId, selectedFrameId, userToken]);
+    if (state.role === 'Student') {
+      renderBadges();
+    }
+  }, [selectedAvatarId, selectedFrameId]);
   
 
   // Handle the sign-out process
@@ -193,7 +195,9 @@ const ProfileScreen = ({ navigation, route }) => {
       await AsyncStorage.setItem('userData', JSON.stringify(userData));
       
       loadAvatarAndFrame(); 
-      renderBadges();
+      if (state.role === 'Student') {
+        renderBadges();
+      }
     } catch (error) {
       console.error('Error fetching latest user data:', error);
     } finally {
