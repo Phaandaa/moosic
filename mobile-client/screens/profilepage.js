@@ -37,13 +37,19 @@ const ProfileScreen = ({ navigation, route }) => {
     try{
       const storedData = await AsyncStorage.getItem('userData');
       const storedAuthData = await AsyncStorage.getItem('authData');
-
+      // console.log("BREAK1")
+      // console.log(storedData)
+      // console.log("BREAK2")
       if (storedAuthData && storedData) {
         const authData = JSON.parse(storedAuthData);
         setUserToken(authData.idToken);  // Set the token from stored auth data
+       
+        console.log(storedData)
         setCacheUserData(JSON.parse(storedData));
-        console.log(userToken)
-        return 
+        // console.log("BREAK3")
+        // console.log(userToken)
+        // console.log("BREAK4")
+        // console.log(cacheUserData)
 
       }
       
@@ -52,8 +58,6 @@ const ProfileScreen = ({ navigation, route }) => {
     }
   }
   
-  const authHeader = { headers: { Authorization: `Bearer ${userToken}` } };
-  console.log(authHeader)
   
   // Fetch inventory data
   const fetchInventoryData = async (userId) => {
@@ -63,7 +67,7 @@ const ProfileScreen = ({ navigation, route }) => {
         console.log('No user token available.');
         return;
       }
-      
+      const authHeader = { headers: { Authorization: `Bearer ${userToken}` } }
       const avatarResponse = await axios.get(`${IP_ADDRESS}/student-inventory/${userId}/avatar-details`, authHeader);
       setOwnedAvatars(avatarResponse.data);
 
@@ -113,7 +117,7 @@ const ProfileScreen = ({ navigation, route }) => {
       }
 
       // Setting up the Authorization header with the userToken
-      
+      const authHeader = { headers: { Authorization: `Bearer ${userToken}` } }
 
       const [avatarResponse, frameResponse] = await Promise.all([
         axios.get(`${IP_ADDRESS}/reward-shop/${selectedAvatarId}`, authHeader),
@@ -134,14 +138,14 @@ const ProfileScreen = ({ navigation, route }) => {
     loadData();
     console.log('TokenId', userToken)
 
-  }, [userToken]);
+  }, [cacheUserData]);
   
   useEffect(() => {
     loadAvatarAndFrame();
     if (state.role === 'Student') {
       renderBadges();
     }
-  }, [selectedAvatarId, selectedFrameId]);
+  }, [cacheUserData, selectedAvatarId, selectedFrameId]);
   
 
   // Handle the sign-out process
@@ -181,6 +185,7 @@ const ProfileScreen = ({ navigation, route }) => {
   const fetchLatestUserData = async () => {
     setIsLoading(true); // Show loading indicator during data fetch
     try {
+      const authHeader = { headers: { Authorization: `Bearer ${userToken}` } }
       const response = await axios.get(`${IP_ADDRESS}/students/${userId}`, authHeader);
       const userData = response.data;
       // Update the state with the latest fetched data
@@ -214,6 +219,8 @@ const ProfileScreen = ({ navigation, route }) => {
     try {
       // Update Avatar if selected
       if (selectedAvatarId) {
+        console.log("BREAK55")
+        console.log(`${IP_ADDRESS}/students/${userId}/update-avatar?avatar=${selectedAvatarId}`)
         await axios.put(`${IP_ADDRESS}/students/${userId}/update-avatar?avatar=${selectedAvatarId}`, authHeader);
       }
   
