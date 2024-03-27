@@ -43,15 +43,17 @@ const ProfileScreen = ({ navigation, route }) => {
         setUserToken(authData.idToken);  // Set the token from stored auth data
         setCacheUserData(JSON.parse(storedData));
         console.log(userToken)
+        return 
 
       }
       
-    }catch{
+    } catch{
       console.log('No stored data found');
     }
   }
   
   const authHeader = { headers: { Authorization: `Bearer ${userToken}` } };
+  console.log(authHeader)
   
   // Fetch inventory data
   const fetchInventoryData = async (userId) => {
@@ -77,7 +79,7 @@ const ProfileScreen = ({ navigation, route }) => {
     setRefreshing(true);
     setIsLoading(true);
     try {
-      await fetchCache();
+      
       setUserName(cacheUserData.name);
       setUserEmail(cacheUserData.email);
       setUserId(cacheUserData.id);
@@ -128,15 +130,16 @@ const ProfileScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
+    fetchCache();
     loadData();
     console.log('TokenId', userToken)
 
-  }, []);
+  }, [userToken]);
   
   useEffect(() => {
     loadAvatarAndFrame();
     renderBadges();
-  }, [selectedAvatarId, selectedFrameId]);
+  }, [selectedAvatarId, selectedFrameId, userToken]);
   
 
   // Handle the sign-out process

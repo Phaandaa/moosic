@@ -127,9 +127,6 @@ export const AuthProvider = ({ children }) => {
         const response = await axios.post(`${IP_ADDRESS}/api/auth/signin`, { email, password, expoPushToken });
         const { data } = response;
         
-        // console.log(data.userId, data.role); // Confirm these values are correctly logged
-        // console.log(data.idToken);
-        
         if (response.status === 200 && data.userId) {
             await saveAuthDataToCache(data);
             
@@ -169,7 +166,7 @@ export const AuthProvider = ({ children }) => {
 
   const signOut = async (userId, expoPushToken) => {
     try {
-      const response = await axios.post(`${IP_ADDRESS}/api/auth/signout/vNOxOYWrIhc4bpnhKQY2hyCOnO22?expoPushToken=${expoPushToken}`, {});
+      const response = await axios.post(`${IP_ADDRESS}/api/auth/signout/${userId}?expoPushToken=${expoPushToken}`, {});
       console.log(expoPushToken);
       await clearAuthDataFromCache(); // This function should remove auth data from AsyncStorage
       dispatch({ type: LOGOUT });

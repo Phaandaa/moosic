@@ -137,10 +137,10 @@ const HomeScreen = ({ navigation }) => {
           {/* Background of the progress bar (the track) */}
           <View style={styles.progressTrack}>
               {/* Foreground of the progress bar */}
-              <View style={[styles.progressBar, {width: `${progressbar}%`}]} />
+              <View style={[styles.progressBar, {width: `${Math.min(100,progressbar)}%`}]} />
           </View>
           <Text style={styles.progressText}>
-              {progressbar}% Completed
+              {Math.min(100,progressbar)}% Completed
           </Text>
         </View>
 
