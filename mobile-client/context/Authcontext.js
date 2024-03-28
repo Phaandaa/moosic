@@ -56,7 +56,7 @@ const storeUserData = async (userData) => {
   try {
     await AsyncStorage.setItem('userData', JSON.stringify(userData));
     dispatch({ type: STORE_USER_DATA, payload: userData });
-    
+    console.log('Authcontext.js line 59, state:', state);
   } catch (error) {
     console.error('Authcontext.js line 61, Error storing user data:', error);
   }
