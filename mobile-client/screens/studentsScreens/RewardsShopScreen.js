@@ -38,7 +38,7 @@ function RewardsShopScreen() {
         const parsedUserData = JSON.parse(userData);
         setUserData(parsedUserData);
       } catch (error) {
-        console.error("Error processing user data", error);
+        console.error("RewardsShopScreen.js line 41, Error processing user data", error);
       }
     };
     fetchUserData();
@@ -61,7 +61,7 @@ function RewardsShopScreen() {
         setItems(responseData); // Set the state with the response data
         setFilteredResults(responseData);
       } catch (error) {
-        console.error("Error fetching items:", error);
+        console.error("RewardsShopScreen.js line 64, Error fetching items:", error);
       }
     };
     fetchItems();
@@ -137,7 +137,7 @@ function RewardsShopScreen() {
       setModalVisible(false);
       setSelectedItem(null); // Reset selected item on successful redemption
     } catch (error) {
-      console.error("Redemption error:", error);
+      console.error("RewardsShopScreen.js line 140, Redemption error:", error);
       Alert.alert("Redemption Failed", error.toString());
       setModalVisible(false);
     }

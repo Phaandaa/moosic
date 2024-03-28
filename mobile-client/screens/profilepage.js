@@ -91,7 +91,7 @@ const ProfileScreen = ({ navigation, route }) => {
         // can add renderBadges() here instead in useEffect
       }
     } catch (error) {
-      console.error('profilepage.js line 94, Error processing stored data:', error);
+      console.error('profilepage.js line 94, Error processing stored data:', error.message);
     } finally {
       setIsLoading(false);
       setRefreshing(false);
@@ -231,9 +231,18 @@ const ProfileScreen = ({ navigation, route }) => {
     const authHeader = { headers: { Authorization: `Bearer ${userToken}` } }
     try {
       const response = await axios.get(`${IP_ADDRESS}/student-inventory/${userId}/badge-details`, authHeader);
-      setOwnedBadges(response.data);
+      if (response.status === 404) {
+        console.log('kontoll');
+        setOwnedBadges([]);
+      } else {
+        setOwnedBadges(response.data);
+      }
     } catch (error) {
-      console.error('profilepgae.js line 236, Error fetching badges:', error);
+      if (error.response && error.response.status === 404) {
+        console.log('profilepage.js line 242, Badges not found (404 error):', error.response);
+      } else {
+        console.error('profilepage.js line 244, Error fetching badges:', error);
+      }
     }
   }
 
