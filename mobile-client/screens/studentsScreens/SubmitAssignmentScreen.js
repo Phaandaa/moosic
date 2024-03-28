@@ -41,9 +41,9 @@ function SubmitAssignmentScreen({ navigation, route }) {
         quality: 1,
       });
       if (!result.canceled) {
-        console.log('result.assets[0]:', result.assets[0])
+        console.log('SubmitAssignment.js line 44, result.assets[0]:', result.assets[0])
         saveImage(result.assets[0]); 
-        console.log(images);
+        console.log('SubmitAssignment.js line 46, images: ', images);
       }
     }
   };
@@ -56,7 +56,7 @@ function SubmitAssignmentScreen({ navigation, route }) {
       });
       if (!result.canceled && result.assets) {
         setUploadedDocuments(currentDocs => [...currentDocs, ...result.assets]);
-        console.log('uploadedDocuments',uploadedDocuments);
+        console.log('SubmitAssignment.js line 59, uploadedDocuments: ',uploadedDocuments);
       }
     } catch (error) {
       Alert.alert('Error picking document:', error.message);
@@ -122,14 +122,14 @@ function SubmitAssignmentScreen({ navigation, route }) {
         const uriParts = image.uri.split('.');
         const fileType = uriParts[uriParts.length - 1];
 
-        console.log('Appending file:', image.uri);
+        console.log('SubmitAssignment.js line 125, Appending file:', image.uri);
         formData.append('files', {
             uri: uri,
             name: fileName,
             type: `image/${fileType}`,
         });
       } else {
-        console.warn('Invalid image URI:', image.uri);
+        console.warn('SubmitAssignment.js line 132, Invalid image URI:', image.uri);
       }
     });
 
@@ -144,7 +144,7 @@ function SubmitAssignmentScreen({ navigation, route }) {
 
     formData.append("studentComment", studentComments);
 
-    console.log(formData)
+    console.log('SubmitAssignment.js line 147: formData', formData)
 
     try {
 
@@ -158,12 +158,12 @@ function SubmitAssignmentScreen({ navigation, route }) {
         throw new Error(`Request failed with status ${response.status}: ${errorText}`);
       }
       const responseData = await response.json();
-      console.log(responseData);
+      console.log('SubmitAssignment.js line 161, responseData: ', responseData);
       // dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
       setModalVisible(true);
 
     } catch (error) {
-      console.error('Error creating assignment:', error);
+      console.error('SubmitAssignment.js line 166, Error creating assignment:', error);
       Alert.alert('Error', `Failed to create assignment. ${error.response?.data?.message || 'Please try again.'}`);
     }
   };

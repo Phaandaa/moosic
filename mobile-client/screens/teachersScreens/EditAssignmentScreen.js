@@ -65,9 +65,9 @@ function EditAssignmentScreen({ route, navigation }) {
         quality: 1,
       });
       if (!result.canceled) {
-        console.log('result.assets[0]:', result.assets[0])
+        console.log('EditAssignmentScreen.js line 68, result.assets[0]:', result.assets[0])
         saveImage(result.assets[0]); 
-        console.log(images);
+        console.log('EditAssignmentScreen.js line 70, images: ', images);
       }
     }
   };
@@ -80,7 +80,7 @@ function EditAssignmentScreen({ route, navigation }) {
       });
       if (!result.canceled && result.assets) {
         setUploadedDocuments(currentDocs => [...currentDocs, ...result.assets]);
-        console.log('uploadedDocuments',uploadedDocuments);
+        console.log('EditAssignmentScreen.js line 83, uploadedDocuments: ',uploadedDocuments);
       }
     } catch (error) {
       Alert.alert('Error picking document:', error.message);
@@ -140,9 +140,7 @@ function EditAssignmentScreen({ route, navigation }) {
       return;
     }
 
-    console.log('assignmentDeadline', assignmentDeadline)
-    console.log('assignmentDeadline', assignmentDeadline)
-
+    console.log('EditAssignmentScreen.js line 143, assignmentDeadline', assignmentDeadline)
   
     const formData = new FormData();
 
@@ -150,7 +148,7 @@ function EditAssignmentScreen({ route, navigation }) {
       assignment_desc: assignmentDesc,
       assignment_deadline: assignmentDeadline,
     };
-    console.log('assignmentData:', assignmentData)
+    console.log('EditAssignmentScreen.js line 151, assignmentData: ', assignmentData)
     
   
     images.forEach((image, index) => {
@@ -160,14 +158,14 @@ function EditAssignmentScreen({ route, navigation }) {
         const uriParts = image.uri.split('.');
         const fileType = uriParts[uriParts.length - 1];
 
-        console.log('Appending file:', image.uri);
+        console.log('EditAssignmentScreen.js line 161, Appending file:', image.uri);
         formData.append('files', {
             uri: uri,
             name: fileName,
             type: `image/${fileType}`,
         });
       } else {
-        console.warn('Invalid image URI:', image.uri);
+        console.warn('EditAssignmentScreen.js line 168, Invalid image URI:', image.uri);
       }
     });
 
@@ -181,7 +179,7 @@ function EditAssignmentScreen({ route, navigation }) {
 
     // console.log(formData)
     formData.append("assignment", {"string" : JSON.stringify(assignmentData), type: 'application/json'});
-    console.log(formData)
+    console.log('EditAssignmentScreen.js line 182, formData: ', formData)
 
     try {
      
@@ -198,12 +196,12 @@ function EditAssignmentScreen({ route, navigation }) {
       
 
       const responseData = await response.json();
-      console.log(responseData);
+      console.log('EditAssignmentScreen.js line', responseData);
       dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
       setModalVisible(true);
 
     } catch (error) {
-      console.error('Error editing assignment:', error);
+      console.error('EditAssignmentScreen.js line 204, Error editing assignment:', error);
       Alert.alert('Error', `Failed to edit assignment. ${error.response?.data?.message || 'Please try again.'}`);
     }
   };

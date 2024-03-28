@@ -18,7 +18,7 @@ function PracticeListStudentScreen({navigation}){
             const storedData = await AsyncStorage.getItem('authData');
             if (storedData !== null) {
                 const parsedData = JSON.parse(storedData);
-                console.log('studentID:', parsedData.userId);
+                console.log('PracticeListStudent.js line 21, studentID:', parsedData.userId);
                 return parsedData.userId;
             }
         } catch (error) {
@@ -32,7 +32,7 @@ function PracticeListStudentScreen({navigation}){
             try {
                 const id = await checkStoredData();
                 setStudentID(id);
-                console.log(studentID)
+                console.log('PracticeListStudent.js, student ID: ', studentID)
             } catch (error) {
                 console.error('Error processing stored data', error);
             }
@@ -59,15 +59,15 @@ function PracticeListStudentScreen({navigation}){
                     // If the date format is different, you may need to parse it to a Date object first
                     return new Date(b.submissionTimestamp) - new Date(a.submissionTimestamp);
                 });
-                console.log(sortedData);
+                console.log('PracticeListStudent.js line 62: sortedData', sortedData);
 
                 setPracticeData(sortedData); // Set the state with the response data
                 setSearchResults(sortedData);
 
-                console.log(practiceData)
+                console.log('PracticeListStudent.js line 67: practiceData', practiceData)
 
             } catch (error) {
-                console.error('Error fetching assignments:', error);
+                console.error('PracticeListStudent.js line 70, Error fetching assignments:', error);
             }
         };
         if(studentID){

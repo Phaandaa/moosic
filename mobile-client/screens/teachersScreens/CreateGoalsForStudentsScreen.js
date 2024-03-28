@@ -30,7 +30,7 @@ function CreateGoalsForStudents({ route }) {
                   SetCurrentpoints(response.data.points);
               }
           } catch (error) {
-              console.log("Error", "Failed to fetch student goals.");
+              console.log("CreateGoalsForStudentsScreen.js line 33, Error", "Failed to fetch student goals.");
           } finally {
               setLoadingState(false);
           }

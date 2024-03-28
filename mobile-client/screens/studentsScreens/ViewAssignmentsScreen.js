@@ -12,7 +12,7 @@ const trimDate = (date) => {
 
 function ViewAssignmentsScreen({route, navigation}) {
     const { assignment } = route.params;
-    console.log('assignment:', assignment)
+    console.log('ViewAssignments.js line 15, assignment:', assignment)
 
     // const assignmentDataAll = useSelector(state => state.cache.assignmentDataAll) || []; 
 

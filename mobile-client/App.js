@@ -96,7 +96,7 @@ async function registerForPushNotificationsAsync() {
     token = await Notifications.getExpoPushTokenAsync({
       projectId: "266a78dd-0994-4876-8ba9-92801ff17fb2",
     });
-    console.log(token);
+    console.log("App.js line 99, expoPushToken: " + token);
   } else {
     alert('Must use physical device for Push Notifications');
   }
@@ -244,16 +244,6 @@ const RootNavigator = () => {
     registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
 
     notificationListener.current = Notifications.addNotificationReceivedListener(async notification => {
-      console.log('Notification received:', notification);
-
-      if (notification.remote) {
-        console.log('Push notification received:', notification);
-        console.log(notification.request.content.data.message);
-      } else {
-        console.log('Local notification received:', notification);
-        // Handle local notification
-      }
-  
       // Save the received notification to AsyncStorage
       const newNotificationData = {
         id: notification.request.identifier, 
@@ -269,14 +259,14 @@ const RootNavigator = () => {
   
         // Save the updated list back to AsyncStorage
         await saveNotification (updatedNotifications);
-        console.log('Notification data saved to cache.');
+        console.log('App.js line 262, Notification data saved to cache.');
       } catch (error) {
-        console.error('Error saving notification to cache:', error);
+        console.error('App.js line 264, Error saving notification to cache:', error);
       }
     });
 
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log(response);
+      console.log('App.js line 269, response: ', response);
     });
 
     setIsLoading(false); 

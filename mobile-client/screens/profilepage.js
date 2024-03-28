@@ -42,11 +42,13 @@ const ProfileScreen = ({ navigation, route }) => {
         const authData = JSON.parse(storedAuthData);
         setUserToken(authData.idToken);  // Set the token from stored auth data
         setCacheUserData(JSON.parse(storedData));
-
+        const parsedData = JSON.parse(storedData);
+        console.log('profilepage.js line 46, Parsed user data:', parsedData);
+        setCacheUserData(parsedData);
       }
       
     } catch{
-      console.error('No stored data found');
+      console.error('profilepage.js line 51, Error fetching cache data:', error);
     }
   }
   
@@ -66,7 +68,7 @@ const ProfileScreen = ({ navigation, route }) => {
       const frameResponse = await axios.get(`${IP_ADDRESS}/student-inventory/${userId}/frame-details`, authHeader);
       setOwnedFrames(frameResponse.data);
     } catch (error) {
-      console.error('Error fetching inventory:', error);
+      console.error('profilepage.js line 71, Error fetching inventory:', error);
     }
   };
 
@@ -89,7 +91,7 @@ const ProfileScreen = ({ navigation, route }) => {
         // can add renderBadges() here instead in useEffect
       }
     } catch (error) {
-      console.error('Error processing stored data:', error);
+      console.error('profilepage.js line 94, Error processing stored data:', error);
     } finally {
       setIsLoading(false);
       setRefreshing(false);
@@ -117,7 +119,7 @@ const ProfileScreen = ({ navigation, route }) => {
       setAvatar(avatarResponse.data.imageLink);
       setFrame(frameResponse.data.imageLink);
     } catch (error) {
-      console.error('Error fetching avatar or frame data:', error);
+      console.error('profilepage.js line 122, Error fetching avatar or frame data:', error);
     } finally {
       setIsLoading(false);
     }
@@ -142,10 +144,10 @@ const ProfileScreen = ({ navigation, route }) => {
   const handleSignOut = async () => {
     setIsLoading(true);
     try {
-      await signOut(userId, expoPushToken);
-      // await signOut();
+      // await signOut(userId, expoPushToken);
+      await signOut();
     } catch (error) {
-      console.error('Error signing out', error);
+      console.error('profilepage.js line 150, Error signing out', error);
     } finally {
       setIsLoading(false);
     }
@@ -192,7 +194,7 @@ const ProfileScreen = ({ navigation, route }) => {
         renderBadges();
       }
     } catch (error) {
-      console.error('Error fetching latest user data:', error);
+      console.error('profilepage.js line 197, Error fetching latest user data:', error);
     } finally {
       setIsLoading(false); // Hide loading indicator
     }
@@ -216,7 +218,7 @@ const ProfileScreen = ({ navigation, route }) => {
       await fetchLatestUserData();
       
     } catch (error) {
-      console.error('Error updating profile:', error);
+      console.error('profilepage.js line 221, Error updating profile:', error);
       alert('An error occurred while updating your profile. Please try again.');
     } finally {
       setIsLoading(false); // Hide loading indicator
@@ -231,7 +233,7 @@ const ProfileScreen = ({ navigation, route }) => {
       const response = await axios.get(`${IP_ADDRESS}/student-inventory/${userId}/badge-details`, authHeader);
       setOwnedBadges(response.data);
     } catch (error) {
-      console.error('Error fetching badges:', error);
+      console.error('profilepgae.js line 236, Error fetching badges:', error);
     }
   }
 
@@ -355,7 +357,7 @@ const ProfileScreen = ({ navigation, route }) => {
       await fetchLatestUserData(); 
     }
     catch (error) {
-      console.error('Error fetching latest user data:', error);
+      console.error('profilepage.js line 360, Error fetching latest user data:', error);
     }
     // Directly call fetchLatestUserData to update state
     setRefreshing(false);

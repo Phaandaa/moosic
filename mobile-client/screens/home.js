@@ -31,7 +31,6 @@ const HomeScreen = ({ navigation }) => {
   const fetchDataAndUpdateState = async () => {
     setLoadingState(true);
     try {
-      // Retrieve auth and user data from AsyncStorage
       const authDataString = await AsyncStorage.getItem('authData');
       const userDataString = await AsyncStorage.getItem('userData');
       
@@ -39,34 +38,29 @@ const HomeScreen = ({ navigation }) => {
         throw new Error('Required data not found in AsyncStorage');
       }
       
-      // Parse the retrieved strings to JSON
       const authData = JSON.parse(authDataString);
       const userData = JSON.parse(userDataString);
       
-      console.log('Parsed auth data:', authData);
-      console.log('Parsed user data:', userData);
+      console.log('home.js line 46, Parsed auth data:', authData);
+      console.log('home.js line 47, Parsed user data:', userData);
       
-      // Update state with the retrieved data
-      setUserToken(authData.idToken); // Assuming idToken is part of your authData
-      setUserRole(authData.role); // Update userRole state with role
-      console.log('User role:', authData.role);
-      console.log('idToken data:', authData.idToken);
-      setUser(userData); // Update user state with userData
+      setUserToken(authData.idToken); 
+      setUserRole(authData.role); 
+      console.log('home.js line 50, User role:', authData.role);
+      console.log('home.js line 51, idToken data:', authData.idToken);
+      setUser(userData); 
       
-      // Prepare the auth header using the idToken
       const authHeader = { headers: { Authorization: `Bearer ${authData.idToken}` } };
-      console.log('Auth header:', authHeader)
-      // Fetch student's goals using the auth header
+      console.log('home.js line 56, Auth header:', authHeader)
       const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/student/${userData.id}`;
-      console.log('Fetching student goals from:', fetchStudentsGoalsUrl);
+      console.log('home.js line 57, Fetching student goals from:', fetchStudentsGoalsUrl);
       
       const goalsResponse = await axios.get(fetchStudentsGoalsUrl, authHeader);
       
-      // Update state with the fetched goals
       setGoals(goalsResponse.data ? goalsResponse.data : []);
       
     } catch (error) {
-      console.error('Error during data fetching and state updating', error);
+      console.error('home.js line 63, Error during data fetching and state updating', error);
     } finally {
       setLoadingState(false);
     }
@@ -74,7 +68,7 @@ const HomeScreen = ({ navigation }) => {
   
   useEffect(() => {
     fetchDataAndUpdateState();
-  }, []); // Empty dependency array means this runs once on component mount
+  }, []); 
   
   
 
@@ -84,7 +78,7 @@ const HomeScreen = ({ navigation }) => {
     require('../assets/homepage-banners/treblecleffbanner.png'),
   ];
 
-
+  // TODO: check if can just let the user swipe
   useEffect(() => {
     const interval = setInterval(() => {
       const nextIndex = (currentIndex + 1) % bannerImages.length;

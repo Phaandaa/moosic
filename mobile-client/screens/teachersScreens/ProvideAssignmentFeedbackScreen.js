@@ -45,9 +45,9 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
         quality: 1,
       });
       if (!result.canceled) {
-        console.log('result.assets[0]:', result.assets[0])
+        console.log('ProvideAssignmentFeddbackScreen.js line 48, result.assets[0]:', result.assets[0])
         saveImage(result.assets[0]); 
-        console.log(images);
+        console.log('ProvideAssignmentFeddbackScreen.js line 50, images: ', images);
       }
     }
   };
@@ -60,7 +60,7 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
       });
       if (!result.canceled && result.assets) {
         setUploadedDocuments(currentDocs => [...currentDocs, ...result.assets]);
-        console.log('uploadedDocuments',uploadedDocuments);
+        console.log('ProvideAssignmentFeddbackScreen.js line 63, uploadedDocuments: ',uploadedDocuments);
       }
     } catch (error) {
       Alert.alert('Error picking document:', error.message);
@@ -126,14 +126,14 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
         const uriParts = image.uri.split('.');
         const fileType = uriParts[uriParts.length - 1];
 
-        console.log('Appending file:', image.uri);
+        console.log('ProvideAssignmentFeddbackScreen.js line 129, Appending file:', image.uri);
         formData.append('files', {
             uri: uri,
             name: fileName,
             type: `image/${fileType}`,
         });
       } else {
-        console.warn('Invalid image URI:', image.uri);
+        console.warn('ProvideAssignmentFeddbackScreen.js line 136, Invalid image URI:', image.uri);
       }
     });
 
@@ -149,7 +149,7 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
     formData.append("teacherFeedback", teacherFeedback);
     formData.append("points", parseInt(points));
 
-    console.log(formData)
+    console.log('ProvideAssignmentFeddbackScreen.js line 152, formData: ', formData)
 
     try {
 
@@ -163,12 +163,12 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
         throw new Error(`Request failed with status ${response.status}: ${errorText}`);
       }
       const responseData = await response.json();
-      console.log(responseData);
+      console.log('ProvideAssignmentFeddbackScreen.js line 166, responseData: ', responseData);
       // dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
       setModalVisible(true);
 
     } catch (error) {
-      console.error('Error adding feedback:', error);
+      console.error('ProvideAssignmentFeddbackScreen.js line 171, Error adding feedback:', error);
       Alert.alert('Error', `Failed to add feedback. ${error.response?.data?.message || 'Please try again.'}`);
     }
   };

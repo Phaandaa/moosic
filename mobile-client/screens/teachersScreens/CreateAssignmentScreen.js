@@ -61,9 +61,9 @@ function CreateAssignmentScreen({ navigation }) {
         quality: 1,
       });
       if (!result.canceled) {
-        console.log('result.assets[0]:', result.assets[0])
+        console.log('CreateAssignmentScreen.js line 64, result.assets[0]:', result.assets[0])
         saveImage(result.assets[0]); 
-        console.log(images);
+        console.log('CreateAssignmentScreen.js line 66, images: ', images);
       }
     }
   };
@@ -76,7 +76,7 @@ function CreateAssignmentScreen({ navigation }) {
       });
       if (!result.canceled && result.assets) {
         setUploadedDocuments(currentDocs => [...currentDocs, ...result.assets]);
-        console.log('uploadedDocuments',uploadedDocuments);
+        console.log('CreateAssignmentScreen.js line 79, uploadedDocuments: ',uploadedDocuments);
       }
     } catch (error) {
       Alert.alert('Error picking document:', error.message);
@@ -151,7 +151,7 @@ function CreateAssignmentScreen({ navigation }) {
       // selected_students: [{student_id: '5C4Q6ZILqoTBi9YnESwpKQuhMcN2'}],
       points: 0
     };
-    console.log('assignmentData:', assignmentData)
+    console.log('CreateAssignmentScreen.js line 154, assignmentData:', assignmentData)
     
   
     images.forEach((image, index) => {
@@ -161,14 +161,14 @@ function CreateAssignmentScreen({ navigation }) {
         const uriParts = image.uri.split('.');
         const fileType = uriParts[uriParts.length - 1];
 
-        console.log('Appending file:', image.uri);
+        console.log('CreateAssignmentScreen.js line 164, Appending file:', image.uri);
         formData.append('files', {
             uri: uri,
             name: fileName,
             type: `image/${fileType}`,
         });
       } else {
-        console.warn('Invalid image URI:', image.uri);
+        console.warn('CreateAssignmentScreen.js line 171, Invalid image URI:', image.uri);
       }
     });
 
@@ -182,7 +182,7 @@ function CreateAssignmentScreen({ navigation }) {
 
     // console.log(formData)
     formData.append("assignment", {"string" : JSON.stringify(assignmentData), type: 'application/json'});
-    console.log(formData)
+    console.log('CreateAssignmentScreen.js line 185, formData: ', formData)
 
     try {
      
@@ -198,12 +198,12 @@ function CreateAssignmentScreen({ navigation }) {
       }
       
       const responseData = await response.json();
-      console.log(responseData);
+      console.log('CreateAssignmentScreen.js line 201, responseData: ', responseData);
       dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
       setModalVisible(true);
 
     } catch (error) {
-      console.error('Error creating assignment:', error);
+      console.error('CreateAssignmentScreen.js line 206, Error creating assignment:', error);
       Alert.alert('Error', `Failed to create assignment. ${error.response?.data?.message || 'Please try again.'}`);
     }
   };

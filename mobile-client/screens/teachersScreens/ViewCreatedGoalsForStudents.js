@@ -36,7 +36,7 @@ function ViewCreatedGoalsForStudents ({ navigation }) {
             const studentResponse = await axios.get(fetchStudentDataUrl);
             if (studentResponse.data) {
               setStudentData(studentResponse.data); // Update student data
-              console.log(studentResponse.data)
+              console.log('ViewGoalsForStudents.js line 39, studentResponse.data: ', studentResponse.data)
               setFilteredStudents(studentResponse.data);
             } else {
               setStudentData([]); // Set default if no student data found
@@ -53,7 +53,7 @@ function ViewCreatedGoalsForStudents ({ navigation }) {
               setStudentGoals([]); // Set goals to an empty array if no goals were fetched
             }
           } catch (error) {
-            console.error('Error fetching data:', error);
+            console.error('ProvidePracticeFeedbackScreen.js line 56, Error fetching data:', error);
             setFetchError(true); // Set fetch error to true to indicate there was an error
           }
           finally{

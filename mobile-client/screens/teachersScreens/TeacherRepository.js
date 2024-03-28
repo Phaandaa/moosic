@@ -48,12 +48,12 @@ function TeacherRepository({ navigation }) {
             if (goalsResponse.data) {
               // Since the data is an object, we wrap it in an array
               setStudentGoals([goalsResponse.data]); // Wrap the object in an array and update goals
-              console.log(goalsResponse.data);
+              console.log('TeacherRepository line 51, goalsResponse.data: ', goalsResponse.data);
             } else {
               setStudentGoals([]); // Set goals to an empty array if no goals were fetched
             }
           } catch (error) {
-            console.error('Error fetching data:', error);
+            console.error('ProvidePracticeFeedbackScreen.js line 56, Error fetching data:', error);
             setFetchError(true); // Set fetch error to true to indicate there was an error
           }
           finally {

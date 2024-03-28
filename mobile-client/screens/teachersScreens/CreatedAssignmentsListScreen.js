@@ -96,11 +96,11 @@ function CreatedAssignmentsListScreen ({route, navigation}) {
             const storedData = await AsyncStorage.getItem('authData');
             if (storedData !== null) {
                 const parsedData = JSON.parse(storedData);
-                console.log('teacherID:', parsedData.userId);
+                console.log('CreateAssignmentListScreen.js line 99, teacherID:', parsedData.userId);
                 return parsedData.userId;
             }
         } catch (error) {
-            console.error('Error retrieving data from AsyncStorage', error);
+            console.error('CreateAssignmentListScreen.js line 103, Error retrieving data from AsyncStorage', error);
         }
         return '';
     };
@@ -111,9 +111,9 @@ function CreatedAssignmentsListScreen ({route, navigation}) {
             try {
                 const id = await checkStoredData();
                 setTeacherID(id);
-                console.log(teacherID)
+                console.log('CreateAssignmentListScreen.js line 114, teacherID: ', teacherID)
             } catch (error) {
-                console.error('Error processing stored data', error);
+                console.error('CreateAssignmentListScreen.js line 116, Error processing stored data', error);
             }
         };
         fetchData();
@@ -122,7 +122,7 @@ function CreatedAssignmentsListScreen ({route, navigation}) {
     // Fetch assignments using teacherID
     useEffect(() => {
         const fetchCreatedAssignments = async() => {
-            console.group('studentID', studentID)
+            console.group('CreateAssignmentListScreen.js line 125, studentID: ', studentID)
             try {
                 const response = await fetch(`${IP_ADDRESS}/assignments/${studentID}/${teacherID}`, {
                     method: 'GET'
@@ -136,7 +136,7 @@ function CreatedAssignmentsListScreen ({route, navigation}) {
                 setAssignmentData(responseData); // Set the state with the response data
                 setSearchResults(responseData); // Assuming you also want to filter
             } catch (error) {
-                console.error('Error fetching assignments:', error);
+                console.error('CreateAssignmentListScreen.js line 139, Error fetching assignments:', error);
             }
         };
         if(teacherID){

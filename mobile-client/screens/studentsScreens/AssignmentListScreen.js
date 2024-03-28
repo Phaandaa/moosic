@@ -20,7 +20,7 @@ function AssignmentListScreen({navigation}){
             const storedData = await AsyncStorage.getItem('authData');
             if (storedData !== null) {
                 const parsedData = JSON.parse(storedData);
-                console.log('studentID:', parsedData.userId);
+                console.log('AssignmentList.js line 23, studentID:', parsedData.userId);
                 return parsedData.userId;
             }
         } catch (error) {
@@ -34,9 +34,9 @@ function AssignmentListScreen({navigation}){
             try {
                 const id = await checkStoredData();
                 setStudentID(id);
-                console.log(studentID)
+                console.log("AssignmentList.js line 37, student ID: ", studentID)
             } catch (error) {
-                console.error('Error processing stored data', error);
+                console.error("AssignmentList.js line 39, Error processing stored data: ", error);
             }
         };
         fetchData();
@@ -64,9 +64,9 @@ function AssignmentListScreen({navigation}){
                 setAssignmentData(sortedData); // Set the state with the response data
                 setSearchResults(sortedData); // Assuming you also want to filter
 
-                console.log(assignmentData)
+                console.log("AssignmentList.js line 67: ", assignmentData)
             } catch (error) {
-                console.error('Error fetching assignments:', error);
+                console.error('AssignmentList.js line 69, Error fetching assignments:', error);
             }
         };
         if(studentID){

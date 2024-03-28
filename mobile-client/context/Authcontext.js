@@ -35,7 +35,7 @@ const saveAuthDataToCache = async (data) => {
   try {
     await AsyncStorage.setItem('authData', JSON.stringify(data));
   } catch (error) {
-    console.error('Error saving data to cache', error);
+    console.error('Authcontext.js line 38, Error saving data to cache', error);
   }
 };
 
@@ -43,13 +43,13 @@ const saveUserCache = async (data) => {
   try {
     await AsyncStorage.setItem('userData', JSON.stringify(data));
     AsyncStorage.getItem('userData').then(data => {
-      console.log('UserData from cache:', data);
+      console.log('Authcontext.js line 46, userData from cache:', data);
     }).catch(err => {
-      console.error('Error reading userData from cache:', err);
+      console.error('Authcontext.js line 48, Error reading userData from cache:', err);
     });
     
   } catch (error) {
-    console.error('Error saving data to cache', error);
+    console.error('Authcontext.js line 52, Error saving data to cache', error);
   }
 };
 const storeUserData = async (userData) => {
@@ -58,7 +58,7 @@ const storeUserData = async (userData) => {
     dispatch({ type: STORE_USER_DATA, payload: userData });
     
   } catch (error) {
-    console.error('Error storing user data:', error);
+    console.error('Authcontext.js line 61, Error storing user data:', error);
   }
 };
 
@@ -67,7 +67,7 @@ const getAuthDataFromCache = async () => {
     const data = await AsyncStorage.getItem('authData');
     return data ? JSON.parse(data) : null;
   } catch (error) {
-    console.error('Error retrieving data from cache', error);
+    console.error('Authcontext.js line 70, Error retrieving data from cache', error);
   }
 };
 
@@ -76,7 +76,7 @@ const getUserDataFromCache = async () => {
     const data = await AsyncStorage.getItem('userData');
     return data ? JSON.parse(data) : null;
   } catch (error) {
-    console.error('Error retrieving data from cache', error);
+    console.error('Authcontext.js line 79, Error retrieving data from cache', error);
   }
 };
 
@@ -85,7 +85,7 @@ const clearAuthDataFromCache = async () => {
     await AsyncStorage.removeItem('authData');
     await AsyncStorage.removeItem('userData');
   } catch (error) {
-    console.error('Error clearing auth data from cache', error);
+    console.error('Authcontext.js line 88, Error clearing auth data from cache', error);
   }
 };
 
@@ -113,7 +113,7 @@ export const AuthProvider = ({ children }) => {
           dispatch({ type: STORE_USER_DATA, payload: cachedData }); // Directly use parsed data
         }
       } catch (error) {
-        console.error('Error retrieving user data from cache', error);
+        console.error('Authcontext.js line 116, Error retrieving user data from cache', error);
       }
     };
     
@@ -125,30 +125,28 @@ export const AuthProvider = ({ children }) => {
 
   const signIn = async (email, password, expoPushToken) => {
     try {
-        console.log("Here lies the expo push token" + expoPushToken);
+        console.log("Authcontext.js line 128: Here lies the expo push token ", expoPushToken);
         const response = await axios.post(`${IP_ADDRESS}/api/auth/signin`, { email, password, expoPushToken });
         const { data } = response;
         
         if (response.status === 200 && data.userId) {
             await saveAuthDataToCache(data);
             
-            // Using a dynamic URL based on the role to simplify the fetch logic
             const userRolePath = data.role === 'Teacher' ? 'teachers' : 'students';
 
             const authHeader = { headers: { Authorization: `Bearer ${data.idToken}` } };
-            console.log('Auth header:', authHeader)
+            console.log('AuthContext.js line 138, Auth header:', authHeader)
 
             const userDetailsResponse = await axios.get(`${IP_ADDRESS}/${userRolePath}/${data.userId}`,authHeader);
-            console.log('User Details Response:', userDetailsResponse);
+            console.log('AuthContext.js line 141, User Details Response:', userDetailsResponse);
 
             if (userDetailsResponse.status === 200) {
-                console.log(userDetailsResponse.data); // Log the fetched user details
+                console.log("Authcontext.js line 144, userDetailsResponse.data: ", userDetailsResponse.data); 
                 await saveUserCache(userDetailsResponse.data);
                 dispatch({ type: LOGIN_SUCCESS, payload: { ...data, role: userDetailsResponse.data.role } });
-                return data; // Return or handle the successful login and data fetch
+                return data; 
             } else {
-                console.error('Failed to fetch user details');
-                // Handle failure to fetch user details
+                console.error('Authcontext.js line 149, Failed to fetch user details');
             }
         } else {
             // Handle unsuccessful login or missing userId
@@ -164,33 +162,33 @@ export const AuthProvider = ({ children }) => {
 };
 
 
-  const signOut = async (userId, expoPushToken) => {
-    try {
-      const encodedExpoPushToken = encodeURIComponent(expoPushToken);
-      const url = `${IP_ADDRESS}/api/auth/signout/${userId}?expoPushToken=${encodedExpoPushToken}`;
-      console.log(url);
-      const response = await axios.post(url, {});
-      await clearAuthDataFromCache(); // This function should remove auth data from AsyncStorage
-      dispatch({ type: LOGOUT });
-      
-    } catch (error) {
-      if (error.response) {
-        console.error('Error during sign out:', error.response.data);
-      } else {
-        console.error('Error during sign out:', error.message);
-      }
-    }
-  };
-
-  // const signOut = async () => {
+  // const signOut = async (userId, expoPushToken) => {
   //   try {
+  //     const encodedExpoPushToken = encodeURIComponent(expoPushToken);
+  //     const url = `${IP_ADDRESS}/api/auth/signout/${userId}?expoPushToken=${encodedExpoPushToken}`;
+  //     console.log('Authcontext.js line 169, url: ', url);
+  //     const response = await axios.post(url, {});
   //     await clearAuthDataFromCache(); // This function should remove auth data from AsyncStorage
   //     dispatch({ type: LOGOUT });
       
   //   } catch (error) {
-  //     console.error('Error during sign out:', error);
+  //     if (error.response) {
+  //       console.error('Authcontext.js line 176, Error during sign out:', error.response.data);
+  //     } else {
+  //       console.error('Authcontext.js line 178, Error during sign out:', error.message);
+  //     }
   //   }
   // };
+
+  const signOut = async () => {
+    try {
+      await clearAuthDataFromCache(); // This function should remove auth data from AsyncStorage
+      dispatch({ type: LOGOUT });
+      
+    } catch (error) {
+      console.error('Authcontext.js line 189, Error during sign out:', error);
+    }
+  };
   
 
   

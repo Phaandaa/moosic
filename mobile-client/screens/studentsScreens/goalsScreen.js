@@ -38,16 +38,16 @@ const GoalsScreen = () => {
       const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/student/${userId}`;
       const goalsResponse = await axios.get(fetchStudentsGoalsUrl);
       setGoals(goalsResponse.data ? goalsResponse.data : []);
-      console.log(goals)
+      console.log("goalsScreen.js line 41: ", goals)
 
       // Fetch student data
       const fetchPointsLog = `${IP_ADDRESS}/points-logs/student/${userId}`;
-      console.log(fetchPointsLog)
+      console.log("goalsScreen.js line 45: ", fetchPointsLog)
       const PointsLogresponse = await axios.get(fetchPointsLog);
       setPointsLog(PointsLogresponse.data ? PointsLogresponse.data : []);
 
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('goalsScreen.js line 50, Error fetching data:', error);
     } finally {
       setLoadingState(false);
     }
@@ -148,7 +148,7 @@ const GoalsScreen = () => {
   };
 
   const isGoalsSet = !goals.length > 0;
-  console.log(goals);
+  console.log("goalsScreen.js line 151", goals);
 
   return (
     <LoadingComponent isLoading={loadingstate}>
