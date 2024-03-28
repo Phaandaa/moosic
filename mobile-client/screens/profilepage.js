@@ -43,7 +43,7 @@ const ProfileScreen = ({ navigation, route }) => {
         setUserToken(authData.idToken);  // Set the token from stored auth data
         setCacheUserData(JSON.parse(storedData));
         const parsedData = JSON.parse(storedData);
-        console.log('profilepage.js line 46, Parsed user data:', parsedData);
+        console.log('profilepage.js line 46, storedData:', storedData); // kalo print storedData disini bs tp kalo userCaheData gbs, masi empty string
         setCacheUserData(parsedData);
       }
       
@@ -76,7 +76,7 @@ const ProfileScreen = ({ navigation, route }) => {
     setRefreshing(true);
     setIsLoading(true);
     try {
-      
+      console.log('profilepage.js line 79, cacheUserDate:', cacheUserData);
       setUserName(cacheUserData.name);
       setUserEmail(cacheUserData.email);
       setUserId(cacheUserData.id);
@@ -128,8 +128,9 @@ const ProfileScreen = ({ navigation, route }) => {
   useEffect(() => {
     fetchCache();
     loadData();
-
-
+    console.log('profilepage.js line 131, Logging current cacheUserData'); // disini jg masi gbs ke console.log userCacheDatanya
+    console.log(cacheUserData); // tp td kalo ditungguin semenit bs tp jadi refresh refresh sendiri, 
+    // usulan: bisa ga store semua di state aja yg dipake buat di app? cache yg di storage malah yg auth data aja. Pake state lgsg kayanya lbh stabil 
   }, []);
   
   useEffect(() => {
