@@ -37,24 +37,16 @@ const ProfileScreen = ({ navigation, route }) => {
     try{
       const storedData = await AsyncStorage.getItem('userData');
       const storedAuthData = await AsyncStorage.getItem('authData');
-      // console.log("BREAK1")
-      // console.log(storedData)
-      // console.log("BREAK2")
+
       if (storedAuthData && storedData) {
         const authData = JSON.parse(storedAuthData);
         setUserToken(authData.idToken);  // Set the token from stored auth data
-       
-        console.log(storedData)
         setCacheUserData(JSON.parse(storedData));
-        // console.log("BREAK3")
-        // console.log(userToken)
-        // console.log("BREAK4")
-        // console.log(cacheUserData)
 
       }
       
     } catch{
-      console.log('No stored data found');
+      console.error('No stored data found');
     }
   }
   
@@ -64,7 +56,6 @@ const ProfileScreen = ({ navigation, route }) => {
     try {
       // Fetch avatars
       if (!userToken) {
-        console.log('No user token available.');
         return;
       }
       const authHeader = { headers: { Authorization: `Bearer ${userToken}` } }
@@ -112,7 +103,6 @@ const ProfileScreen = ({ navigation, route }) => {
     try {
       // Check if the userToken is available
       if (!userToken) {
-        console.log('No user token available.');
         return;
       }
 
@@ -136,9 +126,9 @@ const ProfileScreen = ({ navigation, route }) => {
   useEffect(() => {
     fetchCache();
     loadData();
-    console.log('TokenId', userToken)
 
-  }, [cacheUserData]);
+
+  }, []);
   
   useEffect(() => {
     loadAvatarAndFrame();
@@ -152,8 +142,6 @@ const ProfileScreen = ({ navigation, route }) => {
   const handleSignOut = async () => {
     setIsLoading(true);
     try {
-      console.log(userId);
-      console.log(expoPushToken);
       await signOut(userId, expoPushToken);
       // await signOut();
     } catch (error) {
@@ -212,15 +200,11 @@ const ProfileScreen = ({ navigation, route }) => {
 
   const updateStudentAvatarAndFrame = async () => {
     setIsLoading(true); // Indicate loading
-    console.log('selectedAvatarId', selectedAvatarId)
-    console.log('selectedFrameId', selectedFrameId)
-    console.log('userId', userId)
+    const authHeader = { headers: { Authorization: `Bearer ${userToken}` } }
 
     try {
       // Update Avatar if selected
       if (selectedAvatarId) {
-        console.log("BREAK55")
-        console.log(`${IP_ADDRESS}/students/${userId}/update-avatar?avatar=${selectedAvatarId}`)
         await axios.put(`${IP_ADDRESS}/students/${userId}/update-avatar?avatar=${selectedAvatarId}`, authHeader);
       }
   
@@ -242,11 +226,10 @@ const ProfileScreen = ({ navigation, route }) => {
 
   const renderBadges = async() => {
     setIsLoading(true);
-
+    const authHeader = { headers: { Authorization: `Bearer ${userToken}` } }
     try {
       const response = await axios.get(`${IP_ADDRESS}/student-inventory/${userId}/badge-details`, authHeader);
       setOwnedBadges(response.data);
-      console.log(ownedBadges);
     } catch (error) {
       console.error('Error fetching badges:', error);
     }
@@ -350,7 +333,7 @@ const ProfileScreen = ({ navigation, route }) => {
             <TouchableOpacity
               style={styles.modalCloseButton}
               onPress={() => {
-                console.log('Done pressed'); // Debugging line to ensure the function is triggered
+               
                 setIsModalVisible(false);
                 updateStudentAvatarAndFrame();
               }}
@@ -370,7 +353,6 @@ const ProfileScreen = ({ navigation, route }) => {
     setRefreshing(true);
     try{
       await fetchLatestUserData(); 
-      console.log(avatar, frame)
     }
     catch (error) {
       console.error('Error fetching latest user data:', error);
