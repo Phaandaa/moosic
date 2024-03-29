@@ -242,6 +242,7 @@ const RootNavigator = () => {
 
   useEffect(() => {
     registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+    console.log("App.js line 245, state:", state);
 
     notificationListener.current = Notifications.addNotificationReceivedListener(async notification => {
       // Save the received notification to AsyncStorage
@@ -286,7 +287,7 @@ const RootNavigator = () => {
       {state.isLoading ? (
         <Stack.Screen name="Loading" component={LoadingScreen} />
       ) : state.isLoggedIn ? (
-        state.role === 'Student' ? (
+        state.userData.role === 'Student' ? (
           <>
           <Stack.Screen name="StudentTabs" component={StudentTabs} options={{ headerShown: false }} initialParams={{ expoPushToken }}/>
           

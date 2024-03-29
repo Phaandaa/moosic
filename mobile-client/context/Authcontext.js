@@ -5,27 +5,22 @@ import IP_ADDRESS from '../constants/ip_address_temp';
 
 
 const AuthContext = createContext({
-  state: { isLoggedIn: false, user: null, error: null, role: null },
+  state: { isLoggedIn: false, userData: null, error: null, authHeader: null },
 });
 
 // Action Types
 const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 const LOGIN_ERROR = 'LOGIN_ERROR';
 const LOGOUT = 'LOGOUT';
-const STORE_USER_DATA = 'STORE_USER_DATA';
-
-
 
 const authReducer = (state, action) => {
   switch (action.type) {
     case LOGIN_SUCCESS:
-      return { ...state, isLoggedIn: true, user: action.payload, role: action.payload.role };
+      return { ...state, isLoggedIn: true, userData: action.payload.userData, authHeader: action.payload.authHeader };
     case LOGIN_ERROR:
       return { ...state, isLoggedIn: false, error: action.payload };
     case LOGOUT:
-      return { ...state, isLoggedIn: false, user: null, userData: null, role: null };
-    case STORE_USER_DATA:
-      return { ...state, userData: action.payload };
+      return { ...state, isLoggedIn: false, userData: null, authHeader: null };
     default:
       return state;
   }
@@ -39,117 +34,77 @@ const saveAuthDataToCache = async (data) => {
   }
 };
 
-const saveUserCache = async (data) => {
-  try {
-    await AsyncStorage.setItem('userData', JSON.stringify(data));
-    AsyncStorage.getItem('userData').then(data => {
-      console.log('Authcontext.js line 46, userData from cache:', data);
-    }).catch(err => {
-      console.error('Authcontext.js line 48, Error reading userData from cache:', err);
-    });
-    
-  } catch (error) {
-    console.error('Authcontext.js line 52, Error saving data to cache', error);
-  }
-};
-const storeUserData = async (userData) => {
-  try {
-    await AsyncStorage.setItem('userData', JSON.stringify(userData));
-    dispatch({ type: STORE_USER_DATA, payload: userData });
-    console.log('Authcontext.js line 59, state:', state);
-  } catch (error) {
-    console.error('Authcontext.js line 61, Error storing user data:', error);
-  }
-};
-
 const getAuthDataFromCache = async () => {
   try {
     const data = await AsyncStorage.getItem('authData');
     return data ? JSON.parse(data) : null;
   } catch (error) {
-    console.error('Authcontext.js line 70, Error retrieving data from cache', error);
-  }
-};
-
-const getUserDataFromCache = async () => {
-  try {
-    const data = await AsyncStorage.getItem('userData');
-    return data ? JSON.parse(data) : null;
-  } catch (error) {
-    console.error('Authcontext.js line 79, Error retrieving data from cache', error);
+    console.error('Authcontext.js line 43, Error retrieving auth data from cache', error);
   }
 };
 
 const clearAuthDataFromCache = async () => {
   try {
     await AsyncStorage.removeItem('authData');
-    await AsyncStorage.removeItem('userData');
   } catch (error) {
-    console.error('Authcontext.js line 88, Error clearing auth data from cache', error);
+    console.error('Authcontext.js line 51, Error clearing auth data from cache', error);
   }
 };
+
+const loggingInAndRetrieveUserData = async (authData, dispatch) => {
+  try {
+    const userRolePath = authData.role === 'Teacher' ? 'teachers' : 'students';
+    const authHeader = { headers: { Authorization: `Bearer ${authData.idToken}` } };
+    console.log('AuthContext.js line 58, Auth header:', authHeader)
+
+    const userDetailsResponse = await axios.get(`${IP_ADDRESS}/${userRolePath}/${authData.userId}`, authHeader);
+    console.log('AuthContext.js line 61, User Details Response:', userDetailsResponse);
+
+    if (userDetailsResponse.status === 200) {
+      console.log("Authcontext.js line 64, userDetailsResponse.data: ", userDetailsResponse.data); 
+      dispatch({ type: LOGIN_SUCCESS, payload: { userData:userDetailsResponse.data, authHeader } });
+    } else {
+      console.error('Authcontext.js line 67, Failed to fetch user details');
+    }
+  } catch (error) {
+    console.error('Authcontext.js line 70, Error logging in and retrieving user data', error);
+  }
+}
 
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, {
     isLoggedIn: false,
-    user: null,
+    userData: null,
     error: null,
-    role: null,
+    authHeader: null,
   });
 
   useEffect(() => {
     const loadAuthData = async () => {
-      const cachedData = await getAuthDataFromCache();
-      if (cachedData) {
-        dispatch({ type: LOGIN_SUCCESS, payload: { user: cachedData.user, role: cachedData.role } });
-      }
-      
-    };
-
-    const loadCachedUserData = async () => {
-      try {
-        const cachedData = await getUserDataFromCache(); // Correct variable used
-        if (cachedData) { // Check the correct variable
-          dispatch({ type: STORE_USER_DATA, payload: cachedData }); // Directly use parsed data
-        }
-      } catch (error) {
-        console.error('Authcontext.js line 116, Error retrieving user data from cache', error);
+      var cachedAuthData = await getAuthDataFromCache();
+      if (cachedAuthData) {
+        const refreshTokenResponse = await axios.post(`${IP_ADDRESS}/api/auth/request-new-token/${cachedAuthData.userId}?refreshToken=${cachedData.refreshToken}`, {});
+        const newRefreshToken = refreshTokenResponse.data.refresh_token
+        const newIdToken = refreshTokenResponse.data.id_token;
+        cachedAuthData = {...cachedAuthData, idToken: newIdToken, refreshToken: newRefreshToken}
+        await saveAuthDataToCache(cachedAuthData);
+        loggingInAndRetrieveUserData(cachedAuthData, dispatch);
       }
     };
-    
-
     loadAuthData();
-    loadCachedUserData();
   }, []);
 
 
   const signIn = async (email, password, expoPushToken) => {
     try {
-        console.log("Authcontext.js line 128: Here lies the expo push token ", expoPushToken);
+        console.log("Authcontext.js line 75: Here lies the expo push token ", expoPushToken);
         const response = await axios.post(`${IP_ADDRESS}/api/auth/signin`, { email, password, expoPushToken });
         const { data } = response;
-        
+        console.log("Authcontext.js line 78, to be savedAuthData:", data);
         if (response.status === 200 && data.userId) {
             await saveAuthDataToCache(data);
-            
-            const userRolePath = data.role === 'Teacher' ? 'teachers' : 'students';
-
-            const authHeader = { headers: { Authorization: `Bearer ${data.idToken}` } };
-            console.log('AuthContext.js line 138, Auth header:', authHeader)
-
-            const userDetailsResponse = await axios.get(`${IP_ADDRESS}/${userRolePath}/${data.userId}`,authHeader);
-            console.log('AuthContext.js line 141, User Details Response:', userDetailsResponse);
-
-            if (userDetailsResponse.status === 200) {
-                console.log("Authcontext.js line 144, userDetailsResponse.data: ", userDetailsResponse.data); 
-                await saveUserCache(userDetailsResponse.data);
-                dispatch({ type: LOGIN_SUCCESS, payload: { ...data, role: userDetailsResponse.data.role } });
-                return data; 
-            } else {
-                console.error('Authcontext.js line 149, Failed to fetch user details');
-            }
+            loggingInAndRetrieveUserData(data, dispatch);
         } else {
-            // Handle unsuccessful login or missing userId
             const errorMessage = data.message || 'Failed to sign in';
             dispatch({ type: LOGIN_ERROR, payload: errorMessage });
             throw new Error(errorMessage);
@@ -189,11 +144,8 @@ export const AuthProvider = ({ children }) => {
       console.error('Authcontext.js line 189, Error during sign out:', error);
     }
   };
-  
 
-  
-
-  const values = { state, dispatch, signIn, signOut, storeUserData };
+  const values = { state, dispatch, signIn, signOut };
 
   return (
     <AuthContext.Provider value={values}>

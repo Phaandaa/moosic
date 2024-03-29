@@ -17,7 +17,6 @@ const LoginPage = ({ route, navigation }) => {
   const handleLogin = async () => {
     setIsLoading(true);
     try {
-      console.log("login.js line 20: expo push token ", expoPushToken);
       const response = await signIn(email, password, expoPushToken);
       
       if (response != null){
@@ -35,17 +34,10 @@ const LoginPage = ({ route, navigation }) => {
   const checkStoredData = async () => {
     try {
       const storedData = await AsyncStorage.getItem('authData');
-      const userData =  await AsyncStorage.getItem('userData');
       
-      if (storedData !== null  && userData !== null) {
-        const parsedUserData = JSON.parse(userData);
+      if (storedData !== null) {
         const parsedData = JSON.parse(storedData);
         console.log("login.js line 43, Stored Auth Data:", parsedData);
-        console.log("login.js line 44, Stored User Data:", parsedUserData);
-
-        const idToken = parsedData.idToken;
-        console.log("login.js line 47, Stored idToken:", idToken);
-
         return parsedData;
       } else {
         console.log("login.js line 51, No data stored in AsyncStorage");
