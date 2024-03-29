@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.example.server.models.AuthRequest;
 import com.example.server.models.FirebaseToken;
+import com.example.server.models.RefreshTokenResponse;
 
 import jakarta.annotation.PostConstruct;
 
@@ -95,4 +96,26 @@ public class FirebaseAuthService {
         }
     }
 
+    public RefreshTokenResponse refreshTokenId(String refreshToken) {
+        try{
+            String url = "https://securetoken.googleapis.com/v1/token?key="+ firebaseApiKey;
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+            Map<String, String> requestBody = new HashMap<>();
+            requestBody.put("grant_type", "refresh_token");
+            requestBody.put("refresh_token", refreshToken);
+
+            HttpEntity<Map<String, String>> entity = new HttpEntity<>(requestBody, headers);
+    
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<RefreshTokenResponse> responseEntity = restTemplate.exchange(url, HttpMethod.POST, entity, RefreshTokenResponse.class);
+    
+            return responseEntity.getBody();
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while refreshing new token up. Please try again later" + e.getMessage());
+        }
+
+    }
 }
