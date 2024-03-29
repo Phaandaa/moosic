@@ -20,18 +20,16 @@ function MyStudentsScreen({ navigation }) {
     // Fetch students using teacherID
     useEffect(() => {
         const fetchStudentsApi = `${IP_ADDRESS}/students/teacher/${teacherID}/`;
-        console.log('MyStudentsScreen.js line 28, featchStudentApi,', fetchStudentsApi);
         const fetchStudents = async() => {
             try {
                 setLoadingState(true);
-                const response = await axios.get(fetchStudentsApi);
+                const response = await axios.get(fetchStudentsApi, state.authHeader);
                 const data = response.data;
                 
                 if (data.length > 0) {
                     setStudents(data);
                     setFilteredStudents(data);
                 } else {
-                    // If the response is successful but contains no data
                     setFetchError(true);
                 }
             } catch (error) {

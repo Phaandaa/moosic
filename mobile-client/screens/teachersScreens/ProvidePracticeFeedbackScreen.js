@@ -11,8 +11,11 @@ import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Colors from '../../constants/colors';
 import SuccessModal from '../../components/ui/SuccessModal';
+import axios from 'axios';
+import { useAuth } from '../../context/Authcontext';
 
 function ProvidePracticeFeedbackScreen({route, navigation}){
+    const { state } = useAuth();
     const {practiceID} = route.params;
     const [teacherFeedback, setTeacherFeedback] = useState('');
     const [points, setPoints] = useState('');
@@ -56,25 +59,10 @@ function ProvidePracticeFeedbackScreen({route, navigation}){
 
     const saveVideo = (newVideo) => {
         setVideos((currentVideos) => [...currentVideos, newVideo]);
-        // setLoadingStates((currentLoadingStates) => ({ ...currentLoadingStates, [newVideo]: true }));
     };
     
   const validateForm = () => {
-    // let newErrors = {};
     let isValid = true;
-    // if (!assignmentName.trim()) {
-    //   newErrors.assignmentName = 'Assignment name is required.';
-    //   isValid = false;
-    // }
-    // if (!assignmentDesc.trim()) {
-    //   newErrors.assignmentDesc = 'Description is required.';
-    //   isValid = false;
-    // }
-    // if (!assignmentDeadline) {
-    //   newErrors.assignmentDeadline = 'Deadline is required.';
-    //   isValid = false;
-    // }
-    // setErrors(newErrors);
     return isValid;
   };
 
@@ -120,19 +108,15 @@ function ProvidePracticeFeedbackScreen({route, navigation}){
     console.log('ProvidePracticeFeedbackScreen.js line 120, formData: ', formData)
 
     try {
-      const response = await fetch(`${IP_ADDRESS}/practices/feedback/${practiceID}?`, {
-          method: 'PUT',
-          body: formData,
-      });
+      // const response = await fetch(`${IP_ADDRESS}/practices/feedback/${practiceID}?`, {
+      //     method: 'PUT',
+      //     body: formData,
+      // });
+
+      const response = await axios.put(`${IP_ADDRESS}/practices/feedback/${practiceID}?`, formData, state.authHeader);
         
-      if (!response.ok) {
-        const errorText = response.statusText || 'Unknown error occurred';
-        throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-      }
-      const responseData = await response.json();
+      const responseData = response.data;
       console.log('ProvidePracticeFeedbackScreen.js line 133, responseData: ', responseData);
-      // dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
-      // navigation.navigate('ViewCreatedAssignmentsScreen', { responseData });
       setModalVisible(true);
 
     } catch (error) {

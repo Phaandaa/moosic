@@ -34,16 +34,13 @@ const HomeScreen = ({ navigation }) => {
     setLoadingState(true);
     try {
       setUserRole(state.userData.role);
-      console.log('home.js line 36, Auth header:', state.authHeader)
-      const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/student/${state.userData.id}`;
-      console.log('home.js line 38, Fetching student goals from:', fetchStudentsGoalsUrl);
-      
+      const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/teacher/${state.userData.id}`;      
       const goalsResponse = await axios.get(fetchStudentsGoalsUrl, state.authHeader);
       
       setGoals(goalsResponse.data ? goalsResponse.data : []);
       
     } catch (error) {
-      console.error('home.js line 63, Error during data fetching and state updating', error);
+      console.error('home.js line 43, Error during data fetching and state updating', error);
     } finally {
       setLoadingState(false);
     }
@@ -61,7 +58,6 @@ const HomeScreen = ({ navigation }) => {
     require('../assets/homepage-banners/treblecleffbanner.png'),
   ];
 
-  // TODO: check if can just let the user swipe
   useEffect(() => {
     const interval = setInterval(() => {
       const nextIndex = (currentIndex + 1) % bannerImages.length;

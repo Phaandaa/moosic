@@ -5,10 +5,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import AssignmentSearchBar from '../../components/ui/assignmentSearchBar';
 import trimDate from '../../components/ui/trimDate';
+import { useAuth } from '../../context/Authcontext';
+import axios from 'axios';
 
 function PracticeListTeacherScreen({route, navigation}){
+    const { state } = useAuth();
     const { studentID, studentName }  = route.params;
-
     const [teacherID, setTeacherID] = useState('');
     const [practiceData, setPracticeData] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
@@ -45,23 +47,12 @@ function PracticeListTeacherScreen({route, navigation}){
     useEffect(() => {
         const fetchPractices = async() => {
             try {
-                console.log('PracticeListTeacherScreen.js line 48, teacherstudentID: ', teacherID, studentID)
-                const response = await fetch(`${IP_ADDRESS}/practices/${studentID}/${teacherID}`, {
-                    method: 'GET'
-                });
-                
-                if (!response.ok) {
-                    const errorText = response.statusText || 'Unknown error occurred';
-                    throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-                }
-                const responseData = await response.json();
+                const response = await axios.get(`${IP_ADDRESS}/practices/${studentID}/${teacherID}`, state.authHeader);
+                const responseData = response.data;
 
                 const sortedData = responseData.sort((a, b) => {
-                    // Assuming the deadline is in a format that can be directly compared, like 'YYYY-MM-DD'
-                    // If the date format is different, you may need to parse it to a Date object first
                     return new Date(b.submissionTimestamp) - new Date(a.submissionTimestamp);
                 });
-                console.log('PracticeListTeacherScreen.js line 64, sortedData: ', sortedData);
 
                 setPracticeData(sortedData); // Set the state with the response data
                 setSearchResults(sortedData);
