@@ -134,19 +134,25 @@ const ProfileScreen = ({ navigation, route }) => {
 
   const fetchLatestUserData = async () => {
     setIsLoading(true); // Show loading indicator during data fetch
+    var userData;
     try {
-      const response = await axios.get(`${IP_ADDRESS}/students/${userId}`, state.authHeader);
-      const userData = response.data;
-      
+      if (state.userData.role === 'Student') {
+        const response = await axios.get(`${IP_ADDRESS}/students/${userId}`, state.authHeader);
+        userData = response.data;
+      } else if (state.userData.role === 'Teacher') {
+        const response = await axios.get(`${IP_ADDRESS}/teachers/${userId}`, state.authHeader);
+        userData = response.data;
+      }
       setUserName(userData.name);
       setUserEmail(userData.email);
       setUserRole(userData.role);
+      setUserInstrument(userData.instrument);
       setSelectedAvatarId(userData.avatar);
       setSelectedFrameId(userData.avatarFrame);
-      setUserInstrument(userData.instrument);
       setUserPoints(userData.pointsCounter);
+      
       // Optionally, update the local storage if caching user data
-      dispatch({ type: 'UPDATE_USER_DATA', payload: { userData:response.data } })
+      dispatch({ type: 'UPDATE_USER_DATA', payload: { userData } })
       
       loadAvatarAndFrame(); 
       if (state.role === 'Student') {

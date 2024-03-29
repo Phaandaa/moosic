@@ -16,7 +16,6 @@ const HomeScreen = ({ navigation }) => {
   const { state } = useAuth();
   const [searchResults, setSearchResults] = useState([]);
   const [userRole, setUserRole] = useState('');
-  const [user, setUser] = useState({}); 
   const [goals, setGoals] = useState([]);
   const [loadingstate, setLoadingState] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -34,7 +33,7 @@ const HomeScreen = ({ navigation }) => {
     setLoadingState(true);
     try {
       setUserRole(state.userData.role);
-      const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/teacher/${state.userData.id}`;      
+      const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/student/${state.userData.id}`;      
       const goalsResponse = await axios.get(fetchStudentsGoalsUrl, state.authHeader);
       
       setGoals(goalsResponse.data ? goalsResponse.data : []);
@@ -160,11 +159,11 @@ const HomeScreen = ({ navigation }) => {
   const renderHeader = () => {
     return (
       <>
-        <Text style={[theme.textTitle]}> Welcome, {user?.name?.split(" ")[0]}! </Text>
+        <Text style={[theme.textTitle]}> Welcome, {state.userData.name.split(" ")[0]}! </Text>
         {userRole === 'Student' && (
           <>
             <Text style={[theme.textSubtitle, { marginBottom: 10 }]}>
-              Your current points: {user?.pointsCounter ? user.pointsCounter : 0}
+              Your current points: {state.userData.pointsCounter ? state.userData.pointsCounter : 0}
             </Text>
           </>
         )}

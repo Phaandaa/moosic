@@ -7,7 +7,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import AssignmentSearchBar from '../../components/ui/assignmentSearchBar';
 import trimDate from '../../components/ui/trimDate';
+import { useAuth } from '../../context/Authcontext';
+
 function PracticeListStudentScreen({navigation}){
+    const { state } = useAuth();
     const [studentID, setStudentID] = useState('');
     const [practiceData, setPracticeData] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
@@ -28,35 +31,21 @@ function PracticeListStudentScreen({navigation}){
     };
     // Fetch studentID on component mount
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const id = await checkStoredData();
-                setStudentID(id);
-                console.log('PracticeListStudent.js, student ID: ', studentID)
-            } catch (error) {
-                console.error('Error processing stored data', error);
-            }
-        };
-        fetchData();
+        setStudentID(state.userData.id);
     }, []);
 
     // Fetch practices using studentID
     useEffect(() => {
         const fetchPractices = async() => {
             try {
-                const response = await fetch(`${IP_ADDRESS}/practices/student/${studentID}`, {
-                    method: 'GET'
-                });
+
+                `${IP_ADDRESS}/practices/student/${studentID}`
+                const response = await axios.get(`${IP_ADDRESS}/practices/student/${studentID}`, state.authHeader);
                 
-                if (!response.ok) {
-                    const errorText = response.statusText || 'Unknown error occurred';
-                    throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-                }
-                const responseData = await response.json();
+                
+                const responseData = await response.data;
 
                 const sortedData = responseData.sort((a, b) => {
-                    // Assuming the deadline is in a format that can be directly compared, like 'YYYY-MM-DD'
-                    // If the date format is different, you may need to parse it to a Date object first
                     return new Date(b.submissionTimestamp) - new Date(a.submissionTimestamp);
                 });
                 console.log('PracticeListStudent.js line 62: sortedData', sortedData);

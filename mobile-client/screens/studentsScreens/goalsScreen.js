@@ -7,8 +7,10 @@ import axios from 'axios';
 import LoadingComponent from '../../components/ui/LoadingComponent';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import moment from 'moment';
+import { useAuth } from '../../context/Authcontext';
 
 const GoalsScreen = () => {
+  const { state } = useAuth();
   const [activeTab, setActiveTab] = useState('all');
   const [goals, setGoals] = useState([]);
   const [studentData, setStudentData] = useState({ pointsCounter: 0 });
@@ -26,24 +28,16 @@ const GoalsScreen = () => {
   const fetchGoalsAndStudentData = async () => {
     try {
       setLoadingState(true);
-      const storedData = await AsyncStorage.getItem('userData');
-      if (!storedData) {
-        throw new Error('No user data found.');
-      }
-      const parsedData = JSON.parse(storedData);
-      const userId = parsedData.id;
-      setPoints(parsedData.pointsCounter);
+      setPoints(state.userData.pointsCounter);
       
       // Fetch student's goals
-      const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/student/${userId}`;
-      const goalsResponse = await axios.get(fetchStudentsGoalsUrl);
+      const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/student/${state.userData.id}`;
+      const goalsResponse = await axios.get(fetchStudentsGoalsUrl, state.authHeader);
       setGoals(goalsResponse.data ? goalsResponse.data : []);
-      console.log("goalsScreen.js line 41: ", goals)
 
       // Fetch student data
-      const fetchPointsLog = `${IP_ADDRESS}/points-logs/student/${userId}`;
-      console.log("goalsScreen.js line 45: ", fetchPointsLog)
-      const PointsLogresponse = await axios.get(fetchPointsLog);
+      const fetchPointsLog = `${IP_ADDRESS}/points-logs/student/${state.userData.id}`;
+      const PointsLogresponse = await axios.get(fetchPointsLog, state.authHeader);
       setPointsLog(PointsLogresponse.data ? PointsLogresponse.data : []);
 
     } catch (error) {

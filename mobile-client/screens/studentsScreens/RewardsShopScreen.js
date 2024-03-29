@@ -18,11 +18,14 @@ import Colors from "../../constants/colors";
 import RewardsCategoryDropdown1 from "../../components/ui/RewardsCategoryDropdown1";
 import theme from "../../styles/theme";
 import ConfirmPurchaseModal from "../../components/ui/confirmPurchaseModal";
+import { useAuth } from "../../context/Authcontext";
+import axios from "axios";
 
 // Dimensions to calculate the window width
 const { width } = Dimensions.get("window");
 
 function RewardsShopScreen() {
+  const { state } = useAuth();
   const [items, setItems] = useState([]);
   const [userData, setUserData] = useState({});
   const [filteredResults, setFilteredResults] = useState([]);
@@ -47,17 +50,9 @@ function RewardsShopScreen() {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await fetch(`${IP_ADDRESS}/reward-shop`, {
-          method: "GET",
-        });
-
-        if (!response.ok) {
-          const errorText = response.statusText || "Unknown error occurred";
-          throw new Error(
-            `Request failed with status ${response.status}: ${errorText}`
-          );
-        }
-        const responseData = await response.json();
+        const response =  await axios.get(`${IP_ADDRESS}/reward-shop`, state.authHeader);
+        
+        const responseData = response.data;
         setItems(responseData); // Set the state with the response data
         setFilteredResults(responseData);
       } catch (error) {
@@ -105,27 +100,11 @@ function RewardsShopScreen() {
     if (!selectedItem || !userData.id) return;
 
     try {
-      const response = await fetch(
-        `${IP_ADDRESS}/reward-shop/digital/${selectedItem.id}?student_id=${userData.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
 
-      if (!response.ok) {
-        // If the server response is not ok, throw an error
-        const errorText =
-          (await response.text()) || "An unknown error occurred";
-        throw new Error(
-          `Request failed with status ${response.status}: ${errorText}`
-        );
-      }
+      const response = await axios.put(`${IP_ADDRESS}/reward-shop/digital/${selectedItem.id}?student_id=${userData.id}`, {}, state.authHeader);
 
       // Parse the JSON response from the server
-      const updatedItem = await response.json();
+      const updatedItem = response.data;
 
       // Update local state to reflect the redeemed item and the new points total
       setUserData((previousUserData) => ({
