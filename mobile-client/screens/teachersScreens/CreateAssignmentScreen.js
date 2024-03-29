@@ -12,10 +12,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Colors from '../../constants/colors';
 import SuccessModal from '../../components/ui/SuccessModal';
+import { useAuth } from '../../context/Authcontext';
 
 
 function CreateAssignmentScreen({ navigation }) {
   const dispatch = useDispatch();
+  const { state } = useAuth();
   const [assignmentName, setAssignmentName] = useState('');
   const [assignmentDesc, setAssignmentDesc] = useState('');
   const [assignmentDeadline, setAssignmentDeadline] = useState('');
@@ -185,19 +187,10 @@ function CreateAssignmentScreen({ navigation }) {
     console.log('CreateAssignmentScreen.js line 185, formData: ', formData)
 
     try {
-     
-      const response = await fetch(`${IP_ADDRESS}/assignments/create`, {
-          method: 'POST',
-          body: formData,
-      });
       
-        
-      if (!response.ok) {
-        const errorText = response.statusText || 'Unknown error occurred';
-        throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-      }
+      const response = await axios.post(`${IP_ADDRESS}/assignments/create`, formData, state.authHeader);
       
-      const responseData = await response.json();
+      const responseData = response.data;
       console.log('CreateAssignmentScreen.js line 201, responseData: ', responseData);
       dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
       setModalVisible(true);

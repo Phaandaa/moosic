@@ -5,8 +5,10 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import Colors from '../../constants/colors';
+import { useAuth } from '../../context/Authcontext'
 
 const StudentDropdown = ({ onSelectionChange }) => {
+    const { state } = useAuth();
     const [selected, setSelected] = useState([]);
     const [students, setStudents] = useState([]);
     const [isFetching, setIsFetching] = useState(true);
@@ -15,16 +17,10 @@ const StudentDropdown = ({ onSelectionChange }) => {
         const fetchUserDataAndStudents = async () => {
           setIsFetching(true);
           try {
-            const storedData = await AsyncStorage.getItem('authData');
-            if (!storedData) {
-              throw new Error('No user data found.');
-            }
-            const parsedData = JSON.parse(storedData);
-            const userId = parsedData.userId; // Make sure this is the correct key for userId
-            const response = await axios.get(`${IP_ADDRESS}/students/teacher/${userId}/`);
-
+            
+            const response = await axios.get(`${IP_ADDRESS}/students/teacher/${state.userData.id}/`, state.authHeader);
             const formattedData = response.data.map(student => ({
-              key: student.id, // Ensure the key is a string
+              key: student.id, 
               value: student.name,
             }));
             setStudents(formattedData); // Update the students state with formatted data

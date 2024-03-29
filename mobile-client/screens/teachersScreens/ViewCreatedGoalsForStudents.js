@@ -39,7 +39,7 @@ function ViewCreatedGoalsForStudents ({ navigation }) {
             }
       
             // Fetch student's goals
-            const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/teacher/${userId}`;
+            const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/teacher/${state.userData.id}`;
             const goalsResponse = await axios.get(fetchStudentsGoalsUrl, state.authHeader);
             if (goalsResponse.data) {
               setStudentGoals([goalsResponse.data]);
