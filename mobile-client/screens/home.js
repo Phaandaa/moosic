@@ -7,11 +7,13 @@ import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import IP_ADDRESS from '../constants/ip_address_temp';
 import Colors from '../constants/colors';
+import { useAuth } from '../context/Authcontext';
 
 const { width } = Dimensions.get('window');
 
 
 const HomeScreen = ({ navigation }) => {
+  const { state } = useAuth();
   const [searchResults, setSearchResults] = useState([]);
   const [userRole, setUserRole] = useState('');
   const [user, setUser] = useState({}); 
@@ -31,31 +33,12 @@ const HomeScreen = ({ navigation }) => {
   const fetchDataAndUpdateState = async () => {
     setLoadingState(true);
     try {
-      const authDataString = await AsyncStorage.getItem('authData');
-      const userDataString = await AsyncStorage.getItem('userData');
+      setUserRole(state.userData.role);
+      console.log('home.js line 36, Auth header:', state.authHeader)
+      const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/student/${state.userData.id}`;
+      console.log('home.js line 38, Fetching student goals from:', fetchStudentsGoalsUrl);
       
-      if (!authDataString || !userDataString) {
-        throw new Error('Required data not found in AsyncStorage');
-      }
-      
-      const authData = JSON.parse(authDataString);
-      const userData = JSON.parse(userDataString);
-      
-      console.log('home.js line 46, Parsed auth data:', authData);
-      console.log('home.js line 47, Parsed user data:', userData);
-      
-      setUserToken(authData.idToken); 
-      setUserRole(authData.role); 
-      console.log('home.js line 50, User role:', authData.role);
-      console.log('home.js line 51, idToken data:', authData.idToken);
-      setUser(userData); 
-      
-      const authHeader = { headers: { Authorization: `Bearer ${authData.idToken}` } };
-      console.log('home.js line 56, Auth header:', authHeader)
-      const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/student/${userData.id}`;
-      console.log('home.js line 57, Fetching student goals from:', fetchStudentsGoalsUrl);
-      
-      const goalsResponse = await axios.get(fetchStudentsGoalsUrl, authHeader);
+      const goalsResponse = await axios.get(fetchStudentsGoalsUrl, state.authHeader);
       
       setGoals(goalsResponse.data ? goalsResponse.data : []);
       
