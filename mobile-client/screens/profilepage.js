@@ -10,18 +10,16 @@ import Modal from 'react-native-modal'; // Import react-native-modal
 
 const ProfileScreen = ({ navigation, route }) => {
 
-  const { signOut, state } = useAuth();
+  const { signOut, state, dispatch } = useAuth();
   const { expoPushToken } = route.params;
   const [isLoading, setIsLoading] = useState(false);
-  const [cacheUserData, setCacheUserData] = useState('');
-  const [userToken, setUserToken] = useState('');
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [userInstrument, setUserInstrument] = useState(''); // Assuming the user's instrument is stored in the user data
   const [userPoints, setUserPoints] = useState(0);
   const [userRole,  setUserRole] = useState(''); // Assuming the user's role is stored in the user data
   const [refreshing, setRefreshing] = useState(false);
-  const [userId, setUserId] = useState('');
+  const [userId, setUserId] = useState(state.userData.id);
   const [avatar, setAvatar] = useState('');
   const [frame, setFrame] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -33,34 +31,10 @@ const ProfileScreen = ({ navigation, route }) => {
   const [selectedFrameId, setSelectedFrameId] = useState('');
   
   
-  const fetchCache = async() => {
-    try{
-      const storedData = await AsyncStorage.getItem('userData');
-      const storedAuthData = await AsyncStorage.getItem('authData');
-
-      if (storedAuthData && storedData) {
-        const authData = JSON.parse(storedAuthData);
-        setUserToken(authData.idToken);  // Set the token from stored auth data
-        setCacheUserData(JSON.parse(storedData));
-        const parsedData = JSON.parse(storedData);
-        console.log('profilepage.js line 46, storedData:', storedData); // kalo print storedData disini bs tp kalo userCaheData gbs, masi empty string
-        setCacheUserData(parsedData);
-      }
-      
-    } catch{
-      console.error('profilepage.js line 51, Error fetching cache data:', error);
-    }
-  }
-  
-  
   // Fetch inventory data
   const fetchInventoryData = async (userId) => {
     try {
-      // Fetch avatars
-      if (!userToken) {
-        return;
-      }
-      const authHeader = { headers: { Authorization: `Bearer ${userToken}` } }
+      const authHeader = state.authHeader;
       const avatarResponse = await axios.get(`${IP_ADDRESS}/student-inventory/${userId}/avatar-details`, authHeader);
       setOwnedAvatars(avatarResponse.data);
 
@@ -76,19 +50,17 @@ const ProfileScreen = ({ navigation, route }) => {
     setRefreshing(true);
     setIsLoading(true);
     try {
-      console.log('profilepage.js line 79, cacheUserDate:', cacheUserData);
-      setUserName(cacheUserData.name);
-      setUserEmail(cacheUserData.email);
-      setUserId(cacheUserData.id);
-      setUserRole(cacheUserData.role);
-      setSelectedAvatarId(cacheUserData.avatar);
-      setSelectedFrameId(cacheUserData.avatarFrame);
-      setUserInstrument(cacheUserData.instrument); 
-      setUserPoints(cacheUserData.pointsCounter);
+      setUserName(state.userData.name);
+      setUserEmail(state.userData.email);
+      setUserId(state.userData.id);
+      setUserRole(state.userData.role);
+      setSelectedAvatarId(state.userData.avatar);
+      setSelectedFrameId(state.userData.avatarFrame);
+      setUserInstrument(state.userData.instrument); 
+      setUserPoints(state.userData.pointsCounter);
 
-      if (cacheUserData.role !== 'Teacher') {
-        await fetchInventoryData(cacheUserData.id);
-        // can add renderBadges() here instead in useEffect
+      if (state.userData.role !== 'Teacher') {
+        await fetchInventoryData(state.userData.id);
       }
     } catch (error) {
       console.error('profilepage.js line 94, Error processing stored data:', error.message);
@@ -103,19 +75,10 @@ const ProfileScreen = ({ navigation, route }) => {
     
     setIsLoading(true);
     try {
-      // Check if the userToken is available
-      if (!userToken) {
-        return;
-      }
-
-      // Setting up the Authorization header with the userToken
-      const authHeader = { headers: { Authorization: `Bearer ${userToken}` } }
-
       const [avatarResponse, frameResponse] = await Promise.all([
-        axios.get(`${IP_ADDRESS}/reward-shop/${selectedAvatarId}`, authHeader),
-        axios.get(`${IP_ADDRESS}/reward-shop/${selectedFrameId}`, authHeader),
+        axios.get(`${IP_ADDRESS}/reward-shop/${selectedAvatarId}`, state.authHeader),
+        axios.get(`${IP_ADDRESS}/reward-shop/${selectedFrameId}`, state.authHeader),
       ]);
-
       setAvatar(avatarResponse.data.imageLink);
       setFrame(frameResponse.data.imageLink);
     } catch (error) {
@@ -126,11 +89,7 @@ const ProfileScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    fetchCache();
     loadData();
-    console.log('profilepage.js line 131, Logging current cacheUserData'); // disini jg masi gbs ke console.log userCacheDatanya
-    console.log(cacheUserData); // tp td kalo ditungguin semenit bs tp jadi refresh refresh sendiri, 
-    // usulan: bisa ga store semua di state aja yg dipake buat di app? cache yg di storage malah yg auth data aja. Pake state lgsg kayanya lbh stabil 
   }, []);
   
   useEffect(() => {
@@ -138,15 +97,15 @@ const ProfileScreen = ({ navigation, route }) => {
     if (state.role === 'Student') {
       renderBadges();
     }
-  }, [cacheUserData, selectedAvatarId, selectedFrameId]);
+  }, [selectedAvatarId, selectedFrameId]);
   
 
   // Handle the sign-out process
   const handleSignOut = async () => {
     setIsLoading(true);
     try {
-      // await signOut(userId, expoPushToken);
-      await signOut();
+      await signOut(userId, expoPushToken);
+      //await signOut();
     } catch (error) {
       console.error('profilepage.js line 150, Error signing out', error);
     } finally {
@@ -169,17 +128,16 @@ const ProfileScreen = ({ navigation, route }) => {
   const onEditPress = () => {
     setIsModalVisible(true);
       if (ownedAvatars.length === 0 && ownedFrames.length === 0) {
-        fetchInventoryData(userId); // Assuming fetchInventoryData will handle setting state
+        fetchInventoryData(state.userData.id);
       }
   };
 
   const fetchLatestUserData = async () => {
     setIsLoading(true); // Show loading indicator during data fetch
     try {
-      const authHeader = { headers: { Authorization: `Bearer ${userToken}` } }
-      const response = await axios.get(`${IP_ADDRESS}/students/${userId}`, authHeader);
+      const response = await axios.get(`${IP_ADDRESS}/students/${userId}`, state.authHeader);
       const userData = response.data;
-      // Update the state with the latest fetched data
+      
       setUserName(userData.name);
       setUserEmail(userData.email);
       setUserRole(userData.role);
@@ -188,7 +146,7 @@ const ProfileScreen = ({ navigation, route }) => {
       setUserInstrument(userData.instrument);
       setUserPoints(userData.pointsCounter);
       // Optionally, update the local storage if caching user data
-      await AsyncStorage.setItem('userData', JSON.stringify(userData));
+      dispatch({ type: 'UPDATE_USER_DATA', payload: { userData:response.data } })
       
       loadAvatarAndFrame(); 
       if (state.role === 'Student') {
@@ -203,17 +161,16 @@ const ProfileScreen = ({ navigation, route }) => {
 
   const updateStudentAvatarAndFrame = async () => {
     setIsLoading(true); // Indicate loading
-    const authHeader = { headers: { Authorization: `Bearer ${userToken}` } }
 
     try {
       // Update Avatar if selected
       if (selectedAvatarId) {
-        await axios.put(`${IP_ADDRESS}/students/${userId}/update-avatar?avatar=${selectedAvatarId}`, authHeader);
+        await axios.put(`${IP_ADDRESS}/students/${userId}/update-avatar?avatar=${selectedAvatarId}`, {}, state.authHeader);
       }
   
       // Update Frame if selected
       if (selectedFrameId) {
-        await axios.put(`${IP_ADDRESS}/students/${userId}/update-avatar-frame?avatarFrame=${selectedFrameId}`, authHeader);
+        await axios.put(`${IP_ADDRESS}/students/${userId}/update-avatar-frame?avatarFrame=${selectedFrameId}`, {}, state.authHeader);
 
       }
       await fetchLatestUserData();
@@ -222,18 +179,16 @@ const ProfileScreen = ({ navigation, route }) => {
       console.error('profilepage.js line 221, Error updating profile:', error);
       alert('An error occurred while updating your profile. Please try again.');
     } finally {
-      setIsLoading(false); // Hide loading indicator
-      setIsModalVisible(false); // Optionally close modal
+      setIsLoading(false); 
+      setIsModalVisible(false); 
     }
   };
 
   const renderBadges = async() => {
     setIsLoading(true);
-    const authHeader = { headers: { Authorization: `Bearer ${userToken}` } }
     try {
-      const response = await axios.get(`${IP_ADDRESS}/student-inventory/${userId}/badge-details`, authHeader);
+      const response = await axios.get(`${IP_ADDRESS}/student-inventory/${userId}/badge-details`, state.authHeader);
       if (response.status === 404) {
-        console.log('kontoll');
         setOwnedBadges([]);
       } else {
         setOwnedBadges(response.data);
@@ -367,9 +322,8 @@ const ProfileScreen = ({ navigation, route }) => {
       await fetchLatestUserData(); 
     }
     catch (error) {
-      console.error('profilepage.js line 360, Error fetching latest user data:', error);
+      console.error('profilepage.js line 325, Error fetching latest user data:', error);
     }
-    // Directly call fetchLatestUserData to update state
     setRefreshing(false);
   };
 

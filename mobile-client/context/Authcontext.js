@@ -12,6 +12,7 @@ const AuthContext = createContext({
 const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 const LOGIN_ERROR = 'LOGIN_ERROR';
 const LOGOUT = 'LOGOUT';
+const UPDATE_USER_DATA = 'UPDATE_USER_DATA';
 
 const authReducer = (state, action) => {
   switch (action.type) {
@@ -21,6 +22,8 @@ const authReducer = (state, action) => {
       return { ...state, isLoggedIn: false, error: action.payload };
     case LOGOUT:
       return { ...state, isLoggedIn: false, userData: null, authHeader: null };
+    case UPDATE_USER_DATA:
+      return { ...state, userData: action.payload.userData }
     default:
       return state;
   }
@@ -83,7 +86,7 @@ export const AuthProvider = ({ children }) => {
     const loadAuthData = async () => {
       var cachedAuthData = await getAuthDataFromCache();
       if (cachedAuthData) {
-        const refreshTokenResponse = await axios.post(`${IP_ADDRESS}/api/auth/request-new-token/${cachedAuthData.userId}?refreshToken=${cachedData.refreshToken}`, {});
+        const refreshTokenResponse = await axios.post(`${IP_ADDRESS}/api/auth/request-new-token/${cachedAuthData.userId}?refreshToken=${cachedAuthData.refreshToken}`, {});
         const newRefreshToken = refreshTokenResponse.data.refresh_token
         const newIdToken = refreshTokenResponse.data.id_token;
         cachedAuthData = {...cachedAuthData, idToken: newIdToken, refreshToken: newRefreshToken}
@@ -117,33 +120,33 @@ export const AuthProvider = ({ children }) => {
 };
 
 
-  // const signOut = async (userId, expoPushToken) => {
-  //   try {
-  //     const encodedExpoPushToken = encodeURIComponent(expoPushToken);
-  //     const url = `${IP_ADDRESS}/api/auth/signout/${userId}?expoPushToken=${encodedExpoPushToken}`;
-  //     console.log('Authcontext.js line 169, url: ', url);
-  //     const response = await axios.post(url, {});
-  //     await clearAuthDataFromCache(); // This function should remove auth data from AsyncStorage
-  //     dispatch({ type: LOGOUT });
-      
-  //   } catch (error) {
-  //     if (error.response) {
-  //       console.error('Authcontext.js line 176, Error during sign out:', error.response.data);
-  //     } else {
-  //       console.error('Authcontext.js line 178, Error during sign out:', error.message);
-  //     }
-  //   }
-  // };
-
-  const signOut = async () => {
+  const signOut = async (userId, expoPushToken) => {
     try {
+      const encodedExpoPushToken = encodeURIComponent(expoPushToken);
+      const url = `${IP_ADDRESS}/api/auth/signout/${userId}?expoPushToken=${encodedExpoPushToken}`;
+      console.log('Authcontext.js line 169, url: ', url);
+      const response = await axios.post(url, {});
       await clearAuthDataFromCache(); // This function should remove auth data from AsyncStorage
       dispatch({ type: LOGOUT });
       
     } catch (error) {
-      console.error('Authcontext.js line 189, Error during sign out:', error);
+      if (error.response) {
+        console.error('Authcontext.js line 176, Error during sign out:', error.response.data);
+      } else {
+        console.error('Authcontext.js line 178, Error during sign out:', error.message);
+      }
     }
   };
+
+  // const signOut = async () => {
+  //   try {
+  //     await clearAuthDataFromCache(); // This function should remove auth data from AsyncStorage
+  //     dispatch({ type: LOGOUT });
+      
+  //   } catch (error) {
+  //     console.error('Authcontext.js line 189, Error during sign out:', error);
+  //   }
+  // };
 
   const values = { state, dispatch, signIn, signOut };
 
