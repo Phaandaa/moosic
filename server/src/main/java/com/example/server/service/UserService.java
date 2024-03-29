@@ -19,6 +19,7 @@ import com.example.server.entity.User;
 import com.example.server.entity.UserType;
 import com.example.server.models.CreateUserDTO;
 import com.example.server.models.FirebaseToken;
+import com.example.server.models.RefreshTokenResponse;
 import com.example.server.models.SignInResponseDTO;
 import com.example.server.models.SignOutDTO;
 
@@ -187,6 +188,28 @@ public class UserService {
     }
 
     @Transactional
+    public RefreshTokenResponse refreshTokenId(String userId, String refreshToken) {
+        try {
+            
+            RefreshTokenResponse refreshTokenResponse = firebaseAuthService.refreshTokenId(refreshToken);
+            if (!refreshTokenResponse.getUserId().equals(userId)) {
+                throw new IllegalArgumentException("Token not valid for this user anymore. Please login again");
+            }
+            
+            return refreshTokenResponse;
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error getting new token: " + e.getMessage());
+        }
+        
+    }
+
+    
+
+    @Transactional
     public String signOut(String userId, String expoPushToken) {
         try {
             User selectedUser = userRepository.findById(userId).orElseThrow(()->
@@ -224,8 +247,6 @@ public class UserService {
         }
         
     }
-
-    
 
     @Transactional
     private Student createStudent(String id, String name, String email, CreateUserDTO userDTO, Date creationTime) {
