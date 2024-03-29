@@ -6,9 +6,11 @@ import HomepageSearchBar from '../../components/ui/homepageSearchbar';
 import axios from 'axios';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import LoadingComponent from '../../components/ui/LoadingComponent';
+import { useAuth } from '../../context/Authcontext';
 
 
 function ViewCreatedGoalsForStudents ({ navigation }) {
+    const { state } = useAuth();
     const [search, setSearch] = useState('');
     const [studentData, setStudentData] = useState([]);
     const [filteredStudents, setFilteredStudents] = useState([]);
@@ -24,16 +26,10 @@ function ViewCreatedGoalsForStudents ({ navigation }) {
         const fetchGoalsAndStudentData = async () => {
           try {
             setLoadingState(true);
-            const storedData = await AsyncStorage.getItem('authData');
-            if (!storedData) {
-              throw new Error('No user data found.');
-            }
-            const parsedData = JSON.parse(storedData);
-            const userId = parsedData.userId;
             
             // Fetch student data
-            const fetchStudentDataUrl = `${IP_ADDRESS}/students/teacher/${userId}/`;
-            const studentResponse = await axios.get(fetchStudentDataUrl);
+            const fetchStudentDataUrl = `${IP_ADDRESS}/students/teacher/${state.userData.id}/`;
+            const studentResponse = await axios.get(fetchStudentDataUrl, state.authHeader);
             if (studentResponse.data) {
               setStudentData(studentResponse.data); // Update student data
               console.log('ViewGoalsForStudents.js line 39, studentResponse.data: ', studentResponse.data)
@@ -44,17 +40,15 @@ function ViewCreatedGoalsForStudents ({ navigation }) {
       
             // Fetch student's goals
             const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/teacher/${userId}`;
-            const goalsResponse = await axios.get(fetchStudentsGoalsUrl);
+            const goalsResponse = await axios.get(fetchStudentsGoalsUrl, state.authHeader);
             if (goalsResponse.data) {
-              // Since the data is an object, we wrap it in an array
-              setStudentGoals([goalsResponse.data]); // Wrap the object in an array and update goals
-              
+              setStudentGoals([goalsResponse.data]);
             } else {
-              setStudentGoals([]); // Set goals to an empty array if no goals were fetched
+              setStudentGoals([]); 
             }
           } catch (error) {
-            console.error('ProvidePracticeFeedbackScreen.js line 56, Error fetching data:', error);
-            setFetchError(true); // Set fetch error to true to indicate there was an error
+            console.error('ViewGoalsForStudents.js line 50, Error fetching data:', error);
+            setFetchError(true); 
           }
           finally{
             setLoadingState(false);

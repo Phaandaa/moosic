@@ -4,8 +4,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import LoadingComponent from '../../components/ui/LoadingComponent';
+import { useAuth } from '../../context/Authcontext';
 
 function CreateGoalsForStudents({ route }) {
+  const { state } = useAuth();
   const [practiceGoalCount, setPracticeGoalCount] = useState(0);
   const [assignmentGoalCount, setAssignmentGoalCount] = useState(0);
   const [points, setPoints] = useState(0);
@@ -21,7 +23,7 @@ function CreateGoalsForStudents({ route }) {
           setLoadingState(true);
           try {
               const fetchStudentGoalsUrl = `${IP_ADDRESS}/goals/student/${studentID}`;
-              const response = await axios.get(fetchStudentGoalsUrl);
+              const response = await axios.get(fetchStudentGoalsUrl, state.authHeader);
               if (response.data) {
                   setPracticeGoalCount(response.data.practiceGoalCount);
                   setAssignmentGoalCount(response.data.assignmentGoalCount);
@@ -49,7 +51,7 @@ function CreateGoalsForStudents({ route }) {
               points: points, // 
           };
           const editStudentGoalsUrl = `${IP_ADDRESS}/goals/update-goal/${studentID}`;
-          await axios.put(editStudentGoalsUrl, requestBody);
+          await axios.put(editStudentGoalsUrl, requestBody, state.authHeader);
           Alert.alert("Success", "Goals updated successfully.");
       } catch (error) {
           Alert.alert("Error", "Failed to update goals.");

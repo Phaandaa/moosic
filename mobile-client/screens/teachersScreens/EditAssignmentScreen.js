@@ -11,6 +11,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import theme from '../../styles/theme';
 import Colors from '../../constants/colors';
 import SuccessModal from '../../components/ui/SuccessModal';
+import { useAuth } from '../../context/Authcontext';
+import axios from 'axios';
 
 const getFileNameFromUrl = (url) => {
   return url.split('/').pop().slice(37);
@@ -18,6 +20,7 @@ const getFileNameFromUrl = (url) => {
 
 function EditAssignmentScreen({ route, navigation }) {
   const { assignment } = route.params;
+  const { state } = useAuth();
 
   const dispatch = useDispatch();
   const [assignmentDesc, setAssignmentDesc] = useState(assignment.description);
@@ -182,20 +185,11 @@ function EditAssignmentScreen({ route, navigation }) {
     console.log('EditAssignmentScreen.js line 182, formData: ', formData)
 
     try {
-     
-      const response = await fetch(`${IP_ADDRESS}/assignments/teacher/${assignment.assignmentId}/update-details`, {
-          method: 'PUT',
-          body: formData,
-      });
-      
-        
-      if (!response.ok) {
-        const errorText = response.statusText || 'Unknown error occurred';
-        throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-      }
+      const updateAssignmentURL = `${IP_ADDRESS}/assignments/teacher/${assignment.assignmentId}/update-details`;
+      const response = await axios.put(updateAssignmentURL, formData , state.authHeader);
       
 
-      const responseData = await response.json();
+      const responseData = response.data;
       console.log('EditAssignmentScreen.js line', responseData);
       dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
       setModalVisible(true);

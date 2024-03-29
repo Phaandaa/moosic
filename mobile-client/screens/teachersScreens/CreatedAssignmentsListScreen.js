@@ -12,12 +12,15 @@ import { setCache } from '../../cacheSlice';
 import { useFocusEffect } from '@react-navigation/native';
 import Colors from '../../constants/colors';
 import trimDate from '../../components/ui/trimDate';
+import { useAuth } from '../../context/Authcontext'
+import axios from 'axios';
 
 function CreatedAssignmentsListScreen ({route, navigation}) {
     const dispatch = useDispatch();
     const cacheStudentID = useSelector(state => state.cache.studentID); // Assuming you have set up the Redux slice correctly
     const cacheStudentName = useSelector(state => state.cache.studentID); // Assuming you have set up the Redux slice correctly
 
+    const { state } = useAuth();
     const [teacherID, setTeacherID] = useState('');
     const [studentID, setStudentID] = useState(cacheStudentID || '');
     const [studentName, setStudentName] = useState(cacheStudentName || '');
@@ -52,25 +55,14 @@ function CreatedAssignmentsListScreen ({route, navigation}) {
                 // Check if we have a valid teacherID and studentID before fetching
                 if (teacherID && studentID) {
                     try {
-                        const response = await fetch(`${IP_ADDRESS}/assignments/${studentID}/${teacherID}`, {
-                            method: 'GET'
-                        });
-                        
-                        if (!response.ok) {
-                            const errorText = response.statusText || 'Unknown error occurred';
-                            throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-                        }
-
-                        const responseData = await response.json();
-                        // Sort assignments by deadline in descending order
+                        const response = await axios.get(`${IP_ADDRESS}/assignments/${studentID}/${teacherID}`, state.authHeader);
+                        const responseData = response.data;
                         const sortedData = responseData.sort((a, b) => {
-                            // Assuming the deadline is in a format that can be directly compared, like 'YYYY-MM-DD'
-                            // If the date format is different, you may need to parse it to a Date object first
                             return new Date(b.createdAtDate) - new Date(a.createdAtDate);
                         });
 
-                        setAssignmentData(sortedData); // Set the state with the response data
-                        setSearchResults(sortedData); // Assuming you also want to filter
+                        setAssignmentData(sortedData); 
+                        setSearchResults(sortedData); 
                     } catch (error) {
                         console.error('Error fetching assignments:', error);
                     }
@@ -90,7 +82,6 @@ function CreatedAssignmentsListScreen ({route, navigation}) {
     const [assignmentData, setAssignmentData] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
 
-     // Check stored data for teacherID
      const checkStoredData = async () => {
         try {
             const storedData = await AsyncStorage.getItem('authData');
@@ -107,16 +98,7 @@ function CreatedAssignmentsListScreen ({route, navigation}) {
 
     // Fetch teacherID on component mount
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const id = await checkStoredData();
-                setTeacherID(id);
-                console.log('CreateAssignmentListScreen.js line 114, teacherID: ', teacherID)
-            } catch (error) {
-                console.error('CreateAssignmentListScreen.js line 116, Error processing stored data', error);
-            }
-        };
-        fetchData();
+        setTeacherID(state.userData.id);
     }, []);
 
     // Fetch assignments using teacherID
@@ -124,17 +106,11 @@ function CreatedAssignmentsListScreen ({route, navigation}) {
         const fetchCreatedAssignments = async() => {
             console.group('CreateAssignmentListScreen.js line 125, studentID: ', studentID)
             try {
-                const response = await fetch(`${IP_ADDRESS}/assignments/${studentID}/${teacherID}`, {
-                    method: 'GET'
-                });
+                const response = await axios.get(`${IP_ADDRESS}/assignments/${studentID}/${teacherID}`, state.authHeader);
                 
-                if (!response.ok) {
-                    const errorText = response.statusText || 'Unknown error occurred';
-                    throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-                }
-                const responseData = await response.json();
-                setAssignmentData(responseData); // Set the state with the response data
-                setSearchResults(responseData); // Assuming you also want to filter
+                const responseData = response.data;
+                setAssignmentData(responseData); 
+                setSearchResults(responseData);
             } catch (error) {
                 console.error('CreateAssignmentListScreen.js line 139, Error fetching assignments:', error);
             }
