@@ -5,7 +5,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -131,13 +134,14 @@ public class FirebaseAuthService {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-            Map<String, String> requestBody = new HashMap<>();
-            requestBody.put("grant_type", "refresh_token");
-            requestBody.put("refresh_token", refreshToken);
+            MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+            requestBody.add("grant_type", "refresh_token");
+            requestBody.add("refresh_token", refreshToken);
 
-            HttpEntity<Map<String, String>> entity = new HttpEntity<>(requestBody, headers);
-    
+            HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(requestBody, headers);
+
             RestTemplate restTemplate = new RestTemplate();
+            restTemplate.getMessageConverters().add(new FormHttpMessageConverter());
             ResponseEntity<RefreshTokenResponse> responseEntity = restTemplate.exchange(url, HttpMethod.POST, entity, RefreshTokenResponse.class);
     
             return responseEntity.getBody();

@@ -67,4 +67,10 @@ public class AuthController {
         firebaseAuthService.sendPasswordResetEmail(user.getEmail());
         return ResponseEntity.ok("Password reset email sent");
     }
+
+    @Operation(summary = "User refresh for new token")
+    @PostMapping("/request-new-token/{userId}")
+    public ResponseEntity<?> refreshTokenId(@PathVariable String userId, @RequestParam String refreshToken) {
+        return ResponseEntity.ok(userService.refreshTokenId(userId, refreshToken));
+    }
 }
