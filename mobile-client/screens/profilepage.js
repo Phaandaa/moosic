@@ -519,7 +519,7 @@ const styles = StyleSheet.create({
   itemsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
   },
   itemOption: {
     marginBottom: 20,
