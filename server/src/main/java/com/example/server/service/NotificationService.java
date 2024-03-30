@@ -114,6 +114,25 @@ public class NotificationService {
         }
     }
 
+    public List<Notification> markReadByRecipientId(String recipientId) {
+        try {
+            List<Notification> notifications = notificationRepository.findByRecipientId(recipientId);
+            if (notifications.isEmpty() || notifications == null) {
+                throw new NoSuchElementException("No notifications found for user ID " + recipientId);
+            }
+            for(Notification notification : notifications) {
+                notification.setReadStatus("read");
+            }
+            notificationRepository.saveAll(notifications);
+            return notifications;
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Error fetching points logs for student ID: " + recipientId + " " + e.getMessage());
+        }
+    }
+
     @Scheduled(cron = "0 5 0 * * *") 
     public void removeOldNotifications() {
         try {

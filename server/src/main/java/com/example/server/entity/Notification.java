@@ -32,6 +32,9 @@ public class Notification {
     @Field(name = "text_date")
     private String textDate;
 
+    @Field(name = "read_status")
+    private String readStatus;
+
     public Notification(String title, String body, String recipientId) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Date currentDate = new Date();
@@ -40,6 +43,7 @@ public class Notification {
         this.recipientId = recipientId;
         this.creationTime = currentDate;
         this.textDate = sdf.format(currentDate);
+        this.readStatus = "unread";
     }
     
 }
