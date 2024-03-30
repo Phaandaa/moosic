@@ -52,7 +52,7 @@ const ProfileScreen = ({ navigation, route }) => {
       setUserInstrument(state.userData.instrument); 
       setUserPoints(state.userData.pointsCounter);
 
-      if (state.userData.role !== 'Teacher') {
+      if (state.userData.role === 'Student') {
         await fetchInventoryData(state.userData.id);
       }
     } catch (error) {
@@ -119,9 +119,9 @@ const ProfileScreen = ({ navigation, route }) => {
         setSelectedAvatar(userData.avatar);
         setSelectedFrame(userData.avatarFrame);
         setUserPoints(userData.pointsCounter);
+        fetchInventoryData(userData.id);
       }
       dispatch({ type: 'UPDATE_USER_DATA', payload: { userData } }) 
-      fetchInventoryData(userData.id);
     } catch (error) {
       console.error('profilepage.js line 197, Error fetching latest user data:', error);
     } finally {

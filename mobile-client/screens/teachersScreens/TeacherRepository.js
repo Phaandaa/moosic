@@ -53,7 +53,7 @@ function TeacherRepository({ navigation }) {
               setStudentGoals([]); // Set goals to an empty array if no goals were fetched
             }
           } catch (error) {
-            console.error('ProvidePracticeFeedbackScreen.js line 56, Error fetching data:', error);
+            console.error('TeacherRepository.js line 56, Error fetching data:', error);
             setFetchError(true); // Set fetch error to true to indicate there was an error
           }
           finally {

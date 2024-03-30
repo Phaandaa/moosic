@@ -46,7 +46,7 @@ const HomeScreen = ({ navigation }) => {
   };
   
   useEffect(() => {
-    fetchDataAndUpdateState();
+    if (state.userData.role == 'Student') fetchDataAndUpdateState();
   }, []); 
   
   
