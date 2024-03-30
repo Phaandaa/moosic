@@ -34,6 +34,7 @@ function RewardsShopScreen() {
   const [searchText, setSearchText] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [purchaseCounter, setPurchaseCounter] = useState(0);
 
   useEffect(() => {
     console.log("RewardsShopScreen.js line 38", state.userData);
@@ -48,17 +49,14 @@ function RewardsShopScreen() {
           axios.get(`${IP_ADDRESS}/reward-shop`, state.authHeader),
           axios.get(`${IP_ADDRESS}/purchase-history/${state.userData.id}`, state.authHeader),
         ]);
-        
-        setItems(itemResponse.data); // Set the state with the response data
-        setFilteredResults(itemResponse.data);
-        setPurchaseHistory(purchaseHistoryResponse.data);
-        console.log("Reward Shop line 55, items: ", itemResponse.data);
+        setItems(itemResponse.data); 
+        setPurchaseHistory(purchaseHistoryResponse.data); 
       } catch (error) {
         console.error("RewardsShopScreen.js line 64, Error fetching items:", error);
       }
     };
     fetchItems();
-  }, []);
+  }, [purchaseCounter, state.userData]);
 
   useEffect(() => {
     // Combine search and category filters
@@ -113,6 +111,7 @@ function RewardsShopScreen() {
       Alert.alert("Success", "Item redeemed successfully!");
       setModalVisible(false);
       setSelectedItem(null); // Reset selected item on successful redemption
+      setPurchaseCounter((prevPurchaseCounter) => prevPurchaseCounter + 1); // just for refreshing the page bro dont delete hehe
     } catch (error) {
       console.error("RewardsShopScreen.js line 140, Redemption error:", error);
       Alert.alert("Redemption Failed", error.toString());
@@ -120,14 +119,14 @@ function RewardsShopScreen() {
     }
   };
 
-  const hasBeenFullyPurchased = (itemId, purchaseHistory, limitation) => {
+  const hasBeenFullyPurchased = (itemId, purchaseHistory, limitation, stock) => {
     const totalPurchased = purchaseHistory.reduce((total, purchase) => {
       if (purchase.itemId === itemId) {
         return total + purchase.purchaseAmount;
       }
       return total;
     }, 0); 
-    return totalPurchased >= limitation;
+    return totalPurchased >= limitation || stock <= 0;
   };
   
 
@@ -136,15 +135,16 @@ function RewardsShopScreen() {
     setSelectedItem(null); // Reset selected item on modal close
   };
 
-  const ShopItem = ({ description, points, type, imageLink, id, limitation }) => {
-    const isFullyPurchased = hasBeenFullyPurchased(id, purchaseHistory, limitation);
+  const ShopItem = ({ description, points, type, imageLink, id, limitation, stock }) => {
+    const isFullyPurchased = hasBeenFullyPurchased(id, purchaseHistory, limitation, stock);
+    const canPurchase = userData.pointsCounter >= points;
     return (
       <TouchableOpacity
         style={[styles.item, isFullyPurchased ? styles.itemDisabled : null]}
         onPress={() =>
           isFullyPurchased ? null : handlePressPurchase({ description, points, type, imageLink, id })
         }
-        disabled={isFullyPurchased}
+        disabled={isFullyPurchased || !canPurchase}
         // style={styles.item}
         // onPress={() =>
         //   handlePressPurchase({ description, points, type, imageLink, id })
@@ -161,15 +161,15 @@ function RewardsShopScreen() {
         <View style={styles.titleContainer}>
           <Text style={styles.itemTitle}>{description}</Text>
         </View>
-        <View style={styles.pointsContainer}>
-          {!isFullyPurchased && <Image 
-            source={require('../../assets/currency.png')} 
-            style={styles.currencyImage}
-          />}
-          <Text style={styles.itemPoints}>
-            {!isFullyPurchased ? points : "Item sold out"}
-          </Text>
-        </View>
+          <View style={styles.pointsContainer}>
+            {!isFullyPurchased && <Image 
+              source={require('../../assets/currency.png')} 
+              style={styles.currencyImage}
+            />}
+            <Text style={[styles.itemPoints, canPurchase ? null : styles.pointsDisabledText]}>
+              {!isFullyPurchased ? points : "Item sold out"}
+            </Text>
+          </View>
       </TouchableOpacity>
     );
   };
@@ -331,6 +331,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  pointsDisabledText: {
+    opacity: 0.5
   },
   itemPoints: {
     color: "#fff",

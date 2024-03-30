@@ -56,7 +56,7 @@ public class RewardShopService {
         try {
             List<RewardShop> items = rewardShopRepository.findAll();
             if (items.isEmpty() || items == null) {
-                throw new NoSuchElementException("No items found in shop currently ");
+                items = new ArrayList<>();
             }
             return items;
         } catch (NoSuchElementException e) {
@@ -83,7 +83,7 @@ public class RewardShopService {
         try {
             List<RewardShop> items = rewardShopRepository.findBySubtype(type);
             if (items.isEmpty() || items == null) {
-                throw new NoSuchElementException("No items found in shop currently ");
+                items = new ArrayList<>();
             }
             return items;
         } catch (NoSuchElementException e) {

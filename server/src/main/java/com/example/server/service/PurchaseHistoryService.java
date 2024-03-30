@@ -1,5 +1,6 @@
 package com.example.server.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -19,13 +20,13 @@ public class PurchaseHistoryService {
         try {
             List<PurchaseHistory> purchaseHistories = purchaseHistoryRepository.findAllSorted();
             if (purchaseHistories.isEmpty() || purchaseHistories == null) {
-                throw new NoSuchElementException("No purchase histories found");
+                purchaseHistories = new ArrayList<>();
             }
             return purchaseHistories;            
         } catch (NoSuchElementException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuntimeException("Error fetching all purchase histories");
+            throw new RuntimeException("Error fetching all purchase histories" + e.getMessage());
         }
     }
 
@@ -33,13 +34,13 @@ public class PurchaseHistoryService {
         try {
             List<PurchaseHistory> purchaseHistories = purchaseHistoryRepository.findByStudentId(studentId);
             if (purchaseHistories.isEmpty() || purchaseHistories == null) {
-                throw new NoSuchElementException("No purchase histories found for student ID: " + studentId);
+                purchaseHistories = new ArrayList<>();
             }
             return purchaseHistories;            
         } catch (NoSuchElementException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuntimeException("Error fetching purchase histories for student ID: " + studentId);
+            throw new RuntimeException("Error fetching purchase histories for student ID " + studentId + ": " + e.getMessage());
         }
     }
 }
