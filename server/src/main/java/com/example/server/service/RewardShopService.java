@@ -283,6 +283,8 @@ public class RewardShopService {
             StudentInventory studentInventory = studentInventoryRepository.findByStudentId(studentId).orElseThrow(()->
                 new NoSuchElementException("Student Inventory not found for student ID " + studentId));
             studentInventory.addInventoryItem(rewardShopItem.getSubtype(), rewardShopItem.getImageLink());
+            System.out.println("Here is the item bought:" + rewardShopItem.getImageLink());
+            studentInventoryRepository.save(studentInventory);
 
             // tambahin points log murid
             String pointsLogDesc = "Bought " + rewardShopItem.getDescription() + " from shop";
