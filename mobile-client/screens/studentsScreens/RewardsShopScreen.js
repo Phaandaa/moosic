@@ -27,6 +27,7 @@ const { width } = Dimensions.get("window");
 function RewardsShopScreen() {
   const { state } = useAuth();
   const [items, setItems] = useState([]);
+  const [purchaseHistory, setPurchaseHistory] = useState([]);
   const [userData, setUserData] = useState({});
   const [filteredResults, setFilteredResults] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -42,11 +43,16 @@ function RewardsShopScreen() {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response =  await axios.get(`${IP_ADDRESS}/reward-shop`, state.authHeader);
+
+        const [itemResponse, purchaseHistoryResponse] = await Promise.all([
+          axios.get(`${IP_ADDRESS}/reward-shop`, state.authHeader),
+          axios.get(`${IP_ADDRESS}/purchase-history/${state.userData.id}`, state.authHeader),
+        ]);
         
-        const responseData = response.data;
-        setItems(responseData); // Set the state with the response data
-        setFilteredResults(responseData);
+        setItems(itemResponse.data); // Set the state with the response data
+        setFilteredResults(itemResponse.data);
+        setPurchaseHistory(purchaseHistoryResponse.data);
+        console.log("Reward Shop line 55, items: ", itemResponse.data);
       } catch (error) {
         console.error("RewardsShopScreen.js line 64, Error fetching items:", error);
       }
@@ -114,18 +120,35 @@ function RewardsShopScreen() {
     }
   };
 
+  const hasBeenFullyPurchased = (itemId, purchaseHistory, limitation) => {
+    const totalPurchased = purchaseHistory.reduce((total, purchase) => {
+      if (purchase.itemId === itemId) {
+        return total + purchase.purchaseAmount;
+      }
+      return total;
+    }, 0); 
+    return totalPurchased >= limitation;
+  };
+  
+
   const handleCloseModal = () => {
     setModalVisible(false);
     setSelectedItem(null); // Reset selected item on modal close
   };
 
-  const ShopItem = ({ description, points, type, imageLink, id }) => {
+  const ShopItem = ({ description, points, type, imageLink, id, limitation }) => {
+    const isFullyPurchased = hasBeenFullyPurchased(id, purchaseHistory, limitation);
     return (
       <TouchableOpacity
-        style={styles.item}
+        style={[styles.item, isFullyPurchased ? styles.itemDisabled : null]}
         onPress={() =>
-          handlePressPurchase({ description, points, type, imageLink, id })
+          isFullyPurchased ? null : handlePressPurchase({ description, points, type, imageLink, id })
         }
+        disabled={isFullyPurchased}
+        // style={styles.item}
+        // onPress={() =>
+        //   handlePressPurchase({ description, points, type, imageLink, id })
+        // }
       >
         <View style={styles.itemHeader}>
           <Text style={styles.itemType}>{type}</Text>
@@ -139,12 +162,12 @@ function RewardsShopScreen() {
           <Text style={styles.itemTitle}>{description}</Text>
         </View>
         <View style={styles.pointsContainer}>
-          <Image 
+          {!isFullyPurchased && <Image 
             source={require('../../assets/currency.png')} 
             style={styles.currencyImage}
-          />
+          />}
           <Text style={styles.itemPoints}>
-            {points}
+            {!isFullyPurchased ? points : "Item sold out"}
           </Text>
         </View>
       </TouchableOpacity>
@@ -269,6 +292,9 @@ const styles = StyleSheet.create({
   itemType: {
     fontWeight: "bold",
     color: Colors.fontPrimary,
+  },
+  itemDisabled: {
+    opacity: 0.5,
   },
   itemImage: {
     width: "100%",
