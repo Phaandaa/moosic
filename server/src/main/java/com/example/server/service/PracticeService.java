@@ -1,5 +1,6 @@
 package com.example.server.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -13,6 +14,7 @@ import com.example.server.dao.GoalRepository;
 import com.example.server.dao.PointsLogRepository;
 import com.example.server.dao.PracticeRepository;
 import com.example.server.dao.StudentRepository;
+import com.example.server.dao.TeacherRepository;
 import com.example.server.entity.Goal;
 import com.example.server.entity.PointsLog;
 import com.example.server.entity.Practice;
@@ -30,6 +32,9 @@ public class PracticeService {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private TeacherRepository teacherRepository;
 
     @Autowired
     private PointsLogRepository pointsLogRepository;
@@ -78,9 +83,11 @@ public class PracticeService {
     
     public List<Practice> findPracticeByStudentId(String studentId) {
         try {
+            studentRepository.findById(studentId).orElseThrow(()->
+                new NoSuchElementException("No student found with the ID " + studentId));
             List<Practice> practices = practiceRepository.findByStudentId(studentId);
             if (practices.isEmpty() || practices == null) {
-                throw new NoSuchElementException("No practice logs found for student ID " + studentId);
+                return new ArrayList<>();
             }
             return practices;
         } catch (NoSuchElementException e) {
@@ -93,10 +100,11 @@ public class PracticeService {
     
     public List<Practice> findPracticeByTeacherId(String teacherId) {
         try {
+            teacherRepository.findById(teacherId).orElseThrow(()->
+                new NoSuchElementException("No teacher log found with the ID " + teacherId));
             List<Practice> practices = practiceRepository.findByTeacherId(teacherId);
-            System.out.println(practices);
             if (practices.isEmpty() || practices == null) {
-                throw new NoSuchElementException("No practice logs found for teacher ID " + teacherId);
+                return new ArrayList<>();
             }
             return practices;
         } catch (NoSuchElementException e) {
@@ -111,7 +119,7 @@ public class PracticeService {
         try {
             List<Practice> practices = practiceRepository.findByStudentIdAndTeacherId(studentId, teacherId);
             if (practices.isEmpty() || practices == null) {
-                throw new NoSuchElementException("No practice logs found for student ID " + studentId + " and teacher ID " + teacherId);
+                return new ArrayList<>();
             }
             return practices;
         } catch (NoSuchElementException e) {
@@ -199,7 +207,7 @@ public class PracticeService {
     @Transactional
     public void deletePractice(String practiceId) {
         try {
-            Practice practice = practiceRepository.findById(practiceId).orElseThrow(()->
+            practiceRepository.findById(practiceId).orElseThrow(()->
                 new NoSuchElementException("No practice log found with the ID " + practiceId));
             practiceRepository.deleteById(practiceId);
         } catch (NoSuchElementException e) {

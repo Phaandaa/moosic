@@ -289,7 +289,7 @@ public class UserService {
         try {
             List<User> users = userRepository.findAll();
             if (users == null || users.isEmpty()) {
-                throw new NoSuchElementException("No users found");
+                return new ArrayList<>();
             }
             return users;
         } catch (NoSuchElementException e) {

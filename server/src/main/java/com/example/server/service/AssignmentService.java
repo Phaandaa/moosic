@@ -17,6 +17,7 @@ import com.example.server.dao.AssignmentRepository;
 import com.example.server.dao.GoalRepository;
 import com.example.server.dao.PointsLogRepository;
 import com.example.server.dao.StudentRepository;
+import com.example.server.dao.TeacherRepository;
 import com.example.server.entity.Assignment;
 import com.example.server.entity.Goal;
 import com.example.server.entity.PointsLog;
@@ -42,6 +43,9 @@ public class AssignmentService {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private TeacherRepository teacherRepository;
 
     @Autowired
     private NotificationService notificationService;
@@ -98,9 +102,11 @@ public class AssignmentService {
     
     public List<Assignment> findAssignmentByStudentId(String studentId) {
         try {
+            studentRepository.findById(studentId).orElseThrow(()->
+                new NoSuchElementException("No student found with the ID " + studentId));
             List<Assignment> assignments = assignmentRepository.findByStudentId(studentId);
             if (assignments.isEmpty() || assignments == null) {
-                throw new NoSuchElementException("No assignments found for student ID " + studentId);
+                return new ArrayList<>();
             }
             return assignments;            
         } catch (NoSuchElementException e) {
@@ -112,9 +118,11 @@ public class AssignmentService {
 
     public List<Assignment> findAssignmentByTeacherId(String teacherId) {
         try {
+            teacherRepository.findById(teacherId).orElseThrow(()->
+                new NoSuchElementException("No teacher found with the ID " + teacherId));
             List<Assignment> assignments = assignmentRepository.findByTeacherId(teacherId);
             if (assignments.isEmpty() || assignments == null) {
-                throw new NoSuchElementException("No assignments found for teacher ID " + teacherId);
+                return new ArrayList<>();
             }
             return assignments;            
         } catch (NoSuchElementException e) {
@@ -126,9 +134,13 @@ public class AssignmentService {
 
     public List<Assignment> findAssignmentByStudentIdAndTeacherId(String studentId, String teacherId) {
         try {
+            studentRepository.findById(studentId).orElseThrow(()->
+                new NoSuchElementException("No student found with the ID " + studentId));
+            teacherRepository.findById(teacherId).orElseThrow(()->
+                new NoSuchElementException("No teacher found with the ID " + teacherId));
             List<Assignment> assignments = assignmentRepository.findByStudentIdAndTeacherId(studentId, teacherId);
             if (assignments.isEmpty() || assignments == null) {
-                throw new NoSuchElementException("No assignments found for student ID " + studentId + " and teacher ID " + teacherId);
+                return new ArrayList<>();
             }
             return assignments;            
         } catch (NoSuchElementException e) {

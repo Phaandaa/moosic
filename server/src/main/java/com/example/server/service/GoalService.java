@@ -3,6 +3,7 @@ package com.example.server.service;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.server.dao.GoalRepository;
 import com.example.server.dao.StudentRepository;
+import com.example.server.dao.TeacherRepository;
 import com.example.server.entity.Goal;
 import com.example.server.entity.Student;
 import com.example.server.models.UpdateGoalDTO;
@@ -27,9 +29,14 @@ public class GoalService {
     @Autowired
     private StudentRepository studentRepository;
 
+    @Autowired
+    private TeacherRepository teacherRepository;
+
     // edit goal practice, assignment and 
     public Goal updateGoalByStudentId(String studentId, UpdateGoalDTO updateGoalDTO) {
         try {
+            studentRepository.findById(studentId).orElseThrow(()->
+                new NoSuchElementException("Student not found with the ID " + studentId));
             Goal goal = goalRepository.findByStudentId(studentId).orElseThrow(()->
                 new NoSuchElementException("Goal not found with student ID " + studentId));
             Integer newPracticeGoalCount = updateGoalDTO.getPracticeGoalCount();
@@ -55,6 +62,8 @@ public class GoalService {
     // get goal by student id 
     public Goal getGoalByStudentId(String studentId) {
         try {
+            studentRepository.findById(studentId).orElseThrow(()->
+                new NoSuchElementException("Student not found with the ID " + studentId));
             Goal goal = goalRepository.findByStudentId(studentId).orElseThrow(()->
                 new NoSuchElementException("Goal not found with student ID " + studentId));
             return goal;          
@@ -68,9 +77,11 @@ public class GoalService {
     // get goal by teacher id
     public List<Goal> getGoalByTeacherId(String teacherId) {
         try {
+            teacherRepository.findById(teacherId).orElseThrow(()->
+                new NoSuchElementException("No teacher found with the ID " + teacherId));
             List<Goal> goals = goalRepository.findAllByTeacherId(teacherId);
             if (goals.isEmpty() || goals == null) {
-                throw new NoSuchElementException("No goals found for teacher ID " + teacherId);
+                return new ArrayList<>();
             }
             return goals;       
         } catch (NoSuchElementException e) {

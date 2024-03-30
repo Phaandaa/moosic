@@ -103,7 +103,7 @@ public class NotificationService {
         try {
             List<Notification> notifications = notificationRepository.findByRecipientId(recipientId);
             if (notifications.isEmpty() || notifications == null) {
-                throw new NoSuchElementException("No notifications found for user ID " + recipientId);
+                return new ArrayList<>();
             }
             return notifications;
         } catch (NoSuchElementException e) {
@@ -118,7 +118,7 @@ public class NotificationService {
         try {
             List<Notification> notifications = notificationRepository.findByRecipientId(recipientId);
             if (notifications.isEmpty() || notifications == null) {
-                throw new NoSuchElementException("No notifications found for user ID " + recipientId);
+                return new ArrayList<>();
             }
             for(Notification notification : notifications) {
                 notification.setReadStatus("read");
