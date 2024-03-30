@@ -67,10 +67,10 @@ const loggingInAndRetrieveUserData = async (authData, dispatch) => {
       console.log("Authcontext.js line 64, userDetailsResponse.data: ", userDetailsResponse.data); 
       dispatch({ type: LOGIN_SUCCESS, payload: { userData:userDetailsResponse.data, authHeader } });
     } else {
-      console.error('Authcontext.js line 67, Failed to fetch user details');
+      console.error('Authcontext.js line 70, Failed to fetch user details');
     }
   } catch (error) {
-    console.error('Authcontext.js line 70, Error logging in and retrieving user data', error);
+    console.error('Authcontext.js line 73, Error logging in and retrieving user data', error);
   }
 }
 

@@ -35,16 +35,8 @@ function RewardsShopScreen() {
   const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const userData = await AsyncStorage.getItem("userData");
-        const parsedUserData = JSON.parse(userData);
-        setUserData(parsedUserData);
-      } catch (error) {
-        console.error("RewardsShopScreen.js line 41, Error processing user data", error);
-      }
-    };
-    fetchUserData();
+    console.log("RewardsShopScreen.js line 38", state.userData);
+    setUserData(state.userData);
   }, []);
 
   useEffect(() => {

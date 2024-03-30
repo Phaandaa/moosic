@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView, RefreshControl } from 'react-native';
 import { useAuth } from '../context/Authcontext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Adjust this import based on the icon library you use
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
@@ -15,34 +14,28 @@ const ProfileScreen = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
-  const [userInstrument, setUserInstrument] = useState(''); // Assuming the user's instrument is stored in the user data
+  const [userInstrument, setUserInstrument] = useState(''); 
   const [userPoints, setUserPoints] = useState(0);
-  const [userRole,  setUserRole] = useState(''); // Assuming the user's role is stored in the user data
+  const [userRole,  setUserRole] = useState('');
   const [refreshing, setRefreshing] = useState(false);
-  const [userId, setUserId] = useState(state.userData.id);
-  const [avatar, setAvatar] = useState('');
-  const [frame, setFrame] = useState('');
+  const [userId, setUserId] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [ownedAvatars, setOwnedAvatars] = useState([]);
   const [ownedFrames, setOwnedFrames] = useState([]);
-  const [ownedBadges, setOwnedBadges] = useState([]); // Assuming badges are fetched from the API
+  const [ownedBadges, setOwnedBadges] = useState([]); 
   
-  const [selectedAvatarId, setSelectedAvatarId] = useState('');
-  const [selectedFrameId, setSelectedFrameId] = useState('');
-  
+  const [selectedAvatar, setSelectedAvatar] = useState('');
+  const [selectedFrame, setSelectedFrame] = useState('');
   
   // Fetch inventory data
   const fetchInventoryData = async (userId) => {
     try {
-      const authHeader = state.authHeader;
-      const avatarResponse = await axios.get(`${IP_ADDRESS}/student-inventory/${userId}/avatar-details`, authHeader);
-      setOwnedAvatars(avatarResponse.data);
-
-      // Fetch frames
-      const frameResponse = await axios.get(`${IP_ADDRESS}/student-inventory/${userId}/frame-details`, authHeader);
-      setOwnedFrames(frameResponse.data);
+      const response = await axios.get(`${IP_ADDRESS}/student-inventory/${userId}`, state.authHeader);
+      setOwnedAvatars(response.data.ownedAvatarList);
+      setOwnedFrames(response.data.ownedFrameList);
+      setOwnedBadges(response.data.ownedBadgeList);
     } catch (error) {
-      console.error('profilepage.js line 71, Error fetching inventory:', error);
+      console.error('profilepage.js line 38, Error fetching inventory:', error);
     }
   };
 
@@ -54,8 +47,8 @@ const ProfileScreen = ({ navigation, route }) => {
       setUserEmail(state.userData.email);
       setUserId(state.userData.id);
       setUserRole(state.userData.role);
-      setSelectedAvatarId(state.userData.avatar);
-      setSelectedFrameId(state.userData.avatarFrame);
+      setSelectedAvatar(state.userData.avatar);
+      setSelectedFrame(state.userData.avatarFrame);
       setUserInstrument(state.userData.instrument); 
       setUserPoints(state.userData.pointsCounter);
 
@@ -70,34 +63,9 @@ const ProfileScreen = ({ navigation, route }) => {
     }
   };
 
-  const loadAvatarAndFrame = async () => {
-    if (!selectedAvatarId || !selectedFrameId) return; // Only proceed if both IDs are available
-    
-    setIsLoading(true);
-    try {
-      const [avatarResponse, frameResponse] = await Promise.all([
-        axios.get(`${IP_ADDRESS}/reward-shop/${selectedAvatarId}`, state.authHeader),
-        axios.get(`${IP_ADDRESS}/reward-shop/${selectedFrameId}`, state.authHeader),
-      ]);
-      setAvatar(avatarResponse.data.imageLink);
-      setFrame(frameResponse.data.imageLink);
-    } catch (error) {
-      console.error('profilepage.js line 122, Error fetching avatar or frame data:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
     loadData();
   }, []);
-  
-  useEffect(() => {
-    loadAvatarAndFrame();
-    if (state.role === 'Student') {
-      renderBadges();
-    }
-  }, [selectedAvatarId, selectedFrameId]);
   
 
   // Handle the sign-out process
@@ -147,17 +115,13 @@ const ProfileScreen = ({ navigation, route }) => {
       setUserEmail(userData.email);
       setUserRole(userData.role);
       setUserInstrument(userData.instrument);
-      setSelectedAvatarId(userData.avatar);
-      setSelectedFrameId(userData.avatarFrame);
-      setUserPoints(userData.pointsCounter);
-      
-      // Optionally, update the local storage if caching user data
-      dispatch({ type: 'UPDATE_USER_DATA', payload: { userData } })
-      
-      loadAvatarAndFrame(); 
-      if (state.role === 'Student') {
-        renderBadges();
+      if (state.userData.role === 'Student') {
+        setSelectedAvatar(userData.avatar);
+        setSelectedFrame(userData.avatarFrame);
+        setUserPoints(userData.pointsCounter);
       }
+      dispatch({ type: 'UPDATE_USER_DATA', payload: { userData } }) 
+      fetchInventoryData(userData.id);
     } catch (error) {
       console.error('profilepage.js line 197, Error fetching latest user data:', error);
     } finally {
@@ -166,47 +130,28 @@ const ProfileScreen = ({ navigation, route }) => {
   };
 
   const updateStudentAvatarAndFrame = async () => {
-    setIsLoading(true); // Indicate loading
+    setIsLoading(true);
 
     try {
-      // Update Avatar if selected
-      if (selectedAvatarId) {
-        await axios.put(`${IP_ADDRESS}/students/${userId}/update-avatar?avatar=${selectedAvatarId}`, {}, state.authHeader);
+      if (selectedAvatar) {
+        const response = await axios.put(`${IP_ADDRESS}/students/${userId}/update-avatar?avatar=${selectedAvatar}`, {}, state.authHeader);
+        console.log("profile page line 139 Upadting avatar response: ", response.data)
       }
-  
-      // Update Frame if selected
-      if (selectedFrameId) {
-        await axios.put(`${IP_ADDRESS}/students/${userId}/update-avatar-frame?avatarFrame=${selectedFrameId}`, {}, state.authHeader);
+
+      if (selectedFrame) {
+        await axios.put(`${IP_ADDRESS}/students/${userId}/update-avatar-frame?avatarFrame=${selectedFrame}`, {}, state.authHeader);
 
       }
       await fetchLatestUserData();
       
     } catch (error) {
-      console.error('profilepage.js line 221, Error updating profile:', error);
-      alert('An error occurred while updating your profile. Please try again.');
+      console.error('profilepage.js line 148, Error updating profile:', error);
+      alert('profilepage.js line 149 An error occurred while updating your profile. Please try again.');
     } finally {
       setIsLoading(false); 
       setIsModalVisible(false); 
     }
   };
-
-  const renderBadges = async() => {
-    setIsLoading(true);
-    try {
-      const response = await axios.get(`${IP_ADDRESS}/student-inventory/${userId}/badge-details`, state.authHeader);
-      if (response.status === 404) {
-        setOwnedBadges([]);
-      } else {
-        setOwnedBadges(response.data);
-      }
-    } catch (error) {
-      if (error.response && error.response.status === 404) {
-        console.log('profilepage.js line 242, Badges not found (404 error):', error.response);
-      } else {
-        console.error('profilepage.js line 244, Error fetching badges:', error);
-      }
-    }
-  }
 
   const InventoryModal = () => {
     const [selectedTab, setSelectedTab] = useState('avatars'); // 'avatars' or 'frames'
@@ -217,7 +162,7 @@ const ProfileScreen = ({ navigation, route }) => {
         style={styles.itemOption}
         onPress={() => onAvatarSelect(item)}
       >
-        <Image source={{ uri: item.imageLink }} style={styles.itemImage} />
+        <Image source={{ uri: item }} style={styles.itemImage} />
       </TouchableOpacity>
     );
   
@@ -229,34 +174,26 @@ const ProfileScreen = ({ navigation, route }) => {
           onFrameSelect(item);
         }}
       >
-        <Image source={{ uri: item.imageLink }} style={styles.itemImage} />
+        <Image source={{ uri: item }} style={styles.itemImage} />
       </TouchableOpacity>
     );
 
     // Function to handle removing the avatar
       const onRemoveAvatar = () => {
-        setAvatar(''); // Reset avatar to default
-        setSelectedAvatarId(''); // Clear selected avatar ID
-        
+        setSelectedAvatar(''); 
       };
 
       // Function to handle removing the frame
       const onRemoveFrame = () => {
-        setFrame(''); // Reset frame to default
-        setSelectedFrameId(''); // Clear selected frame ID
-        
+        setSelectedFrame(''); 
       };
 
       const onAvatarSelect = (item) => {
-        setAvatar(item.imageLink); // Update avatar preview
-        AsyncStorage.setItem('avatar', item.imageLink);
-        setSelectedAvatarId(item.id); // Store selected avatar ID
+        setSelectedAvatar(item); 
       };
       
       const onFrameSelect = (item) => {
-        setFrame(item.imageLink); // Update frame preview
-        AsyncStorage.setItem('avatarFrame', item.imageLink);
-        setSelectedFrameId(item.id); // Store selected frame ID
+        setSelectedFrame(item); 
       };
       
 
@@ -345,12 +282,12 @@ const ProfileScreen = ({ navigation, route }) => {
             <TouchableOpacity style={styles.avatarContainer} onPress={onEditPress}>
               <Image
                 style={styles.avatar}
-                source={avatar ? { uri: avatar } : require('../assets/favicon.png')}
+                source={selectedAvatar ? { uri: selectedAvatar } : require('../assets/favicon.png')}
               />
-              {frame ? (
+              {selectedFrame ? (
                 <Image
                   style={styles.frame}
-                  source={{ uri: frame }}
+                  source={{ uri: selectedFrame }}
                 />
               ) : null}
               <Icon name="edit" size={24} color="white" style={styles.editIcon} />
@@ -359,7 +296,7 @@ const ProfileScreen = ({ navigation, route }) => {
             <View style={styles.avatarContainer}>
               <Image
                 style={styles.avatar}
-                source={avatar ? { uri: avatar } : require('../assets/favicon.png')}
+                source={selectedAvatar ? { uri: selectedAvatar } : require('../assets/favicon.png')}
               />
             </View>
           )}
