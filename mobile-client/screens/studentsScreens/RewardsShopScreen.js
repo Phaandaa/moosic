@@ -247,7 +247,6 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    // padding: 10,
     alignItems: "center",
     paddingTop: 18,
   },
@@ -315,13 +314,12 @@ const styles = StyleSheet.create({
     color: Colors.fontSecondary,
   },
   currentPointsContainer: {
-    backgroundColor: '#fffff',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    width: "100%",
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    // Remove width: "100%" to let the container shrink-wrap its content
   },
   pointsContainer: {
     backgroundColor: Colors.primary500, // Button background
