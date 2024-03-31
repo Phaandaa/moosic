@@ -1,5 +1,7 @@
 package com.example.server.entity;
 
+import java.util.Date;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -19,6 +21,7 @@ public class MaterialRepository {
     private String reasonForStatus;
     private String teacherId;
     private String teacherName;
+    private Date creationTime;
 
 
     public MaterialRepository(String title, String description, String fileLink, String status, String reasonForStatus,
@@ -30,6 +33,7 @@ public class MaterialRepository {
         this.reasonForStatus = reasonForStatus;
         this.teacherId = teacherId;
         this.teacherName = teacherName;
+        this.creationTime = new Date();
     }
 
 

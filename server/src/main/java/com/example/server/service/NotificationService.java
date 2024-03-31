@@ -7,22 +7,16 @@ import org.springframework.stereotype.Service;
 
 import com.google.cloud.spring.pubsub.core.PubSubTemplate;
 
-import java.time.DayOfWeek;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 import com.example.server.models.NotificationDTO;
 import com.example.server.dao.NotificationRepository;
 import com.example.server.dao.StudentRepository;
 import com.example.server.dao.TeacherRepository;
-import com.example.server.entity.Goal;
 import com.example.server.entity.Notification;
 import com.example.server.entity.Student;
 import com.example.server.entity.Teacher;
