@@ -27,9 +27,8 @@ public class CloudStorageService {
 
     public String uploadFileToGCS(MultipartFile file, String bucketSegment) {
         try {
-            String objectName = bucketSegment + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
-            System.out.println(gcsBucket);
-            System.out.println(objectName);
+            String fileModifiedName = file.getOriginalFilename().replace(" ", "_");
+            String objectName = bucketSegment + "/" + UUID.randomUUID() + "_" + fileModifiedName;
             WritableResource resource = (WritableResource) resourceLoader.getResource("gs://" + gcsBucket + "/" + objectName);
     
             try (OutputStream os = resource.getOutputStream()) {

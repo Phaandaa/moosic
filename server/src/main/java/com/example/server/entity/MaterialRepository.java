@@ -13,7 +13,7 @@ import lombok.Setter;
 @Document(collection = "material_repository")
 public class MaterialRepository {
     @Id
-    private String materialId;
+    private String id;
     private String title;
     private String description;
     private String fileLink;
@@ -39,11 +39,9 @@ public class MaterialRepository {
 
     @Override
     public String toString() {
-        return "MaterialRepository [materialId=" + materialId + ", title=" + title + ", description=" + description
-                + ", fileLink=" + fileLink + ", status=" + status + ", reasonForStatus=" + reasonForStatus
-                + ", teacherId=" + teacherId + ", teacherName=" + teacherName + "]";
+        return "MaterialRepository [id=" + id + ", title=" + title + ", description=" + description + ", fileLink="
+                + fileLink + ", status=" + status + ", reasonForStatus=" + reasonForStatus + ", teacherId=" + teacherId
+                + ", teacherName=" + teacherName + ", creationTime=" + creationTime + "]";
     }
-
-    
     
 }

@@ -1,7 +1,6 @@
 package com.example.server.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -13,9 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.server.dao.MaterialRepositoryRepository;
 import com.example.server.dao.TeacherRepository;
 import com.example.server.entity.MaterialRepository;
-import com.example.server.entity.Practice;
 import com.example.server.models.CreateMaterialRepositoryDTO;
-import com.example.server.models.CreatePracticeDTO;
 
 @Service
 public class MaterialRepositoryService {
@@ -105,8 +102,8 @@ public class MaterialRepositoryService {
 
             notificationService.sendNotification(
                 "Teacher", 
-                "Your uploaded material has been reviewed by admin", 
-                String.format("Your uploaded material %s has been reviewed. Status is: %s", material.getTitle(), material.getStatus()), 
+                String.format("%s material review", material.getTitle()), 
+                String.format("Your uploaded material %s has been reviewed. Status: %s", material.getTitle(), material.getStatus()), 
                 material.getTeacherId()
             );
             return material;
@@ -128,6 +125,7 @@ public class MaterialRepositoryService {
 
             material.setFileLink(newFileURL);
             material.setStatus("Pending");
+            material.setReasonForStatus(null);
 
             materialRepositoryRepository.save(material);
             return material;

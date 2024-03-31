@@ -28,19 +28,19 @@ public class MaterialRepositoryController {
     private MaterialRepositoryService materialRepositoryService;
 
     @Operation(summary = "Get all material repositories for admin")
-    @GetMapping("/admin}")
+    @GetMapping("/admin")
     public ResponseEntity<?> getAllMaterialRepositoryForAdmin() {
         return ResponseEntity.ok(materialRepositoryService.getAllMaterialRepository());
     }
 
     @Operation(summary = "Get all approved material repositories for teacher")
-    @GetMapping("/teacher}")
+    @GetMapping("/teacher")
     public ResponseEntity<?> getApprovedMaterialRepositoryForTeachers() {
         return ResponseEntity.ok(materialRepositoryService.getAllApprovedMaterialRepository());
     }
 
     @Operation(summary = "Get material repository by teacher id")
-    @GetMapping("/teacher/{teacherId}}")
+    @GetMapping("/teacher/{teacherId}")
     public ResponseEntity<?> getMaterialRepositoryById(@PathVariable String teacherId) {
         return ResponseEntity.ok(materialRepositoryService.getMaterialRepositoryByTeacherId(teacherId));
     }
