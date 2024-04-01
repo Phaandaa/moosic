@@ -13,6 +13,7 @@ import { SvgIcon } from "@mui/material";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { postAsync } from "src/utils/utils";
 import { useAuth } from "src/hooks/use-auth";
+import { set } from "nprogress";
 
 export default function StudentsModal({ onAddStudent }) {
   const { user } = useAuth();
@@ -82,17 +83,19 @@ export default function StudentsModal({ onAddStudent }) {
     // Assuming postAsync is correctly defined elsewhere and handles the asynchronous POST request
     const submitData = async () => {
       try {
-        const response = await postAsync("users/create", {
+        const newData = {
           name: studentName,
           email: studentEmail,
           role: "Student",
-          password: password, // Make sure your API expects this structure
+          password: password,
           info: {
             instrument: instrument,
             grade: gradeLevel,
             tuitionDay: tuitionDay,
           },
-        }, user.idToken);
+        };
+        console.log("Submitting form data:", newData);
+        const response = await postAsync("users/create", newData, user.idToken, false);
         if (!response.ok) {
           console.error("Server error:", response.status, response.statusText);
           throw new Error("Server error");
@@ -123,6 +126,7 @@ export default function StudentsModal({ onAddStudent }) {
         setGradeLevel("");
         setPassword("");
         setPasswordCfm("");
+        setTuitionDay("");
       }
     };
 

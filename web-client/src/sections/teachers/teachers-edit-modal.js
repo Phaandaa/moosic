@@ -38,7 +38,7 @@ export default function TeachersEditModal({ teacher, onEditTeacher }) {
     event.preventDefault();
     const submitData = async () => {
       try {
-        const response = await putAsync(`teachers/${teacher.id}/update-phone?phone=${phone}`, user.idToken);
+        const response = await putAsync(`teachers/${teacher.id}/update-phone?phone=${phone}`, null, user.idToken);
         if (!response.ok) {
           console.error(
             "Server error when updating phone:",

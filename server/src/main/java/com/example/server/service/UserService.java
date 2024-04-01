@@ -92,6 +92,8 @@ public class UserService {
                 isNotEmptyOrNull(instrument, "Instrument");
                 String grade = userDTO.getInfo().get("grade");
                 isNotEmptyOrNull(grade, "Grade");
+                String tuitionDay = userDTO.getInfo().get("tuitionDay");
+                isNotEmptyOrNull(tuitionDay, "Tuition Day");
             }
 
             FirebaseToken firebaseResponse = firebaseAuthService.signUpWithEmailAndPassword(email, password);
@@ -254,7 +256,7 @@ public class UserService {
             String instrument = userDTO.getInfo().get("instrument");
             String grade = userDTO.getInfo().get("grade");
             String phoneNumber = userDTO.getInfo().get("phone");
-            String tuitionDay = userDTO.getInfo().get("tuition_day");
+            String tuitionDay = userDTO.getInfo().get("tuitionDay");
             Student newStudent = new Student(id, name, email, 0, null, new ArrayList<>(), instrument, phoneNumber ,grade, null,null, null, creationTime,tuitionDay, new ArrayList<>());
             studentRepository.save(newStudent);
             Goal newGoal = new Goal(id, name, null, 0, 0, 3, 1, "Not done", 20, false);
