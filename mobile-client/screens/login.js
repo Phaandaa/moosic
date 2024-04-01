@@ -37,7 +37,6 @@ const LoginPage = ({ route, navigation }) => {
       
       if (storedData !== null) {
         const parsedData = JSON.parse(storedData);
-        console.log("login.js line 43, Stored Auth Data:", parsedData);
         return parsedData;
       } else {
         console.log("login.js line 51, No data stored in AsyncStorage");

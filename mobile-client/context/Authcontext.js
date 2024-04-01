@@ -5,7 +5,7 @@ import IP_ADDRESS from '../constants/ip_address_temp';
 
 
 const AuthContext = createContext({
-  state: { isLoggedIn: false, userData: null, error: null, authHeader: null },
+  state: { isLoggedIn: false, userData: null, error: null, authHeader: null, notifications: null },
 });
 
 // Action Types
@@ -13,17 +13,20 @@ const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 const LOGIN_ERROR = 'LOGIN_ERROR';
 const LOGOUT = 'LOGOUT';
 const UPDATE_USER_DATA = 'UPDATE_USER_DATA';
+const UPDATE_NOTIFS = 'UPDATE_NOTIFS';
 
 const authReducer = (state, action) => {
   switch (action.type) {
     case LOGIN_SUCCESS:
-      return { ...state, isLoggedIn: true, userData: action.payload.userData, authHeader: action.payload.authHeader };
+      return { ...state, isLoggedIn: true, userData: action.payload.userData, authHeader: action.payload.authHeader, notifications: action.payload.notifications };
     case LOGIN_ERROR:
       return { ...state, isLoggedIn: false, error: action.payload };
     case LOGOUT:
       return { ...state, isLoggedIn: false, userData: null, authHeader: null };
     case UPDATE_USER_DATA:
       return { ...state, userData: action.payload.userData }
+    case UPDATE_NOTIFS:
+      return { ...state, notifications: action.payload.notifications }
     default:
       return state;
   }
@@ -58,14 +61,14 @@ const loggingInAndRetrieveUserData = async (authData, dispatch) => {
   try {
     const userRolePath = authData.role === 'Teacher' ? 'teachers' : 'students';
     const authHeader = { headers: { Authorization: `Bearer ${authData.idToken}` } };
-    console.log('AuthContext.js line 58, Auth header:', authHeader)
 
-    const userDetailsResponse = await axios.get(`${IP_ADDRESS}/${userRolePath}/${authData.userId}`, authHeader);
-    console.log('AuthContext.js line 61, User Details Response:', userDetailsResponse);
+    const [userDetailsResponse, notificationResponse] = await Promise.all([
+      axios.get(`${IP_ADDRESS}/${userRolePath}/${authData.userId}`, authHeader),
+      axios.get(`${IP_ADDRESS}/notifications/${authData.userId}`, authHeader),
+    ]);
 
     if (userDetailsResponse.status === 200) {
-      console.log("Authcontext.js line 64, userDetailsResponse.data: ", userDetailsResponse.data); 
-      dispatch({ type: LOGIN_SUCCESS, payload: { userData:userDetailsResponse.data, authHeader } });
+      dispatch({ type: LOGIN_SUCCESS, payload: { userData:userDetailsResponse.data, authHeader, notifications: notificationResponse.data } });
     } else {
       console.error('Authcontext.js line 70, Failed to fetch user details');
     }
@@ -80,6 +83,7 @@ export const AuthProvider = ({ children }) => {
     userData: null,
     error: null,
     authHeader: null,
+    notifications: null
   });
 
   useEffect(() => {
@@ -117,7 +121,7 @@ export const AuthProvider = ({ children }) => {
         dispatch({ type: LOGIN_ERROR, payload: errorMessage });
         throw new Error(errorMessage);
     }
-};
+  };
 
 
   const signOut = async (userId, expoPushToken) => {

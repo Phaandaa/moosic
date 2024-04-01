@@ -342,6 +342,19 @@ const theme = StyleSheet.create({
     flex: 1, // Take up as much space as possible
     marginRight: 8, // Add some margin to the right of the text
   },
+  notificationDot: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    height: 10,
+    width: 10,
+    backgroundColor: 'red',
+    borderRadius: 5,
+  },
+  currencyImage:{
+    height: 22,
+    width: 22
+  }
 });
 
 export default theme;

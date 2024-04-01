@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, Alert, Platform, Keyboard} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import CurrentGoals from '../../components/ui/CurrentGoals';
 import axios from 'axios';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import LoadingComponent from '../../components/ui/LoadingComponent';
@@ -60,7 +60,6 @@ function CreateGoalsForStudents({ route }) {
       }
   };
 
-  // Function to validate and set the new points from TextInput
   const handleSetPoints = (newPoints) => {
     const validatedPoints = parseInt(newPoints, 10);
     if (!isNaN(validatedPoints)) {
@@ -91,28 +90,6 @@ function CreateGoalsForStudents({ route }) {
     </View>
   );
 
-  const CurrentGoals = ({ currentPracticeGoalCount, currentAssignmentGoalCount, currentPoints }) => {
-    return (
-      <View style={styles.currentGoalsContainer}>
-        <Text style={styles.currentGoalsText}>Current Goal:</Text>
-        <View style={styles.goalsRow}>
-          <View style={styles.goalCard}>
-            <Text style={styles.goalLabel}>Practice Goal</Text>
-            <Text style={styles.goalValue}>{currentPracticeGoalCount}</Text>
-          </View>
-          <View style={styles.goalCard}>
-            <Text style={styles.goalLabel}>Assignment Goal</Text>
-            <Text style={styles.goalValue}>{currentAssignmentGoalCount}</Text>
-          </View>
-          <View style={styles.goalCard}>
-            <Text style={styles.goalLabel}>Points Allocated</Text>
-            <Text style={styles.goalValue}>{currentPoints}</Text>
-          </View>
-        </View>
-      </View>
-    );
-  };
-
   const isGoalsSet = currentPracticeGoalCount > 0 || currentAssignmentGoalCount > 0;
 
     return (
@@ -120,11 +97,7 @@ function CreateGoalsForStudents({ route }) {
       <View style={styles.container}>
           <Text style={styles.title}>Set Weekly Goal for {studentName}</Text>
           {isGoalsSet ? (
-              <CurrentGoals
-                  currentPracticeGoalCount={currentPracticeGoalCount}
-                  currentAssignmentGoalCount={currentAssignmentGoalCount}
-                  currentPoints={currentPoints}
-              />
+              <CurrentGoals isStudent={false} studentId={studentID} />
           ) : (
               <Text style={styles.createGoalPrompt}>Create a goal to get started!</Text>
           )}
@@ -153,50 +126,40 @@ function CreateGoalsForStudents({ route }) {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 20,
-        textAlign: 'center',
-    },
-    goalContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginBottom: 20,
-    },
-    counterContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    counterText: {
-        fontSize: 24,
-        minWidth: 50,
-        textAlign: 'center',
-    },
-    confirmButton: {
-        backgroundColor: '#4664EA',
-        padding: 15,
-        borderRadius: 5,
-        alignItems: 'center',
-    },
-    confirmButtonText: {
-        color: 'white',
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    currentGoalsText: {
-      fontSize: 16,
-      fontWeight: 'bold',
-      marginBottom: 10,
+  container: {
+      flex: 1,
+      padding: 20,
   },
-  goalText: {
-      fontSize: 16,
-      marginBottom: 5,
+  title: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      marginBottom: 20,
+      textAlign: 'center',
+  },
+  counterContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+  },
+  counterText: {
+      fontSize: 24,
+      minWidth: 50,
+      textAlign: 'center',
+  },
+  confirmButton: {
+      backgroundColor: '#4664EA',
+      padding: 15,
+      borderRadius: 5,
+      alignItems: 'center',
+  },
+  confirmButtonText: {
+      color: 'white',
+      fontSize: 18,
+      fontWeight: 'bold',
+  },
+  currentGoalsText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
   goalCounterContainer: {
     alignItems: 'center',
@@ -214,93 +177,70 @@ const styles = StyleSheet.create({
       marginBottom: 20,
       textAlign: 'center',
   },
-pointsLabel: {
-  marginBottom: 10, // Add some space above the text input
-},
-counter: {
-  flexDirection: 'row',
-  alignItems: 'center',
-},
-counterButton: {
-  backgroundColor: '#6F66FF',
-  paddingHorizontal: 15,
-  paddingVertical: 10,
-  margin: 5,
-  borderRadius: 5,
-},
-counterButtonText: {
-  fontSize: 20,
-  color: 'white',
-  fontWeight: 'bold',
-},
-countDisplay: {
-  paddingVertical: 10,
-  paddingHorizontal: 15,
-  borderWidth: 1,
-  borderColor: 'lightgrey',
-  borderRadius: 5,
-  margin: 5,
-},
-counterText: {
-  fontSize: 20,
-},
-counterContainer: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  marginBottom: 20,
-},
-label: {
-  fontSize: 16,
-  fontWeight: 'bold',
-},
-pointsInput: {
-  borderWidth: 1,
-  borderColor: 'grey',
-  borderRadius: 5,
-  padding: 10,
-  width: 80,
-  textAlign: 'center',
-  fontSize: 18,
-},
+  pointsLabel: {
+    marginBottom: 10, // Add some space above the text input
+  },
+  counter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  counterButton: {
+    backgroundColor: '#6F66FF',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    margin: 5,
+    borderRadius: 5,
+  },
+  counterButtonText: {
+    fontSize: 20,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  countDisplay: {
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderWidth: 1,
+    borderColor: 'lightgrey',
+    borderRadius: 5,
+    margin: 5,
+  },
+  counterText: {
+    fontSize: 20,
+  },
+  counterContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  pointsInput: {
+    borderWidth: 1,
+    borderColor: 'grey',
+    borderRadius: 5,
+    padding: 10,
+    width: 80,
+    textAlign: 'center',
+    fontSize: 18,
+  },
 
-currentGoalsContainer: {
-  alignItems: 'center',
-  marginVertical: 20,
-},
-currentGoalsText: {
-  fontSize: 16,
-  fontWeight: 'bold',
-  marginBottom: 10,
-},
-goalsRow: {
-  flexDirection: 'row',
-  justifyContent: 'space-around',
-  width: '100%',
-},
-goalCard: {
-  backgroundColor: 'white',
-  paddingVertical: 10,
-  paddingHorizontal: 20,
-  borderRadius: 10,
-  flex: 1, // The flex property allows the card to grow and shrink dynamically
-  margin: 5, // Keep some space between cards
-  alignItems: 'center',
-  justifyContent: 'center',
-  // Shadow styles...
-},
-goalLabel: {
-  fontSize: 12,
-  color: '#777',
-  marginBottom: 5, // Give some space between the label and the value
-  textAlign: 'center',
-},
-goalValue: {
-  fontSize: 18,
-  fontWeight: 'bold',
-},
-
-    // ... other styles
+  currentGoalsContainer: {
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  currentGoalsText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  goalsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+  },
 });
 
 export default CreateGoalsForStudents;
