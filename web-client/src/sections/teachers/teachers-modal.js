@@ -11,8 +11,10 @@ import DialogTitle from "@mui/material/DialogTitle";
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import { FormControl, InputLabel, Select, MenuItem, SvgIcon } from "@mui/material";
 import { postAsync } from "src/utils/utils";
+import { useAuth } from "src/hooks/use-auth";
 
 export default function TeachersModal({ onAddTeacher }) {
+  const { user } = useAuth();
   const [open, setOpen] = React.useState(false);
   const [step, setStep] = React.useState(1);
   const [teacherName, setTeacherName] = React.useState("");
@@ -84,7 +86,7 @@ export default function TeachersModal({ onAddTeacher }) {
             instrument: instrument,
             phone: teacherPhone.toString(),
           },
-        });
+        }, user.idToken);
         if (!response.ok) {
           console.error("Server error:", response.status, response.statusText);
           throw new Error("Server error");

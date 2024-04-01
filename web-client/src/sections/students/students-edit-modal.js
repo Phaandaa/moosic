@@ -13,8 +13,10 @@ import { SvgIcon } from "@mui/material";
 import { getAsync, putAsync } from "src/utils/utils"; // Assuming getAsync is a utility for making GET requests
 import { useEffect } from "react";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { useAuth } from "src/hooks/use-auth";
 
 export default function StudentsEditModal({ student, onEditStudent }) {
+  const { user } = useAuth();
   const [open, setOpen] = React.useState(false);
   const [teachers, setTeachers] = React.useState([]);
   const [selectedTeacher, setSelectedTeacher] = React.useState({});
@@ -41,7 +43,7 @@ export default function StudentsEditModal({ student, onEditStudent }) {
     const submitData = async () => {
       try {
         if (Object.keys(selectedTeacher).length > 0) {
-          const responseTeacher = await putAsync(`students/${student.id}/update-teacher?teacherId=${selectedTeacher.id}`);
+          const responseTeacher = await putAsync(`students/${student.id}/update-teacher?teacherId=${selectedTeacher.id}`, user.idToken);
           if (!responseTeacher.ok) {
             console.error(
               "Server error when updating teacherId:",
@@ -52,7 +54,7 @@ export default function StudentsEditModal({ student, onEditStudent }) {
           }
         }
         if (grade !== "") {
-          const responseGrade = await putAsync(`students/${student.id}/update-grade?grade=${grade}`);
+          const responseGrade = await putAsync(`students/${student.id}/update-grade?grade=${grade}`, user.idToken);
           if (!responseGrade.ok) {
             console.error(
               "Server error when updating grade:",
@@ -64,7 +66,7 @@ export default function StudentsEditModal({ student, onEditStudent }) {
         }
 
         if (tuitionDay !== "") {
-          const responseTuitionDay = await putAsync(`students/${student.id}/update-tuition-day?tuitionDay=${tuitionDay}`);
+          const responseTuitionDay = await putAsync(`students/${student.id}/update-tuition-day?tuitionDay=${tuitionDay}`, user.idToken);
           if (!responseTuitionDay.ok) {
             console.error(
               "Server error when updating tuition day:",
@@ -126,7 +128,7 @@ export default function StudentsEditModal({ student, onEditStudent }) {
   useEffect(() => {
     const fetchTeachers = async () => {
       try {
-        const response = await getAsync("teachers");
+        const response = await getAsync("teachers", user.idToken);
         const data = await response.json();
         setTeachers(data.filter((teacher) => teacher.instrument === student.instrument));
       } catch (error) {
