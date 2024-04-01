@@ -30,8 +30,10 @@ import { figmaColors } from "src/theme/colors";
 import Pagination from "@mui/material/Pagination";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { FilterDropdowns } from "src/sections/repository/repo-filter-dropdowns";
-import { getAsync } from "src/utils/utils";
+import { getAsync, putAsync, postAsync } from "src/utils/utils";
 import { useAuth } from "src/hooks/use-auth";
+import SnackbarAlert from "src/components/alert";
+import { set } from "nprogress";
 
 const materialsMockData = [
   // Approved materials
@@ -165,21 +167,14 @@ const ApproveMaterialsSection = ({ pendingMaterials, onApprove, onReject }) => {
   };
 
   const handleReject = (reason) => {
-    onReject(currentMaterial.materialId, reason);
+    onReject(currentMaterial.id, reason);
+    setRejectionModalOpen(false);
+    setRejectionReason("");
   };
 
   const handleApprove = () => {
-    onApprove(currentMaterial.materialId);
+    onApprove(currentMaterial.id);
   };
-
-  // const handleApprove = async (materialId) => {
-  //   // Send an API request to approve the material
-  //   // Replace with actual API call
-  //   await fetch(`/api/materials/approve/${materialId}`, { method: "POST" });
-  //   // Remove the material from `pendingMaterials` and call `onApprove`
-  //   setPendingMaterials((current) => current.filter((m) => m.id !== materialId));
-  //   onApprove();
-  // };
 
   return (
     <>
@@ -205,7 +200,7 @@ const ApproveMaterialsSection = ({ pendingMaterials, onApprove, onReject }) => {
             <>
               <List>
                 {currentItems.map((material) => (
-                  <ListItem key={material.materialId} divider>
+                  <ListItem key={material.id} divider>
                     <ListItemText
                       primary={material.title}
                       secondary={`Instrument: ${material.instrument} - Grade: ${material.grade}`}
@@ -266,7 +261,7 @@ const ApproveMaterialsSection = ({ pendingMaterials, onApprove, onReject }) => {
         </AccordionDetails>
         <RejectionModal
           open={rejectionModalOpen}
-          onClose={() => setRejectionModalOpen(false)}
+          onClose={() => {setRejectionModalOpen(false); setRejectionReason("")}}
           onSubmit={handleReject}
           reason={rejectionReason}
           setReason={setRejectionReason}
@@ -285,7 +280,19 @@ const ApproveMaterialsSection = ({ pendingMaterials, onApprove, onReject }) => {
 const Page = () => {
   const { user } = useAuth();
 
-  console.log(user.id)
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
+  const onTriggerSnackbar = (message, severity) => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
 
   const [materials, setMaterials] = useState([]);
 
@@ -332,6 +339,51 @@ const Page = () => {
     });
   };
 
+  const handleApprove = async (materialId) => {
+    // Implement the logic to approve the material
+    try {
+      const response = await putAsync(
+        `material-repository/admin/${materialId}?status=Approved&reasonForStatus=Pass`,
+        {},
+        user.idToken
+      );
+      if (!response.ok) {
+        onTriggerSnackbar("Error approving material", "error");
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      console.log("Material approved successfully");
+      onTriggerSnackbar("Material approved successfully", "success");
+      // Fetch the materials again to update the UI
+      fetchMaterials();
+    } catch (error) {
+      console.error("Error approving material:", error);
+      onTriggerSnackbar("Error approving material", "error");
+    }
+  };
+
+  const handleReject = async (materialId, reason) => {
+    // Implement the logic to reject the material
+    try {
+      const response = await putAsync(
+        `material-repository/admin/${materialId}?status=Rejected&reasonForStatus=${reason}`,
+        {},
+        user.idToken
+      );
+      if (!response.ok) {
+        onTriggerSnackbar("Error rejecting material", "error");
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      console.log("Material rejected successfully");
+      onTriggerSnackbar("Material rejected successfully", "success");
+      // Fetch the materials again to update the UI
+      fetchMaterials();
+    } catch (error) {
+      console.error("Error rejecting material:", error);
+      onTriggerSnackbar("Error rejecting material", "error");
+    }
+  };
+
+
   const filteredAndSearchedMaterials = approvedMaterials.filter((material) => {
     // Filter logic
     const filterMatch =
@@ -351,18 +403,18 @@ const Page = () => {
     return filterMatch && searchMatch;
   });
 
-  useEffect(() => {
-    const fetchMaterials = async () => {
-      try {
-        const response = await getAsync("material-repository/admin", user.idToken);
-        const data = await response.json();
-        setMaterials(data);
-        console.log("Materials fetched:", data);
-      } catch (error) {
-        console.error("Error fetching materials:", error);
-      }
-    };
+  const fetchMaterials = async () => {
+    try {
+      const response = await getAsync("material-repository/admin", user.idToken);
+      const data = await response.json();
+      setMaterials(data);
+      console.log("Materials fetched:", data);
+    } catch (error) {
+      console.error("Error fetching materials:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchMaterials();
   }, []);
 
@@ -477,7 +529,8 @@ const Page = () => {
               </div>
             </Stack>
             <ApproveMaterialsSection
-              // onApprove={fetchMaterials}
+              onApprove={handleApprove}
+              onReject={handleReject}
               pendingMaterials={pendingMaterials}
             />
             <Accordion defaultExpanded>
@@ -542,6 +595,12 @@ const Page = () => {
             </Accordion>
           </Stack>
         </Container>
+        <SnackbarAlert
+          open={snackbarOpen}
+          severity={snackbarSeverity}
+          message={snackbarMessage}
+          handleClose={handleCloseSnackbar}
+        />
       </Box>
     </>
   );
