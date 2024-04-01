@@ -1,12 +1,12 @@
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export const getAsync = (url, token = null) => {
-  const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
   return fetch(apiUrl + url, { headers });
 };
 
-export const fetchAllEndpoints = async (urls, accessToken) => {
-  const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
+export const fetchAllEndpoints = async (urls, accessToken = null) => {
+  const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
 
   const fetchPromises = urls.map((url) => fetch(apiUrl + url, { headers }));
   const responses = await Promise.all(fetchPromises);
