@@ -245,25 +245,15 @@ const RootNavigator = () => {
     console.log("App.js line 245, state:", state);
 
     notificationListener.current = Notifications.addNotificationReceivedListener(async notification => {
-      // Save the received notification to AsyncStorage
-      const newNotificationData = {
-        id: notification.request.identifier, 
-        message: notification.request.content.data.message,
-        time: new Date().toISOString(),
+      const updatenotification = async() => {
+        try {
+            const response = await axios.get(`${IP_ADDRESS}/notifications/${state.userData.id}`, state.authHeader);
+            dispatch({ type: 'UPDATE_NOTIFS', payload: { notifications: response.data } });
+        } catch (error) {
+            console.error("App.js line 253, ", error);
+        }
       };
-  
-      try {
-        const existingNotificationsJson = await getNotifications();
-        const existingNotifications = existingNotificationsJson ? JSON.parse(existingNotificationsJson) : [];
-  
-        const updatedNotifications = [...existingNotifications, newNotificationData];
-  
-        // Save the updated list back to AsyncStorage
-        await saveNotification (updatedNotifications);
-        console.log('App.js line 262, Notification data saved to cache.');
-      } catch (error) {
-        console.error('App.js line 264, Error saving notification to cache:', error);
-      }
+      updatenotification();
     });
 
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
