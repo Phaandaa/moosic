@@ -1,5 +1,5 @@
 import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
-import { useCallback, useMemo, useState, useEffect } from "react";
+import { useCallback, useMemo, useState, useEffect, use } from "react";
 import {
   Box,
   Button,
@@ -30,12 +30,14 @@ import { figmaColors } from "src/theme/colors";
 import Pagination from "@mui/material/Pagination";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { FilterDropdowns } from "src/sections/repository/repo-filter-dropdowns";
+import { getAsync } from "src/utils/utils";
+import { useAuth } from "src/hooks/use-auth";
 
 const materialsMockData = [
   // Approved materials
   {
     materialId: "file-1",
-    fileName: "Music Theory 101",
+    title: "Music Theory 101",
     createdTime: "2024-01-02T11:00:00Z",
     fileLink:
       "https://storage.googleapis.com/moosicfyp/assignments/15a003c0-81c1-4f04-a414-81a6045c25c4_IMG_1539.png",
@@ -205,7 +207,7 @@ const ApproveMaterialsSection = ({ pendingMaterials, onApprove, onReject }) => {
                 {currentItems.map((material) => (
                   <ListItem key={material.materialId} divider>
                     <ListItemText
-                      primary={material.fileName}
+                      primary={material.title}
                       secondary={`Instrument: ${material.instrument} - Grade: ${material.grade}`}
                     />
                     <Button
@@ -281,7 +283,11 @@ const ApproveMaterialsSection = ({ pendingMaterials, onApprove, onReject }) => {
 };
 
 const Page = () => {
-  const [materials, setMaterials] = useState(materialsMockData);
+  const { user } = useAuth();
+
+  console.log(user.id)
+
+  const [materials, setMaterials] = useState([]);
 
   // When rendering approved materials:
   const approvedMaterials = materials.filter((material) => material.status === "Approved");
@@ -333,26 +339,30 @@ const Page = () => {
       (filters.instrument ? material.instrument === filters.instrument : true) &&
       (filters.grade ? material.grade === filters.grade : true);
 
-    // Search logic - checks if the search term is included in the material's fileName
+    // Search logic - checks if the search term is included in the material's title
     // You can extend this logic to search in other attributes as well
     const searchMatch =
-      material.fileName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      material.instrument.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      material.grade.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      material.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      material.createdTime.toLowerCase().includes(searchTerm.toLowerCase());
+      material.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      material.instrument?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      material.grade?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      material.type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      material.creationTime.toLowerCase().includes(searchTerm.toLowerCase());
 
     return filterMatch && searchMatch;
   });
 
-  const fetchMaterials = async () => {
-    // Replace with actual API call
-    const response = await fetch("");
-    const data = await response.json();
-    setMaterials(data);
-  };
-
   useEffect(() => {
+    const fetchMaterials = async () => {
+      try {
+        const response = await getAsync("material-repository/admin", user.idToken);
+        const data = await response.json();
+        setMaterials(data);
+        console.log("Materials fetched:", data);
+      } catch (error) {
+        console.error("Error fetching materials:", error);
+      }
+    };
+
     fetchMaterials();
   }, []);
 
@@ -367,7 +377,7 @@ const Page = () => {
           component="img"
           height="140" // Adjust the height accordingly
           image={material.fileLink}
-          alt={`${material.fileName} preview`} // Provide a meaningful alt text
+          alt={`${material.title} preview`} // Provide a meaningful alt text
           sx={{ borderRadius: 1, mb: 2 }}
         />
       ) : (
@@ -385,11 +395,11 @@ const Page = () => {
           </Typography>
         </Box>
       )}
-      <Typography variant="h6">{material.fileName}</Typography>
+      <Typography variant="h6">{material.title}</Typography>
       <Typography variant="subtitle2">Type: {material.type}</Typography>
       <Typography variant="subtitle2">Instrument: {material.instrument}</Typography>
       <Typography variant="subtitle2">Grade: {material.grade}</Typography>
-      <Typography variant="subtitle2">Created: {material.createdTime}</Typography>
+      <Typography variant="subtitle2">Created: {material.creationTime}</Typography>
       <Box display={"flex"} justifyContent={"center"}>
         <Button
           component="a"
@@ -424,7 +434,7 @@ const Page = () => {
       {materials.map((material) => (
         <ListItem key={material.id} divider>
           <ListItemText
-            primary={material.fileName}
+            primary={material.title}
             secondary={`Instrument: ${material.instrument} - Grade: ${material.grade}`}
           />
           <Button
@@ -467,7 +477,7 @@ const Page = () => {
               </div>
             </Stack>
             <ApproveMaterialsSection
-              onApprove={fetchMaterials}
+              // onApprove={fetchMaterials}
               pendingMaterials={pendingMaterials}
             />
             <Accordion defaultExpanded>
