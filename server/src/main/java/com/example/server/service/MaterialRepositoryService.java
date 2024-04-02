@@ -37,10 +37,13 @@ public class MaterialRepositoryService {
             String teacherId = materialRepositoryDTO.getTeacherId();
             teacherRepository.findById(teacherId).orElseThrow(()->
                 new NoSuchElementException("No teacher found with the ID " + teacherId));
+            List<String> type = materialRepositoryDTO.getType();
+            List<String> instrument = materialRepositoryDTO.getInstrument();
+            List<String> grade = materialRepositoryDTO.getGrade();
             String teacherName = materialRepositoryDTO.getTeacherName();
             String title = materialRepositoryDTO.getTitle();
             String description = materialRepositoryDTO.getDescription();
-            MaterialRepository createdMaterialRepository = new MaterialRepository(title, description, fileURL, "Pending", null, teacherId, teacherName);
+            MaterialRepository createdMaterialRepository = new MaterialRepository(title, description, fileURL, "Pending", null, type, instrument, grade, teacherId, teacherName);
 
             materialRepositoryRepository.save(createdMaterialRepository);
             return createdMaterialRepository;

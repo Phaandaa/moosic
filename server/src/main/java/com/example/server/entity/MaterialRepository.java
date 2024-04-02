@@ -1,6 +1,7 @@
 package com.example.server.entity;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -19,29 +20,27 @@ public class MaterialRepository {
     private String fileLink;
     private String status; // Pending, Approved, Rejected
     private String reasonForStatus;
+    private List<String> type;
+    private List<String> instrument;
+    private List<String> grade;
     private String teacherId;
     private String teacherName;
     private Date creationTime;
 
 
-    public MaterialRepository(String title, String description, String fileLink, String status, String reasonForStatus,
-            String teacherId, String teacherName) {
+    public MaterialRepository(String title, String description, String fileLink, String status, String reasonForStatus, List<String> type,
+        List<String> instrument, List<String> grade, String teacherId, String teacherName) {
         this.title = title;
         this.description = description;
         this.fileLink = fileLink;
         this.status = status;
         this.reasonForStatus = reasonForStatus;
+        this.type = type;
+        this.instrument = instrument;
+        this.grade = grade;
         this.teacherId = teacherId;
         this.teacherName = teacherName;
         this.creationTime = new Date();
-    }
-
-
-    @Override
-    public String toString() {
-        return "MaterialRepository [id=" + id + ", title=" + title + ", description=" + description + ", fileLink="
-                + fileLink + ", status=" + status + ", reasonForStatus=" + reasonForStatus + ", teacherId=" + teacherId
-                + ", teacherName=" + teacherName + ", creationTime=" + creationTime + "]";
     }
     
 }
