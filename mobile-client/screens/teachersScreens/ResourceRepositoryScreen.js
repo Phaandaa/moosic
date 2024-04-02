@@ -10,84 +10,71 @@ import {
   FlatList,
   Image,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import HomepageSearchBar from "../../components/ui/homepageSearchbar";
 import IP_ADDRESS from "../../constants/ip_address_temp";
-import { Ionicons } from "@expo/vector-icons";
 import Colors from "../../constants/colors";
 import theme from "../../styles/theme";
+import { useAuth } from "../../context/Authcontext";
 
 import TypeCategoryDropdown from "../../components/ui/TypeCategoryDropdown";
 import GradeCategoryDropdown from "../../components/ui/GradeCategoryDropdown";
 import InstrumentCategoryDropdown from "../../components/ui/InstrumentCategoryDropdown";
+import axios from "axios";
 
 
 // Dimensions to calculate the window width
 const { width } = Dimensions.get("window");
 
 function ResourceRepositoryScreen() {
+    const { state } = useAuth();
+    const [centralFiles, setCentralFiles] = useState([]);
+    const [teacherFiles, setTeacherFiles] = useState([]);
     const [files, setFiles] = useState([]);
     const [userData, setUserData] = useState({});
     const [filteredResults, setFilteredResults] = useState([]);
     const [searchText, setSearchText] = useState("");
-    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedTab, setSelectedTab] = useState("central");
 
     const [selectedTypes, setSelectedTypes] = useState([]); 
     const [selectedInstruments, setSelectedInstruments] = useState([]);
     const [selectedGrades, setSelectedGrades] = useState([]); 
 
-    // const [selectedItem, setSelectedItem] = useState(null);
-
-    // useEffect(() => {
-    //     const fetchUserData = async () => {
-    //     try {
-    //         const userData = await AsyncStorage.getItem("userData");
-    //         const parsedUserData = JSON.parse(userData);
-    //         setUserData(parsedUserData);
-    //     } catch (error) {
-    //         console.error("Error processing user data", error);
-    //     }
-    //     };
-    //     fetchUserData();
-    // }, []);
-
-    // useEffect(() => {
-    //     const fetchItems = async () => {
-    //     try {
-    //         const response = await fetch(`${IP_ADDRESS}/reward-shop`, {
-    //         method: "GET",
-    //         });
-
-    //         if (!response.ok) {
-    //         const errorText = response.statusText || "Unknown error occurred";
-    //         throw new Error(
-    //             `Request failed with status ${response.status}: ${errorText}`
-    //         );
-    //         }
-    //         const responseData = await response.json();
-    //         setItems(responseData); // Set the state with the response data
-    //         setFilteredResults(responseData);
-    //         console.log('responseData', responseData)
-    //     } catch (error) {
-    //         console.error("Error fetching items:", error);
-    //     }
-    //     };
-    //     fetchItems();
-    // }, []);
-
     useEffect(() => {
-        // Combine search and category filters
-        applyFilters();
-    }, [files, searchText, selectedTypes, selectedInstruments, selectedGrades]);
+        const fetchMaterials = async() => {
+            try {
+                const [centralFilesResponse, teacherFilesResponse] = await Promise.all([
+                    axios.get(`${IP_ADDRESS}/material-repository/teacher`, state.authHeader),
+                    axios.get(`${IP_ADDRESS}/material-repository/teacher/${state.userData.id}`, state.authHeader),
+                ]);
+                setCentralFiles(centralFilesResponse.data);
+                setTeacherFiles(teacherFilesResponse.data);
+                console.log("Central files: ", centralFilesResponse.data);
+                console.log("Teacher files: ", teacherFilesResponse.data);
+                setFilteredResults(centralFilesResponse.data);
+            } catch (error) {
+                console.error("ResourceRepositoryScreen.js line 94, ", error);
+            }
+        };
+        fetchMaterials();
+    }, [state.authHeader, state.userData.id]);
+    
+    useEffect(() => {
+        if (selectedTab == "central") {
+            setFilteredResults(applyFilters(centralFiles));
+        } 
+        if (selectedTab == "teacher") {
+            setFilteredResults(applyFilters(teacherFiles));
+        }
+    }, [files, searchText, selectedTypes, selectedInstruments, selectedGrades, selectedTab]);
 
-    const applyFilters = () => {
+    const applyFilters = useCallback((files) => {
         let result = files;
 
         // Filter by search text
         if (searchText) {
-        result = result.filter((file) =>
-            file.fileName.toLowerCase().includes(searchText.toLowerCase())
-        );
+            result = result.filter((file) =>
+                file.title.toLowerCase().includes(searchText.toLowerCase())
+            );
         }
 
         // Filter by selected types
@@ -109,74 +96,18 @@ function ResourceRepositoryScreen() {
             file.grade.some(grade => selectedGrades.includes(grade.toLowerCase()))
         )};
         setFilteredResults(result);
-    };
+
+        return result;
+    }, [searchText, selectedTypes, selectedInstruments, selectedGrades]);
+
+    useEffect(() => {
+        let source = selectedTab == "central" ? centralFiles : teacherFiles;
+        setFilteredResults(applyFilters(source));
+    }, [centralFiles, teacherFiles, applyFilters, selectedTab]);
 
     const handleSearch = (text) => {
         setSearchText(text);
     };
-
-    // const handleTypeSelectionChange = (types) => {
-    //     setSelectedTypes(types);
-    //     console.log('selectedTypes', selectedTypes);
-    // }; // Assuming setSelectedStudents doesn't change, this function is now stable
-
-    // const handleInstrumentSelectionChange = ((instruments) => {
-    //     setSelectedInstruments(instruments);
-    //     console.log('selectedInstruments', selectedInstruments)
-    // }, [setSelectedInstruments]); // Assuming setSelectedStudents doesn't change, this function is now stable
-
-    // const handleGradeSelectionChange = ((grades) => {
-    //     setSelectedGrades(grades);
-    //     console.log('selectedGrades', selectedGrades)
-    // }, [setSelectedGrades]); // Assuming setSelectedStudents doesn't change, this function is now stable
-
-    useEffect(() => {
-        const MockFiles = [{
-            id: '1', 
-            fileName: 'ABRSM Theory.pdf',
-            creationTime: '2024-03-21T16:53:25.758+00:00',
-            fileLink:'https://storage.googleapis.com/moosicfyp/assignments/d8b061f5-525c-4720-b375-cb040ea8b2e7_IMG_0651.jpg',
-            type: ['Theory', 'Sight Reading'],
-            instrument: ['Piano', 'Guitar'],
-            grade: ['3'],
-            status: 'Pending'
-        }, {
-            id: '2',
-            fileName: 'SightReading5.png',
-            creationTime: '2024-03-21T16:54:31.761+00:00',
-            fileLink:'https://storage.googleapis.com/moosicfyp/assignments/4428ebb0-9309-46c1-bc4f-e914d6c79d83_IMG_0653.jpg',
-            type: ['Theory', 'Sight Reading'],
-            instrument: ['Piano', 'Violin'],
-            grade: ['3'],
-            status: 'Approved'
-        }, {
-            id: '3',
-            fileName: 'Twinkle Twinkle Little Star.jpg',
-            creationTime: '2024-03-21T16:54:31.761+00:00',
-            fileLink:'https://storage.googleapis.com/moosicfyp/assignments/40482763-d96c-4b8e-9fb0-0c92f8a57a3e_IMG_1845.jpg',
-            type: ['Music Sheet'],
-            instrument: ['Violin'],
-            grade: ['1'],
-            status: 'Rejected'
-        }, {
-            id: '4',
-            fileName: 'Allegramente.jpg',
-            creationTime: '2024-03-21T16:54:31.761+00:00',
-            fileLink:'https://storage.googleapis.com/moosicfyp/assignments/060d391c-d3a4-4adb-aa65-0e4b1933289c_IMG_1846.jpg',
-            type: ['Music Sheet'],
-            instrument: ['Violin'],
-            grade: ['4', '5'],
-            status: 'Rejected'
-        }];
-        
-        setFiles(MockFiles);
-        setFilteredResults(MockFiles);
-        console.log('files: ', files);
-    }, []);
-
-    useEffect(() => {
-        console.log('files: ', files); // This will now log the updated state, but only after re-renders.
-    }, [files]); // Log the `files` state when it changes
 
     const RepoFile = ({ fileName, instrument, type, grade, fileLink }) => {
         return (
@@ -215,15 +146,17 @@ function ResourceRepositoryScreen() {
         <View style={styles.container}>
         <View style={styles.shadowContainer}>
             <View style={styles.headerButtons}>
-                <View style={styles.navigationRow}>
-                    <TouchableOpacity style={styles.pressedNavigationBtn}>
-                        <Text style={styles.pressedNavigationText}>Central Repository</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.navigationBtn}>
-                        <Text style={styles.navigationText}>My Uploaded Resources</Text>
-                    </TouchableOpacity>
-                </View>
                 <HomepageSearchBar onSearch={handleSearch} />
+                <View style={styles.dropdownContainer}>
+                    <View style={styles.navigationRow}>
+                        <TouchableOpacity style={selectedTab === "central" ? styles.pressedNavigationBtn : styles.navigationBtn} onPress={() => setSelectedTab("central")}>
+                            <Text style={selectedTab === "central" ? styles.pressedNavigationText : styles.navigationText}>Central Repository</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={selectedTab === "teacher" ? styles.pressedNavigationBtn : styles.navigationBtn} onPress={() => setSelectedTab("teacher")}>
+                            <Text style={selectedTab === "teacher" ? styles.pressedNavigationText : styles.navigationText}>My Uploaded Resources</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
                 <ScrollView horizontal={true}> 
                     <View style={styles.dropdownContainer}> 
                         <TypeCategoryDropdown onCategoryChange={setSelectedTypes}/>
@@ -420,6 +353,7 @@ const styles = StyleSheet.create({
         fontSize: 16
     },
     navigationRow:{
+        marginTop: 20,
         flexDirection: 'row',
         justifyContent: 'center', 
         width: '100%',
