@@ -25,14 +25,14 @@ const NotificationsScreen = ({ navigation }) => {
   
   return (
     <View style={styles.container}>
-  {/* Fixed content at the top */}
-  <Text style={styles.headerText}>Notifications</Text>
-  <TouchableOpacity
-    style={styles.button}
-    onPress={() => navigation.navigate('SetReminderScreen')}>
-    <Text style={styles.buttonText}>Set Reminder</Text>
-    <Ionicons name="alarm-outline" size={20} color="white" />
-  </TouchableOpacity>
+    {/* Fixed content at the top */}
+    {/* <Text style={styles.headerText}>Notifications</Text> */}
+    {state.userData.role === "Student" && <TouchableOpacity
+      style={styles.button}
+      onPress={() => navigation.navigate('SetReminderScreen')}>
+      <Text style={styles.buttonText}>Set Reminder</Text>
+      <Ionicons name="alarm-outline" size={20} color="white" />
+    </TouchableOpacity>}
 
   {/* Scrollable content */}
   <ScrollView style={theme.container}>
