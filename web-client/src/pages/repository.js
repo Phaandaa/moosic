@@ -33,109 +33,6 @@ import { FilterDropdowns } from "src/sections/repository/repo-filter-dropdowns";
 import { getAsync, putAsync, postAsync } from "src/utils/utils";
 import { useAuth } from "src/hooks/use-auth";
 import SnackbarAlert from "src/components/alert";
-import { set } from "nprogress";
-
-const materialsMockData = [
-  // Approved materials
-  {
-    materialId: "file-1",
-    title: "Music Theory 101",
-    createdTime: "2024-01-02T11:00:00Z",
-    fileLink:
-      "https://storage.googleapis.com/moosicfyp/assignments/15a003c0-81c1-4f04-a414-81a6045c25c4_IMG_1539.png",
-    status: "Approved",
-    instrument: "Piano",
-    grade: "3",
-    type: "Image",
-    teacherId: "teacher-111",
-  },
-  {
-    materialId: "file-2",
-    fileName: "Music Theory 102",
-    createdTime: "2024-01-05T10:30:00Z",
-    fileLink:
-      "https://storage.googleapis.com/moosicfyp/assignments/534f768f-6006-4e16-88e7-41f7489c4a44_ABRSM-Grade-8-Practice-Test.pdf",
-    status: "Approved",
-    instrument: "Guitar",
-    grade: "6",
-    type: "Document",
-    teacherId: "teacher-111",
-  },
-  // Pending materials
-  {
-    materialId: "file-pending-1",
-    fileName: "Music Theory 104",
-    createdTime: "2024-02-15T09:30:00Z",
-    fileLink:
-      "https://storage.googleapis.com/moosicfyp/assignments/10c65252-05de-4f47-b21c-72548283fddf_cakes-bakery.e956eab7.pdf",
-    status: "Pending",
-    instrument: "Ukulele",
-    grade: "1",
-    type: "Document",
-    teacherId: "teacher-222",
-  },
-  {
-    materialId: "file-pending-2",
-    fileName: "Music Theory 105",
-    createdTime: "2024-02-20T10:30:00Z",
-    fileLink:
-      "https://storage.googleapis.com/moosicfyp/assignments/2dac5872-5e26-40e9-80cf-6100dc0aec91_baseline_assesment_report_cover.png",
-    status: "Pending",
-    instrument: "Violin",
-    grade: "5",
-    type: "Image",
-    teacherId: "teacher-222",
-  },
-  {
-    materialId: "file-pending-3",
-    fileName: "Music Theory 106",
-    createdTime: "2024-02-25T11:00:00Z",
-    fileLink:
-      "https://storage.googleapis.com/moosicfyp/assignments/2dac5872-5e26-40e9-80cf-6100dc0aec91_baseline_assesment_report_cover.png",
-    status: "Pending",
-    instrument: "Piano",
-    grade: "2",
-    type: "Image",
-    teacherId: "teacher-223",
-  },
-  {
-    materialId: "file-pending-4",
-    fileName: "Music Theory 107",
-    createdTime: "2024-02-25T11:00:00Z",
-    fileLink:
-      "https://storage.googleapis.com/moosicfyp/assignments/2dac5872-5e26-40e9-80cf-6100dc0aec91_baseline_assesment_report_cover.png",
-    status: "Pending",
-    instrument: "Ukulele",
-    grade: "3",
-    type: "Image",
-    teacherId: "teacher-224",
-  },
-  {
-    materialId: "file-pending-5",
-    fileName: "Music Theory 108",
-    createdTime: "2024-02-25T11:00:00Z",
-    fileLink:
-      "https://storage.googleapis.com/moosicfyp/assignments/2dac5872-5e26-40e9-80cf-6100dc0aec91_baseline_assesment_report_cover.png",
-    status: "Pending",
-    instrument: "Ukulele",
-    grade: "3",
-    type: "Image",
-    teacherId: "teacher-224",
-  },
-  {
-    materialId: "file-pending-6",
-    fileName: "Music Theory 109",
-    createdTime: "2024-02-25T11:00:00Z",
-    fileLink:
-      "https://storage.googleapis.com/moosicfyp/assignments/2dac5872-5e26-40e9-80cf-6100dc0aec91_baseline_assesment_report_cover.png",
-    status: "Pending",
-    instrument: "Ukulele",
-    grade: "3",
-    type: "Image",
-    teacherId: "teacher-224",
-  },
-  // ... add more materials as needed
-];
 
 const ApproveMaterialsSection = ({ pendingMaterials, onApprove, onReject }) => {
   const [rejectionModalOpen, setRejectionModalOpen] = useState(false);
@@ -418,8 +315,15 @@ const Page = () => {
     fetchMaterials();
   }, []);
 
-  const handleAddFile = (file) => {
-    console.log("File added:", file);
+  const handleAddFile = (data) => {
+    console.log("File added:", data);
+    if (data.status === "Pending") {
+      setMaterials([...materials, data]);
+    }
+    if (data.status === "Approved") {
+      setMaterials([...materials, data]);
+    }
+
   };
 
   const MaterialCard = ({ material }) => (

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.server.models.CreateMaterialRepositoryDTO;
 import com.example.server.service.MaterialRepositoryService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,13 +43,13 @@ public class MaterialRepositoryController {
     public ResponseEntity<?> getMaterialRepositoryById(@PathVariable String teacherId) {
         return ResponseEntity.ok(materialRepositoryService.getMaterialRepositoryByTeacherId(teacherId));
     }
-    
+
     @Operation(summary = "Create new material repository")
     @PostMapping(path = "/create", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> createMaterialRepository(
-            @RequestPart("material_repository") CreateMaterialRepositoryDTO materialRepositoryDTO,
+            @RequestPart("material_repository") String materialRepositoryJSON,
             @RequestPart("file") MultipartFile file) {
-        return ResponseEntity.ok(materialRepositoryService.createMaterialRepository(materialRepositoryDTO, file));
+        return ResponseEntity.ok(materialRepositoryService.createMaterialRepository(materialRepositoryJSON, file));
     }
 
     @Operation(summary = "Approve material and give reason")
