@@ -30,6 +30,7 @@ function CreateGoalsForStudents({ route }) {
                   setCurrentPracticeGoalCount(response.data.practiceGoalCount);
                   setCurrentAssignmentGoalCount(response.data.assignmentGoalCount);
                   SetCurrentpoints(response.data.points);
+                  setPoints(response.data.points);
               }
           } catch (error) {
               console.log("CreateGoalsForStudentsScreen.js line 33, Error", "Failed to fetch student goals.");
@@ -51,9 +52,12 @@ function CreateGoalsForStudents({ route }) {
               points: points, // 
           };
           const editStudentGoalsUrl = `${IP_ADDRESS}/goals/update-goal/${studentID}`;
+          console.log(editStudentGoalsUrl);
+          console.log("CreateGoalsForStudent.js line 55", requestBody);
           await axios.put(editStudentGoalsUrl, requestBody, state.authHeader);
           Alert.alert("Success", "Goals updated successfully.");
       } catch (error) {
+          console.log("CreateGoalsforStudent.js line 57", error);
           Alert.alert("Error", "Failed to update goals.");
       } finally {
           setLoadingState(false);
@@ -118,7 +122,7 @@ function CreateGoalsForStudents({ route }) {
                   />
                 </View>
                 <TouchableOpacity style={styles.confirmButton} onPress={handleSetGoal}>
-                  <Text style={styles.confirmButtonText}>Confirm</Text>
+                  <Text style={styles.confirmButtonText}>Update Goal</Text>
                 </TouchableOpacity>
             </View>
         </LoadingComponent>
