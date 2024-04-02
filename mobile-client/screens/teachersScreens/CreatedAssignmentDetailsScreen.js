@@ -5,12 +5,16 @@ import { Ionicons } from '@expo/vector-icons';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import trimDate from '../../components/ui/trimDate';
 import DeleteModal from '../../components/ui/DeleteModal';
+import axios from 'axios';
+import { useAuth } from '../../context/Authcontext';
 
 const getFileNameFromUrl = (url) => {
     return url.split('/').pop().slice(37);
 };
 
 function CreatedAssignmentDetailsScreen({route, navigation}) {
+
+    const { state } = useAuth();
     const { assignment } = route.params;
     console.log('CreateAssignmentDetails.js line 15, createdassignment', assignment)
 
@@ -27,18 +31,9 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
     const deleteAssignment = async() => {
         console.log('CreateAssignmentDetails.js line 28, assignmentId', assignment.assignmentId)
         try {
-            const response = await fetch(`${IP_ADDRESS}/assignments/${assignment.assignmentId}`, {
-                method: 'DELETE'
-            });
-            
-            if (!response.ok) {
-                const errorText = response.statusText || 'Unknown error occurred';
-                throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-            }
+            const response = await axios.delete(`${IP_ADDRESS}/assignments/${assignment.assignmentId}`, state.authHeader);
             Alert.alert('Success', 'Assignment has been removed!');
-
             navigation.goBack();
-
         } catch (error) {
             console.error('CreateAssignmentDetails.js line 43, Error deleting assignment:', error);
         }
