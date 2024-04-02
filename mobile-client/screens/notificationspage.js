@@ -38,19 +38,16 @@ const NotificationsScreen = ({ navigation }) => {
   <ScrollView style={theme.container}>
     {notifications.length > 0 ? ( 
           notifications.map((notification, index) => (
-            <>
-              <View key={notification.id} style={theme.card3}>
-                {notification.readStatus == "unread" && <View style={theme.notificationDot} />}
-                  <View style={theme.cardTextContainer}>
-                      <Text style={theme.cardTitle}>{notification.title}</Text>
-                      <Text style={theme.cardText}>{notification.body}</Text>
-                      <Text style={theme.cardText}>
-                        <Ionicons name="calendar-outline" size={16} color="#525F7F" /> {notification.textDate}
-                      </Text>
-                  </View>
-                  
-              </View>
-            </>
+            <View key={notification.id} style={theme.card3}>
+              {notification.readStatus == "unread" && <View style={theme.notificationDot} />}
+                <View style={theme.cardTextContainer}>
+                    <Text style={theme.cardTitle}>{notification.title}</Text>
+                    <Text style={theme.cardText}>{notification.body}</Text>
+                    <Text style={theme.cardText}>
+                      <Ionicons name="calendar-outline" size={16} color="#525F7F" /> {notification.textDate}
+                    </Text>
+                </View>
+            </View>
           ))
       ) : (
           <View style={theme.card2}>
