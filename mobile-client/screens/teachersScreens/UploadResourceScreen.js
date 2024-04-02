@@ -5,7 +5,6 @@ import * as DocumentPicker from 'expo-document-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
 import { useDispatch } from 'react-redux';
-import { setCache } from '../../cacheSlice';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -15,13 +14,14 @@ import SuccessModal from '../../components/ui/SuccessModal';
 import TypeCategoryDropdownGrey from "../../components/ui/TypeCategoryDropdownGrey";
 import GradeCategoryDropdownGrey from "../../components/ui/GradeCategoryDropdownGrey";
 import InstrumentCategoryDropdownGrey from "../../components/ui/InstrumentCategoryDropdownGrey";
+import { useAuth } from '../../context/Authcontext';
 
 function UploadResourceScreen({ navigation }) {
   
+  const { state } = useAuth();
   const dispatch = useDispatch();
-  const [assignmentName, setAssignmentName] = useState('');
-  const [assignmentDesc, setAssignmentDesc] = useState('');
-  const [submissionDate, setSubmissionDate] = useState(new Date());
+  const [materialTitle, setMaterialTitle] = useState('');
+  const [materialDesc, setMaterialDesc] = useState('');
   const [errors, setErrors] = useState({});
 
   const [image, setImage] = useState(null);
@@ -34,7 +34,7 @@ function UploadResourceScreen({ navigation }) {
   const [isModalVisible, setModalVisible] = useState(false);
 
   const handleModalButtonPress = () => {
-    navigation.navigate('Home');
+    navigation.navigate('Repository');
     setModalVisible(false);
   };
 
@@ -87,14 +87,22 @@ function UploadResourceScreen({ navigation }) {
   const validateForm = () => {
     let newErrors = {};
     let isValid = true;
-    if (!assignmentName.trim()) {
-      newErrors.assignmentName = 'File name is required.';
+    if (!materialTitle.trim()) {
+      newErrors.materialTitle = 'File name is required.';
       isValid = false;
     }
-    if (!assignmentDesc.trim()) {
-      newErrors.assignmentDesc = 'Description is required.';
+    if (!materialDesc.trim()) {
+      newErrors.materialDesc = 'Description is required.';
       isValid = false;
     }
+    if (image === null && uploadedDocument === null) {
+      newErrors.fileUpload = 'Please upload an image or document';
+      isValid = false;
+    } else if (image && uploadedDocument) {
+      newErrors.fileUpload = 'Please only upload etiher image or document';
+      isValid = false;
+    }
+    console.log(newErrors);
     setErrors(newErrors);
     return isValid;
   };
@@ -105,81 +113,63 @@ function UploadResourceScreen({ navigation }) {
       return;
     }
   
-    const storedData = await AsyncStorage.getItem('authData');
-    if (!storedData) {
-      Alert.alert('Error', 'Authentication data is not available. Please login again.');
-      return;
-    }
-  
-    const parsedData = JSON.parse(storedData);
-    if (!parsedData.userId || !parsedData.name) {
-      Alert.alert('Error', 'Incomplete authentication data. Please login again.');
-      return;
-    }
-  
     const formData = new FormData();
 
-    const assignmentData ={
-      teacher_id: parsedData.userId,
-      teacher_name: parsedData.name,
-      assignment_title: assignmentName,
-      assignment_desc: assignmentDesc,
+    const materialData ={
+      teacherId: state.userData.id,
+      teacherName: state.userData.name,
+      title: materialTitle,
+      description: materialDesc,
     };
-    console.log('assignmentData:', assignmentData)
-    
+
+    console.log('materialData:', materialData)
   
-    image.forEach((image, index) => {
-      const { uri, fileName } = image
+    // image.forEach((image, index) => {
+    //   const { uri, fileName } = image
+    //   if (typeof image.uri === 'string') { // Check if image.uri is a string
+    //     const uriParts = image.uri.split('.');
+    //     const fileType = uriParts[uriParts.length - 1];
 
-      if (typeof image.uri === 'string') { // Check if image.uri is a string
-        const uriParts = image.uri.split('.');
-        const fileType = uriParts[uriParts.length - 1];
+    //     console.log('Appending file:', image.uri);
+    //     formData.append('files', {
+    //         uri: uri,
+    //         name: fileName,
+    //         type: `image/${fileType}`,
+    //     });
+    //   } else {
+    //     console.warn('Invalid image URI:', image.uri);
+    //   }
+    // });
 
-        console.log('Appending file:', image.uri);
-        formData.append('files', {
-            uri: uri,
-            name: fileName,
-            type: `image/${fileType}`,
-        });
-      } else {
-        console.warn('Invalid image URI:', image.uri);
-      }
-    });
-
-    uploadedDocuments.forEach((doc, index) => {
-      formData.append(`files`, {
-        uri: doc.uri,
-        type: doc.mimeType,
-        name: doc.name
+    if (image) {
+      const uriParts = image.uri.split('.');
+      const fileType = uriParts[uriParts.length - 1];
+      
+      formData.append('file', {
+        uri: image.uri,
+        name: `photo.${fileType}`,
+        type: `image/${fileType}`,
       });
-    });
-
+    } else if (uploadedDocument) {
+      formData.append('file', {
+        uri: uploadedDocument.uri,
+        name: uploadedDocument.name,
+        type: uploadedDocument.mimeType,
+      });
+    }
+    
     // console.log(formData)
-    formData.append("assignment", {"string" : JSON.stringify(assignmentData), type: 'application/json'});
+    formData.append("material_repository", {"string" : JSON.stringify(materialData), type: 'application/json'});
     console.log(formData)
+    try {
+      const response = axios.post(`${IP_ADDRESS}/material-repository/create`, formData, state.authHeader);
+      const responseData = await response.data;
+      setModalVisible(true);
+    } catch (error) {
+      console.error('Error recording practice:', error);
+      Alert.alert('Error', `Failed to create practice. ${error.response?.data?.message || 'Please try again.'}`);
+    }
 
-  // try {
-     
-  //     const response = await fetch(`${IP_ADDRESS}/assignments/create`, {
-  //         method: 'POST',
-  //         body: formData,
-  //     });
-      
-        
-  //     if (!response.ok) {
-  //       const errorText = response.statusText || 'Unknown error occurred';
-  //       throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-  //     }
-      
-  //     const responseData = await response.json();
-  //     console.log(responseData);
-  //     dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
-  //     setModalVisible(true);
-
-  //   } catch (error) {
-  //     console.error('Error creating assignment:', error);
-  //     Alert.alert('Error', `Failed to create assignment. ${error.response?.data?.message || 'Please try again.'}`);
-  //   }
   };
 
 
@@ -190,12 +180,22 @@ function UploadResourceScreen({ navigation }) {
 
         <View style={styles.inputContainer}>
           <TextInput
-            placeholder="Add File Name"
-            value={assignmentName}
-            onChangeText={setAssignmentName}
+            placeholder="Add Material Title"
+            value={materialTitle}
+            onChangeText={setMaterialTitle}
             style={styles.input}
           />
-          {errors.assignmentName && <Text style={styles.errorText}>{errors.assignmentName}</Text>}
+          {errors.materialTitle && <Text style={styles.errorText}>{errors.materialTitle}</Text>}
+        </View>
+
+        <View style={styles.inputContainer}>
+          <TextInput
+            placeholder="Add Material Description"
+            value={materialDesc}
+            onChangeText={setMaterialDesc}
+            style={styles.input}
+          />
+          {errors.materialDesc && <Text style={styles.errorText}>{errors.materialDesc}</Text>}
         </View>
 
         <View style={styles.dropdownContainer}> 
@@ -205,13 +205,15 @@ function UploadResourceScreen({ navigation }) {
         </View>
 
         <View style={styles.uploadButtons}>
-        <View style={styles.attachFilesSection}>
-          <TouchableOpacity style={styles.attachButton} onPress={() => uploadImage('gallery')}>
-            <Ionicons name="images" size={24} color={Colors.mainPurple} />
-            <Text style={styles.attachText}>Upload an Image</Text>
-          </TouchableOpacity>
-        </View>
-
+          <View style={styles.attachFilesSection}>
+            <TouchableOpacity style={styles.attachButton} onPress={() => uploadImage('gallery')}>
+              <Ionicons name="images" size={24} color={Colors.mainPurple} />
+              <Text style={styles.attachText}>Upload an Image</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{ alignItems: 'center', justifyContent: 'center'}}>
+            <Text>or</Text>
+          </View>
           <View style={styles.attachFilesSection}>
             <TouchableOpacity style={styles.attachButton} onPress={uploadDocument}>
               <Ionicons name="attach" size={24} color={Colors.mainPurple} />
