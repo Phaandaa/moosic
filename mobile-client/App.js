@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
+import { StatusBar } from 'expo-status-bar';
 
 // Pages
 import LoginPage from './screens/login';
@@ -223,13 +224,16 @@ function TeacherTabs({ route }) {
 const App = () => {
     
   return (
-    <AuthProvider>
-      <Provider store={store}>
-        <NavigationContainer>
-          <RootNavigator />
-        </NavigationContainer>
-      </Provider>
-    </AuthProvider>
+    <>
+      <StatusBar style="dark" />
+      <AuthProvider>
+        <Provider store={store}>
+          <NavigationContainer>
+            <RootNavigator />
+          </NavigationContainer>
+        </Provider>
+      </AuthProvider>
+    </>
   );
 };
 
@@ -309,7 +313,7 @@ const RootNavigator = () => {
            <Stack.Screen name="CreateGoalsForStudents" component={CreateGoalsForStudents} options={{ title: 'Create Goals' }} />
            <Stack.Screen name="PracticeListTeacherScreen" component={PracticeListTeacherScreen} options={{ title: 'Practice Log' }} />
           <Stack.Screen name="ProvidePracticeFeedbackScreen" component={ProvidePracticeFeedbackScreen} options={{ title: 'Provide Feedback' }} />
-          <Stack.Screen name="ResourceRepositoryScreen" component={ResourceRepositoryScreen} options={{ title: 'Central Resource Repository' }} />
+          <Stack.Screen name="ResourceRepositoryScreen" component={ResourceRepositoryScreen} options={{ title: 'Resource Repository' }} />
           <Stack.Screen name="ResourcesUploadedListScreen" component={ResourcesUploadedListScreen} options={{ title: 'Resources Uploaded' }} />
           <Stack.Screen name="UploadResourceScreen" component={UploadResourceScreen} options={{ title: 'Upload Resources' }} />
           <Stack.Screen name="SelectFilesFromRepositoryScreen" component={SelectFilesFromRepositoryScreen} options={{ title: 'Select Files' }} />
