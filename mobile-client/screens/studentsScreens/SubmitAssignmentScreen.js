@@ -9,8 +9,11 @@ import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SuccessModal from '../../components/ui/SuccessModal';
 import Colors from '../../constants/colors';
+import { useAuth } from '../../context/Authcontext';
+import axios from 'axios';
 
 function SubmitAssignmentScreen({ navigation, route }) {
+  const { state } = useAuth();
   const {assignmentID} = route.params;
   const [assignmentName, setAssignmentName] = useState('');
   const [studentComments, setStudentComments] = useState('');
@@ -148,23 +151,19 @@ function SubmitAssignmentScreen({ navigation, route }) {
 
     try {
 
-      const response = await fetch(`${IP_ADDRESS}/assignments/student/${assignmentID}/update?`, {
-          method: 'PUT',
-          body: formData,
-      });
-        
-      if (!response.ok) {
-        const errorText = response.statusText || 'Unknown error occurred';
-        throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-      }
-      const responseData = await response.json();
-      console.log('SubmitAssignment.js line 161, responseData: ', responseData);
-      // dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
+      // const response = await fetch(`${IP_ADDRESS}/assignments/student/${assignmentID}/update?`, {
+      //     method: 'PUT',
+      //     body: formData,
+      // });
+
+      const response = await axios.put(`${IP_ADDRESS}/assignments/student/${assignmentID}/update?`, formData, state.authHeader);
+      
+      
       setModalVisible(true);
 
     } catch (error) {
-      console.error('SubmitAssignment.js line 166, Error creating assignment:', error);
-      Alert.alert('Error', `Failed to create assignment. ${error.response?.data?.message || 'Please try again.'}`);
+      console.error('SubmitAssignment.js line 166, Error submitting assignment:', error);
+      Alert.alert('Error', `Failed to submit assignment. ${error.response?.data?.message || 'Please try again.'}`);
     }
   };
 
