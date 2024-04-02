@@ -83,15 +83,30 @@ const CustomTabBarButton = ({ children }) => {
                         >
                           <Text style={styles.optionText}>Create Goals</Text>
                         </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() => navigateToScreen('UploadResourceScreen')}
+                          style={styles.optionButton}
+                        >
+                          <Text style={styles.optionText}>Upload Resource</Text>
+                        </TouchableOpacity>
                       </>
                     )}
                     {userRole === 'Student' && (
-                      <TouchableOpacity
-                        onPress={() => navigateToScreen('CreatePracticeScreen')}
+                      <>
+                        <TouchableOpacity
+                          onPress={() => navigateToScreen('CreatePracticeScreen')}
+                          style={styles.optionButton}
+                        >
+                          <Text style={styles.optionText}>Create Practice Log</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                        onPress={() => navigateToScreen('SetReminderScreen')}
                         style={styles.optionButton}
-                      >
-                        <Text style={styles.optionText}>Create Practice Log</Text>
-                      </TouchableOpacity>
+                        >
+                          <Text style={styles.optionText}>Schedule Practice Reminder</Text>
+                        </TouchableOpacity>
+                    </>
+                      
                     )}
                   </View>
                 </TouchableWithoutFeedback>

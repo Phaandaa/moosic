@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { TextInput, View, ScrollView, TouchableOpacity, Text, Button, Image, Alert, StyleSheet, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
-import StudentDropdown from '../../components/ui/StudentDropdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
 import { useDispatch } from 'react-redux';
@@ -12,41 +11,31 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Colors from '../../constants/colors';
 import SuccessModal from '../../components/ui/SuccessModal';
-import { useAuth } from '../../context/Authcontext';
 
+import TypeCategoryDropdownGrey from "../../components/ui/TypeCategoryDropdownGrey";
+import GradeCategoryDropdownGrey from "../../components/ui/GradeCategoryDropdownGrey";
+import InstrumentCategoryDropdownGrey from "../../components/ui/InstrumentCategoryDropdownGrey";
 
-function CreateAssignmentScreen({ navigation }) {
+function UploadResourceScreen({ navigation }) {
+  
   const dispatch = useDispatch();
-  const { state } = useAuth();
   const [assignmentName, setAssignmentName] = useState('');
   const [assignmentDesc, setAssignmentDesc] = useState('');
-  const [assignmentDeadline, setAssignmentDeadline] = useState('');
-  const [selectedStudents, setSelectedStudents] = useState([]);
   const [submissionDate, setSubmissionDate] = useState(new Date());
   const [errors, setErrors] = useState({});
 
-  const [images, setImages] = useState([]);
-  const [uploadedDocuments, setUploadedDocuments] = useState([]);
+  const [image, setImage] = useState(null);
+  const [uploadedDocument, setUploadedDocument] = useState(null);
+
+  const [selectedTypes, setSelectedTypes] = useState([]); 
+  const [selectedInstruments, setSelectedInstruments] = useState([]);
+  const [selectedGrades, setSelectedGrades] = useState([]); 
 
   const [isModalVisible, setModalVisible] = useState(false);
 
   const handleModalButtonPress = () => {
     navigation.navigate('Home');
     setModalVisible(false);
-  };
-
-  const [date, setDate] = useState(new Date());
-  const [showPicker, setShowPicker] = useState(false);
-
-  const toggleDatepicker = () => {
-    setShowPicker(!showPicker);
-  };
-
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShowPicker(Platform.OS === 'ios');
-    setDate(currentDate);
-    setAssignmentDeadline(currentDate.toDateString());
   };
 
   const uploadImage = async (mode) => {
@@ -63,9 +52,10 @@ function CreateAssignmentScreen({ navigation }) {
         quality: 1,
       });
       if (!result.canceled) {
-        console.log('CreateAssignmentScreen.js line 64, result.assets[0]:', result.assets[0])
-        saveImage(result.assets[0]); 
-        console.log('CreateAssignmentScreen.js line 66, images: ', images);
+        console.log('result.assets[0]:', result.assets[0])
+        setImage(result.assets[0]); 
+        setUploadedDocument(null);
+        console.log(image);
       }
     }
   };
@@ -74,54 +64,40 @@ function CreateAssignmentScreen({ navigation }) {
     try {
       const result = await DocumentPicker.getDocumentAsync({
         type: '*/*',
-        multiple: true,
+        multiple: false,
       });
       if (!result.canceled && result.assets) {
-        setUploadedDocuments(currentDocs => [...currentDocs, ...result.assets]);
-        console.log('CreateAssignmentScreen.js line 79, uploadedDocuments: ',uploadedDocuments);
+        setUploadedDocument(result.assets[0]);
+        setImage(null);
+        console.log('uploadedDocument',uploadedDocument);
       }
     } catch (error) {
       Alert.alert('Error picking document:', error.message);
     }
   };
   
-  
-  const saveImage = (newImage) => {
-    setImages((currentImages) => [...currentImages, newImage]);
+  const removeImage = () => {
+    setImage(null);
   };
 
-  const removeImage = (index) => {
-    setImages(currentImages => currentImages.filter((_, i) => i !== index));
-  };
-
-  const removeDocument = (index) => {
-    setUploadedDocuments(currentDocs => currentDocs.filter((_, i) => i !== index));
+  const removeDocument = () => {
+    setUploadedDocument(null);
   };
 
   const validateForm = () => {
     let newErrors = {};
     let isValid = true;
     if (!assignmentName.trim()) {
-      newErrors.assignmentName = 'Assignment name is required.';
+      newErrors.assignmentName = 'File name is required.';
       isValid = false;
     }
     if (!assignmentDesc.trim()) {
       newErrors.assignmentDesc = 'Description is required.';
       isValid = false;
     }
-    if (!assignmentDeadline) {
-      newErrors.assignmentDeadline = 'Deadline is required.';
-      isValid = false;
-    }
     setErrors(newErrors);
     return isValid;
   };
-
-  // Handler to update state with selected student IDs in the desired format
-  const handleStudentSelectionChange = useCallback((selectedIds) => {
-    const formattedSelectedStudents = selectedIds.map(id => ({ student_id: id }));
-    setSelectedStudents(formattedSelectedStudents);
-  }, [setSelectedStudents]); // Assuming setSelectedStudents doesn't change, this function is now stable
 
   const submitHandler = async () => {
     if (!validateForm()) {
@@ -148,29 +124,25 @@ function CreateAssignmentScreen({ navigation }) {
       teacher_name: parsedData.name,
       assignment_title: assignmentName,
       assignment_desc: assignmentDesc,
-      assignment_deadline: assignmentDeadline,
-      selected_students: selectedStudents,
-      // selected_students: [{student_id: '5C4Q6ZILqoTBi9YnESwpKQuhMcN2'}],
-      points: 0
     };
-    console.log('CreateAssignmentScreen.js line 154, assignmentData:', assignmentData)
+    console.log('assignmentData:', assignmentData)
     
   
-    images.forEach((image, index) => {
+    image.forEach((image, index) => {
       const { uri, fileName } = image
 
       if (typeof image.uri === 'string') { // Check if image.uri is a string
         const uriParts = image.uri.split('.');
         const fileType = uriParts[uriParts.length - 1];
 
-        console.log('CreateAssignmentScreen.js line 164, Appending file:', image.uri);
+        console.log('Appending file:', image.uri);
         formData.append('files', {
             uri: uri,
             name: fileName,
             type: `image/${fileType}`,
         });
       } else {
-        console.warn('CreateAssignmentScreen.js line 171, Invalid image URI:', image.uri);
+        console.warn('Invalid image URI:', image.uri);
       }
     });
 
@@ -184,32 +156,41 @@ function CreateAssignmentScreen({ navigation }) {
 
     // console.log(formData)
     formData.append("assignment", {"string" : JSON.stringify(assignmentData), type: 'application/json'});
-    console.log('CreateAssignmentScreen.js line 185, formData: ', formData)
+    console.log(formData)
 
-    try {
+  // try {
+     
+  //     const response = await fetch(`${IP_ADDRESS}/assignments/create`, {
+  //         method: 'POST',
+  //         body: formData,
+  //     });
       
-      const response = await axios.post(`${IP_ADDRESS}/assignments/create`, formData, state.authHeader);
+        
+  //     if (!response.ok) {
+  //       const errorText = response.statusText || 'Unknown error occurred';
+  //       throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+  //     }
       
-      const responseData = response.data;
-      console.log('CreateAssignmentScreen.js line 201, responseData: ', responseData);
-      dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
-      setModalVisible(true);
+  //     const responseData = await response.json();
+  //     console.log(responseData);
+  //     dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
+  //     setModalVisible(true);
 
-    } catch (error) {
-      console.error('CreateAssignmentScreen.js line 206, Error creating assignment:', error);
-      Alert.alert('Error', `Failed to create assignment. ${error.response?.data?.message || 'Please try again.'}`);
-    }
+  //   } catch (error) {
+  //     console.error('Error creating assignment:', error);
+  //     Alert.alert('Error', `Failed to create assignment. ${error.response?.data?.message || 'Please try again.'}`);
+  //   }
   };
 
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.formContainer}>
-        <Text style={styles.header}>Create New Assignment</Text>
+        <Text style={styles.header}>Upload A New Resource</Text>
 
         <View style={styles.inputContainer}>
           <TextInput
-            placeholder="Add a Title"
+            placeholder="Add File Name"
             value={assignmentName}
             onChangeText={setAssignmentName}
             style={styles.input}
@@ -217,96 +198,61 @@ function CreateAssignmentScreen({ navigation }) {
           {errors.assignmentName && <Text style={styles.errorText}>{errors.assignmentName}</Text>}
         </View>
 
-        <View style={styles.inputContainer}>
-          <TextInput
-            placeholder="Description"
-            value={assignmentDesc}
-            onChangeText={setAssignmentDesc}
-            multiline
-            style={[styles.input, styles.textArea]}
-          />
-          {errors.assignmentDesc && <Text style={styles.errorText}>{errors.assignmentDesc}</Text>}
+        <View style={styles.dropdownContainer}> 
+            <TypeCategoryDropdownGrey onCategoryChange={setSelectedTypes}/>
+            <InstrumentCategoryDropdownGrey onCategoryChange={setSelectedInstruments}/>
+            <GradeCategoryDropdownGrey onCategoryChange={setSelectedGrades}/>
         </View>
-        
-        <View style={styles.deadlineContainer}>
-          <Text style={styles.dueDateLabel}>Due date</Text>
-          <TouchableOpacity onPress={toggleDatepicker} style={styles.dateDisplay}>
-            <Text style={styles.dateText}>{assignmentDeadline || 'Select date'}</Text>
-            <Ionicons name="calendar" size={24} color={Colors.mainPurple} />
-          </TouchableOpacity>
-        </View>
-
-        {showPicker && (
-          <DateTimePicker
-            value={date}
-            mode="date"
-            display="default"
-            onChange={onChange}
-          />
-        )}
-
 
         <View style={styles.uploadButtons}>
         <View style={styles.attachFilesSection}>
           <TouchableOpacity style={styles.attachButton} onPress={() => uploadImage('gallery')}>
             <Ionicons name="images" size={24} color={Colors.mainPurple} />
-            <Text style={styles.attachText}>Upload Image</Text>
+            <Text style={styles.attachText}>Upload an Image</Text>
           </TouchableOpacity>
         </View>
 
           <View style={styles.attachFilesSection}>
             <TouchableOpacity style={styles.attachButton} onPress={uploadDocument}>
               <Ionicons name="attach" size={24} color={Colors.mainPurple} />
-              <Text style={styles.attachText}>Attach Files</Text>
+              <Text style={styles.attachText}>Attach a File</Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* <View style={styles.repoContainer}> */}
-          <View style={styles.attachFilesSection}>
-            <TouchableOpacity style={styles.attachButton} onPress={() => navigation.navigate('SelectFilesFromRepositoryScreen')}>
-              <Ionicons name="file-tray-full" size={24} color={Colors.mainPurple} />
-              <Text style={styles.attachText}>Choose Files from Repository</Text>
-            </TouchableOpacity>
-          </View>
-        {/* </View> */}
-
         {/* Display Images and Document Names */}
-        {images.length === 0 && uploadedDocuments.length === 0 ? (
+        {image == null && uploadedDocument == null ? (
           <View style={styles.emptyContainer}>
             <Ionicons name="cloud-upload-outline" size={50} color="#cccccc" />
-            <Text style={styles.emptyText}>Upload images or documents to your assignment</Text>
+            <Text style={styles.emptyText}>Upload either an image or file to the central repository.</Text>
           </View>
         ) : (
           <>
             <View style={styles.imageContainer}>
               
-                {images.map((image, index) => (
-                      <View key={image.uri} style={styles.imageWrapper}>
-                          <Image source={{ uri: image.uri }} style={styles.image} />
-                          <TouchableOpacity onPress={() => removeImage(index)} style={styles.removeButton}>
-                              
-                              <Ionicons name="close-circle" size={24} color="red" />
-                          </TouchableOpacity>
-                      </View>
-                ))}
+                {image && (
+                  <View key={image.uri} style={styles.imageWrapper}>
+                      <Image source={{ uri: image.uri }} style={styles.image} />
+                      <TouchableOpacity onPress={() => removeImage()} style={styles.removeButton}>
+                          <Ionicons name="close-circle" size={24} color="red" />
+                      </TouchableOpacity>
+                  </View>
+                )}
             </View>
 
             <View style={styles.documentContainer}>
-              {uploadedDocuments.map((doc, index) => (
-                <View key={index} style={styles.documentItem}>
+              {uploadedDocument && (
+                <View style={styles.documentItem}>
                   <Ionicons name="document-attach" size={24} color="#4F8EF7" />
-                  <Text style={styles.documentName}>{doc.name}</Text>
-                  <TouchableOpacity onPress={() => removeDocument(index)} style={styles.removeButton}>
+                  <Text style={styles.documentName}>{uploadedDocument.name}</Text>
+                  <TouchableOpacity onPress={() => removeDocument()} style={styles.removeButton}>
                     <Ionicons name="close-circle" size={24} color="red" />
                   </TouchableOpacity>
                 </View>
-              ))}
+              )}
             </View>
           </>
         )}
-
-        <StudentDropdown onSelectionChange={handleStudentSelectionChange} style={styles.dropdown} />
 
       <SuccessModal 
         isModalVisible={isModalVisible} 
@@ -317,7 +263,7 @@ function CreateAssignmentScreen({ navigation }) {
       />
 
         <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={submitHandler}>
-          <Text style={styles.buttonText}>Create Assignment</Text>
+          <Text style={styles.buttonText}>Upload Resource</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -328,6 +274,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffffff',
+    paddingTop: 10
   },
   emptyContainer: {
     alignItems: 'center',
@@ -366,7 +313,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 15,
     flexDirection: 'row',
-    alignItems: 'center',    
+    alignItems: 'center',
     justifyContent: 'center', // Center horizontally
     padding: 15,
     flex: 1,
@@ -375,7 +322,6 @@ const styles = StyleSheet.create({
   attachButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center'
   },
   attachText: {
     marginLeft: 10,
@@ -394,11 +340,7 @@ const styles = StyleSheet.create({
   uploadButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 10,
-  },
-  repoContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    marginBottom: 20,
   },
   imageContainer: {
     flexDirection: 'row',
@@ -488,5 +430,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  dropdownContainer:{
+    // flexDirection: 'row',
+    // justifyContent: "space-between", // Try 'space-around' for equal spacing
+    // alignItems: 'center', // This centers the dropdowns vertically in the container
+    // height: 60,
+    // marginTop: 10
+    marginBottom: 20
+},
 });
-export default CreateAssignmentScreen;
+
+export default UploadResourceScreen;
