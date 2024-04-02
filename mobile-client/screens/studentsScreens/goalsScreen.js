@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, RefreshControl, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import theme from '../../styles/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -161,10 +161,13 @@ const GoalsScreen = () => {
           <Text style={styles.createGoalPrompt}>Aim High, Start your Goals!</Text>
       )}
 
-      <View style={[styles.balanceContainer, { backgroundColor: '#007AFF', overflow: 'hidden', position: 'relative'}]}>
-        <Ionicons name="trophy" size={180} color='#FFFFFF' style={{ position: 'absolute', bottom: 0, right: 0 }} />
-        <Text style={styles.balanceText}>Your Points</Text>
-        <Text style={styles.pointsIndicator}>{points}</Text>
+      <View style={styles.balanceContainer}>
+        <Text style={[styles.balanceText]}>Your points:</Text>
+        <Image 
+          source={require('../../assets/currency.png')} 
+          style={[styles.currencyImage, styles.balanceChild]}
+        />
+        <Text style={[styles.pointsIndicator, styles.balanceChild]}>{points}</Text>
       </View>
 
       <FlatList
@@ -196,27 +199,34 @@ const styles = StyleSheet.create({
   activeTabText: {
     color: '#FFD700', // Accent Color
   },
+  balanceChild: {
+    marginHorizontal: 10,
+  },
   balanceContainer: {
-    backgroundColor: '#686BFF', // Primary Color
+    flexDirection: 'row', // align children in a row
+    alignItems: 'center', // center items vertically in the container
+    justifyContent: 'flex-start', // space between the text container and the image
+    backgroundColor: '#007AFF',
     borderRadius: 8,
     marginHorizontal: 20,
-    marginTop: 10,
     marginBottom: 20,
     paddingHorizontal: 20,
-    paddingVertical: 60,
-    verticalAlign: 'center',
-    
+    paddingVertical: 20, // adjusted for equal padding
+  },
+  currencyImage: {
+    width: 30, // specify your size
+    height: 30, // specify your size
+    resizeMode: 'contain'
   },
   balanceText: {
     color: 'white',
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold', // Standardize font weight
   },
   pointsIndicator: {
     color: 'white',
-    fontSize: 36,
+    fontSize: 16,
     fontWeight: 'bold',
-    marginTop: 8,
   },
   tabContainer: {
     flexDirection: 'row',
@@ -239,7 +249,8 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
     backgroundColor: '#686BFF', // Adjust as per your color scheme
     marginHorizontal: 20,
     borderRadius: 10,
@@ -253,7 +264,7 @@ const styles = StyleSheet.create({
   logItemContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 15,
+    padding: 10,
     marginHorizontal: 20,
     backgroundColor: 'white',
     borderRadius: 8,
@@ -261,12 +272,11 @@ const styles = StyleSheet.create({
   },
   logDescription: {
     flex: 2,
-    fontSize: 16,
-    color: '#333',
-    fontWeight: '700',
+    fontSize: 13,
+    color: '#333'
   },
   logChangeAmount: {
-    fontSize: 16,
+    fontSize: 13,
     color: '#333',
     marginLeft: 12,
     flex: 1,
@@ -280,7 +290,7 @@ const styles = StyleSheet.create({
     color: 'red', // or a specific shade of red you prefer
   },
   logDate: {
-    fontSize: 16,
+    fontSize: 13,
     color: '#333',
     marginLeft: 12,
     flex: 2,
@@ -347,7 +357,9 @@ progressBar: {
     maxWidth: '100%', // Ensure it doesn't overflow the container
     position: 'absolute', // Position it behind the progress bar
 },
-
+pointsContainer: {
+  alignItems: 'center', // Center the text
+},
 progressText: {
     position: 'absolute',
     padding: 20,

@@ -111,7 +111,9 @@ function RewardsShopScreen() {
       Alert.alert("Success", "Item redeemed successfully!");
       setModalVisible(false);
       setSelectedItem(null); // Reset selected item on successful redemption
-      setPurchaseCounter((prevPurchaseCounter) => prevPurchaseCounter + 1); // just for refreshing the page bro dont delete hehe
+      if (selectedItem.type === "DIGITAL") {
+        setPurchaseCounter((prevPurchaseCounter) => prevPurchaseCounter + 1); // just for refreshing the page bro dont delete hehe
+      }
     } catch (error) {
       console.error("RewardsShopScreen.js line 140, Redemption error:", error);
       Alert.alert("Redemption Failed", error.toString());
@@ -324,7 +326,7 @@ const styles = StyleSheet.create({
   pointsContainer: {
     backgroundColor: Colors.primary500, // Button background
     paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
     width: "100%",
     flexDirection: 'row',
     alignItems: 'center',

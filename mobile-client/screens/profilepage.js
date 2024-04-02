@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView, RefreshControl } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView, RefreshControl, FlatList, Dimensions } from 'react-native';
 import { useAuth } from '../context/Authcontext';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Adjust this import based on the icon library you use
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import IP_ADDRESS from '../constants/ip_address_temp';
 import Modal from 'react-native-modal'; // Import react-native-modal
+import theme from '../styles/theme';
 
 const ProfileScreen = ({ navigation, route }) => {
 
@@ -83,9 +84,12 @@ const ProfileScreen = ({ navigation, route }) => {
 
   // Component for statistics cards
 
-  const StatsCard = ({ iconName, value, label }) => (
+  const StatsCard = ({ value, label }) => (
     <View style={styles.statCard}>
-      <Icon name={iconName} size={24} color="#FFA500" style={styles.statIcon} />
+      <Image 
+        source={require('../assets/currency.png')} 
+        style={[theme.currencyImage, styles.statIcon]}
+      />
       <View style={styles.statDetails}>
         <Text style={styles.statValue}>{value}</Text>
         <Text style={styles.statLabel}>{label}</Text>
@@ -212,11 +216,10 @@ const ProfileScreen = ({ navigation, route }) => {
       
     return (
       <Modal
-      isVisible={isModalVisible} // Use isVisible prop for visibility
-      onBackdropPress={() => setIsModalVisible(false)} // Close modal on backdrop press
-      onSwipeComplete={() => setIsModalVisible(false)} // Optional: close modal on swipe
-      style={styles.modalOverlay} // Apply custom styles as needed
-        
+        isVisible={isModalVisible} // Use isVisible prop for visibility
+        onBackdropPress={() => setIsModalVisible(false)} // Close modal on backdrop press
+        onSwipeComplete={() => setIsModalVisible(false)} // Optional: close modal on swipe
+        style={styles.modalOverlay} // Apply custom styles as needed
       >
         
           <View style={styles.modalContainer}>
@@ -270,6 +273,25 @@ const ProfileScreen = ({ navigation, route }) => {
     setRefreshing(false);
   };
 
+  const makeBadgeObject = (badgeUriList) => {
+    let badgeObjectArr = [];
+    for (let i = 0; i < badgeUriList.length; i++){
+      var singleBadgeObject = {}
+      singleBadgeObject["id"] = i;
+      singleBadgeObject["uri"] = badgeUriList[i];
+      badgeObjectArr.push(singleBadgeObject);
+    }
+
+    return badgeObjectArr;
+  }
+
+  const renderBadge = ({ item }) => (
+    <Image
+      source={{ uri: item.uri }}
+      style={styles.badgeImage}
+    />
+  );
+
 
   return (
     <SafeAreaView style={styles.safeArea} >
@@ -307,19 +329,26 @@ const ProfileScreen = ({ navigation, route }) => {
         </View>
 
         {userRole !== 'Teacher' && (
-        <><View style={styles.statsContainer}>
-            {/* Render stats using StatsCard component */}
-            <StatsCard iconName="local-fire-department" value="2" label="Day Streak" />
-            <StatsCard iconName="star" value={userPoints} label="Points" />
-            <StatsCard iconName="emoji-events" value="5" label="Total crowns" />
-            <StatsCard iconName="military-tech" value="Bronze" label="League" />
+          <>
+            <View style={styles.statsContainer}>
+              {/* Render stats using StatsCard component */}
+              <StatsCard iconName="star" value={userPoints} label="Points" />
 
-          </View>
-          <View style={styles.badgesContainer}>
-            <Text style={styles.sectionTitle}> Your Badges</Text>
-            
             </View>
-            </>
+            <View style={styles.badgesContainer}>
+              <Text style={styles.sectionTitle}> Your Badges</Text>
+              <View style={styles.badgesContainer}>
+                <FlatList
+                  data={makeBadgeObject(ownedBadges)}
+                  renderItem={renderBadge}
+                  keyExtractor={(item, index) => index.toString()}
+                  horizontal
+                  pagingEnabled
+                  showsHorizontalScrollIndicator={true}
+                />
+              </View>
+            </View>
+          </>
         )}
 
         <TouchableOpacity style={styles.addButton} onPress={handleSignOut}>
@@ -343,6 +372,7 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'flex-start',
       marginTop: 20,
+      paddingHorizontal: 20
   },
   header: {
       marginTop: 60, // This should be adjusted based on your layout and SafeAreaView
@@ -580,7 +610,16 @@ const styles = StyleSheet.create({
     // You might need to adjust the padding or margins if the text doesn't fit well
   },
   badgesContainer: {
-
+    width: '100%', // Ensure the badges container takes the full width
+    alignItems: 'center', // Center badges horizontally
+    justifyContent: 'center', // Center badges vertically
+    paddingHorizontal: 0,
+    marginVertical: 10 // Match horizontal padding with other content
+  },
+  badgeImage: {
+    width: (Dimensions.get('window').width)/3, // full width of screen for each image
+    height: (Dimensions.get('window').width)/3, // specify a height for images
+    resizeMode: 'cover', // or 'contain' based on what you need
   },
 });
 

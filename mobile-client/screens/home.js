@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef  } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Dimensions,Image, ScrollView } from 'react-native';
 import BoxComponent from '../components/ui/homepageModuleBoxes';
+import CurrentGoals from '../components/ui/CurrentGoals';
 import theme from '../styles/theme';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import IP_ADDRESS from '../constants/ip_address_temp';
@@ -15,111 +15,25 @@ const { width } = Dimensions.get('window');
 const HomeScreen = ({ navigation }) => {
   const { state } = useAuth();
   const [searchResults, setSearchResults] = useState([]);
-  const [goals, setGoals] = useState([]);
   const [loadingstate, setLoadingState] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [userToken, setUserToken] = useState('');
-
-  const [progressbar, setProgressBar] = useState(0);
-  const [currentIndex, setCurrentIndex] = useState(0); // Track the current index with state
-  
   
 
   const flatListRef = useRef();
-  const intervalId = useRef(null);
 
-  const fetchDataAndUpdateState = async () => {
-    setLoadingState(true);
-    try {
-      const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/student/${state.userData.id}`;      
-      const goalsResponse = await axios.get(fetchStudentsGoalsUrl, state.authHeader);
-      
-      setGoals(goalsResponse.data ? goalsResponse.data : []);
-      
-    } catch (error) {
-      console.error('home.js line 43, Error during data fetching and state updating', error);
-    } finally {
-      setLoadingState(false);
-    }
-  };
-  
-  useEffect(() => {
-    if (state.userData.role == 'Student') fetchDataAndUpdateState();
-  }, []); 
-  
-  
-
-   const bannerImages = [
+  const bannerImages = [
     require('../assets/homepage-banners/cowbanner.png'),
     require('../assets/homepage-banners/notebanner.png'),
     require('../assets/homepage-banners/treblecleffbanner.png'),
   ];
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const nextIndex = (currentIndex + 1) % bannerImages.length;
-      flatListRef.current?.scrollToIndex({
-        animated: true,
-        index: nextIndex,
-      });
-      setCurrentIndex(nextIndex); // Update current index
-    }, 3000); // Change banner every 3 seconds
-
-    return () => clearInterval(interval); // Clean up on unmount
-  }, [currentIndex]); // Depend on currentIndex to calculate the next index
-
   const renderItem = ({ item }) => (
     <Image source={item} style={{ width, height: 200 }} resizeMode="cover" />
   );
   
-  useEffect(() => {
-    const totalGoals = goals.practiceGoalCount + goals.assignmentGoalCount;
-    const completedGoals = goals.practiceCount + goals.assignmentCount;
-    const newProgress = totalGoals > 0 ? (completedGoals / totalGoals) * 100 : 0;
-    setProgressBar(Math.round(newProgress));
-  }, [goals]);
-
- 
-
-  const CurrentGoals = ({ completedPractice, completedAssignment, currentPracticeGoalCount, currentAssignmentGoalCount, currentPoints }) => {
-    
-    return (
-      <View style={styles.currentGoalsContainer}>
-        <Text style={styles.currentGoalsText}>Goals At a Glance</Text>
-        
-        <View style={styles.goalsRow}>
-          <View style={[styles.goalCard, {backgroundColor: Colors.green}]}>
-            <Text style={styles.goalLabel}>Practices Completed</Text>
-            <Text style={styles.goalValue}>{completedPractice} / {currentPracticeGoalCount}</Text>
-          </View>
-          <View style={[styles.goalCard, {backgroundColor:  Colors.orange}]}>
-            <Text style={styles.goalLabel}>Assignment Completed</Text>
-            <Text style={styles.goalValue}>{completedAssignment} / {currentAssignmentGoalCount}</Text>
-          </View>
-          <View style={[styles.goalCard, {backgroundColor:  Colors.pink}]}>
-            <Text style={styles.goalLabel}>Points Upon Completion</Text>
-            <Text style={styles.goalValue}>{currentPoints}</Text>
-          </View>
-        </View>
-
-
-        <View style={styles.progressContainer}>
-          {/* Background of the progress bar (the track) */}
-          <View style={styles.progressTrack}>
-              {/* Foreground of the progress bar */}
-              <View style={[styles.progressBar, {width: `${Math.min(100,progressbar)}%`}]} />
-          </View>
-          <Text style={styles.progressText}>
-              {Math.min(100,progressbar)}% Completed
-          </Text>
-        </View>
-
-        
-      </View>
-    );
-  };
-
-  const isGoalsSet = !goals.length > 0;
+  const hasUnread = (notifications) => {
+    return notifications.some(notification => notification.readStatus === 'unread');
+  } 
   
 
   const teacherModules = [
@@ -136,8 +50,6 @@ const HomeScreen = ({ navigation }) => {
  
   ];
 
- 
-
   const modules = state.userData.role === 'Teacher' ? teacherModules : studentModules;
 
   const Header = () => (
@@ -150,6 +62,8 @@ const HomeScreen = ({ navigation }) => {
         style={styles.notificationButton} 
         onPress={() => navigation.navigate('Notifications')}>
         <Ionicons name="notifications-outline" size={30} color="black" />
+        {hasUnread(state.notifications) && <View style={[theme.notificationDot, { right: 12, top: 12 }]} />}
+        
       </TouchableOpacity>
     </View>
   );
@@ -167,34 +81,18 @@ const HomeScreen = ({ navigation }) => {
         )}
         {/* Display Images */}
         <View style={{ flex: 1 }}>
-      <FlatList
-        ref={flatListRef}
-        data={bannerImages}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        onScrollToIndexFailed={info => {
-          const wait = new Promise(resolve => setTimeout(resolve, 500));
-          wait.then(() => {
-            flatListRef.current?.scrollToIndex({ index: info.index, animated: true });
-          });
-        }}
-      />
-    </View>
+          <FlatList
+            ref={flatListRef}
+            data={bannerImages}
+            renderItem={renderItem}
+            keyExtractor={(item, index) => index.toString()}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={true}
+          />
+        </View>
         {state.userData.role === 'Student' && (
-          isGoalsSet ? (
-            <CurrentGoals
-              completedPractice={goals.practiceCount}
-              completedAssignment={goals.assignmentCount}
-              currentPracticeGoalCount={goals.practiceGoalCount}
-              currentAssignmentGoalCount={goals.assignmentGoalCount}
-              currentPoints={goals.points}
-            />
-          ) : (
-            <Text style={styles.createGoalPrompt}>Aim High, Start your Goals!</Text>
-          )
+            <CurrentGoals isStudent={true} studentId={state.userData.id} />
         )}
       </>
     );
@@ -212,6 +110,7 @@ const HomeScreen = ({ navigation }) => {
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
         <BoxComponent
+          style={styles.modulesComponent}
           color={item.color}
           title={item.title}
           subtitle={item.subtitle}
@@ -273,88 +172,19 @@ const styles = StyleSheet.create({
     verticalAlign: 'center',
     // If your BoxComponent has its own padding or margins adjust this accordingly
   },
-  currentGoalsContainer: {
-    marginBottom: 20,
-    marginVertical: 20,
-  },
-  currentGoalsText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  goalsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-    
-  },
-  goalCard: {
-    backgroundColor: 'white',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    flex: 1, // The flex property allows the card to grow and shrink dynamically
-    margin: 5, // Keep some space between cards
-    alignItems: 'center',
+  imageContainer: {
+    width: width, // full width of the screen
+    height: 200, // the height of the carousel
     justifyContent: 'center',
+    alignItems: 'center', // center the image within the container
   },
-  goalLabel: {
-    fontSize: 12,
-    color: '#777',
-    marginBottom: 5, // Give some space between the label and the value
-    textAlign: 'center',
-    color: 'white'
-  },
-  goalValue: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'white'
-  },
-  progressContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    margin: 20,
-    position: 'relative', // Ensures the text can be absolutely positioned within
-},
-
-progressTrack: {
-    backgroundColor: '#e0e0e0', // Light grey for the unfilled track
-    borderRadius: 20,
-    height: 30,
-    width: '100%', // Ensure it fills the container
-    position: 'hidden', // Position it behind the progress bar
-},
-
-progressBar: {
-    backgroundColor: 'lightgreen', // Primary color for the filled track
+  bannerImage: {
+    // height will be less than or equal to 200 to maintain aspect ratio
+    // width will scale accordingly
     height: '100%',
-    borderRadius: 20,
-    minWidth: 20, // Minimum visibility
-    maxWidth: '100%', // Ensure it doesn't overflow the container
-    position: 'absolute', // Position it behind the progress bar
-},
-
-progressText: {
-    position: 'absolute',
-    padding: 20,
-    color: 'black',
-},
-imageContainer: {
-  width: width, // full width of the screen
-  height: 200, // the height of the carousel
-  justifyContent: 'center',
-  alignItems: 'center', // center the image within the container
-},
-bannerImage: {
-  // height will be less than or equal to 200 to maintain aspect ratio
-  // width will scale accordingly
-  height: '100%',
-  borderRadius: 15,
-  resizeMode: 'cover', // the image will be scaled to fit within the view
-  aspectRatio: 1.9, // aspect ratio of the image
-  marginRight: 30, // space between images
-},
-
-
-  
+    borderRadius: 15,
+    resizeMode: 'cover', // the image will be scaled to fit within the view
+    aspectRatio: 1.9, // aspect ratio of the image
+    marginRight: 30, // space between images
+  },
 });

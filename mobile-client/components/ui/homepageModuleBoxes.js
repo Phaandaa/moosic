@@ -58,7 +58,7 @@ const BoxComponent = ({
 // Adjust the styles as needed
 const styles = StyleSheet.create({
   box: {
-    marginHorizontal: MARGIN / 2,
+    margin: MARGIN / 2,
     alignItems: 'center', // Center children horizontally
     justifyContent: 'center', // Center children vertically
     padding: 10, // Add padding as needed
@@ -71,21 +71,19 @@ const styles = StyleSheet.create({
     // Container for the icon to center it properly
     justifyContent: 'center',
     alignItems: 'center',
-    height: 100, // Set a fixed height for the icon container
+    height: 100,
   },
   textContainer: {
-    alignItems: 'center', // Center text horizontally
-    marginTop: 10, // Space between icon and text
+    alignItems: 'center', 
+    marginTop: 10, 
   },
   title: {
-    // ... Your existing title styles
     fontSize: 16,
     color: 'white',
     fontStyle: 'italic',
     fontWeight: 'bold',
   },
   subtitle: {
-    // ... Your existing subtitle styles
     fontSize: 10,
     color: 'white',
     fontStyle: 'italic',
