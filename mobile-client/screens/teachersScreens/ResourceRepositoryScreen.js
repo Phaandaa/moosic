@@ -15,6 +15,7 @@ import IP_ADDRESS from "../../constants/ip_address_temp";
 import Colors from "../../constants/colors";
 import theme from "../../styles/theme";
 import { useAuth } from "../../context/Authcontext";
+import { Ionicons } from "@expo/vector-icons";
 
 import TypeCategoryDropdown from "../../components/ui/TypeCategoryDropdown";
 import GradeCategoryDropdown from "../../components/ui/GradeCategoryDropdown";
@@ -109,18 +110,26 @@ function ResourceRepositoryScreen() {
         setSearchText(text);
     };
 
-    const RepoFile = ({ fileName, instrument, type, grade, fileLink }) => {
+    const RepoFile = ({ title, instrument, type, grade, fileLink, creationTime, status }) => {
         return (
         <TouchableOpacity style={styles.item}>
             <View style={styles.itemImageContainer}> 
+                {selectedTab === "teacher" && <View style={styles.statusHeader}>
+                    <Ionicons
+                        name={status === 'Approved' ? "checkmark-circle" : status === 'Rejected' ? "close-circle" : "timer"}
+                        size={30}
+                        color={status === 'Approved' ? Colors.accentGreen : status === 'Rejected' ? Colors.accentRed : Colors.accentBlue}
+                        style={styles.statusLogo}
+                    />
+                </View>}
                 <Image
                     source={{ uri: fileLink }}
                     style={styles.itemImage}
                     resizeMode="cover"
                 />
             </View>
-            <Text style={styles.itemTitle}>{fileName}</Text>
-            <Text style={styles.date}>{'24/03/2024' /* Replace with actual date if needed */}</Text>
+            <Text style={styles.itemTitle}>{title}</Text>
+            <Text style={styles.date}>{creationTime.slice(0, 10)}</Text>
             <View style={styles.chipContainer}>
                 {type.map((typeItem, index) => (
                     <View key={index} style={styles.chip}>
@@ -147,16 +156,6 @@ function ResourceRepositoryScreen() {
         <View style={styles.shadowContainer}>
             <View style={styles.headerButtons}>
                 <HomepageSearchBar onSearch={handleSearch} />
-                <View style={styles.dropdownContainer}>
-                    <View style={styles.navigationRow}>
-                        <TouchableOpacity style={selectedTab === "central" ? styles.pressedNavigationBtn : styles.navigationBtn} onPress={() => setSelectedTab("central")}>
-                            <Text style={selectedTab === "central" ? styles.pressedNavigationText : styles.navigationText}>Central Repository</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={selectedTab === "teacher" ? styles.pressedNavigationBtn : styles.navigationBtn} onPress={() => setSelectedTab("teacher")}>
-                            <Text style={selectedTab === "teacher" ? styles.pressedNavigationText : styles.navigationText}>My Uploaded Resources</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
                 <ScrollView horizontal={true}> 
                     <View style={styles.dropdownContainer}> 
                         <TypeCategoryDropdown onCategoryChange={setSelectedTypes}/>
@@ -166,9 +165,15 @@ function ResourceRepositoryScreen() {
                 </ScrollView>
             </View>
             <View style={styles.header}>
-            <Text style={styles.headerText}>
-                {filteredResults?.length ? filteredResults.length : 0} Files Found
-            </Text>
+                <Text style={styles.headerText}>
+                    {filteredResults?.length ? filteredResults.length : 0} Files Found
+                </Text>
+                <TouchableOpacity style={[selectedTab === "central" ? styles.pressedNavigationBtn : styles.navigationBtn, { width: width/4 }]} onPress={() => setSelectedTab("central")}>
+                    <Text style={selectedTab === "central" ? styles.pressedNavigationText : styles.navigationText}>Central</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={selectedTab === "teacher" ? styles.pressedNavigationBtn : styles.navigationBtn} onPress={() => setSelectedTab("teacher")}>
+                    <Text style={selectedTab === "teacher" ? styles.pressedNavigationText : styles.navigationText}>My Resources</Text>
+                </TouchableOpacity>
             </View>
         </View>
 
@@ -193,7 +198,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   shadowContainer: {
-    padding: 15, // Optional: If you want some space inside the container
+    paddingTop: 15,
+    paddingHorizontal: 20,
+    paddingBottom: 15, // Optional: If you want some space inside the container
     backgroundColor: "#fff", // A background color is required
     // iOS shadow styles
     shadowColor: "#000",
@@ -213,6 +220,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     // padding: 10,
     alignItems: "center",
+    marginVertical: 0,
+    overflow: 'hidden',
   },
   headerText: {
     fontSize: 14,
@@ -313,7 +322,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: "space-around", // Try 'space-around' for equal spacing
         alignItems: 'center', // This centers the dropdowns vertically in the container
-        marginVertical: 10
+        marginVertical: 0
     },
     selectionCount: {
         textAlign: 'center', // Center the text horizontally
@@ -353,36 +362,42 @@ const styles = StyleSheet.create({
         fontSize: 16
     },
     navigationRow:{
-        marginTop: 20,
+        marginTop: 10,
         flexDirection: 'row',
         justifyContent: 'center', 
         width: '100%',
     },
     navigationBtn:{
-        padding: 5,
+        padding: 8,
         backgroundColor: Colors.accentGrey,
         borderRadius: 12,
-        padding: 10,
         flexDirection: 'row',
         justifyContent: 'space-around',
-        width: 'auto',
-        paddingHorizontal: 30,
-        marginHorizontal: 10
+        width: width/3,
+        marginHorizontal: 3
     },
     pressedNavigationBtn:{
-        padding: 5,
+        padding: 8,
         backgroundColor: Colors.mainPurple,
         borderRadius: 12,
-        padding: 10,
         flexDirection: 'row',
         justifyContent: 'space-around',
-        width: 'auto',
-        paddingHorizontal: 30,
-        marginHorizontal: 10
+        alignSelf: 'center',
+        width: width/3,
+        marginHorizontal: 3
     },
     navigationText:{
         fontSize: 12,
         color: Colors.fontSecondary
+    },
+    statusHeader: {
+        position: "absolute",
+        top: 0,
+        right: 0,
+        zIndex: 1,
+        backgroundColor: '#ffffff',        
+        borderRadius: 50,
+        paddingHorizontal: 2,
     },
     pressedNavigationText:{
         fontSize: 12,
