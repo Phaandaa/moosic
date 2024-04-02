@@ -91,7 +91,7 @@ function ViewCreatedGoalsForStudents ({ navigation }) {
                                           studentID: student.id,
                                           studentName: student.name, // Assuming 'id' is the property that holds the student ID
                                         })}>
-                                        <Text style={theme.smallButtonText}>Create Goal</Text>
+                                        <Text style={theme.smallButtonText}>Update Goal</Text>
                                     </TouchableOpacity>
                           
                                 </View>
