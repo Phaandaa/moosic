@@ -1,5 +1,7 @@
 package com.example.server.entity;
 
+import java.util.Date;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -11,7 +13,7 @@ import lombok.Setter;
 @Document(collection = "material_repository")
 public class MaterialRepository {
     @Id
-    private String materialId;
+    private String id;
     private String title;
     private String description;
     private String fileLink;
@@ -19,6 +21,7 @@ public class MaterialRepository {
     private String reasonForStatus;
     private String teacherId;
     private String teacherName;
+    private Date creationTime;
 
 
     public MaterialRepository(String title, String description, String fileLink, String status, String reasonForStatus,
@@ -30,16 +33,15 @@ public class MaterialRepository {
         this.reasonForStatus = reasonForStatus;
         this.teacherId = teacherId;
         this.teacherName = teacherName;
+        this.creationTime = new Date();
     }
 
 
     @Override
     public String toString() {
-        return "MaterialRepository [materialId=" + materialId + ", title=" + title + ", description=" + description
-                + ", fileLink=" + fileLink + ", status=" + status + ", reasonForStatus=" + reasonForStatus
-                + ", teacherId=" + teacherId + ", teacherName=" + teacherName + "]";
+        return "MaterialRepository [id=" + id + ", title=" + title + ", description=" + description + ", fileLink="
+                + fileLink + ", status=" + status + ", reasonForStatus=" + reasonForStatus + ", teacherId=" + teacherId
+                + ", teacherName=" + teacherName + ", creationTime=" + creationTime + "]";
     }
-
-    
     
 }

@@ -53,15 +53,15 @@ function SetReminderScreen({navigation}){
   
     useEffect(() => {
         const subscription1 = Notifications.addNotificationReceivedListener((notification)=> {
-            console.log('NOTIF RECEIVED');
-            console.log(notification);
+            console.log('SetReminderScreen.js line 56, NOTIF RECEIVED');
+            console.log('SetReminderScreen.js line 57, notification: ', notification);
             const userName = notification.request.content.data.userName;
-            console.log(userName);
+            console.log('SetReminderScreen.js line 59, username: ', userName);
         });
 
         const subscription2 = Notifications.addNotificationResponseReceivedListener((response) => {
-            console.log('NOTIF RESPONSE RECEIVED');
-            console.log(response);
+            console.log('SetReminderScreen.js line 63, NOTIF RESPONSE RECEIVED');
+            console.log('SetReminderScreen.js line 64, response: ', response);
         });
 
         return () => {
@@ -162,12 +162,12 @@ function SetReminderScreen({navigation}){
 
         // Validate inputs before proceeding
         if (!validateInputs()) {
-          console.log('Validation failed. Missing values.');
+          console.log('SetReminderScreen.js line 165: Validation failed. Missing values.');
           return; // Stop execution if validation fails
         }
 
       // Proceed with scheduling the notification if validation is successful
-      console.log("Scheduling notification with time:", time, "and frequency:", frequency);
+      console.log("SetReminderScreen.js line 170, Scheduling notification with time:", time, "and frequency:", frequency);
 
         // Ensure 'time' is a Date object and 'frequency' is an integer
         if (!(time instanceof Date) || isNaN(frequency)) {

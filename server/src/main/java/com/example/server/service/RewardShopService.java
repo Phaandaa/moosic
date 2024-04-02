@@ -56,7 +56,7 @@ public class RewardShopService {
         try {
             List<RewardShop> items = rewardShopRepository.findAll();
             if (items.isEmpty() || items == null) {
-                throw new NoSuchElementException("No items found in shop currently ");
+                items = new ArrayList<>();
             }
             return items;
         } catch (NoSuchElementException e) {
@@ -83,7 +83,7 @@ public class RewardShopService {
         try {
             List<RewardShop> items = rewardShopRepository.findBySubtype(type);
             if (items.isEmpty() || items == null) {
-                throw new NoSuchElementException("No items found in shop currently ");
+                items = new ArrayList<>();
             }
             return items;
         } catch (NoSuchElementException e) {
@@ -283,6 +283,8 @@ public class RewardShopService {
             StudentInventory studentInventory = studentInventoryRepository.findByStudentId(studentId).orElseThrow(()->
                 new NoSuchElementException("Student Inventory not found for student ID " + studentId));
             studentInventory.addInventoryItem(rewardShopItem.getSubtype(), rewardShopItem.getImageLink());
+            System.out.println("Here is the item bought:" + rewardShopItem.getImageLink());
+            studentInventoryRepository.save(studentInventory);
 
             // tambahin points log murid
             String pointsLogDesc = "Bought " + rewardShopItem.getDescription() + " from shop";

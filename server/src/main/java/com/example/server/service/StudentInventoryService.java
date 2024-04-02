@@ -181,7 +181,7 @@ public class StudentInventoryService {
 
             List<String> ownedBadgeList = studentInventory.getOwnedBadgeList();
 
-            if (ownedBadgeList.isEmpty() || ownedBadgeList == null) {
+            if (ownedBadgeList == null || ownedBadgeList.isEmpty()) {
                     throw new NoSuchElementException("No badge found in student inventory with student ID " + studentId);
             } else {
                 List<RewardShop> ownedBadgeDetails = rewardShopService.getAllRewardShopItem();
@@ -189,7 +189,7 @@ public class StudentInventoryService {
                     .filter(item ->  ownedBadgeList.contains(item.getId()))
                     .collect(Collectors.toList());
             }
-
+    
         } catch (NoSuchElementException e) {
             throw e;
 

@@ -12,8 +12,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setCache, clearCache } from '../../cacheSlice';
 import Colors from '../../constants/colors';
 import SuccessModal from '../../components/ui/SuccessModal';
+import { useAuth } from '../../context/Authcontext';
+import axios from 'axios';
 function CreatePracticeScreen({navigation}){
     // const dispatch = useDispatch();
+    const { state } = useAuth();
     const [title, setTitle] = useState('');
     const [comment, setComment] = useState('');
     const [videos, setVideos] = useState([]);
@@ -30,23 +33,8 @@ function CreatePracticeScreen({navigation}){
     useEffect(() => {
       const fetchTeacher = async () => {
         try {
-          const storedData = await AsyncStorage.getItem('authData');
-          if (!storedData) {
-            Alert.alert('Error', 'Authentication data is not available. Please login again.');
-            return;
-          }
-    
-          const parsedData = JSON.parse(storedData);
-          const response = await fetch(`${IP_ADDRESS}/teachers/student/${parsedData.userId}`, {
-            method: 'GET',
-          });
-          
-          if (!response.ok) {
-            const errorText = response.statusText || 'Unknown error occurred';
-            throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-          }
-          
-          const responseData = await response.json();
+          const response = await axios.get(`${IP_ADDRESS}/teachers/student/${state.userData.id}`, state.authHeader);
+          const responseData = response.data;
           setTeacher(responseData);
         } catch (error) {
           console.error('Error fetching teacher:', error);
@@ -114,17 +102,9 @@ function CreatePracticeScreen({navigation}){
         console.log(formData)
 
         try {
-            const response = await fetch(`${IP_ADDRESS}/practices/create`, {
-                method: 'POST',
-                body: formData,
-            });
+            const response = axios.post(`${IP_ADDRESS}/practices/create`, formData, state.authHeader);
               
-            if (!response.ok) {
-              const errorText = response.statusText || 'Unknown error occurred';
-              throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-            }
-            const responseData = await response.json();
-            console.log(responseData);
+            const responseData = await response.data;
             // dispatch(setCache({ key: 'practiceData', value: practiceData })); 
             // navigation.navigate('PracticeListStudentScreen');
             setModalVisible(true);

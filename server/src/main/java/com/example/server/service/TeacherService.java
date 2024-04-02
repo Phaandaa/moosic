@@ -89,7 +89,7 @@ public class TeacherService {
             Teacher teacher = teacherRepository.findById(teacherId).orElseThrow(()->
                 new NoSuchElementException("No teacher found with ID " + teacherId)
                 );        
-            teacher.setPhoneNumber(phone);
+            teacher.setPhoneNumber(phone);;
             teacherRepository.save(teacher);
         } catch (NoSuchElementException e) {
             throw e;

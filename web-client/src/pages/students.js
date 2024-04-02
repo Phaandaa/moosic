@@ -12,15 +12,18 @@ import StudentsModal from "src/sections/students/students-modal";
 import { getAsync } from "src/utils/utils";
 import { Card } from "@mui/material";
 import { convertArrayToCSV } from "src/utils/utils";
+import { useAuth } from "src/hooks/use-auth";
+
 
 const Page = () => {
+  const { user } = useAuth();
   const [studentData, setStudentData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await getAsync(`students`);
+        const response = await getAsync(`students`, user.idToken);
         const data = await response.json();
         setStudentData(Array.isArray(data) ? data : []);
       } catch (error) {

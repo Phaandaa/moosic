@@ -14,7 +14,7 @@ const getFileNameFromUrl = (url) => {
 function ViewPracticeStudentScreen({route, navigation}){
     // const practiceData = useSelector(state => state.cache.practiceData);
     const { practice } = route.params;
-    console.log(practice)
+    console.log('ViewPracticeStudent.js line 17, practice: ', practice)
 
     const [isModalVisible, setModalVisible] = useState(false);
     const [studentID, setStudentID] = useState('');
@@ -54,10 +54,11 @@ function ViewPracticeStudentScreen({route, navigation}){
                                             <Text style={theme.smallButtonText}>{practice.points} Points</Text>
                                         </View>
                                 </View>
+                                {practice.feedbackLinks &&
                                 <TouchableOpacity onPress={() => Linking.openURL(practice.feedbackLinks)} style={{ flexDirection: 'row', alignItems: 'center' }}>
                                         <Ionicons name="link" size={24} color="#525F7F" />
                                         <Text style={theme.documentName}> {getFileNameFromUrl(practice.feedbackLinks)}</Text>
-                                </TouchableOpacity>
+                                </TouchableOpacity>}
                                 <Text style={theme.cardText}>{practice.feedback}</Text>
                             </View>
                         </View>

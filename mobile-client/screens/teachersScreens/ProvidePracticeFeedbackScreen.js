@@ -11,8 +11,11 @@ import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Colors from '../../constants/colors';
 import SuccessModal from '../../components/ui/SuccessModal';
+import axios from 'axios';
+import { useAuth } from '../../context/Authcontext';
 
 function ProvidePracticeFeedbackScreen({route, navigation}){
+    const { state } = useAuth();
     const {practiceID} = route.params;
     const [teacherFeedback, setTeacherFeedback] = useState('');
     const [points, setPoints] = useState('');
@@ -56,25 +59,10 @@ function ProvidePracticeFeedbackScreen({route, navigation}){
 
     const saveVideo = (newVideo) => {
         setVideos((currentVideos) => [...currentVideos, newVideo]);
-        // setLoadingStates((currentLoadingStates) => ({ ...currentLoadingStates, [newVideo]: true }));
     };
     
   const validateForm = () => {
-    // let newErrors = {};
     let isValid = true;
-    // if (!assignmentName.trim()) {
-    //   newErrors.assignmentName = 'Assignment name is required.';
-    //   isValid = false;
-    // }
-    // if (!assignmentDesc.trim()) {
-    //   newErrors.assignmentDesc = 'Description is required.';
-    //   isValid = false;
-    // }
-    // if (!assignmentDeadline) {
-    //   newErrors.assignmentDeadline = 'Deadline is required.';
-    //   isValid = false;
-    // }
-    // setErrors(newErrors);
     return isValid;
   };
 
@@ -101,7 +89,7 @@ function ProvidePracticeFeedbackScreen({route, navigation}){
     if (videos.length > 0 && videos[0].uri) {
         // Assuming `videos[0]` is the video object that you logged
         const video = videos[0];
-        console.log('video: ',video)
+        console.log('ProvidePracticeFeedbackScreen.js line 104, video: ',video)
     
         // Append the video file to the formData
         formData.append("video", {
@@ -109,34 +97,30 @@ function ProvidePracticeFeedbackScreen({route, navigation}){
           name: video.fileName, // Use the filename from the video object
         //   type: 'video/mov' // You can hardcode the type or derive it from the fileName
         });
-        console.log('videouri: ', video.uri)
-        console.log('vidfilename: ', video.fileName)
-        console.log('vidtype: ', video.type)
+        console.log('ProvidePracticeFeedbackScreen.js line 112, videouri: ', video.uri)
+        console.log('ProvidePracticeFeedbackScreen.js line 113, vidfilename: ', video.fileName)
+        console.log('ProvidePracticeFeedbackScreen.js line 114, vidtype: ', video.type)
 
     }
     formData.append("teacherFeedback", teacherFeedback);
     formData.append("points", parseInt(points));
 
-    console.log(formData)
+    console.log('ProvidePracticeFeedbackScreen.js line 120, formData: ', formData)
 
     try {
-      const response = await fetch(`${IP_ADDRESS}/practices/feedback/${practiceID}?`, {
-          method: 'PUT',
-          body: formData,
-      });
+      // const response = await fetch(`${IP_ADDRESS}/practices/feedback/${practiceID}?`, {
+      //     method: 'PUT',
+      //     body: formData,
+      // });
+
+      const response = await axios.put(`${IP_ADDRESS}/practices/feedback/${practiceID}?`, formData, state.authHeader);
         
-      if (!response.ok) {
-        const errorText = response.statusText || 'Unknown error occurred';
-        throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-      }
-      const responseData = await response.json();
-      console.log(responseData);
-      // dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
-      // navigation.navigate('ViewCreatedAssignmentsScreen', { responseData });
+      const responseData = response.data;
+      console.log('ProvidePracticeFeedbackScreen.js line 133, responseData: ', responseData);
       setModalVisible(true);
 
     } catch (error) {
-      console.error('Error adding feedback:', error);
+      console.error('ProvidePracticeFeedbackScreen.js line 139, Error adding feedback:', error);
       Alert.alert('Error', `Failed to add feedback. ${error.response?.data?.message || 'Please try again.'}`);
     }
     };

@@ -20,7 +20,7 @@ const LoginPage = ({ route, navigation }) => {
       const response = await signIn(email, password, expoPushToken);
       
       if (response != null){
-        await checkStoredData();
+        // await checkStoredData();
         navigation.navigate('Home');
       }
       
@@ -34,29 +34,23 @@ const LoginPage = ({ route, navigation }) => {
   const checkStoredData = async () => {
     try {
       const storedData = await AsyncStorage.getItem('authData');
-      const userData =  await AsyncStorage.getItem('userData');
       
-      if (storedData !== null  && userData !== null) {
-        // Data exists in AsyncStorage
-        const parsedUserData = JSON.parse(userData);
+      if (storedData !== null) {
         const parsedData = JSON.parse(storedData);
-        console.log("Stored Auth Data:", parsedData);
-        console.log("Stored User Data:", parsedUserData);
-        return parsedData; // Return it if you need to use it
+        console.log("login.js line 43, Stored Auth Data:", parsedData);
+        return parsedData;
       } else {
-        console.log("No data stored in AsyncStorage");
+        console.log("login.js line 51, No data stored in AsyncStorage");
       }
     } catch (error) {
-      console.error('Error retrieving data from AsyncStorage', error);
+      console.error('login.js line 54, Error retrieving data from AsyncStorage', error);
     }
   };
 
   useEffect(() => {
-    // Call this function to check the stored data
     checkStoredData();
   }, []);
 
-  // Fonts are loaded, render the LoginPage
   return (
     
     <View style={theme.container}>

@@ -29,7 +29,7 @@ const Page = () => {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await getAsync(`students`);
+        const response = await getAsync(`students`, user.idToken);
         const data = await response.json();
         setStudents(data);
       } catch (error) {
@@ -39,7 +39,7 @@ const Page = () => {
 
     const fetchTeachers = async () => {
       try {
-        const response = await getAsync(`teachers`);
+        const response = await getAsync(`teachers`, user.idToken);
         const data = await response.json();
         setTeachers(data);
       } catch (error) {
@@ -49,7 +49,7 @@ const Page = () => {
 
     const fetchItems = async () => {
       try {
-        const response = await getAsync(`reward-shop`);
+        const response = await getAsync(`reward-shop`, user.idToken);
         const data = await response.json();
         setItems(data);
         console.log("Items:", data);

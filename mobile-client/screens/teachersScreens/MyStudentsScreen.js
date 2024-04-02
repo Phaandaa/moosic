@@ -7,73 +7,43 @@ import theme from '../../styles/theme';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import LoadingComponent from '../../components/ui/LoadingComponent';
 import Colors from '../../constants/colors';
+import { useAuth } from '../../context/Authcontext';
 
 function MyStudentsScreen({ navigation }) {
+    const { state } = useAuth();
     const [students, setStudents] = useState([]);
     const [filteredStudents, setFilteredStudents] = useState([]);
-    const [teacherID, setTeacherID] = useState('');
+    const [teacherID, setTeacherID] = useState(state.userData.id);
     const [fetchError, setFetchError] = useState(false);
     const [loadingstate, setLoadingState] = useState(false);
 
-    // Check stored data for teacherID
-    const checkStoredData = async () => {
-        try {
-            
-            const storedData = await AsyncStorage.getItem('authData');
-            if (storedData !== null) {
-                const parsedData = JSON.parse(storedData);
-                return parsedData.userId;
-            }
-        } catch (error) {
-            console.error('Error retrieving data from AsyncStorage', error);
-        }
-        finally{
-            setLoadingState(false);
-        }
-        return '';
-    };
-
-        // Fetch teacherID on component mount
-        useEffect(() => {
-            const fetchData = async () => {
-                try {
-                    const id = await checkStoredData();
-                    setTeacherID(id);
-                } catch (error) {
-                    console.error('Error processing stored data', error);
-                }
-            };
-            fetchData();
-        }, []);
-
-        // Fetch students using teacherID
-        useEffect(() => {
-            const fetchStudentsApi = `${IP_ADDRESS}/students/teacher/${teacherID}/`;
-            const fetchStudents = async() => {
-                try {
-                    setLoadingState(true);
-                    const response = await axios.get(fetchStudentsApi);
-                    const data = response.data;
-                    
-                    if (data.length > 0) {
-                        setStudents(data);
-                        setFilteredStudents(data);
-                    } else {
-                        // If the response is successful but contains no data
-                        setFetchError(true);
-                    }
-                } catch (error) {
-                    console.error('Error fetching students:', error);
+    // Fetch students using teacherID
+    useEffect(() => {
+        const fetchStudentsApi = `${IP_ADDRESS}/students/teacher/${teacherID}/`;
+        const fetchStudents = async() => {
+            try {
+                setLoadingState(true);
+                const response = await axios.get(fetchStudentsApi, state.authHeader);
+                const data = response.data;
+                
+                if (data.length > 0) {
+                    setStudents(data);
+                    setFilteredStudents(data);
+                } else {
                     setFetchError(true);
                 }
-                finally{
-                    setLoadingState(false);
-                }
-            };
-            if(teacherID){
-                fetchStudents();
+            } catch (error) {
+                console.error('Error fetching students:', error);
+                setFetchError(true);
             }
-        }, [teacherID]);
+            finally{
+                setLoadingState(false);
+            }
+        };
+        if(teacherID){
+            fetchStudents();
+        }
+    }, [teacherID]);
 
     // Handle search functionality
     const handleSearch = (query) => {

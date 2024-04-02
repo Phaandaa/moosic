@@ -22,3 +22,18 @@
 # Other common folders to ignore
 bin/
 out/
+
+.gradle/
+!/gradle/wrapper/gradle-wrapper.jar
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
+# Cache of project
+.buildOutputCleanup/
+
+# And if you have more specific Gradle files that are appearing in your structure, you can ignore them using:
+**/gradle/**/*.bin

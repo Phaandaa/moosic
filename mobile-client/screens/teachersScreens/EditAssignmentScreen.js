@@ -11,6 +11,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import theme from '../../styles/theme';
 import Colors from '../../constants/colors';
 import SuccessModal from '../../components/ui/SuccessModal';
+import { useAuth } from '../../context/Authcontext';
+import axios from 'axios';
 
 const getFileNameFromUrl = (url) => {
   return url.split('/').pop().slice(37);
@@ -18,6 +20,7 @@ const getFileNameFromUrl = (url) => {
 
 function EditAssignmentScreen({ route, navigation }) {
   const { assignment } = route.params;
+  const { state } = useAuth();
 
   const dispatch = useDispatch();
   const [assignmentDesc, setAssignmentDesc] = useState(assignment.description);
@@ -65,9 +68,9 @@ function EditAssignmentScreen({ route, navigation }) {
         quality: 1,
       });
       if (!result.canceled) {
-        console.log('result.assets[0]:', result.assets[0])
+        console.log('EditAssignmentScreen.js line 68, result.assets[0]:', result.assets[0])
         saveImage(result.assets[0]); 
-        console.log(images);
+        console.log('EditAssignmentScreen.js line 70, images: ', images);
       }
     }
   };
@@ -80,7 +83,7 @@ function EditAssignmentScreen({ route, navigation }) {
       });
       if (!result.canceled && result.assets) {
         setUploadedDocuments(currentDocs => [...currentDocs, ...result.assets]);
-        console.log('uploadedDocuments',uploadedDocuments);
+        console.log('EditAssignmentScreen.js line 83, uploadedDocuments: ',uploadedDocuments);
       }
     } catch (error) {
       Alert.alert('Error picking document:', error.message);
@@ -140,9 +143,7 @@ function EditAssignmentScreen({ route, navigation }) {
       return;
     }
 
-    console.log('assignmentDeadline', assignmentDeadline)
-    console.log('assignmentDeadline', assignmentDeadline)
-
+    console.log('EditAssignmentScreen.js line 143, assignmentDeadline', assignmentDeadline)
   
     const formData = new FormData();
 
@@ -150,7 +151,7 @@ function EditAssignmentScreen({ route, navigation }) {
       assignment_desc: assignmentDesc,
       assignment_deadline: assignmentDeadline,
     };
-    console.log('assignmentData:', assignmentData)
+    console.log('EditAssignmentScreen.js line 151, assignmentData: ', assignmentData)
     
   
     images.forEach((image, index) => {
@@ -160,14 +161,14 @@ function EditAssignmentScreen({ route, navigation }) {
         const uriParts = image.uri.split('.');
         const fileType = uriParts[uriParts.length - 1];
 
-        console.log('Appending file:', image.uri);
+        console.log('EditAssignmentScreen.js line 161, Appending file:', image.uri);
         formData.append('files', {
             uri: uri,
             name: fileName,
             type: `image/${fileType}`,
         });
       } else {
-        console.warn('Invalid image URI:', image.uri);
+        console.warn('EditAssignmentScreen.js line 168, Invalid image URI:', image.uri);
       }
     });
 
@@ -181,29 +182,20 @@ function EditAssignmentScreen({ route, navigation }) {
 
     // console.log(formData)
     formData.append("assignment", {"string" : JSON.stringify(assignmentData), type: 'application/json'});
-    console.log(formData)
+    console.log('EditAssignmentScreen.js line 182, formData: ', formData)
 
     try {
-     
-      const response = await fetch(`${IP_ADDRESS}/assignments/teacher/${assignment.assignmentId}/update-details`, {
-          method: 'PUT',
-          body: formData,
-      });
-      
-        
-      if (!response.ok) {
-        const errorText = response.statusText || 'Unknown error occurred';
-        throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-      }
+      const updateAssignmentURL = `${IP_ADDRESS}/assignments/teacher/${assignment.assignmentId}/update-details`;
+      const response = await axios.put(updateAssignmentURL, formData , state.authHeader);
       
 
-      const responseData = await response.json();
-      console.log(responseData);
+      const responseData = response.data;
+      console.log('EditAssignmentScreen.js line', responseData);
       dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
       setModalVisible(true);
 
     } catch (error) {
-      console.error('Error editing assignment:', error);
+      console.error('EditAssignmentScreen.js line 204, Error editing assignment:', error);
       Alert.alert('Error', `Failed to edit assignment. ${error.response?.data?.message || 'Please try again.'}`);
     }
   };

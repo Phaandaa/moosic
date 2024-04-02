@@ -12,10 +12,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Colors from '../../constants/colors';
 import SuccessModal from '../../components/ui/SuccessModal';
+import { useAuth } from '../../context/Authcontext';
 
 
 function CreateAssignmentScreen({ navigation }) {
   const dispatch = useDispatch();
+  const { state } = useAuth();
   const [assignmentName, setAssignmentName] = useState('');
   const [assignmentDesc, setAssignmentDesc] = useState('');
   const [assignmentDeadline, setAssignmentDeadline] = useState('');
@@ -61,9 +63,9 @@ function CreateAssignmentScreen({ navigation }) {
         quality: 1,
       });
       if (!result.canceled) {
-        console.log('result.assets[0]:', result.assets[0])
+        console.log('CreateAssignmentScreen.js line 64, result.assets[0]:', result.assets[0])
         saveImage(result.assets[0]); 
-        console.log(images);
+        console.log('CreateAssignmentScreen.js line 66, images: ', images);
       }
     }
   };
@@ -76,7 +78,7 @@ function CreateAssignmentScreen({ navigation }) {
       });
       if (!result.canceled && result.assets) {
         setUploadedDocuments(currentDocs => [...currentDocs, ...result.assets]);
-        console.log('uploadedDocuments',uploadedDocuments);
+        console.log('CreateAssignmentScreen.js line 79, uploadedDocuments: ',uploadedDocuments);
       }
     } catch (error) {
       Alert.alert('Error picking document:', error.message);
@@ -151,7 +153,7 @@ function CreateAssignmentScreen({ navigation }) {
       // selected_students: [{student_id: '5C4Q6ZILqoTBi9YnESwpKQuhMcN2'}],
       points: 0
     };
-    console.log('assignmentData:', assignmentData)
+    console.log('CreateAssignmentScreen.js line 154, assignmentData:', assignmentData)
     
   
     images.forEach((image, index) => {
@@ -161,14 +163,14 @@ function CreateAssignmentScreen({ navigation }) {
         const uriParts = image.uri.split('.');
         const fileType = uriParts[uriParts.length - 1];
 
-        console.log('Appending file:', image.uri);
+        console.log('CreateAssignmentScreen.js line 164, Appending file:', image.uri);
         formData.append('files', {
             uri: uri,
             name: fileName,
             type: `image/${fileType}`,
         });
       } else {
-        console.warn('Invalid image URI:', image.uri);
+        console.warn('CreateAssignmentScreen.js line 171, Invalid image URI:', image.uri);
       }
     });
 
@@ -182,28 +184,19 @@ function CreateAssignmentScreen({ navigation }) {
 
     // console.log(formData)
     formData.append("assignment", {"string" : JSON.stringify(assignmentData), type: 'application/json'});
-    console.log(formData)
+    console.log('CreateAssignmentScreen.js line 185, formData: ', formData)
 
     try {
-     
-      const response = await fetch(`${IP_ADDRESS}/assignments/create`, {
-          method: 'POST',
-          body: formData,
-      });
       
-        
-      if (!response.ok) {
-        const errorText = response.statusText || 'Unknown error occurred';
-        throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-      }
+      const response = await axios.post(`${IP_ADDRESS}/assignments/create`, formData, state.authHeader);
       
-      const responseData = await response.json();
-      console.log(responseData);
+      const responseData = response.data;
+      console.log('CreateAssignmentScreen.js line 201, responseData: ', responseData);
       dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
       setModalVisible(true);
 
     } catch (error) {
-      console.error('Error creating assignment:', error);
+      console.error('CreateAssignmentScreen.js line 206, Error creating assignment:', error);
       Alert.alert('Error', `Failed to create assignment. ${error.response?.data?.message || 'Please try again.'}`);
     }
   };

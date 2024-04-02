@@ -1,5 +1,5 @@
 import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
-import { useCallback, useMemo, useState, useEffect } from "react";
+import { useCallback, useMemo, useState, useEffect, use } from "react";
 import {
   Box,
   Button,
@@ -15,6 +15,9 @@ import {
   ListItem,
   ListItemText,
   Grid,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
 import Head from "next/head";
 import RepoAdd from "src/sections/repository/repo-add";
@@ -25,12 +28,18 @@ import { RejectionModal } from "src/sections/repository/repo-modal";
 import { ApprovalModal } from "src/sections/repository/repo-modal";
 import { figmaColors } from "src/theme/colors";
 import Pagination from "@mui/material/Pagination";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { FilterDropdowns } from "src/sections/repository/repo-filter-dropdowns";
+import { getAsync, putAsync, postAsync } from "src/utils/utils";
+import { useAuth } from "src/hooks/use-auth";
+import SnackbarAlert from "src/components/alert";
+import { set } from "nprogress";
 
 const materialsMockData = [
   // Approved materials
   {
     materialId: "file-1",
-    fileName: "Music Theory 101",
+    title: "Music Theory 101",
     createdTime: "2024-01-02T11:00:00Z",
     fileLink:
       "https://storage.googleapis.com/moosicfyp/assignments/15a003c0-81c1-4f04-a414-81a6045c25c4_IMG_1539.png",
@@ -100,7 +109,31 @@ const materialsMockData = [
     grade: "3",
     type: "Image",
     teacherId: "teacher-224",
-  }
+  },
+  {
+    materialId: "file-pending-5",
+    fileName: "Music Theory 108",
+    createdTime: "2024-02-25T11:00:00Z",
+    fileLink:
+      "https://storage.googleapis.com/moosicfyp/assignments/2dac5872-5e26-40e9-80cf-6100dc0aec91_baseline_assesment_report_cover.png",
+    status: "Pending",
+    instrument: "Ukulele",
+    grade: "3",
+    type: "Image",
+    teacherId: "teacher-224",
+  },
+  {
+    materialId: "file-pending-6",
+    fileName: "Music Theory 109",
+    createdTime: "2024-02-25T11:00:00Z",
+    fileLink:
+      "https://storage.googleapis.com/moosicfyp/assignments/2dac5872-5e26-40e9-80cf-6100dc0aec91_baseline_assesment_report_cover.png",
+    status: "Pending",
+    instrument: "Ukulele",
+    grade: "3",
+    type: "Image",
+    teacherId: "teacher-224",
+  },
   // ... add more materials as needed
 ];
 
@@ -134,42 +167,47 @@ const ApproveMaterialsSection = ({ pendingMaterials, onApprove, onReject }) => {
   };
 
   const handleReject = (reason) => {
-    onReject(currentMaterial.materialId, reason);
+    onReject(currentMaterial.id, reason);
+    setRejectionModalOpen(false);
+    setRejectionReason("");
   };
 
   const handleApprove = () => {
-    onApprove(currentMaterial.materialId);
+    onApprove(currentMaterial.id);
   };
 
-  // const handleApprove = async (materialId) => {
-  //   // Send an API request to approve the material
-  //   // Replace with actual API call
-  //   await fetch(`/api/materials/approve/${materialId}`, { method: "POST" });
-  //   // Remove the material from `pendingMaterials` and call `onApprove`
-  //   setPendingMaterials((current) => current.filter((m) => m.id !== materialId));
-  //   onApprove();
-  // };
-
   return (
-    <Card sx={{ p: 2, display: "flex", width: "100%", flexDirection: "column" }}>
-      <Stack spacing={2}>
-        <Typography variant="h5">Pending Approvals</Typography>
-        <Stack spacing={2}>
+    <>
+      <Accordion defaultExpanded>
+        {/* <Card sx={{ p: 2, display: "flex", width: "100%", flexDirection: "column" }}> */}
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1-content"
+          id="panel1-header"
+          sx={{ p: 2 }}
+        >
+          <Box display="flex" flexDirection="column" justifyContent="space-between">
+            <Typography variant="h5">Pending Approvals</Typography>
+            <Typography sx={{ fontSize: "14px", marginTop: 1, color: figmaColors.fontTertiary }}>
+              You have {pendingMaterials.length} pending approvals
+            </Typography>
+          </Box>
+        </AccordionSummary>
+        <AccordionDetails>
           {pendingMaterials.length === 0 ? (
             <Typography variant="body1">No pending materials to approve</Typography>
           ) : (
             <>
               <List>
                 {currentItems.map((material) => (
-                  <ListItem key={material.materialId} divider>
+                  <ListItem key={material.id} divider>
                     <ListItemText
-                      primary={material.fileName}
+                      primary={material.title}
                       secondary={`Instrument: ${material.instrument} - Grade: ${material.grade}`}
                     />
                     <Button
                       component="a"
                       href={material.fileLink}
-                      target="_blank"
                       startIcon={
                         <SvgIcon>
                           <ArrowUpOnSquareIcon />
@@ -220,26 +258,43 @@ const ApproveMaterialsSection = ({ pendingMaterials, onApprove, onReject }) => {
               />
             </>
           )}
-        </Stack>
-      </Stack>
-      <RejectionModal
-        open={rejectionModalOpen}
-        onClose={() => setRejectionModalOpen(false)}
-        onSubmit={handleReject}
-        reason={rejectionReason}
-        setReason={setRejectionReason}
-      />
-      <ApprovalModal
-        open={approvalModalOpen}
-        onClose={() => setApprovalModalOpen(false)}
-        onConfirm={handleApprove}
-      />
-    </Card>
+        </AccordionDetails>
+        <RejectionModal
+          open={rejectionModalOpen}
+          onClose={() => {setRejectionModalOpen(false); setRejectionReason("")}}
+          onSubmit={handleReject}
+          reason={rejectionReason}
+          setReason={setRejectionReason}
+        />
+        <ApprovalModal
+          open={approvalModalOpen}
+          onClose={() => setApprovalModalOpen(false)}
+          onConfirm={handleApprove}
+        />
+        {/* </Card> */}
+      </Accordion>
+    </>
   );
 };
 
 const Page = () => {
-  const [materials, setMaterials] = useState(materialsMockData);
+  const { user } = useAuth();
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
+  const onTriggerSnackbar = (message, severity) => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
+
+  const [materials, setMaterials] = useState([]);
 
   // When rendering approved materials:
   const approvedMaterials = materials.filter((material) => material.status === "Approved");
@@ -248,17 +303,115 @@ const Page = () => {
   const pendingMaterials = materials.filter((material) => material.status === "Pending");
 
   const [viewType, setViewType] = useState("icons"); // 'icons' or 'list'
+
+  // SEARCH FUNCTION
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
+  // FILTER FUNCTION
+  const [filters, setFilters] = useState({
+    type: "",
+    instrument: "",
+    grade: "",
+  });
+
+  // Unique values for types, instruments, and grades (you could derive these from your materials data)
+  const types = ["Image", "Document"];
+  const instruments = ["Piano", "Guitar", "Ukulele", "Violin"];
+  const grades = ["1", "2", "3", "4", "5", "6"];
+
+  // Update the state when filters are changed
+  const handleFilterChange = (event) => {
+    setFilters({
+      ...filters,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  const handleRefreshFilters = () => {
+    setFilters({
+      type: "",
+      instrument: "",
+      grade: "",
+    });
+  };
+
+  const handleApprove = async (materialId) => {
+    // Implement the logic to approve the material
+    try {
+      const response = await putAsync(
+        `material-repository/admin/${materialId}?status=Approved&reasonForStatus=Pass`,
+        {},
+        user.idToken
+      );
+      if (!response.ok) {
+        onTriggerSnackbar("Error approving material", "error");
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      console.log("Material approved successfully");
+      onTriggerSnackbar("Material approved successfully", "success");
+      // Fetch the materials again to update the UI
+      fetchMaterials();
+    } catch (error) {
+      console.error("Error approving material:", error);
+      onTriggerSnackbar("Error approving material", "error");
+    }
+  };
+
+  const handleReject = async (materialId, reason) => {
+    // Implement the logic to reject the material
+    try {
+      const response = await putAsync(
+        `material-repository/admin/${materialId}?status=Rejected&reasonForStatus=${reason}`,
+        {},
+        user.idToken
+      );
+      if (!response.ok) {
+        onTriggerSnackbar("Error rejecting material", "error");
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      console.log("Material rejected successfully");
+      onTriggerSnackbar("Material rejected successfully", "success");
+      // Fetch the materials again to update the UI
+      fetchMaterials();
+    } catch (error) {
+      console.error("Error rejecting material:", error);
+      onTriggerSnackbar("Error rejecting material", "error");
+    }
+  };
+
+
+  const filteredAndSearchedMaterials = approvedMaterials.filter((material) => {
+    // Filter logic
+    const filterMatch =
+      (filters.type ? material.type === filters.type : true) &&
+      (filters.instrument ? material.instrument === filters.instrument : true) &&
+      (filters.grade ? material.grade === filters.grade : true);
+
+    // Search logic - checks if the search term is included in the material's title
+    // You can extend this logic to search in other attributes as well
+    const searchMatch =
+      material.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      material.instrument?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      material.grade?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      material.type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      material.creationTime.toLowerCase().includes(searchTerm.toLowerCase());
+
+    return filterMatch && searchMatch;
+  });
+
   const fetchMaterials = async () => {
-    // Replace with actual API call
-    const response = await fetch("");
-    const data = await response.json();
-    setMaterials(data);
+    try {
+      const response = await getAsync("material-repository/admin", user.idToken);
+      const data = await response.json();
+      setMaterials(data);
+      console.log("Materials fetched:", data);
+    } catch (error) {
+      console.error("Error fetching materials:", error);
+    }
   };
 
   useEffect(() => {
@@ -276,7 +429,7 @@ const Page = () => {
           component="img"
           height="140" // Adjust the height accordingly
           image={material.fileLink}
-          alt={`${material.fileName} preview`} // Provide a meaningful alt text
+          alt={`${material.title} preview`} // Provide a meaningful alt text
           sx={{ borderRadius: 1, mb: 2 }}
         />
       ) : (
@@ -294,15 +447,15 @@ const Page = () => {
           </Typography>
         </Box>
       )}
-      <Typography variant="h6">{material.fileName}</Typography>
+      <Typography variant="h6">{material.title}</Typography>
+      <Typography variant="subtitle2">Type: {material.type}</Typography>
       <Typography variant="subtitle2">Instrument: {material.instrument}</Typography>
       <Typography variant="subtitle2">Grade: {material.grade}</Typography>
-      <Typography variant="subtitle2">Created: {material.createdTime}</Typography>
+      <Typography variant="subtitle2">Created: {material.creationTime}</Typography>
       <Box display={"flex"} justifyContent={"center"}>
         <Button
           component="a"
-          href={material.linkToGCP}
-          target="_blank"
+          href={material.fileLink}
           startIcon={
             <SvgIcon>
               <ArrowUpOnSquareIcon />
@@ -333,13 +486,12 @@ const Page = () => {
       {materials.map((material) => (
         <ListItem key={material.id} divider>
           <ListItemText
-            primary={material.fileName}
+            primary={material.title}
             secondary={`Instrument: ${material.instrument} - Grade: ${material.grade}`}
           />
           <Button
             component="a"
-            href={material.linkToGCP}
-            target="_blank"
+            href={material.fileLink}
             startIcon={
               <SvgIcon>
                 <ArrowUpOnSquareIcon />
@@ -377,44 +529,78 @@ const Page = () => {
               </div>
             </Stack>
             <ApproveMaterialsSection
-              onApprove={fetchMaterials}
+              onApprove={handleApprove}
+              onReject={handleReject}
               pendingMaterials={pendingMaterials}
             />
-            <Card sx={{ p: 2, display: "flex", width: "100%" }}>
-              <RepoSearch handleSearchChange={handleSearchChange} />
-              <Button
-                color="inherit"
-                startIcon={
-                  <SvgIcon fontSize="small">
-                    <TrashIcon />
-                  </SvgIcon>
-                }
-                //   onClick={handleExport}
-                style={{ marginLeft: "15px" }}
+            <Accordion defaultExpanded>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1-content"
+                id="panel1-header"
+                sx={{ p: 2 }}
               >
-                Delete
-              </Button>
-            </Card>
-            <Box>
-              <Box display={"flex"} justifyContent={"center"}>
-                <ToggleButtonGroup
-                  value={viewType}
-                  exclusive
-                  onChange={(e, view) => setViewType(view)}
-                >
-                  <ToggleButton value="icons">Icons</ToggleButton>
-                  <ToggleButton value="list">List</ToggleButton>
-                </ToggleButtonGroup>
-              </Box>
-              <Box></Box>
-              {viewType === "icons" ? (
-                <MaterialsIconView materials={approvedMaterials} />
-              ) : (
-                <MaterialsListView materials={approvedMaterials} />
-              )}
-            </Box>
+                <Box display="flex" flexDirection="column" justifyContent="space-between">
+                  <Typography variant="h5">Approved Materials</Typography>
+                  <Typography
+                    sx={{ fontSize: "14px", marginTop: 1, color: figmaColors.fontTertiary }}
+                  >
+                    You have {approvedMaterials.length} approved materials
+                  </Typography>
+                </Box>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Card sx={{ p: 2, display: "flex", width: "100%" }}>
+                  <RepoSearch handleSearchChange={handleSearchChange} />
+                  <Button
+                    color="inherit"
+                    startIcon={
+                      <SvgIcon fontSize="small">
+                        <TrashIcon />
+                      </SvgIcon>
+                    }
+                    //   onClick={handleExport}
+                    style={{ marginLeft: "15px" }}
+                  >
+                    Delete
+                  </Button>
+                </Card>
+                <Box>
+                  <FilterDropdowns
+                    filters={filters}
+                    types={types}
+                    instruments={instruments}
+                    grades={grades}
+                    onFilterChange={handleFilterChange}
+                    onResetFilters={handleRefreshFilters}
+                  />
+                  <Box display={"flex"} justifyContent={"center"} mt={2}>
+                    <ToggleButtonGroup
+                      value={viewType}
+                      exclusive
+                      onChange={(e, view) => setViewType(view)}
+                    >
+                      <ToggleButton value="icons">Icons</ToggleButton>
+                      <ToggleButton value="list">List</ToggleButton>
+                    </ToggleButtonGroup>
+                  </Box>
+
+                  {viewType === "icons" ? (
+                    <MaterialsIconView materials={filteredAndSearchedMaterials} />
+                  ) : (
+                    <MaterialsListView materials={filteredAndSearchedMaterials} />
+                  )}
+                </Box>
+              </AccordionDetails>
+            </Accordion>
           </Stack>
         </Container>
+        <SnackbarAlert
+          open={snackbarOpen}
+          severity={snackbarSeverity}
+          message={snackbarMessage}
+          handleClose={handleCloseSnackbar}
+        />
       </Box>
     </>
   );

@@ -11,8 +11,10 @@ import { SvgIcon } from "@mui/material";
 import { putAsync } from "src/utils/utils";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import { useAuth } from "src/hooks/use-auth";
 
 export default function TeachersEditModal({ teacher, onEditTeacher }) {
+  const { user } = useAuth();
   const [open, setOpen] = React.useState(false);
   const [phone, setPhone] = React.useState(""); // New state for phone number
 
@@ -36,7 +38,7 @@ export default function TeachersEditModal({ teacher, onEditTeacher }) {
     event.preventDefault();
     const submitData = async () => {
       try {
-        const response = await putAsync(`teachers/${teacher.id}/update-phone?phone=${phone}`);
+        const response = await putAsync(`teachers/${teacher.id}/update-phone?phone=${phone}`, null, user.idToken);
         if (!response.ok) {
           console.error(
             "Server error when updating phone:",

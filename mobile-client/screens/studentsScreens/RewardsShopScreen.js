@@ -18,54 +18,45 @@ import Colors from "../../constants/colors";
 import RewardsCategoryDropdown1 from "../../components/ui/RewardsCategoryDropdown1";
 import theme from "../../styles/theme";
 import ConfirmPurchaseModal from "../../components/ui/confirmPurchaseModal";
+import { useAuth } from "../../context/Authcontext";
+import axios from "axios";
 
 // Dimensions to calculate the window width
 const { width } = Dimensions.get("window");
 
 function RewardsShopScreen() {
+  const { state } = useAuth();
   const [items, setItems] = useState([]);
+  const [purchaseHistory, setPurchaseHistory] = useState([]);
   const [userData, setUserData] = useState({});
   const [filteredResults, setFilteredResults] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [purchaseCounter, setPurchaseCounter] = useState(0);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const userData = await AsyncStorage.getItem("userData");
-        const parsedUserData = JSON.parse(userData);
-        setUserData(parsedUserData);
-      } catch (error) {
-        console.error("Error processing user data", error);
-      }
-    };
-    fetchUserData();
+    console.log("RewardsShopScreen.js line 38", state.userData);
+    setUserData(state.userData);
   }, []);
 
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await fetch(`${IP_ADDRESS}/reward-shop`, {
-          method: "GET",
-        });
 
-        if (!response.ok) {
-          const errorText = response.statusText || "Unknown error occurred";
-          throw new Error(
-            `Request failed with status ${response.status}: ${errorText}`
-          );
-        }
-        const responseData = await response.json();
-        setItems(responseData); // Set the state with the response data
-        setFilteredResults(responseData);
+        const [itemResponse, purchaseHistoryResponse] = await Promise.all([
+          axios.get(`${IP_ADDRESS}/reward-shop`, state.authHeader),
+          axios.get(`${IP_ADDRESS}/purchase-history/${state.userData.id}`, state.authHeader),
+        ]);
+        setItems(itemResponse.data); 
+        setPurchaseHistory(purchaseHistoryResponse.data); 
       } catch (error) {
-        console.error("Error fetching items:", error);
+        console.error("RewardsShopScreen.js line 64, Error fetching items:", error);
       }
     };
     fetchItems();
-  }, []);
+  }, [purchaseCounter, state.userData]);
 
   useEffect(() => {
     // Combine search and category filters
@@ -105,27 +96,11 @@ function RewardsShopScreen() {
     if (!selectedItem || !userData.id) return;
 
     try {
-      const response = await fetch(
-        `${IP_ADDRESS}/reward-shop/digital/${selectedItem.id}?student_id=${userData.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
 
-      if (!response.ok) {
-        // If the server response is not ok, throw an error
-        const errorText =
-          (await response.text()) || "An unknown error occurred";
-        throw new Error(
-          `Request failed with status ${response.status}: ${errorText}`
-        );
-      }
+      const response = await axios.put(`${IP_ADDRESS}/reward-shop/digital/${selectedItem.id}?student_id=${userData.id}`, {}, state.authHeader);
 
       // Parse the JSON response from the server
-      const updatedItem = await response.json();
+      const updatedItem = response.data;
 
       // Update local state to reflect the redeemed item and the new points total
       setUserData((previousUserData) => ({
@@ -136,25 +111,44 @@ function RewardsShopScreen() {
       Alert.alert("Success", "Item redeemed successfully!");
       setModalVisible(false);
       setSelectedItem(null); // Reset selected item on successful redemption
+      setPurchaseCounter((prevPurchaseCounter) => prevPurchaseCounter + 1); // just for refreshing the page bro dont delete hehe
     } catch (error) {
-      console.error("Redemption error:", error);
+      console.error("RewardsShopScreen.js line 140, Redemption error:", error);
       Alert.alert("Redemption Failed", error.toString());
       setModalVisible(false);
     }
   };
+
+  const hasBeenFullyPurchased = (itemId, purchaseHistory, limitation, stock) => {
+    const totalPurchased = purchaseHistory.reduce((total, purchase) => {
+      if (purchase.itemId === itemId) {
+        return total + purchase.purchaseAmount;
+      }
+      return total;
+    }, 0); 
+    return totalPurchased >= limitation || stock <= 0;
+  };
+  
 
   const handleCloseModal = () => {
     setModalVisible(false);
     setSelectedItem(null); // Reset selected item on modal close
   };
 
-  const ShopItem = ({ description, points, type, imageLink, id }) => {
+  const ShopItem = ({ description, points, type, imageLink, id, limitation, stock }) => {
+    const isFullyPurchased = hasBeenFullyPurchased(id, purchaseHistory, limitation, stock);
+    const canPurchase = userData.pointsCounter >= points;
     return (
       <TouchableOpacity
-        style={styles.item}
+        style={[styles.item, isFullyPurchased ? styles.itemDisabled : null]}
         onPress={() =>
-          handlePressPurchase({ description, points, type, imageLink, id })
+          isFullyPurchased ? null : handlePressPurchase({ description, points, type, imageLink, id })
         }
+        disabled={isFullyPurchased || !canPurchase}
+        // style={styles.item}
+        // onPress={() =>
+        //   handlePressPurchase({ description, points, type, imageLink, id })
+        // }
       >
         <View style={styles.itemHeader}>
           <Text style={styles.itemType}>{type}</Text>
@@ -167,15 +161,15 @@ function RewardsShopScreen() {
         <View style={styles.titleContainer}>
           <Text style={styles.itemTitle}>{description}</Text>
         </View>
-        <View style={styles.pointsContainer}>
-          <Image 
-            source={require('../../assets/currency.png')} 
-            style={styles.currencyImage}
-          />
-          <Text style={styles.itemPoints}>
-            {points}
-          </Text>
-        </View>
+          <View style={styles.pointsContainer}>
+            {!isFullyPurchased && <Image 
+              source={require('../../assets/currency.png')} 
+              style={styles.currencyImage}
+            />}
+            <Text style={[styles.itemPoints, canPurchase ? null : styles.pointsDisabledText]}>
+              {!isFullyPurchased ? points : "Item sold out"}
+            </Text>
+          </View>
       </TouchableOpacity>
     );
   };
@@ -253,7 +247,6 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    // padding: 10,
     alignItems: "center",
     paddingTop: 18,
   },
@@ -299,6 +292,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: Colors.fontPrimary,
   },
+  itemDisabled: {
+    opacity: 0.5,
+  },
   itemImage: {
     width: "100%",
     height: 150,
@@ -318,13 +314,12 @@ const styles = StyleSheet.create({
     color: Colors.fontSecondary,
   },
   currentPointsContainer: {
-    backgroundColor: '#fffff',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    width: "100%",
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    // Remove width: "100%" to let the container shrink-wrap its content
   },
   pointsContainer: {
     backgroundColor: Colors.primary500, // Button background
@@ -334,6 +329,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  pointsDisabledText: {
+    opacity: 0.5
   },
   itemPoints: {
     color: "#fff",

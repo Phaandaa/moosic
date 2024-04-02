@@ -40,7 +40,7 @@ const RewardsCategoryDropdown = ({ onSelectionChange }) => {
         listParentLabelStyle={styles.listParentLabelStyle}
         dropDownContainer={styles.dropDownContainer}
         save="key"
-        onSelect={() => console.log("selected category: ", selected)}
+        onSelect={() => console.log("RewardsCategoryDropdown.js line 43, selected category: ", selected)}
       />
       {/* )} */}
     </View>

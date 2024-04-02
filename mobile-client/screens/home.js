@@ -7,58 +7,47 @@ import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import IP_ADDRESS from '../constants/ip_address_temp';
 import Colors from '../constants/colors';
+import { useAuth } from '../context/Authcontext';
 
 const { width } = Dimensions.get('window');
 
 
 const HomeScreen = ({ navigation }) => {
+  const { state } = useAuth();
   const [searchResults, setSearchResults] = useState([]);
-  const [userRole, setUserRole] = useState('');
-  const [user, setUser] = useState({}); 
   const [goals, setGoals] = useState([]);
   const [loadingstate, setLoadingState] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [userToken, setUserToken] = useState('');
 
   const [progressbar, setProgressBar] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0); // Track the current index with state
+  
+  
 
   const flatListRef = useRef();
   const intervalId = useRef(null);
 
-  const checkStoredData = async () => {
+  const fetchDataAndUpdateState = async () => {
+    setLoadingState(true);
     try {
-      const storedData = await AsyncStorage.getItem('authData');
-      if (storedData !== null) {
-        const parsedData = JSON.parse(storedData);
-        return parsedData;
-      }
-    } catch (error) {
-      console.error('Error retrieving data from AsyncStorage', error);
-    }
-    return '';
-  };
-
-  const checkStoredUserData = async () => {
-    try {
-      setLoadingState(true);
-      const storedData = await AsyncStorage.getItem('userData');
-      if (!storedData) {
-        throw new Error('No user data found.');
-      }
-      const userData = JSON.parse(storedData);
-      setUser(userData); // Set user with userData including points
+      const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/student/${state.userData.id}`;      
+      const goalsResponse = await axios.get(fetchStudentsGoalsUrl, state.authHeader);
       
-      // Fetch student's goals
-      const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/student/${userData.id}`;
-      const goalsResponse = await axios.get(fetchStudentsGoalsUrl);
       setGoals(goalsResponse.data ? goalsResponse.data : []);
-      console.log(goals)
-
+      
     } catch (error) {
-      console.error('Error retrieving data from AsyncStorage', error);
+      console.error('home.js line 43, Error during data fetching and state updating', error);
     } finally {
       setLoadingState(false);
     }
   };
+  
+  useEffect(() => {
+    if (state.userData.role == 'Student') fetchDataAndUpdateState();
+  }, []); 
+  
+  
 
    const bannerImages = [
     require('../assets/homepage-banners/cowbanner.png'),
@@ -67,34 +56,21 @@ const HomeScreen = ({ navigation }) => {
   ];
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const authData = await checkStoredData();
-        setUserRole(authData.role);
-        await checkStoredUserData(); // This now correctly sets user state
-      } catch (error) {
-        console.error('Error processing stored data', error);
-      }
-    };
-    fetchData();
-  }, []);
+    const interval = setInterval(() => {
+      const nextIndex = (currentIndex + 1) % bannerImages.length;
+      flatListRef.current?.scrollToIndex({
+        animated: true,
+        index: nextIndex,
+      });
+      setCurrentIndex(nextIndex); // Update current index
+    }, 3000); // Change banner every 3 seconds
 
-  useEffect(() => {
-    const changeBanner = () => {
-      if (flatListRef.current) {
-        const currentIndex = Math.round(progress / width);
-        const nextIndex = (currentIndex + 1) % bannerImages.length; // Using bannerImages.length directly
-        flatListRef.current.scrollToIndex({
-          index: nextIndex,
-          animated: true,
-        });
-      }
-    };
+    return () => clearInterval(interval); // Clean up on unmount
+  }, [currentIndex]); // Depend on currentIndex to calculate the next index
 
-    intervalId.current = setInterval(changeBanner, 3000);
-
-    return () => clearInterval(intervalId.current); // Clear interval on unmount
-  }, [progress, bannerImages.length]); 
+  const renderItem = ({ item }) => (
+    <Image source={item} style={{ width, height: 200 }} resizeMode="cover" />
+  );
   
   useEffect(() => {
     const totalGoals = goals.practiceGoalCount + goals.assignmentGoalCount;
@@ -103,7 +79,7 @@ const HomeScreen = ({ navigation }) => {
     setProgressBar(Math.round(newProgress));
   }, [goals]);
 
-  
+ 
 
   const CurrentGoals = ({ completedPractice, completedAssignment, currentPracticeGoalCount, currentAssignmentGoalCount, currentPoints }) => {
     
@@ -131,10 +107,10 @@ const HomeScreen = ({ navigation }) => {
           {/* Background of the progress bar (the track) */}
           <View style={styles.progressTrack}>
               {/* Foreground of the progress bar */}
-              <View style={[styles.progressBar, {width: `${progressbar}%`}]} />
+              <View style={[styles.progressBar, {width: `${Math.min(100,progressbar)}%`}]} />
           </View>
           <Text style={styles.progressText}>
-              {progressbar}% Completed
+              {Math.min(100,progressbar)}% Completed
           </Text>
         </View>
 
@@ -164,7 +140,7 @@ const HomeScreen = ({ navigation }) => {
 
  
 
-  const modules = userRole === 'Teacher' ? teacherModules : studentModules;
+  const modules = state.userData.role === 'Teacher' ? teacherModules : studentModules;
 
   const Header = () => (
     <View style={styles.headerContainer}>
@@ -183,34 +159,33 @@ const HomeScreen = ({ navigation }) => {
   const renderHeader = () => {
     return (
       <>
-        <Text style={[theme.textTitle]}> Welcome, {user?.name?.split(" ")[0]}! </Text>
-        {userRole === 'Student' && (
+        <Text style={[theme.textTitle]}> Welcome, {state.userData.name.split(" ")[0]}! </Text>
+        {state.userData.role === 'Student' && (
           <>
             <Text style={[theme.textSubtitle, { marginBottom: 10 }]}>
-              Your current points: {user?.pointsCounter ? user.pointsCounter : 0}
+              Your current points: {state.userData.pointsCounter ? state.userData.pointsCounter : 0}
             </Text>
           </>
         )}
         {/* Display Images */}
-        <FlatList
-          ref={flatListRef}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          data={bannerImages}
-          keyExtractor={(item, index) => String(index)}
-          renderItem={({ item }) => (
-            <View style={styles.imageContainer}>
-              <Image source={item} style={styles.bannerImage} />
-            </View>
-          )}
-          onScroll={(event) => {
-            setProgress(event.nativeEvent.contentOffset.x);
-          }}
-          style={{ height: 200 }} // Set the height of the FlatList itself
-          contentContainerStyle={{ alignItems: 'center' }} // Ensure items are centered
-        />
-        {userRole === 'Student' && (
+        <View style={{ flex: 1 }}>
+      <FlatList
+        ref={flatListRef}
+        data={bannerImages}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScrollToIndexFailed={info => {
+          const wait = new Promise(resolve => setTimeout(resolve, 500));
+          wait.then(() => {
+            flatListRef.current?.scrollToIndex({ index: info.index, animated: true });
+          });
+        }}
+      />
+    </View>
+        {state.userData.role === 'Student' && (
           isGoalsSet ? (
             <CurrentGoals
               completedPractice={goals.practiceCount}

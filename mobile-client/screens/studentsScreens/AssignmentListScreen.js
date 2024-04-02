@@ -8,70 +8,32 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import AssignmentSearchBar from '../../components/ui/assignmentSearchBar';
 import trimDate from '../../components/ui/trimDate';
+import { useAuth } from '../../context/Authcontext';
 
 function AssignmentListScreen({navigation}){
+    const { state } = useAuth();
     const [studentID, setStudentID] = useState('');
     const [assignmentData, setAssignmentData] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
-
-    // Check stored data for studentID
-    const checkStoredData = async () => {
-        try {
-            const storedData = await AsyncStorage.getItem('authData');
-            if (storedData !== null) {
-                const parsedData = JSON.parse(storedData);
-                console.log('studentID:', parsedData.userId);
-                return parsedData.userId;
-            }
-        } catch (error) {
-            console.error('Error retrieving data from AsyncStorage', error);
-        }
-        return '';
-    };
-    // Fetch studentID on component mount
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const id = await checkStoredData();
-                setStudentID(id);
-                console.log(studentID)
-            } catch (error) {
-                console.error('Error processing stored data', error);
-            }
-        };
-        fetchData();
-    }, []);
 
     // Fetch assignments using studentID
     useEffect(() => {
         const fetchAssignments = async() => {
             try {
-                const response = await fetch(`${IP_ADDRESS}/assignments/student/${studentID}`, {
-                    method: 'GET'
-                });
-                
-                if (!response.ok) {
-                    const errorText = response.statusText || 'Unknown error occurred';
-                    throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-                }
-                const responseData = await response.json();
-                const sortedData = responseData.sort((a, b) => {
-                    // Assuming the deadline is in a format that can be directly compared, like 'YYYY-MM-DD'
-                    // If the date format is different, you may need to parse it to a Date object first
-                    return new Date(b.createdAtDate) - new Date(a.createdAtDate);
-                });
+                const response = await axios.get(`${IP_ADDRESS}/assignments/student/${state.userData.id}`, state.authHeader);
+                console.log("AssignmentListScreen.js line 32", response);
+                const responseData = response.data;
 
-                setAssignmentData(sortedData); // Set the state with the response data
-                setSearchResults(sortedData); // Assuming you also want to filter
+                setAssignmentData(responseData); // Set the state with the response data
+                setSearchResults(responseData); // Assuming you also want to filter
 
-                console.log(assignmentData)
+                console.log("AssignmentList.js line 67: ", assignmentData)
             } catch (error) {
-                console.error('Error fetching assignments:', error);
+                console.error('AssignmentList.js line 69, Error fetching assignments:', error);
             }
         };
-        if(studentID){
-            fetchAssignments();
-        }
+        
+        fetchAssignments();
     }, [studentID]);
 
     const handleSearch = (searchText) => {

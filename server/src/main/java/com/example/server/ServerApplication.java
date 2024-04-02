@@ -1,17 +1,28 @@
 package com.example.server;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.slf4j.Logger;
+
+import com.example.server.config.JWTValidator;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import jakarta.annotation.PostConstruct;
 
 @SpringBootApplication
 @EnableScheduling
 public class ServerApplication {
 
+	private static final Logger log = LoggerFactory.getLogger(ServerApplication.class);
+
 	public static void main(String[] args) {
 		Dotenv dotenv = Dotenv.load();
+
 		String mongodbURI = dotenv.get("MONGODB_URI");
 		String mongodbDB = dotenv.get("MONGODB_DB");
 		String firebaseApiKey = dotenv.get("FIREBASE_API_KEY");
@@ -28,6 +39,30 @@ public class ServerApplication {
 		System.setProperty("spring.cloud.gcp.credentials.location", "file:" + googleApplicationCredentials);
 		System.setProperty("gcs-bucket", gcsBucketName);
 		
+		// Validate the JWT
+        JWTValidator.validateJWT("eyJhbGciOiJSUzI1NiIsImtpZCI6ImViYzIwNzkzNTQ1NzExODNkNzFjZWJlZDI5YzU1YmVmMjdhZDJjY2IiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vbW9vc2ljLTQxMTcxOSIsImF1ZCI6Im1vb3NpYy00MTE3MTkiLCJhdXRoX3RpbWUiOjE3MTExMzA4ODcsInVzZXJfaWQiOiJ2Tk94T1lXckloYzRicG5oS1FZMmh5Q09uTzIyIiwic3ViIjoidk5PeE9ZV3JJaGM0YnBuaEtRWTJoeUNPbk8yMiIsImlhdCI6MTcxMTEzMDg4NywiZXhwIjoxNzExMTM0NDg3LCJlbWFpbCI6ImF1ZHJleS5rdXJuaWF3YW4wM0BnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZW1haWwiOlsiYXVkcmV5Lmt1cm5pYXdhbjAzQGdtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.ZZjtpQ-3L4YeGhiw7PWOIyfX6JeEkOgLounK3WMTvGTy59Pb749FKGPF3HJnVjCSs7XxC0cQGCHcUY2F1B6hfLQyvtDb-9qn4Q9jbpTtGdQ04-dLOCcsnYWdqR1Fs8_DEx3PT6lIJEx1o6hGxl_3LcajwkRzgfiVHVfXWr0UZriAbcMadnHpN_wJsYYIEDY5aokK3xwYCHiL5pqBzTBYjUQOqUINNecDD81IIveDgDbOn9MwfNpuZlxt76ER8g-jcc11fm-nDioa7BDeYSGEI8NWUqc4yRWUY7vCCf9vCnxoQV4ct6taiPf_UKpnJmXdqwLY67EyKLjJ0LFn6SlNLg");
+
+
 		SpringApplication.run(ServerApplication.class, args);
+	}
+
+	@PostConstruct
+	public void initialize(){
+		try {
+
+			GoogleCredentials credentials = GoogleCredentials.fromStream(
+                getClass().getClassLoader().getResourceAsStream("serviceAccountKey2.json")
+            );
+
+			FirebaseOptions options = FirebaseOptions.builder()
+                    .setCredentials(credentials)
+                    .build();
+			
+			if (FirebaseApp.getApps().isEmpty()) {
+				FirebaseApp.initializeApp(options);
+			}
+		} catch (Exception e) {
+			log.error("Failed to initialize FirebaseApp: " + e.getMessage());
+		}
 	}
 }

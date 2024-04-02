@@ -21,7 +21,7 @@ const CustomTabBarButton = ({ children }) => {
                 return parsedData.role;
             }
         } catch (error) {
-            console.error('Error retrieving data from AsyncStorage', error);
+            console.error('CustomTabBarButton.js line 24, Error retrieving data from AsyncStorage', error);
         }
         finally{
             setLoadingState(false);
@@ -33,9 +33,9 @@ const CustomTabBarButton = ({ children }) => {
             try {
                 const role = await checkStoredData();
                 setUserRole(role);
-                console.log(role)
+                console.log("CustomTabBarButton.js line 36, role: " + role)
             } catch (error) {
-                console.error('Error processing stored data', error);
+                console.error('CustomTabBarButton.js line 38, Error processing stored data', error);
             }
         };
         fetchData();

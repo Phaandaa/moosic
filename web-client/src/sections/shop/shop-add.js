@@ -18,8 +18,10 @@ import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
+import { useAuth } from "src/hooks/use-auth";
 
 export default function AddItem({ onAddItem }) {
+  const { user } = useAuth();
   const [open, setOpen] = React.useState(false);
 
   const [description, setDescription] = React.useState("");
@@ -107,9 +109,9 @@ export default function AddItem({ onAddItem }) {
         // console.log("formData", formData.get("files"), formData.get("reward-shop-item"));
         let response = null;
         if (!selectedFile) {
-          response = await postAsync("reward-shop/create/without-image", newItem, null, false);
+          response = await postAsync("reward-shop/create/without-image", newItem, user.idToken, false);
         } else {
-          response = await postAsync("reward-shop/create/with-image", formData, null, true);
+          response = await postAsync("reward-shop/create/with-image", formData, user.idToken, true);
         }
         const data = await response.json();
         if (!response.ok) {

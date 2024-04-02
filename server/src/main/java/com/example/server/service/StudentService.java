@@ -1,8 +1,8 @@
 package com.example.server.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,7 +35,7 @@ public class StudentService {
         try {
             List<Student> students = studentRepository.findAllSortedByCreationTime();
             if (students == null || students.isEmpty()) {
-                throw new NoSuchElementException("No students found");
+                return new ArrayList<>();
             }
             return students;
         } catch (NoSuchElementException e) {
@@ -144,9 +144,11 @@ public class StudentService {
         }}
 
     public List<Student> findStudentsByTeacherId(String teacherId) {
+        teacherRepository.findById(teacherId).orElseThrow(()->
+                new NoSuchElementException("Teacher not found with the ID " + teacherId));
         List<Student> students = studentRepository.findAllByTeacherId(teacherId);
         if (students == null || students.isEmpty()) {
-            throw new NoSuchElementException("No students found for teacher ID " + teacherId);
+            return new ArrayList<>();
         }
         return students;
     }

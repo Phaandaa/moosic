@@ -5,10 +5,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import AssignmentSearchBar from '../../components/ui/assignmentSearchBar';
 import trimDate from '../../components/ui/trimDate';
+import { useAuth } from '../../context/Authcontext';
+import axios from 'axios';
 
 function PracticeListTeacherScreen({route, navigation}){
+    const { state } = useAuth();
     const { studentID, studentName }  = route.params;
-
     const [teacherID, setTeacherID] = useState('');
     const [practiceData, setPracticeData] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
@@ -19,11 +21,11 @@ function PracticeListTeacherScreen({route, navigation}){
             const storedData = await AsyncStorage.getItem('authData');
             if (storedData !== null) {
                 const parsedData = JSON.parse(storedData);
-                console.log('teacherID:', parsedData.userId);
+                console.log('PracticeListTeacherScreen.js line 22, teacherID:', parsedData.userId);
                 return parsedData.userId;
             }
         } catch (error) {
-            console.error('Error retrieving data from AsyncStorage', error);
+            console.error('PracticeListTeacherScreen.js line 26, Error retrieving data from AsyncStorage: ', error);
         }
         return '';
     };
@@ -33,9 +35,9 @@ function PracticeListTeacherScreen({route, navigation}){
             try {
                 const id = await checkStoredData();
                 setTeacherID(id);
-                console.log('teacherID', teacherID)
+                console.log('PracticeListTeacherScreen.js line 36, teacherID: ', teacherID)
             } catch (error) {
-                console.error('Error processing stored data', error);
+                console.error('PracticeListTeacherScreen.js line 38, Error processing stored data: ', error);
             }
         };
         fetchData();
@@ -45,30 +47,19 @@ function PracticeListTeacherScreen({route, navigation}){
     useEffect(() => {
         const fetchPractices = async() => {
             try {
-                console.log('teacherstudentID', teacherID, studentID)
-                const response = await fetch(`${IP_ADDRESS}/practices/${studentID}/${teacherID}`, {
-                    method: 'GET'
-                });
-                
-                if (!response.ok) {
-                    const errorText = response.statusText || 'Unknown error occurred';
-                    throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-                }
-                const responseData = await response.json();
+                const response = await axios.get(`${IP_ADDRESS}/practices/${studentID}/${teacherID}`, state.authHeader);
+                const responseData = response.data;
 
                 const sortedData = responseData.sort((a, b) => {
-                    // Assuming the deadline is in a format that can be directly compared, like 'YYYY-MM-DD'
-                    // If the date format is different, you may need to parse it to a Date object first
                     return new Date(b.submissionTimestamp) - new Date(a.submissionTimestamp);
                 });
-                console.log(sortedData);
 
                 setPracticeData(sortedData); // Set the state with the response data
                 setSearchResults(sortedData);
 
-                console.log(practiceData[0])
+                console.log('PracticeListTeacherScreen.js line 69, practiceDate[0]: ', practiceData[0])
             } catch (error) {
-                console.error('Error fetching practice:', error);
+                console.error('PracticeListTeacherScreen.js line 71, Error fetching practice:', error);
             }
         };
         if(teacherID){

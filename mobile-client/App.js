@@ -99,7 +99,7 @@ async function registerForPushNotificationsAsync() {
     token = await Notifications.getExpoPushTokenAsync({
       projectId: "266a78dd-0994-4876-8ba9-92801ff17fb2",
     });
-    console.log(token);
+    console.log("App.js line 99, expoPushToken: " + token);
   } else {
     alert('Must use physical device for Push Notifications');
   }
@@ -234,6 +234,7 @@ const App = () => {
 };
 
 const RootNavigator = () => {
+  
   const { state } = useAuth();
   const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState(false);
@@ -243,34 +244,10 @@ const RootNavigator = () => {
   const [isLoading, setIsLoading] = useState(true); // Added state to track loading status
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true); // Start loading
-        const storedData = await AsyncStorage.getItem('authData');
-        if (storedData !== null) {
-          const parsedData = JSON.parse(storedData);
-          setUserRole(parsedData.role); // Set user role based on fetched data
-        }
-      } catch (error) {
-        console.error('Error retrieving data from AsyncStorage', error);
-      } finally {
-        setIsLoading(false); // End loading
-      }
-    };
-    fetchData();
     registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+    console.log("App.js line 245, state:", state);
 
     notificationListener.current = Notifications.addNotificationReceivedListener(async notification => {
-      console.log('Notification received:', notification);
-
-      if (notification.remote) {
-        console.log('Push notification received:', notification);
-        console.log(notification.request.content.data.message);
-      } else {
-        console.log('Local notification received:', notification);
-        // Handle local notification
-      }
-  
       // Save the received notification to AsyncStorage
       const newNotificationData = {
         id: notification.request.identifier, 
@@ -286,15 +263,17 @@ const RootNavigator = () => {
   
         // Save the updated list back to AsyncStorage
         await saveNotification (updatedNotifications);
-        console.log('Notification data saved to cache.');
+        console.log('App.js line 262, Notification data saved to cache.');
       } catch (error) {
-        console.error('Error saving notification to cache:', error);
+        console.error('App.js line 264, Error saving notification to cache:', error);
       }
     });
 
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log(response);
+      console.log('App.js line 269, response: ', response);
     });
+
+    setIsLoading(false); 
 
     return () => {
       Notifications.removeNotificationSubscription(notificationListener.current);
@@ -311,7 +290,7 @@ const RootNavigator = () => {
       {state.isLoading ? (
         <Stack.Screen name="Loading" component={LoadingScreen} />
       ) : state.isLoggedIn ? (
-        userRole === 'Student' ? (
+        state.userData.role === 'Student' ? (
           <>
           <Stack.Screen name="StudentTabs" component={StudentTabs} options={{ headerShown: false }} initialParams={{ expoPushToken }}/>
           

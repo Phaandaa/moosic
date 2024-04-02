@@ -35,4 +35,10 @@ public class NotificationController {
     public ResponseEntity<?> getNotificationsByRecipientId(@PathVariable String recipientId) {
         return ResponseEntity.ok(notificationService.getNotificationsByRecipientId(recipientId));
     }
+
+    @Operation(summary = "Mark read notification by recipient id")
+    @GetMapping("/mark-read/{recipientId}")
+    public ResponseEntity<?> markReadByRecipientId(@PathVariable String recipientId) {
+        return ResponseEntity.ok(notificationService.markReadByRecipientId(recipientId));
+    }
 }

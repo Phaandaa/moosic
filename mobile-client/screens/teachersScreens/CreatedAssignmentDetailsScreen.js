@@ -12,7 +12,7 @@ const getFileNameFromUrl = (url) => {
 
 function CreatedAssignmentDetailsScreen({route, navigation}) {
     const { assignment } = route.params;
-    console.log('createdassignment', assignment)
+    console.log('CreateAssignmentDetails.js line 15, createdassignment', assignment)
 
     const [isModalVisible, setModalVisible] = useState(false);
 
@@ -25,7 +25,7 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
     };
     
     const deleteAssignment = async() => {
-        console.log('assignmentId', assignment.assignmentId)
+        console.log('CreateAssignmentDetails.js line 28, assignmentId', assignment.assignmentId)
         try {
             const response = await fetch(`${IP_ADDRESS}/assignments/${assignment.assignmentId}`, {
                 method: 'DELETE'
@@ -40,7 +40,7 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
             navigation.goBack();
 
         } catch (error) {
-            console.error('Error deleting assignment:', error);
+            console.error('CreateAssignmentDetails.js line 43, Error deleting assignment:', error);
         }
     };
 

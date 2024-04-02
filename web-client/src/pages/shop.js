@@ -20,8 +20,10 @@ import { getAsync } from "src/utils/utils";
 import SnackbarAlert from "src/components/alert";
 import AddItem from "src/sections/shop/shop-add";
 import { convertArrayToCSV } from "src/utils/utils";
+import { useAuth } from "src/hooks/use-auth";
 
 const Page = () => {
+  const { user } = useAuth();
   const [items, setItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6; // Adjust this value as needed
@@ -35,7 +37,7 @@ const Page = () => {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await getAsync("reward-shop");
+        const response = await getAsync("reward-shop", user.idToken);
         const data = await response.json();
         setItems(Array.isArray(data) ? data : []);
       } catch (error) {

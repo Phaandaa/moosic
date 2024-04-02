@@ -19,6 +19,7 @@ import com.example.server.entity.User;
 import com.example.server.entity.UserType;
 import com.example.server.models.CreateUserDTO;
 import com.example.server.models.FirebaseToken;
+import com.example.server.models.RefreshTokenResponse;
 import com.example.server.models.SignInResponseDTO;
 import com.example.server.models.SignOutDTO;
 
@@ -42,6 +43,14 @@ public class UserService {
 
     @Autowired
     private GoalRepository goalRepository;
+
+    public User getUserByUid(String uid) {
+        return userRepository.findById(uid).orElse(null);
+    }
+
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
 
     @Autowired
     private StudentInventoryRepository studentInventoryRepository;
@@ -83,6 +92,8 @@ public class UserService {
                 isNotEmptyOrNull(instrument, "Instrument");
                 String grade = userDTO.getInfo().get("grade");
                 isNotEmptyOrNull(grade, "Grade");
+                String tuitionDay = userDTO.getInfo().get("tuitionDay");
+                isNotEmptyOrNull(tuitionDay, "Tuition Day");
             }
 
             FirebaseToken firebaseResponse = firebaseAuthService.signUpWithEmailAndPassword(email, password);
@@ -179,6 +190,28 @@ public class UserService {
     }
 
     @Transactional
+    public RefreshTokenResponse refreshTokenId(String userId, String refreshToken) {
+        try {
+            
+            RefreshTokenResponse refreshTokenResponse = firebaseAuthService.refreshTokenId(refreshToken);
+            if (!refreshTokenResponse.getUserId().equals(userId)) {
+                throw new IllegalArgumentException("Token not valid for this user anymore. Please login again");
+            }
+            
+            return refreshTokenResponse;
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error getting new token: " + e.getMessage());
+        }
+        
+    }
+
+    
+
+    @Transactional
     public String signOut(String userId, String expoPushToken) {
         try {
             User selectedUser = userRepository.findById(userId).orElseThrow(()->
@@ -217,15 +250,13 @@ public class UserService {
         
     }
 
-    
-
     @Transactional
     private Student createStudent(String id, String name, String email, CreateUserDTO userDTO, Date creationTime) {
         try {
             String instrument = userDTO.getInfo().get("instrument");
             String grade = userDTO.getInfo().get("grade");
             String phoneNumber = userDTO.getInfo().get("phone");
-            String tuitionDay = userDTO.getInfo().get("tuition_day");
+            String tuitionDay = userDTO.getInfo().get("tuitionDay");
             Student newStudent = new Student(id, name, email, 0, null, new ArrayList<>(), instrument, phoneNumber ,grade, null,null, null, creationTime,tuitionDay, new ArrayList<>());
             studentRepository.save(newStudent);
             Goal newGoal = new Goal(id, name, null, 0, 0, 3, 1, "Not done", 20, false);
@@ -260,7 +291,7 @@ public class UserService {
         try {
             List<User> users = userRepository.findAll();
             if (users == null || users.isEmpty()) {
-                throw new NoSuchElementException("No users found");
+                return new ArrayList<>();
             }
             return users;
         } catch (NoSuchElementException e) {

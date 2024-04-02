@@ -15,8 +15,10 @@ import AccConfirmDeletionModal from "src/sections/teachers/teacher-confirm-delet
 import { deleteAsync } from "src/utils/utils";
 import SnackbarAlert from "src/components/alert";
 import { alpha } from '@mui/material/styles';
+import { useAuth } from "src/hooks/use-auth";
 
 const Page = () => {
+  const { user } = useAuth();
   const [teacherData, setTeacherData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -52,7 +54,7 @@ const Page = () => {
     console.log("Deleting teachers:", accounts);
     // Promise.all will execute all delete requests in parallel
     const deletePromises = accounts.map((teacherId) =>
-      deleteAsync(`teachers/${teacherId}`)
+      deleteAsync(`teachers/${teacherId}`, user.idToken)
     );
 
     try {
@@ -85,7 +87,7 @@ const Page = () => {
   useEffect(() => {
     const fetchTeachers = async () => {
       try {
-        const response = await getAsync(`teachers`);
+        const response = await getAsync(`teachers`, user.idToken);
         const data = await response.json();
         setTeacherData(Array.isArray(data) ? data : []);
       } catch (error) {

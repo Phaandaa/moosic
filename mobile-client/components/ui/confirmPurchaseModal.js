@@ -15,24 +15,39 @@ function ConfirmPurchaseModal({
 
   return (
     <Modal isVisible={isVisible} onBackdropPress={onClose} style={styles.modal}>
-      <View style={styles.content}>
-        <Text style={styles.title}>Confirm Purchase</Text>
-        <Text style={styles.message}>
-          You are about to purchase {item?.description} for {item?.points} points.
-        </Text>
-        <Text style={styles.message}>
-          This will leave you with {remainingPoints < 0 ? 0 : remainingPoints} points.
-        </Text>
+      {item?.type == "DIGITAL" && 
+        <View style={styles.content}>
+          <Text style={styles.title}>Confirm Purchase</Text>
+          <Text style={styles.message}>
+            You are about to purchase {item?.description} for {item?.points} points.
+          </Text>
+          <Text style={styles.message}>
+            This will leave you with {remainingPoints < 0 ? 0 : remainingPoints} points.
+          </Text>
 
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity onPress={onClose} style={[styles.button, styles.cancelButton]}>
+              <Text style={styles.buttonTextCancel}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onConfirm} style={[styles.button, styles.confirmButton]}>
+              <Text style={styles.buttonTextConfirm}>Confirm</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      }
+      {item?.type == "PHYSICAL" && 
+      <View style={styles.content}>
+        <Text style={styles.title}>Physical Purchase</Text>
+        <Text style={styles.message}>
+          Physical items can only be redeemed in the music school.
+        </Text>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={onClose} style={[styles.button, styles.cancelButton]}>
-            <Text style={styles.buttonTextCancel}>Cancel</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={onConfirm} style={[styles.button, styles.confirmButton]}>
-            <Text style={styles.buttonTextConfirm}>Confirm</Text>
+          <TouchableOpacity onPress={onClose} style={[styles.button, styles.confirmButton]}>
+            <Text style={styles.buttonTextConfirm}>OK</Text>
           </TouchableOpacity>
         </View>
       </View>
+    }
     </Modal>
   );
 }

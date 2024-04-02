@@ -24,7 +24,7 @@ import { useState } from "react";
 import Lottie from "react-lottie";
 import noImage from "public/assets/noImage.json";
 import ConfirmDeletionModal from "./shop-confirm-delete";
-import { set } from "nprogress";
+import { useAuth } from "src/hooks/use-auth";
 
 export const ItemDetailModal = ({
   open,
@@ -34,6 +34,7 @@ export const ItemDetailModal = ({
   triggerSnackbar,
   onEditItem,
 }) => {
+  const { user } = useAuth();
   const [studentId, setStudentId] = React.useState("");
   const [disabled, setDisabled] = React.useState(true);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -96,7 +97,12 @@ export const ItemDetailModal = ({
     formData.append("image", selectedFile);
 
     try {
-      const response = await putAsync(`reward-shop/image-update/${item.id}`, formData, null, true);
+      const response = await putAsync(
+        `reward-shop/image-update/${item.id}`,
+        formData,
+        user.idToken,
+        true
+      );
 
       if (response.ok) {
         triggerSnackbar("Image updated successfully!", "success");
@@ -124,7 +130,7 @@ export const ItemDetailModal = ({
   const handleConfirmDelete = async () => {
     try {
       // Delete item logic
-      const response = await deleteAsync(`reward-shop/${item.id}`);
+      const response = await deleteAsync(`reward-shop/${item.id}`, user.idToken);
       if (response.ok) {
         onDeleteItem(item.id);
         handleClose();
@@ -153,7 +159,7 @@ export const ItemDetailModal = ({
 
     try {
       // Assuming you have an endpoint that accepts item updates and returns the updated item
-      const response = await putAsync(`reward-shop/${item.id}`, updatedItem, null, false);
+      const response = await putAsync(`reward-shop/${item.id}`, updatedItem, user.idToken, false);
 
       if (response.ok) {
         onEditItem(updatedItem); // Notify the parent component about the update
@@ -181,7 +187,7 @@ export const ItemDetailModal = ({
     try {
       const url = `reward-shop/physical/${item.id}?student_id=${studentId}&purchase_amount=1`;
       console.log("url", url);
-      const response = await putAsync(url, null, null, false);
+      const response = await putAsync(url, null, idToken, false);
       if (response.ok) {
         triggerSnackbar("Points redeemed successfully!", "success");
       } else {
@@ -198,7 +204,7 @@ export const ItemDetailModal = ({
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await getAsync("students");
+        const response = await getAsync("students", user.idToken);
         const data = await response.json();
         console.log("data", data);
         setStudentList(Array.isArray(data) ? data : []);
@@ -296,7 +302,12 @@ export const ItemDetailModal = ({
               </Grid>
             </Grid>
           )}
-          <Grid container spacing={2} sx={{ mb: 2, justifyContent: "center" }} marginTop={item.type === 'DIGITAL' ? 1 : 0}>
+          <Grid
+            container
+            spacing={2}
+            sx={{ mb: 2, justifyContent: "center" }}
+            marginTop={item.type === "DIGITAL" ? 1 : 0}
+          >
             {item?.type === "DIGITAL" && (
               <Grid item xs={12} md={6}>
                 <TextField
@@ -333,25 +344,25 @@ export const ItemDetailModal = ({
             </Grid>
             {item?.type === "DIGITAL" && (
               <Grid item xs={12} md={6}>
-              <FormControl variant="filled" fullWidth>
-                <InputLabel id="subtype-select-label">Subtype</InputLabel>
-                <Select
-                  labelId="subtype-select-label"
-                  id="subtype-select"
-                  value={subtype}
-                  sx={{ width: "26ch" }}
-                  onChange={handleSubtypeChange}
-                  disabled={type === "PHYSICAL" || disabled}
-                >
-                  {itemSubtypeOptions.map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option.charAt(0).toUpperCase() + option.slice(1)}{" "}
-                      {/* Capitalize the first letter */}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
+                <FormControl variant="filled" fullWidth>
+                  <InputLabel id="subtype-select-label">Subtype</InputLabel>
+                  <Select
+                    labelId="subtype-select-label"
+                    id="subtype-select"
+                    value={subtype}
+                    sx={{ width: "26ch" }}
+                    onChange={handleSubtypeChange}
+                    disabled={type === "PHYSICAL" || disabled}
+                  >
+                    {itemSubtypeOptions.map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option.charAt(0).toUpperCase() + option.slice(1)}{" "}
+                        {/* Capitalize the first letter */}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
             )}
             <Grid item xs={12} md={6}>
               <TextField

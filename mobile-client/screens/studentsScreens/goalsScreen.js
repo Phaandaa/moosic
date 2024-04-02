@@ -7,8 +7,10 @@ import axios from 'axios';
 import LoadingComponent from '../../components/ui/LoadingComponent';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import moment from 'moment';
+import { useAuth } from '../../context/Authcontext';
 
 const GoalsScreen = () => {
+  const { state } = useAuth();
   const [activeTab, setActiveTab] = useState('all');
   const [goals, setGoals] = useState([]);
   const [studentData, setStudentData] = useState({ pointsCounter: 0 });
@@ -26,28 +28,20 @@ const GoalsScreen = () => {
   const fetchGoalsAndStudentData = async () => {
     try {
       setLoadingState(true);
-      const storedData = await AsyncStorage.getItem('userData');
-      if (!storedData) {
-        throw new Error('No user data found.');
-      }
-      const parsedData = JSON.parse(storedData);
-      const userId = parsedData.id;
-      setPoints(parsedData.pointsCounter);
+      setPoints(state.userData.pointsCounter);
       
       // Fetch student's goals
-      const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/student/${userId}`;
-      const goalsResponse = await axios.get(fetchStudentsGoalsUrl);
+      const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/student/${state.userData.id}`;
+      const goalsResponse = await axios.get(fetchStudentsGoalsUrl, state.authHeader);
       setGoals(goalsResponse.data ? goalsResponse.data : []);
-      console.log(goals)
 
       // Fetch student data
-      const fetchPointsLog = `${IP_ADDRESS}/points-logs/student/${userId}`;
-      console.log(fetchPointsLog)
-      const PointsLogresponse = await axios.get(fetchPointsLog);
+      const fetchPointsLog = `${IP_ADDRESS}/points-logs/student/${state.userData.id}`;
+      const PointsLogresponse = await axios.get(fetchPointsLog, state.authHeader);
       setPointsLog(PointsLogresponse.data ? PointsLogresponse.data : []);
 
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('goalsScreen.js line 50, Error fetching data:', error);
     } finally {
       setLoadingState(false);
     }
@@ -148,49 +142,45 @@ const GoalsScreen = () => {
   };
 
   const isGoalsSet = !goals.length > 0;
-  console.log(goals);
+  console.log("goalsScreen.js line 151", goals);
 
   return (
-    <LoadingComponent isLoading={loadingstate}>
+    <View style={styles.container}>
+      <Text style={[theme.textTitle, {marginTop: 50, marginHorizontal: 15}]}>Your Goals</Text>  
       
-        <View style={styles.container}>
-          <Text style={[theme.textTitle, {marginTop: 50, marginHorizontal: 15}]}>Your Goals</Text>  
-          
 
-          {isGoalsSet ? (
-              <CurrentGoals
-                completedPractice={goals.practiceCount}
-                completedAssignment={goals.assignmentCount}
-                  currentPracticeGoalCount={goals.practiceGoalCount}
-                  currentAssignmentGoalCount={goals.assignmentGoalCount}
-                  currentPoints={goals.points}
-              />
-          ) : (
-              <Text style={styles.createGoalPrompt}>Aim High, Start your Goals!</Text>
-          )}
-
-          <View style={[styles.balanceContainer, { backgroundColor: '#007AFF', overflow: 'hidden', position: 'relative'}]}>
-            <Ionicons name="trophy" size={180} color='#FFFFFF' style={{ position: 'absolute', bottom: 0, right: 0 }} />
-            <Text style={styles.balanceText}>Your Points</Text>
-            <Text style={styles.pointsIndicator}>{points}</Text>
-          </View>
-
-          <FlatList
-            data={pointsLog}
-            keyExtractor={item => item.id}
-            renderItem={renderPointsLogItem}
-            ListHeaderComponent={renderHeader}
-            stickyHeaderIndices={[0]}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            extraData={[sortDescending, pointsLog]}
+      {isGoalsSet ? (
+          <CurrentGoals
+            completedPractice={goals.practiceCount}
+            completedAssignment={goals.assignmentCount}
+              currentPracticeGoalCount={goals.practiceGoalCount}
+              currentAssignmentGoalCount={goals.assignmentGoalCount}
+              currentPoints={goals.points}
           />
-          
-          
-        </View>
+      ) : (
+          <Text style={styles.createGoalPrompt}>Aim High, Start your Goals!</Text>
+      )}
+
+      <View style={[styles.balanceContainer, { backgroundColor: '#007AFF', overflow: 'hidden', position: 'relative'}]}>
+        <Ionicons name="trophy" size={180} color='#FFFFFF' style={{ position: 'absolute', bottom: 0, right: 0 }} />
+        <Text style={styles.balanceText}>Your Points</Text>
+        <Text style={styles.pointsIndicator}>{points}</Text>
+      </View>
+
+      <FlatList
+        data={pointsLog}
+        keyExtractor={item => item.id}
+        renderItem={renderPointsLogItem}
+        ListHeaderComponent={renderHeader}
+        stickyHeaderIndices={[0]}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        extraData={[sortDescending, pointsLog]}
+      />
       
-    </LoadingComponent>
+      
+    </View>
   );
 };
 
