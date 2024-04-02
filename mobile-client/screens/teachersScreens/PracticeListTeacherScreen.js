@@ -15,32 +15,8 @@ function PracticeListTeacherScreen({route, navigation}){
     const [practiceData, setPracticeData] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
 
-    // Check stored data for teacherID
-    const checkStoredData = async () => {
-        try {
-            const storedData = await AsyncStorage.getItem('authData');
-            if (storedData !== null) {
-                const parsedData = JSON.parse(storedData);
-                console.log('PracticeListTeacherScreen.js line 22, teacherID:', parsedData.userId);
-                return parsedData.userId;
-            }
-        } catch (error) {
-            console.error('PracticeListTeacherScreen.js line 26, Error retrieving data from AsyncStorage: ', error);
-        }
-        return '';
-    };
-    // Fetch studentID on component mount
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const id = await checkStoredData();
-                setTeacherID(id);
-                console.log('PracticeListTeacherScreen.js line 36, teacherID: ', teacherID)
-            } catch (error) {
-                console.error('PracticeListTeacherScreen.js line 38, Error processing stored data: ', error);
-            }
-        };
-        fetchData();
+        setTeacherID(state.userData.id);
     }, []);
 
     // Fetch practices using studentID
