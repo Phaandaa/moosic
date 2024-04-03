@@ -131,6 +131,11 @@ function CreateAssignmentScreen({ route, navigation }) {
       newErrors.assignmentDeadline = 'Deadline is required.';
       isValid = false;
     }
+
+    if (selectedRepoFiles.length == 0 && images.length == 0 && uploadedDocuments.length == 0) {
+      newErrors.documents = 'Please select image or document';
+      isValid = false;
+    }
     setErrors(newErrors);
     return isValid;
   };
@@ -208,11 +213,16 @@ function CreateAssignmentScreen({ route, navigation }) {
     try {
       
       const response = await axios.post(`${IP_ADDRESS}/assignments/create`, formData, state.authHeader);
+
+      if (response.status == 200) {
+        const responseData = response.data;
+        console.log('CreateAssignmentScreen.js line 201, responseData: ', responseData);
+        dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
+        setModalVisible(true);
+      } else {
+        Alert.alert(`Error creating assignment: ${response.data.message}`);
+      }
       
-      const responseData = response.data;
-      console.log('CreateAssignmentScreen.js line 201, responseData: ', responseData);
-      dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
-      setModalVisible(true);
 
     } catch (error) {
       console.error('CreateAssignmentScreen.js line 206, Error creating assignment:', error);
@@ -263,8 +273,7 @@ function CreateAssignmentScreen({ route, navigation }) {
             onChange={onChange}
           />
         )}
-
-
+        {errors.documents && <Text style={styles.errorText}>{errors.documents}</Text>}
         <View style={styles.uploadButtons}>
         <View style={styles.attachFilesSection}>
           <TouchableOpacity style={styles.attachButton} onPress={() => uploadImage('gallery')}>

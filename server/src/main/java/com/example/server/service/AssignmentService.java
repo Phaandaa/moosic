@@ -53,7 +53,10 @@ public class AssignmentService {
     @Transactional
     public List<Assignment> createAssignment(CreateAssignmentDTO createAssignmentDTO, List<MultipartFile> files) {
         try {
-            List<String> publicUrls = cloudStorageService.uploadFilesToGCS(files, "assignments");
+            List<String> publicUrls = new ArrayList<>();
+            if (!(files == null)) {
+                publicUrls = cloudStorageService.uploadFilesToGCS(files, "assignments");
+            }
             List<HashMap<String, String>> students = createAssignmentDTO.getSelectedStudents();
             List<String> repoFileLinks = createAssignmentDTO.getRepoFileLinks();
             publicUrls.addAll(repoFileLinks);
