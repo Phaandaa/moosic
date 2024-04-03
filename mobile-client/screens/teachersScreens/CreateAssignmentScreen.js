@@ -132,6 +132,11 @@ function CreateAssignmentScreen({ route, navigation }) {
       isValid = false;
     }
 
+    if (selectedStudents.length == 0) {
+      newErrors.students = 'Please at least one student';
+      isValid = false;
+    }
+
     if (selectedRepoFiles.length == 0 && images.length == 0 && uploadedDocuments.length == 0) {
       newErrors.documents = 'Please select image or document';
       isValid = false;
