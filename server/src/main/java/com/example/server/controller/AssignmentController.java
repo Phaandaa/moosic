@@ -23,7 +23,6 @@ import com.example.server.models.EditAssignmentDTO;
 import com.example.server.service.AssignmentService;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.constraints.NotNull;
 
 
 @RestController
@@ -39,7 +38,7 @@ public class AssignmentController {
     @PostMapping(path = "/create", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> createAssignment(
             @RequestPart("assignment") CreateAssignmentDTO assignmentDTO,
-            @RequestPart("files") List<MultipartFile> files) {
+            @RequestPart(name = "files", required = false) List<MultipartFile> files) {
 
         return ResponseEntity.ok(assignmentService.createAssignment(assignmentDTO, files));
         

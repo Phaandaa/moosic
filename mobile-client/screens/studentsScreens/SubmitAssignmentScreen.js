@@ -3,8 +3,6 @@ import { TextInput, View, ScrollView, TouchableOpacity, Text, Button, Image, Ale
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import { Ionicons } from '@expo/vector-icons';
-import { useDispatch } from 'react-redux';
-import { setCache } from '../../cacheSlice';
 import IP_ADDRESS from '../../constants/ip_address_temp';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SuccessModal from '../../components/ui/SuccessModal';
@@ -121,7 +119,7 @@ function SubmitAssignmentScreen({ navigation, route }) {
     images.forEach((image, index) => {
       const { uri, fileName } = image
 
-      if (typeof image.uri === 'string') { // Check if image.uri is a string
+      if (typeof image.uri === 'string') { 
         const uriParts = image.uri.split('.');
         const fileType = uriParts[uriParts.length - 1];
 
@@ -151,22 +149,17 @@ function SubmitAssignmentScreen({ navigation, route }) {
 
     try {
 
-      // const response = await fetch(`${IP_ADDRESS}/assignments/student/${assignmentID}/update?`, {
-      //     method: 'PUT',
-      //     body: formData,
-      // });
-
       const response = await axios.put(`${IP_ADDRESS}/assignments/student/${assignmentID}/update?`, formData, state.authHeader);
-      
-      
-      setModalVisible(true);
-
+      if (response.status == 200) {
+        setModalVisible(true);
+      } else {
+        Alert.alert(`Error Submitting assignment: ${response.data.message}`);
+      }
     } catch (error) {
       console.error('SubmitAssignment.js line 166, Error submitting assignment:', error);
       Alert.alert('Error', `Failed to submit assignment. ${error.response?.data?.message || 'Please try again.'}`);
     }
   };
-
 
   return (
     <ScrollView style={styles.container}>
@@ -199,7 +192,6 @@ function SubmitAssignmentScreen({ navigation, route }) {
           </View>
         </View>
 
-        {/* Display Images and Document Names */}
         {images.length === 0 && uploadedDocuments.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Ionicons name="cloud-upload-outline" size={50} color="#cccccc" />

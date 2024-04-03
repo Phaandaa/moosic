@@ -38,7 +38,6 @@ function ProvidePracticeFeedbackScreen({route, navigation}){
                 await ImagePicker.requestMediaLibraryPermissionsAsync()
                 result = await ImagePicker.launchImageLibraryAsync({
                     mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-                    // allowsEditing: true,
                     aspect: [4,3],
                     quality: 1,
                 })
@@ -87,15 +86,12 @@ function ProvidePracticeFeedbackScreen({route, navigation}){
     const formData = new FormData();    
     
     if (videos.length > 0 && videos[0].uri) {
-        // Assuming `videos[0]` is the video object that you logged
         const video = videos[0];
         console.log('ProvidePracticeFeedbackScreen.js line 104, video: ',video)
     
-        // Append the video file to the formData
         formData.append("video", {
           uri: video.uri,
-          name: video.fileName, // Use the filename from the video object
-        //   type: 'video/mov' // You can hardcode the type or derive it from the fileName
+          name: video.fileName,
         });
         console.log('ProvidePracticeFeedbackScreen.js line 112, videouri: ', video.uri)
         console.log('ProvidePracticeFeedbackScreen.js line 113, vidfilename: ', video.fileName)
@@ -108,16 +104,13 @@ function ProvidePracticeFeedbackScreen({route, navigation}){
     console.log('ProvidePracticeFeedbackScreen.js line 120, formData: ', formData)
 
     try {
-      // const response = await fetch(`${IP_ADDRESS}/practices/feedback/${practiceID}?`, {
-      //     method: 'PUT',
-      //     body: formData,
-      // });
-
       const response = await axios.put(`${IP_ADDRESS}/practices/feedback/${practiceID}?`, formData, state.authHeader);
-        
-      const responseData = response.data;
-      console.log('ProvidePracticeFeedbackScreen.js line 133, responseData: ', responseData);
-      setModalVisible(true);
+      if (response.status == 200) {
+        const responseData = response.data;
+        setModalVisible(true);
+      } else {
+        Alert.alert(`Error giving feedback: ${response.data.message}`)
+      }
 
     } catch (error) {
       console.error('ProvidePracticeFeedbackScreen.js line 139, Error adding feedback:', error);
@@ -159,7 +152,6 @@ function ProvidePracticeFeedbackScreen({route, navigation}){
           </TouchableOpacity>
         </View>
 
-        {/* Display Video */}
         {videos.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Ionicons name="cloud-upload-outline" size={50} color="#cccccc" />
@@ -347,7 +339,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#000000', // Black text for the date
   },
-  // Update existing button styles if necessary
   button: {
     backgroundColor: '#4664EA',
     padding: 15,

@@ -17,7 +17,6 @@ function MyStudentsScreen({ navigation }) {
     const [fetchError, setFetchError] = useState(false);
     const [loadingstate, setLoadingState] = useState(false);
 
-    // Fetch students using teacherID
     useEffect(() => {
         const fetchStudentsApi = `${IP_ADDRESS}/students/teacher/${teacherID}/`;
         const fetchStudents = async() => {
@@ -45,7 +44,6 @@ function MyStudentsScreen({ navigation }) {
         }
     }, [teacherID]);
 
-    // Handle search functionality
     const handleSearch = (query) => {
         if (!query.trim()) {
             setFilteredStudents(students);
@@ -96,8 +94,6 @@ function MyStudentsScreen({ navigation }) {
 
 export default MyStudentsScreen;
 
-// Styles remain the same
-
 
 const styles = StyleSheet.create({
     card: {
@@ -106,12 +102,12 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         marginTop: 10, 
         flexDirection: 'column',
-        justifyContent: 'space-between', // Align items on both ends
-        alignItems: 'center', // Center items vertically
+        justifyContent: 'space-between', 
+        alignItems: 'center',
     },
     cardTextContainer: {
-        flex: 1, // Take up as much space as possible
-        marginRight: 8, // Add some margin to the right of the text
+        flex: 1, 
+        marginRight: 8, 
     },
     cardText: {
         color: 'white',
@@ -127,18 +123,5 @@ const styles = StyleSheet.create({
     buttonContainer: {
         flexDirection: 'row',
         width : '100%',
-        // If you need space between buttons add justifyContent: 'space-between',
     },
-    // smallButton: {
-    //     backgroundColor: 'white',
-    //     padding: 10,
-    //     borderRadius: 15,
-    //     marginLeft: 8, // Add some margin to separate the buttons
-    // },
-    // smallButtonText: {
-    //     color: '#4664EA',
-    //     fontWeight: 'bold',
-    //     fontSize: 14,
-    //     textAlign: 'center',
-    // }
 })

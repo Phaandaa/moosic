@@ -21,24 +21,20 @@ function ViewCreatedGoalsForStudents ({ navigation }) {
     
 
     
-    // Fetch goals using teacherID
     useEffect(() => {
         const fetchGoalsAndStudentData = async () => {
           try {
             setLoadingState(true);
             
-            // Fetch student data
             const fetchStudentDataUrl = `${IP_ADDRESS}/students/teacher/${state.userData.id}/`;
             const studentResponse = await axios.get(fetchStudentDataUrl, state.authHeader);
             if (studentResponse.data) {
-              setStudentData(studentResponse.data); // Update student data
-              console.log('ViewGoalsForStudents.js line 39, studentResponse.data: ', studentResponse.data)
+              setStudentData(studentResponse.data); 
               setFilteredStudents(studentResponse.data);
             } else {
-              setStudentData([]); // Set default if no student data found
+              setStudentData([]); 
             }
       
-            // Fetch student's goals
             const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/teacher/${state.userData.id}`;
             const goalsResponse = await axios.get(fetchStudentsGoalsUrl, state.authHeader);
             if (goalsResponse.data) {
@@ -58,7 +54,6 @@ function ViewCreatedGoalsForStudents ({ navigation }) {
         fetchGoalsAndStudentData();
       }, []);
 
-      // Handle search functionality
     const handleSearch = (query) => {
       if (!query.trim()) {
           setFilteredStudents(students);
@@ -89,7 +84,7 @@ function ViewCreatedGoalsForStudents ({ navigation }) {
                                 <View style={theme.buttonContainer}>
                                     <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('CreateGoalsForStudents', {
                                           studentID: student.id,
-                                          studentName: student.name, // Assuming 'id' is the property that holds the student ID
+                                          studentName: student.name,
                                         })}>
                                         <Text style={theme.smallButtonText}>Update Goal</Text>
                                     </TouchableOpacity>
@@ -113,13 +108,13 @@ const styles = StyleSheet.create({
       borderRadius: 15,
       marginTop: 10, 
       flexDirection: 'row',
-      justifyContent: 'space-between', // Align items on both ends
-      alignItems: 'center', // Center items vertically
+      justifyContent: 'space-between', 
+      alignItems: 'center', 
       
   },
   cardTextContainer: {
-      flex: 1, // Take up as much space as possible
-      marginRight: 8, // Add some margin to the right of the text
+      flex: 1,
+      marginRight: 8, 
   },
   cardText: {
       color: 'white',
@@ -128,13 +123,12 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
       flexDirection: 'row',
-      // If you need space between buttons add justifyContent: 'space-between',
   },
   smallButton: {
       backgroundColor: '#4664EA',
       padding: 10,
       borderRadius: 15,
-      marginLeft: 8, // Add some margin to separate the buttons
+      marginLeft: 8, 
   },
   smallButtonText: {
       color: 'white',

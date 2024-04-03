@@ -1,8 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modal';
-import theme from "../../styles/theme"; // Assuming you have a theme file for consistent styling
-import Colors from "../../constants/colors"; // Assuming you have a colors file for consistent styling
+import Colors from "../../constants/colors"; 
 
 function ConfirmPurchaseModal({
   isVisible,
@@ -90,10 +89,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cancelButton: {
-    backgroundColor: Colors.accentGrey, // Example: '#ff6347'
+    backgroundColor: Colors.accentGrey, 
   },
   confirmButton: {
-    backgroundColor: Colors.primary500, // Example: '#34c759'
+    backgroundColor: Colors.primary500,
   },
   buttonTextCancel: {
     color: Colors.fontTertiary,

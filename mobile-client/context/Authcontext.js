@@ -14,11 +14,19 @@ const LOGIN_ERROR = 'LOGIN_ERROR';
 const LOGOUT = 'LOGOUT';
 const UPDATE_USER_DATA = 'UPDATE_USER_DATA';
 const UPDATE_NOTIFS = 'UPDATE_NOTIFS';
+const UPDATE_RESOURCE_REPOSITORY = 'UPDATE_RESOURCE_REPOSITORY';
+const UPDATE_INVENTORY = 'UPDATE_INVENTORY';
 
 const authReducer = (state, action) => {
   switch (action.type) {
     case LOGIN_SUCCESS:
-      return { ...state, isLoggedIn: true, userData: action.payload.userData, authHeader: action.payload.authHeader, notifications: action.payload.notifications };
+      return { ...state, isLoggedIn: true, 
+        userData: action.payload.userData, 
+        authHeader: action.payload.authHeader, 
+        notifications: action.payload.notifications,
+        resources: action.payload.resources,
+        inventory: action.payload.inventory
+       };
     case LOGIN_ERROR:
       return { ...state, isLoggedIn: false, error: action.payload };
     case LOGOUT:
@@ -27,6 +35,10 @@ const authReducer = (state, action) => {
       return { ...state, userData: action.payload.userData }
     case UPDATE_NOTIFS:
       return { ...state, notifications: action.payload.notifications }
+    case UPDATE_RESOURCE_REPOSITORY:
+      return { ...state, resources: action.payload.resources }
+    case UPDATE_INVENTORY:
+      return { ...state, inventory: action.payload.inventory }
     default:
       return state;
   }
@@ -62,13 +74,35 @@ const loggingInAndRetrieveUserData = async (authData, dispatch) => {
     const userRolePath = authData.role === 'Teacher' ? 'teachers' : 'students';
     const authHeader = { headers: { Authorization: `Bearer ${authData.idToken}` } };
 
-    const [userDetailsResponse, notificationResponse] = await Promise.all([
+    const requests = [
       axios.get(`${IP_ADDRESS}/${userRolePath}/${authData.userId}`, authHeader),
       axios.get(`${IP_ADDRESS}/notifications/${authData.userId}`, authHeader),
-    ]);
+    ];
+
+    if (authData.role === 'Teacher') {
+      requests.push(axios.get(`${IP_ADDRESS}/material-repository/teacher/${authData.userId}`, authHeader));
+    }
+
+    if (authData.role === 'Student') {
+      requests.push(axios.get(`${IP_ADDRESS}/student-inventory/${authData.userId}`, authHeader));
+    }
+
+    const responses = await Promise.all(requests);
+
+    const userDetailsResponse = responses[0];
+    const notificationResponse = responses[1];
+    const resourcesResponse = authData.role === 'Teacher' ? responses[2] : null;
+    const inventoryResponse = authData.role === 'Student' ? responses[2] : null;
+
 
     if (userDetailsResponse.status === 200) {
-      dispatch({ type: LOGIN_SUCCESS, payload: { userData:userDetailsResponse.data, authHeader, notifications: notificationResponse.data } });
+      dispatch({ type: LOGIN_SUCCESS, payload: { 
+        userData:userDetailsResponse.data, 
+        authHeader, 
+        notifications: notificationResponse.data,
+        inventory: authData.role === 'Student' ? inventoryResponse.data : null,
+        resources: authData.role === 'Teacher' ? resourcesResponse.data : null } 
+      });
     } else {
       console.error('Authcontext.js line 70, Failed to fetch user details');
     }
@@ -83,7 +117,9 @@ export const AuthProvider = ({ children }) => {
     userData: null,
     error: null,
     authHeader: null,
-    notifications: null
+    notifications: null,
+    resources: null,
+    inventory: null,
   });
 
   useEffect(() => {
@@ -130,7 +166,7 @@ export const AuthProvider = ({ children }) => {
       const url = `${IP_ADDRESS}/api/auth/signout/${userId}?expoPushToken=${encodedExpoPushToken}`;
       console.log('Authcontext.js line 169, url: ', url);
       const response = await axios.post(url, {});
-      await clearAuthDataFromCache(); // This function should remove auth data from AsyncStorage
+      await clearAuthDataFromCache();
       dispatch({ type: LOGOUT });
       
     } catch (error) {

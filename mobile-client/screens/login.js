@@ -1,4 +1,3 @@
-// LoginPage.js
 import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import theme from '../styles/theme';
@@ -20,7 +19,6 @@ const LoginPage = ({ route, navigation }) => {
       const response = await signIn(email, password, expoPushToken);
       
       if (response != null){
-        // await checkStoredData();
         navigation.navigate('Home');
       }
       
@@ -30,7 +28,6 @@ const LoginPage = ({ route, navigation }) => {
     }
   };
 
-  //Checking stored Data
   const checkStoredData = async () => {
     try {
       const storedData = await AsyncStorage.getItem('authData');

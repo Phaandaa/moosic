@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
 import { MultiSelect } from "react-native-element-dropdown";
 import Colors from "../../constants/colors";
-import Ionicons from "@expo/vector-icons/Ionicons"; // make sure to import Ionicons
+import Ionicons from "@expo/vector-icons/Ionicons"; 
 
 const data = [
   { label: "Piano", value: "piano" },
@@ -30,15 +30,9 @@ const InstrumentCategoryDropdownGrey = (props) => {
     }
     setSelected(newSelected);
 
-    // Notify parent component about the change
     if (props.onCategoryChange) {
       props.onCategoryChange(newSelected);
     }
-
-    // Close the dropdown
-    // if (dropdownRef.current) {
-    //   dropdownRef.current.close();
-    // }
   };
 
   const renderItem = (item) => {

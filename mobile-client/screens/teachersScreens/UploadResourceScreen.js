@@ -4,9 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
-import { useDispatch } from 'react-redux';
 import IP_ADDRESS from '../../constants/ip_address_temp';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Colors from '../../constants/colors';
 import SuccessModal from '../../components/ui/SuccessModal';
@@ -18,8 +16,7 @@ import { useAuth } from '../../context/Authcontext';
 
 function UploadResourceScreen({ navigation }) {
   
-  const { state } = useAuth();
-  const dispatch = useDispatch();
+  const { state, dispatch } = useAuth();
   const [materialTitle, setMaterialTitle] = useState('');
   const [materialDesc, setMaterialDesc] = useState('');
   const [errors, setErrors] = useState({});
@@ -118,28 +115,15 @@ function UploadResourceScreen({ navigation }) {
     const materialData ={
       teacherId: state.userData.id,
       teacherName: state.userData.name,
+      type: selectedTypes,
+      grade: selectedGrades,
+      instrument: selectedInstruments,
       title: materialTitle,
       description: materialDesc,
+      status: "Pending"
     };
 
     console.log('materialData:', materialData)
-  
-    // image.forEach((image, index) => {
-    //   const { uri, fileName } = image
-    //   if (typeof image.uri === 'string') { // Check if image.uri is a string
-    //     const uriParts = image.uri.split('.');
-    //     const fileType = uriParts[uriParts.length - 1];
-
-    //     console.log('Appending file:', image.uri);
-    //     formData.append('files', {
-    //         uri: uri,
-    //         name: fileName,
-    //         type: `image/${fileType}`,
-    //     });
-    //   } else {
-    //     console.warn('Invalid image URI:', image.uri);
-    //   }
-    // });
 
     if (image) {
       const uriParts = image.uri.split('.');
@@ -158,13 +142,18 @@ function UploadResourceScreen({ navigation }) {
       });
     }
     
-    // console.log(formData)
-    formData.append("material_repository", {"string" : JSON.stringify(materialData), type: 'application/json'});
+    formData.append("material_repository", JSON.stringify(materialData));
     console.log(formData)
     try {
-      const response = axios.post(`${IP_ADDRESS}/material-repository/create`, formData, state.authHeader);
-      const responseData = await response.data;
-      setModalVisible(true);
+      const response = await axios.post(`${IP_ADDRESS}/material-repository/create`, formData, state.authHeader);
+      const responseData = response.data;
+      if (response.status == 200) {
+        setModalVisible(true);
+      } else {
+        Alert.alert("Error uploading resources");
+      }
+      const resourcesResponse = await axios.get(`${IP_ADDRESS}/material-repository/teacher/${state.userData.id}`, state.authHeader);
+      dispatch({ type: 'UPDATE_RESOURCE_REPOSITORY', payload: { resources: resourcesResponse.data }});
     } catch (error) {
       console.error('Error recording practice:', error);
       Alert.alert('Error', `Failed to create practice. ${error.response?.data?.message || 'Please try again.'}`);
@@ -222,7 +211,6 @@ function UploadResourceScreen({ navigation }) {
           </View>
         </View>
 
-        {/* Display Images and Document Names */}
         {image == null && uploadedDocument == null ? (
           <View style={styles.emptyContainer}>
             <Ionicons name="cloud-upload-outline" size={50} color="#cccccc" />
@@ -316,7 +304,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center', // Center horizontally
+    justifyContent: 'center', 
     padding: 15,
     flex: 1,
     marginHorizontal: 10
@@ -419,7 +407,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#000000', // Black text for the date
   },
-  // Update existing button styles if necessary
   button: {
     backgroundColor: Colors.mainPurple,
     padding: 15,
@@ -433,11 +420,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   dropdownContainer:{
-    // flexDirection: 'row',
-    // justifyContent: "space-between", // Try 'space-around' for equal spacing
-    // alignItems: 'center', // This centers the dropdowns vertically in the container
-    // height: 60,
-    // marginTop: 10
     marginBottom: 20
 },
 });

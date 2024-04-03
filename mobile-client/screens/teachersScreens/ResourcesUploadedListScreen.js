@@ -38,45 +38,7 @@ function ResourcesUploadedListScreen() {
     const [selectedGrades, setSelectedGrades] = useState([]); 
     const [selectedStatus, setSelectedStatus] = useState([]); 
 
-    // useEffect(() => {
-    //     const fetchUserData = async () => {
-    //     try {
-    //         const userData = await AsyncStorage.getItem("userData");
-    //         const parsedUserData = JSON.parse(userData);
-    //         setUserData(parsedUserData);
-    //     } catch (error) {
-    //         console.error("Error processing user data", error);
-    //     }
-    //     };
-    //     fetchUserData();
-    // }, []);
-
-    // useEffect(() => {
-    //     const fetchItems = async () => {
-    //     try {
-    //         const response = await fetch(`${IP_ADDRESS}/reward-shop`, {
-    //         method: "GET",
-    //         });
-
-    //         if (!response.ok) {
-    //         const errorText = response.statusText || "Unknown error occurred";
-    //         throw new Error(
-    //             `Request failed with status ${response.status}: ${errorText}`
-    //         );
-    //         }
-    //         const responseData = await response.json();
-    //         setItems(responseData); // Set the state with the response data
-    //         setFilteredResults(responseData);
-    //         console.log('responseData', responseData)
-    //     } catch (error) {
-    //         console.error("Error fetching items:", error);
-    //     }
-    //     };
-    //     fetchItems();
-    // }, []);
-
     useEffect(() => {
-        // Combine search and category filters
         applyFilters();
     }, [files, searchText, selectedTypes, selectedInstruments, selectedGrades, selectedStatus]);
 
@@ -113,10 +75,7 @@ function ResourcesUploadedListScreen() {
         if (selectedStatus.length > 0) {
             result = result.filter((file) => {
                 const doesMatchStatus = selectedStatus.includes(file.status.toLowerCase());
-                
-                // Log for debugging
-                // console.log(`Checking file: ${file.fileName}, Status: ${file.status}, Matches: ${doesMatchStatus}`);
-                
+                                
                 return doesMatchStatus;
             });
         }
@@ -177,8 +136,8 @@ function ResourcesUploadedListScreen() {
     }, []);
 
     useEffect(() => {
-        console.log('files: ', files); // This will now log the updated state, but only after re-renders.
-    }, [files]); // Log the `files` state when it changes
+        console.log('files: ', files); 
+    }, [files]); 
 
     useEffect(() => {
         console.log('Filtered Results:', filteredResults);
@@ -188,9 +147,6 @@ function ResourcesUploadedListScreen() {
         return (
         <TouchableOpacity style={styles.item}>
             <View style={styles.itemImageContainer}> 
-                {/* <View style={styles.itemHeader}>
-                    <Text style={styles.itemType}>{status}</Text>
-                </View> */}
                 <View style={styles.statusHeader}>
                     <Ionicons
                         name={status === 'Approved' ? "checkmark-circle" : status === 'Rejected' ? "close-circle" : "timer"}
@@ -230,24 +186,6 @@ function ResourcesUploadedListScreen() {
                     ))}
                 </Text>
             </View>
-
-            {/* <View style={styles.chipContainer}>
-                {type.map((typeItem, index) => (
-                    <View key={index} style={styles.chip}>
-                        <Text style={styles.pinkChipText}>{typeItem}</Text>
-                    </View>
-                ))}
-                {instrument.map((instrumentItem, index) => (
-                    <View key={index} style={[styles.chip, styles.instrumentChip]}>
-                        <Text style={styles.blueChipText}>{instrumentItem}</Text>
-                    </View>
-                ))}
-                {grade.map((gradeItem, index) => (
-                    <View key={index} style={[styles.chip, styles.gradeChip]}>
-                        <Text style={styles.greenChipText}>Grade {gradeItem}</Text>
-                    </View>
-                ))}
-            </View> */}
         </TouchableOpacity>
         );
     };
@@ -257,7 +195,6 @@ function ResourcesUploadedListScreen() {
         <View style={styles.shadowContainer}>
             <View style={styles.headerButtons}>
                 <HomepageSearchBar onSearch={handleSearch} />
-                {/* <RewardsCategoryDropdown1 onCategoryChange={setSelectedCategories} /> */}
                 <ScrollView horizontal={true}> 
                     <View style={styles.dropdownContainer}> 
                         <TypeCategoryDropdown onCategoryChange={setSelectedTypes}/>
@@ -265,21 +202,6 @@ function ResourcesUploadedListScreen() {
                         <GradeCategoryDropdown onCategoryChange={setSelectedGrades}/>
                         <StatusDropdown onCategoryChange={setSelectedStatus}/>
                     </View>
-
-                    {/* <View style={styles.selectedChipsContainer}>
-                        <View style={styles.selectedChip}>
-                            <Text style={styles.pinkSelectedChipText}>{`${selectedTypes.length} Selected`}</Text>
-                        </View>
-                        <View style={[styles.selectedChip, styles.instrumentChip]}>
-                            <Text style={styles.blueSelectedChipText}>{`${selectedInstruments.length} Selected`}</Text>
-                        </View>
-                        <View style={[styles.selectedChip, styles.gradeChip]}>
-                            <Text style={styles.greenSelectedChipText}>{`${selectedGrades.length} Selected`}</Text>
-                        </View>
-                        <View style={[styles.selectedChip, styles.statusChip]}>
-                            <Text style={styles.purpleSelectedChipText}>{`${selectedStatus.length} Selected`}</Text>
-                        </View>
-                    </View> */}
                 </ScrollView>
             </View>
             <View style={styles.header}>
@@ -348,7 +270,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffffff',
         borderRadius: 15,
         margin: 5,
-        width: width / 2 - 20, // Two items per row with padding
+        width: width / 2 - 20, 
         alignItems: 'center',
         overflow: 'hidden',
         justifyContent: 'space-between',
@@ -397,12 +319,10 @@ const styles = StyleSheet.create({
         borderColor: Colors.accentGrey,
         borderWidth: 15,
         borderBottomWidth: 0,
-        overflow: 'hidden', // Ensures the image doesn't bleed outside the border radius
-        // height: 200
+        overflow: 'hidden', 
     },
     itemImage: {
         width: '100%',
-        // height: 100,
         aspectRatio: 1.5,
         borderTopLeftRadius: 15,
         borderTopRightRadius: 15,
@@ -430,7 +350,6 @@ const styles = StyleSheet.create({
     chipContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        // justifyContent: 'center',
         marginVertical: 10,
         marginHorizontal: 5
     },
@@ -477,17 +396,15 @@ const styles = StyleSheet.create({
     },
     dropdownContainer:{
         flexDirection: 'row',
-        // justifyContent: "space-between", // Try 'space-around' for equal spacing
-        // alignItems: 'center', // This centers the dropdowns vertically in the container
         height: 60,
         marginTop: 10
     },
     selectionCount: {
-        textAlign: 'center', // Center the text horizontally
-        color: Colors.fontSecondary, // Use your theme's secondary font color
-        fontSize: 12, // Adjust the size as needed
-        marginTop: 4, // Adjust the space between the dropdown and this text
-        fontWeight: 'bold', // Optional: if you want the text to be bold
+        textAlign: 'center', 
+        color: Colors.fontSecondary, 
+        fontSize: 12, 
+        marginTop: 4,
+        fontWeight: 'bold', 
     },
     selectedChip: {
         backgroundColor: Colors.pastelPink,
@@ -500,8 +417,8 @@ const styles = StyleSheet.create({
     },
     selectedChipsContainer:{
         flexDirection: 'row',
-        justifyContent: "space-around", // Try 'space-around' for equal spacing
-        alignItems: 'center', // This centers the dropdowns vertically in the container
+        justifyContent: "space-around", 
+        alignItems: 'center', 
         marginVertical: 3
     },
     pinkSelectedChipText:{

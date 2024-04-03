@@ -29,31 +29,23 @@ function PracticeListStudentScreen({navigation}){
         }
         return '';
     };
-    // Fetch studentID on component mount
     useEffect(() => {
         setStudentID(state.userData.id);
     }, []);
 
-    // Fetch practices using studentID
     useEffect(() => {
         const fetchPractices = async() => {
             try {
-
                 `${IP_ADDRESS}/practices/student/${studentID}`
                 const response = await axios.get(`${IP_ADDRESS}/practices/student/${studentID}`, state.authHeader);
-                
-                
                 const responseData = await response.data;
 
                 const sortedData = responseData.sort((a, b) => {
                     return new Date(b.submissionTimestamp) - new Date(a.submissionTimestamp);
                 });
-                console.log('PracticeListStudent.js line 62: sortedData', sortedData);
 
-                setPracticeData(sortedData); // Set the state with the response data
+                setPracticeData(sortedData); 
                 setSearchResults(sortedData);
-
-                console.log('PracticeListStudent.js line 67: practiceData', practiceData)
 
             } catch (error) {
                 console.error('PracticeListStudent.js line 70, Error fetching assignments:', error);
@@ -65,15 +57,12 @@ function PracticeListStudentScreen({navigation}){
     }, [studentID]);
 
     const handleSearch = (searchText) => {
-        // Filter the assignmentData based on whether the assignment title includes the searchText
         if (searchText) {
-            // Filter the assignmentData based on whether the assignment title includes the searchText
             const results = practiceData.filter(practice => 
               practice.title.toLowerCase().includes(searchText.toLowerCase())
             );
             setSearchResults(results);
           } else {
-            // If the search text is empty, reset the search results to the full assignment data
             setSearchResults(practiceData);
           }
     };
@@ -84,7 +73,7 @@ function PracticeListStudentScreen({navigation}){
                 <AssignmentSearchBar onSearch={handleSearch} />
             </View>
             <ScrollView>  
-                {searchResults.length > 0 ? ( // Use searchResults here
+                {searchResults.length > 0 ? ( 
                     searchResults.map((practice, index) => (
                         <TouchableOpacity key={index} style={theme.card2} onPress={() => navigation.navigate('ViewPracticeStudentScreen', { practice: practice })}>
                             <View style={theme.cardTextContainer}>

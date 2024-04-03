@@ -25,7 +25,7 @@ import axios from "axios";
 const { width } = Dimensions.get("window");
 
 function RewardsShopScreen() {
-  const { state } = useAuth();
+  const { state, dispatch } = useAuth();
   const [items, setItems] = useState([]);
   const [purchaseHistory, setPurchaseHistory] = useState([]);
   const [userData, setUserData] = useState({});
@@ -109,6 +109,10 @@ function RewardsShopScreen() {
       }));
 
       Alert.alert("Success", "Item redeemed successfully!");
+
+      const inventoryResponse = await axios.get(`${IP_ADDRESS}/student-inventory/${state.userData.id}`, state.authHeader);
+      dispatch({ type: 'UPDATE_INVENTORY', payload: { inventory: inventoryResponse.data }})
+
       setModalVisible(false);
       setSelectedItem(null); // Reset selected item on successful redemption
       if (selectedItem.type === "DIGITAL") {
@@ -147,10 +151,6 @@ function RewardsShopScreen() {
           isFullyPurchased ? null : handlePressPurchase({ description, points, type, imageLink, id })
         }
         disabled={isFullyPurchased || !canPurchase}
-        // style={styles.item}
-        // onPress={() =>
-        //   handlePressPurchase({ description, points, type, imageLink, id })
-        // }
       >
         <View style={styles.itemHeader}>
           <Text style={styles.itemType}>{type}</Text>
@@ -231,8 +231,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   shadowContainer: {
-    padding: 15, // Optional: If you want some space inside the container
-    backgroundColor: "#fff", // A background color is required
+    padding: 15, 
+    backgroundColor: "#fff", 
     // iOS shadow styles
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9f9f9",
     borderRadius: 20,
     margin: 5,
-    width: width / 2 - 20, // Two items per row with padding
+    width: width / 2 - 20,
     alignItems: "center",
     overflow: "hidden",
     position: "relative",
@@ -307,8 +307,8 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 20,
     width: "100%",
-    minHeight: 40, // Adjust this value as needed to accommodate two lines of text
-    justifyContent: "center", // This vertically centers the text
+    minHeight: 40, 
+    justifyContent: "center", 
   },
   itemTitle: {
     fontWeight: "bold",
@@ -321,10 +321,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 10,
     paddingHorizontal: 20,
-    // Remove width: "100%" to let the container shrink-wrap its content
   },
   pointsContainer: {
-    backgroundColor: Colors.primary500, // Button background
+    backgroundColor: Colors.primary500,
     paddingVertical: 10,
     paddingHorizontal: 15,
     width: "100%",

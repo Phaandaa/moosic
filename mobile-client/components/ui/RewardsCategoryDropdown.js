@@ -9,7 +9,6 @@ import Colors from "../../constants/colors";
 
 const RewardsCategoryDropdown = ({ onSelectionChange }) => {
   const [selected, setSelected] = useState([]);
-  // const [categories, setCategories] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
 
   const categories = [
@@ -27,9 +26,6 @@ const RewardsCategoryDropdown = ({ onSelectionChange }) => {
 
   return (
     <View style={styles.dropdownBox}>
-      {/* {isFetching ? (
-                <Text style={styles.loadingText}>Loading categories...</Text>
-            ) : ( */}
       <MultipleSelectList
         setSelected={(val) => setSelected(val)}
         data={categories}
@@ -42,43 +38,36 @@ const RewardsCategoryDropdown = ({ onSelectionChange }) => {
         save="key"
         onSelect={() => console.log("RewardsCategoryDropdown.js line 43, selected category: ", selected)}
       />
-      {/* )} */}
     </View>
   );
 };
 const styles = StyleSheet.create({
   dropdownBox: {
-    // backgroundColor: "#FFFFFF", // Assuming a white background
-    // borderWidth: 1,
-    borderColor: "#CCCCCC", // Light grey border
-    // borderRadius: 5,
-    // paddingHorizontal: 20,
-    // paddingTop: 20,
-    // paddingBottom: 10, // Adjust as needed
+    borderColor: "#CCCCCC",
     marginBottom: 20,
     marginTop: 10,
   },
   label: {
     fontSize: 16,
-    color: Colors.fontPrimary, // Black text for the label
+    color: Colors.fontPrimary, 
     marginBottom: 10,
     fontWeight: "bold",
   },
   loadingText: {
     fontSize: 16,
-    color: "#CCCCCC", // Light grey text while loading
+    color: "#CCCCCC",
   },
   badgeStyles: {
-    backgroundColor: Colors.yellow, // Blue background for selected items
+    backgroundColor: Colors.yellow,
   },
   badgeTextStyles: {
-    color: Colors.fontSecondary, // White text for selected items
+    color: Colors.fontSecondary,
   },
   listParentLabelStyle: {
     fontSize: 16,
   },
   dropDownContainer: {
-    borderWidth: 0, // No border for the dropdown itself
+    borderWidth: 0,
   },
 });
 

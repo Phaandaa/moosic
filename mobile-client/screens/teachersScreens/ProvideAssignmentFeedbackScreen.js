@@ -83,19 +83,6 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
   const validateForm = () => {
     let newErrors = {};
     let isValid = true;
-    // if (!assignmentName.trim()) {
-    //   newErrors.assignmentName = 'Assignment name is required.';
-    //   isValid = false;
-    // }
-    // if (!assignmentDesc.trim()) {
-    //   newErrors.assignmentDesc = 'Description is required.';
-    //   isValid = false;
-    // }
-    // if (!assignmentDeadline) {
-    //   newErrors.assignmentDeadline = 'Deadline is required.';
-    //   isValid = false;
-    // }
-    // setErrors(newErrors);
     return isValid;
   };
 
@@ -122,7 +109,7 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
     images.forEach((image, index) => {
       const { uri, fileName } = image
 
-      if (typeof image.uri === 'string') { // Check if image.uri is a string
+      if (typeof image.uri === 'string') { 
         const uriParts = image.uri.split('.');
         const fileType = uriParts[uriParts.length - 1];
 
@@ -164,7 +151,6 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
       }
       const responseData = await response.json();
       console.log('ProvideAssignmentFeddbackScreen.js line 166, responseData: ', responseData);
-      // dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
       setModalVisible(true);
 
     } catch (error) {
@@ -178,16 +164,6 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
     <ScrollView style={styles.container}>
       <View style={styles.formContainer}>
         <Text style={styles.header}>Provide Feedback</Text>
-
-        {/* <View style={styles.inputContainer}>
-          <TextInput
-            placeholder="Add a Title"
-            value={assignmentName}
-            onChangeText={setAssignmentName}
-            style={styles.input}
-          />
-          {errors.assignmentName && <Text style={styles.errorText}>{errors.assignmentName}</Text>}
-        </View> */}
 
         <View style={styles.inputContainer}>
           <TextInput
@@ -225,7 +201,6 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
           </View>
         </View>
 
-        {/* Display Images and Document Names */}
         {images.length === 0 && uploadedDocuments.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Ionicons name="cloud-upload-outline" size={50} color="#cccccc" />
@@ -420,7 +395,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#000000', // Black text for the date
   },
-  // Update existing button styles if necessary
   button: {
     backgroundColor: Colors.mainPurple,
     padding: 15,

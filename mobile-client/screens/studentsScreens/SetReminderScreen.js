@@ -15,8 +15,6 @@ import DeleteModal from '../../components/ui/DeleteModal';
 import * as Notifications from 'expo-notifications';
 import { format } from 'date-fns';
 import theme from '../../styles/theme';
-import saveNotification from '../../context/notificationsContext';
-
 
 Notifications.setNotificationHandler({
   handleNotification: async () => {
@@ -109,79 +107,46 @@ function SetReminderScreen({navigation}){
       setShowPicker(Platform.OS === 'ios');
       setTime(currentTime);
   
-      // Format the time to a string format before setting it
-      const formattedTime = format(currentTime, 'p'); // Use 'p' for localized time format
+      const formattedTime = format(currentTime, 'p');
       setNotificationTime(formattedTime);
   };
-  
-
-    // const scheduleNotificationHandler = async () => {
-    //     console.log('scheduleNotificationHandler')
-    //     //// START: CALL FUNCTIONS HERE ////
-    //     const hasPushNotificationPermissionGranted =
-    //     await allowsNotificationsAsync();
-
-    //     if (!hasPushNotificationPermissionGranted) {
-    //         await requestPermissionsAsync();
-    //     }
-    //     //// END: CALL FUNCTIONS HERE ////
-    //     Notifications.scheduleNotificationAsync({
-    //         content: {title: 'My first local notification', 
-    //         body: 'body of notif',
-    //         data: {userName: 'Max'}
-    //     },
-    //     trigger:{
-    //         seconds: 5
-    //     }
-    //     });
-    // }
 
     const validateInputs = () => {
       let isValid = true;
       let errors = {};
   
-      // Check if frequency is set
       if (!frequency || frequency < 1) {
         errors.frequency = 'Please set a valid frequency.';
         isValid = false;
       }
   
-      // Check if notificationTime is set (assuming notificationTime being empty string means it's not set)
       if (!notificationTime) {
         errors.notificationTime = 'Please select a time.';
         isValid = false;
       }
   
-      setErrors(errors); // Update the error messages state
-      return isValid; // Return the validity status
+      setErrors(errors);
+      return isValid; 
     };
 
     const scheduleUserDefinedNotification = async (time, frequency) => {
-        // Clear previous errors
         setErrors({});
 
-        // Validate inputs before proceeding
         if (!validateInputs()) {
-          console.log('SetReminderScreen.js line 165: Validation failed. Missing values.');
-          return; // Stop execution if validation fails
+          console.log('SetReminderScreen.js line 136: Validation failed. Missing values.');
+          return; 
         }
 
-      // Proceed with scheduling the notification if validation is successful
-      console.log("SetReminderScreen.js line 170, Scheduling notification with time:", time, "and frequency:", frequency);
-
-        // Ensure 'time' is a Date object and 'frequency' is an integer
         if (!(time instanceof Date) || isNaN(frequency)) {
             console.error("Invalid time or frequency");
             return;
         }
 
-        // Cancel all existing notifications first
         await Notifications.cancelAllScheduledNotificationsAsync();
 
-        let triggerDate = new Date(); // Start with the current date/time
-        triggerDate.setHours(time.getHours(), time.getMinutes(), 0, 0); // Set to the user's selected time
+        let triggerDate = new Date(); 
+        triggerDate.setHours(time.getHours(), time.getMinutes(), 0, 0); 
 
-        // If the selected time has already passed today, schedule for the next interval
         if (triggerDate < new Date()) {
             triggerDate.setDate(triggerDate.getDate() + frequency);
         }
@@ -189,10 +154,9 @@ function SetReminderScreen({navigation}){
         const trigger = {
             hour: triggerDate.getHours(),
             minute: triggerDate.getMinutes(),
-            repeats: true // Note: This might not precisely match the user-defined frequency for iOS
+            repeats: true 
         };
         
-        // Schedule the notification
         await Notifications.scheduleNotificationAsync({
             content: {
                 title: "🎵 Tune Time 🎵",
@@ -202,26 +166,12 @@ function SetReminderScreen({navigation}){
             trigger,
         });      
         setModalVisible(true); 
-        // Due to limitations in setting custom frequencies, especially for iOS,
-        // you might need to manually reschedule the notification upon receipt
-        // to accurately adhere to the user-defined frequency.
     };
 
     return (
         <ScrollView style={styles.container}>
         <View style={styles.formContainer}>
             <Text style={styles.header}>Schedule Practice Reminder</Text>
-            {/* <Text style={styles.normalText}>Current Reminder: every {frequency} day(s) at {notificationTime}</Text> */}
-
-            {/* <View style={styles.inputContainer}>
-            <TextInput
-                placeholder="Frequency"
-                value={frequency}
-                onChangeText={setFrequency}
-                style={styles.input}
-            />
-            {errors.frequency && <Text style={styles.errorText}>{errors.frequency}</Text>}
-            </View> */}
             <View style={styles.deadlineContainer}>
               <Text style={styles.dueDateLabel}>Frequency (days)</Text>
               <View style={styles.counterDisplay}>
@@ -243,26 +193,6 @@ function SetReminderScreen({navigation}){
               {errors.frequency && <Text style={styles.errorText}> {errors.frequency}</Text>}
             </View>
 
-
-            {/* COUNTER */}
-            {/* <View style={styles.goalCounterContainer}>
-              <Text style={styles.label}>Frequency (days)</Text>
-              <View style={styles.counter}>
-                <TouchableOpacity
-                  style={styles.counterButton}
-                  onPress={() => setFrequency(Math.max(0, frequency - 1))}>
-                  <Text style={styles.counterButtonText}>-</Text>
-                </TouchableOpacity>
-                <View style={styles.countDisplay}>
-                  <Text style={styles.counterText}>{frequency}</Text>
-                </View>
-                <TouchableOpacity
-                  style={styles.counterButton}
-                  onPress={() => setFrequency(frequency + 1)}>
-                  <Text style={styles.counterButtonText}>+</Text>
-                </TouchableOpacity>
-              </View>
-            </View> */}
             
             <View style={styles.deadlineContainer}>
             <Text style={styles.dueDateLabel}>Time</Text>
@@ -444,12 +374,12 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       marginBottom: 20,
       padding: 10,
-      backgroundColor: '#F7F7F7', // Light gray background
+      backgroundColor: '#F7F7F7',
       borderRadius: 8,
     },
     dueDateLabel: {
       fontSize: 16,
-      color: '#8E8E93', // Light gray text
+      color: '#8E8E93',
     },
     dateDisplay: {
       flex: 1,
@@ -459,14 +389,13 @@ const styles = StyleSheet.create({
       marginLeft: 10,
       paddingVertical: 8,
       paddingHorizontal: 12,
-      backgroundColor: '#FFFFFF', // White background for date display
+      backgroundColor: '#FFFFFF',
       borderRadius: 8,
     },
     dateText: {
       fontSize: 16,
-      color: '#000000', // Black text for the date
+      color: '#000000', 
     },
-    // Update existing button styles if necessary
     button: {
       backgroundColor: Colors.mainPurple,
       padding: 15,
@@ -505,12 +434,12 @@ const styles = StyleSheet.create({
     counterDisplay: {
       flex: 1,
       flexDirection: 'row',
-      justifyContent: 'center', // Center children along the main axis
-      alignItems: 'center', // Center children along the cross axis
+      justifyContent: 'center', 
+      alignItems: 'center', 
       marginLeft: 10,
       paddingVertical: 8,
       paddingHorizontal: 12,
-      backgroundColor: '#FFFFFF', // White background for date display
+      backgroundColor: '#FFFFFF',
       borderRadius: 8,
     },
 });

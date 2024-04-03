@@ -17,6 +17,9 @@ const HomeScreen = ({ navigation }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [loadingstate, setLoadingState] = useState(false);
   const [userToken, setUserToken] = useState('');
+
+  useEffect(() => {
+  }, [state.notifications]);
   
 
   const flatListRef = useRef();
@@ -100,9 +103,6 @@ const HomeScreen = ({ navigation }) => {
     );
   };
   
-
-  const ITEM_HEIGHT = 200; // Example height, adjust as needed
-
   return (
     <><Header /><FlatList
       ListHeaderComponent={renderHeader}
@@ -123,7 +123,7 @@ const HomeScreen = ({ navigation }) => {
           buttonText={item.buttonText}
           id={item.id} />
       )}
-      numColumns={2} // Adjust based on your content
+      numColumns={2}
     /></>
   );
 };
@@ -138,55 +138,50 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingTop: 16,
     backgroundColor: '#fff',
-    height: 100, // You can adjust this height as needed
+    height: 100,
   },
   logoStyle: {
-    height: "70%", // Set a fixed height for your logo
+    height: "70%", 
     resizeMode: 'contain',
-    flex: 1, // If you want the logo to scale with the container
-    width: undefined, // Necessary when using flex in combination with resizeMode: 'contain'
+    flex: 1, 
+    width: undefined,
   },
   notificationButton: {
-    // Define styles for the notification button if needed
-    padding: 10, // Padding for touch area
+    padding: 10, 
     
   },
   searchBar: {
-    // Assuming HomepageSearchBar accepts a style prop to adjust its styling
     flex: 1,
-    marginRight: 10, // Give some space between search bar and time
+    marginRight: 10, 
   },
   timeText: {
     fontSize: 16,
   },
   headerText: {
-    marginTop: 10, // Space from the logo
+    marginTop: 10,
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333', // Adjust the color to match the design
-    textAlign: 'center', // Center the text
+    color: '#333', 
+    textAlign: 'center', 
   },
   boxContainer: {
     
-    width: width * 0.8, // Each item will take up 80% of the screen width, adjust as needed
-    marginRight: width * 0.05, // Spacing between items, adjust as needed
-    height: 200, // Adjust the height as needed
+    width: width * 0.8, 
+    marginRight: width * 0.05, 
+    height: 200, 
     verticalAlign: 'center',
-    // If your BoxComponent has its own padding or margins adjust this accordingly
   },
   imageContainer: {
-    width: width, // full width of the screen
-    height: 200, // the height of the carousel
+    width: width, 
+    height: 200, 
     justifyContent: 'center',
-    alignItems: 'center', // center the image within the container
+    alignItems: 'center', 
   },
   bannerImage: {
-    // height will be less than or equal to 200 to maintain aspect ratio
-    // width will scale accordingly
     height: '100%',
     borderRadius: 15,
-    resizeMode: 'cover', // the image will be scaled to fit within the view
-    aspectRatio: 1.9, // aspect ratio of the image
-    marginRight: 30, // space between images
+    resizeMode: 'cover',
+    aspectRatio: 1.9, 
+    marginRight: 30, 
   },
 });

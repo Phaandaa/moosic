@@ -25,8 +25,6 @@ const NotificationsScreen = ({ navigation }) => {
   
   return (
     <View style={styles.container}>
-    {/* Fixed content at the top */}
-    {/* <Text style={styles.headerText}>Notifications</Text> */}
     {state.userData.role === "Student" && <TouchableOpacity
       style={styles.button}
       onPress={() => navigation.navigate('SetReminderScreen')}>
@@ -34,7 +32,6 @@ const NotificationsScreen = ({ navigation }) => {
       <Ionicons name="alarm-outline" size={20} color="white" />
     </TouchableOpacity>}
 
-  {/* Scrollable content */}
   <ScrollView style={theme.container}>
     {notifications.length > 0 ? ( 
           notifications.map((notification, index) => (
@@ -65,7 +62,7 @@ export default NotificationsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 20, // Adjust as needed
+    paddingTop: 20, 
   },
   headerText: {
     fontSize: 20,
