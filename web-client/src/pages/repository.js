@@ -33,6 +33,7 @@ import { FilterDropdowns } from "src/sections/repository/repo-filter-dropdowns";
 import { getAsync, putAsync, postAsync } from "src/utils/utils";
 import { useAuth } from "src/hooks/use-auth";
 import SnackbarAlert from "src/components/alert";
+import { format } from "date-fns";
 
 const ApproveMaterialsSection = ({ pendingMaterials, onApprove, onReject }) => {
   const [rejectionModalOpen, setRejectionModalOpen] = useState(false);
@@ -99,8 +100,12 @@ const ApproveMaterialsSection = ({ pendingMaterials, onApprove, onReject }) => {
                 {currentItems.map((material) => (
                   <ListItem key={material.id} divider>
                     <ListItemText
-                      primary={material.title}
-                      secondary={`Instrument: ${material.instrument} - Grade: ${material.grade}`}
+                      primary={material.title ? material.title : "Untitled"}
+                      secondary={`Instrument: ${
+                        material.instrument.length !== 0 ? material.instrument.join(", ") : "N/A"
+                      } - Grade: ${
+                        material.grade.length !== 0 ? material.grade.join(", ") : "N/A"
+                      }`}
                     />
                     <Button
                       component="a"
@@ -354,15 +359,17 @@ const Page = () => {
           backgroundColor={"#EEF0F7"}
         >
           <Typography variant="h4" align="center" sx={{ color: "#525F7F" }}>
-            {material.type}
+            {material.title}
           </Typography>
         </Box>
       )}
       <Typography variant="h6">{material.title}</Typography>
-      <Typography variant="subtitle2">Type: {material.type}</Typography>
-      <Typography variant="subtitle2">Instrument: {material.instrument}</Typography>
-      <Typography variant="subtitle2">Grade: {material.grade}</Typography>
-      <Typography variant="subtitle2">Created: {material.creationTime}</Typography>
+      <Typography variant="subtitle2">Type: {material.type.join(", ")}</Typography>
+      <Typography variant="subtitle2">Instrument: {material.instrument.join(", ")}</Typography>
+      <Typography variant="subtitle2">Grade: {material.grade.join(", ")}</Typography>
+      <Typography variant="subtitle2">
+        Created: {format(new Date(material.creationTime), "dd/MM/yyyy HH:mm:ss")}
+      </Typography>
       <Box display={"flex"} justifyContent={"center"}>
         <Button
           component="a"
@@ -398,7 +405,9 @@ const Page = () => {
         <ListItem key={material.id} divider>
           <ListItemText
             primary={material.title}
-            secondary={`Instrument: ${material.instrument} - Grade: ${material.grade}`}
+            secondary={`Instrument: ${material.instrument.join(
+              ", "
+            )} - Grade: ${material.grade.join(", ")}`}
           />
           <Button
             component="a"
