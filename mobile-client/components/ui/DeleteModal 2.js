@@ -1,5 +1,5 @@
 import Modal from "react-native-modal";
-import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Alert, Button, TextInput } from 'react-native';
+import { View, Image, TouchableOpacity, Text } from 'react-native';
 import theme from "../../styles/theme";
 function DeleteModal({ isModalVisible, imageSource, textMessage, buttonText1, buttonText2, onButton1Press, onButton2Press}){
 

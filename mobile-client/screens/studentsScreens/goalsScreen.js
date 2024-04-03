@@ -24,18 +24,15 @@ const GoalsScreen = () => {
 
 
   
-  // Fetch goals and student data
   const fetchGoalsAndStudentData = async () => {
     try {
       setLoadingState(true);
       setPoints(state.userData.pointsCounter);
       
-      // Fetch student's goals
       const fetchStudentsGoalsUrl = `${IP_ADDRESS}/goals/student/${state.userData.id}`;
       const goalsResponse = await axios.get(fetchStudentsGoalsUrl, state.authHeader);
       setGoals(goalsResponse.data ? goalsResponse.data : []);
 
-      // Fetch student data
       const fetchPointsLog = `${IP_ADDRESS}/points-logs/student/${state.userData.id}`;
       const PointsLogresponse = await axios.get(fetchPointsLog, state.authHeader);
       setPointsLog(PointsLogresponse.data ? PointsLogresponse.data : []);
@@ -58,13 +55,12 @@ const GoalsScreen = () => {
   }; 
 
   const toggleSortOrder = () => {
-    const reversedList = [...pointsLog].reverse(); // Create a shallow copy and reverse it
+    const reversedList = [...pointsLog].reverse(); 
     setPointsLog(reversedList);
     setSortDescending(!sortDescending);
   };
 
 
-  // Function to render the header
   const renderHeader = () => {
     return (
       <View style={styles.headerRow}>
@@ -101,9 +97,9 @@ const GoalsScreen = () => {
   useEffect(() => {
     if (goals.practiceGoalCount + goals.assignmentGoalCount > 0) {
       const newProgress = ((goals.practiceCount + goals.assignmentCount) / (goals.practiceGoalCount + goals.assignmentGoalCount)) * 100;
-      setProgress(Math.round(newProgress)); // Round to nearest whole number
+      setProgress(Math.round(newProgress));
     } else {
-      setProgress(0); // Reset progress if there are no goals
+      setProgress(0); 
     }
   }, [goals]);
 
@@ -113,9 +109,7 @@ const GoalsScreen = () => {
       <View style={styles.currentGoalsContainer}>
         <Text style={styles.currentGoalsText}>Your Weekly Goal:</Text>
         <View style={styles.progressContainer}>
-          {/* Background of the progress bar (the track) */}
           <View style={styles.progressTrack}>
-              {/* Foreground of the progress bar */}
               <View style={[styles.progressBar, {width: `${progress}%`}]} />
           </View>
           <Text style={styles.progressText}>
@@ -194,34 +188,34 @@ const styles = StyleSheet.create({
   },
   activeTab: {
     borderBottomWidth: 4,
-    borderBottomColor: '#FFD700', // Accent Color
+    borderBottomColor: '#FFD700', 
   },
   activeTabText: {
-    color: '#FFD700', // Accent Color
+    color: '#FFD700', 
   },
   balanceChild: {
     marginHorizontal: 10,
   },
   balanceContainer: {
-    flexDirection: 'row', // align children in a row
-    alignItems: 'center', // center items vertically in the container
-    justifyContent: 'flex-start', // space between the text container and the image
+    flexDirection: 'row',
+    alignItems: 'center', 
+    justifyContent: 'flex-start', 
     backgroundColor: '#007AFF',
     borderRadius: 8,
     marginHorizontal: 20,
     marginBottom: 20,
     paddingHorizontal: 20,
-    paddingVertical: 20, // adjusted for equal padding
+    paddingVertical: 20, 
   },
   currencyImage: {
-    width: 30, // specify your size
-    height: 30, // specify your size
+    width: 30,
+    height: 30,
     resizeMode: 'contain'
   },
   balanceText: {
     color: 'white',
     fontSize: 16,
-    fontWeight: 'bold', // Standardize font weight
+    fontWeight: 'bold',
   },
   pointsIndicator: {
     color: 'white',
@@ -231,15 +225,15 @@ const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    backgroundColor: '#686BFF', // Primary Color
+    backgroundColor: '#686BFF', 
     paddingVertical: 10,
     borderRadius: 20,
     marginHorizontal: 20,
-    marginBottom: 20, // Add some space below the tab container
+    marginBottom: 20, 
   },
   tab: {
     paddingVertical: 8,
-    paddingHorizontal: 12, // Ensure tabs are adequately spaced
+    paddingHorizontal: 12, 
   },
   tabText: {
     color: 'white',
@@ -251,7 +245,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 10,
-    backgroundColor: '#686BFF', // Adjust as per your color scheme
+    backgroundColor: '#686BFF',
     marginHorizontal: 20,
     borderRadius: 10,
   },
@@ -259,7 +253,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: '700',
-    // Add any additional styling as needed
   },
   logItemContainer: {
     flexDirection: 'row',
@@ -268,7 +261,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     backgroundColor: 'white',
     borderRadius: 8,
-    // Match the padding and margin with the header for alignment
   },
   logDescription: {
     flex: 2,
@@ -284,10 +276,10 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   greenText: {
-    color: 'green', // or a specific shade of green you prefer
+    color: 'green', 
   },
   redText: {
-    color: 'red', // or a specific shade of red you prefer
+    color: 'red', 
   },
   logDate: {
     fontSize: 13,
@@ -316,16 +308,15 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
-    flex: 1, // The flex property allows the card to grow and shrink dynamically
-    margin: 5, // Keep some space between cards
+    flex: 1,
+    margin: 5,
     alignItems: 'center',
     justifyContent: 'center',
-    // Shadow styles...
   },
   goalLabel: {
     fontSize: 12,
     color: '#777',
-    marginBottom: 5, // Give some space between the label and the value
+    marginBottom: 5, 
     textAlign: 'center',
     color: 'white'
   },
@@ -338,27 +329,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     margin: 20,
-    position: 'relative', // Ensures the text can be absolutely positioned within
+    position: 'relative', 
 },
 
 progressTrack: {
-    backgroundColor: '#e0e0e0', // Light grey for the unfilled track
+    backgroundColor: '#e0e0e0', 
     borderRadius: 20,
     height: 30,
-    width: '100%', // Ensure it fills the container
-    position: 'hidden', // Position it behind the progress bar
+    width: '100%', 
+    position: 'hidden',
 },
 
 progressBar: {
-    backgroundColor: 'lightgreen', // Primary color for the filled track
+    backgroundColor: 'lightgreen', 
     height: '100%',
     borderRadius: 20,
-    minWidth: 20, // Minimum visibility
-    maxWidth: '100%', // Ensure it doesn't overflow the container
-    position: 'absolute', // Position it behind the progress bar
+    minWidth: 20, 
+    maxWidth: '100%', 
+    position: 'absolute',
 },
 pointsContainer: {
-  alignItems: 'center', // Center the text
+  alignItems: 'center',
 },
 progressText: {
     position: 'absolute',

@@ -41,7 +41,6 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
 
     return (
         <ScrollView style={theme.container}>
-            {/* <Text style={[theme.textTitle, { marginTop: 50, verticalAlign: 'middle' }]}>Your Assignments</Text> */}
                     <View style={theme.card3}>
                         <View style={theme.cardTextContainer}>
                             
@@ -49,7 +48,6 @@ function CreatedAssignmentDetailsScreen({route, navigation}) {
                             <Text style={theme.cardText}>{assignment.description}</Text>
                             <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text>
 
-                            {/* <Text style={theme.cardText}>Attachments:</Text> */}
                             {assignment.assignmentDocumentLinks.map((link, linkIndex) => (
                                 <TouchableOpacity key={linkIndex} onPress={() => Linking.openURL(link)} style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <Ionicons name="link" size={24} color="#525F7F" />

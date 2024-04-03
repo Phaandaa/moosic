@@ -17,8 +17,8 @@ import axios from 'axios';
 
 function CreatedAssignmentsListScreen ({route, navigation}) {
     const dispatch = useDispatch();
-    const cacheStudentID = useSelector(state => state.cache.studentID); // Assuming you have set up the Redux slice correctly
-    const cacheStudentName = useSelector(state => state.cache.studentID); // Assuming you have set up the Redux slice correctly
+    const cacheStudentID = useSelector(state => state.cache.studentID); 
+    const cacheStudentName = useSelector(state => state.cache.studentID); 
 
     const { state } = useAuth();
     const [teacherID, setTeacherID] = useState('');
@@ -50,9 +50,7 @@ function CreatedAssignmentsListScreen ({route, navigation}) {
     
     useFocusEffect(
         React.useCallback(() => {
-            // Function that fetches the assignments
             const fetchCreatedAssignments = async () => {
-                // Check if we have a valid teacherID and studentID before fetching
                 if (teacherID && studentID) {
                     try {
                         const response = await axios.get(`${IP_ADDRESS}/assignments/${studentID}/${teacherID}`, state.authHeader);
@@ -70,14 +68,8 @@ function CreatedAssignmentsListScreen ({route, navigation}) {
             };
 
             fetchCreatedAssignments();
-        }, [teacherID, studentID]) // Dependencies array
+        }, [teacherID, studentID]) 
     );
-
-    // const {studentID} = route.params
-    // const dispatch = useDispatch();
-    // dispatch(setCache({ key: 'studentID', value: studentID }));
-
-    // const assignmentDataAll = useSelector(state => state.cache.assignmentDataAll) || []; 
          
     const [assignmentData, setAssignmentData] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
@@ -96,12 +88,10 @@ function CreatedAssignmentsListScreen ({route, navigation}) {
         return '';
     };
 
-    // Fetch teacherID on component mount
     useEffect(() => {
         setTeacherID(state.userData.id);
     }, []);
 
-    // Fetch assignments using teacherID
     useEffect(() => {
         const fetchCreatedAssignments = async() => {
             console.group('CreateAssignmentListScreen.js line 125, studentID: ', studentID)
@@ -121,29 +111,24 @@ function CreatedAssignmentsListScreen ({route, navigation}) {
     }, [studentID, teacherID]);
 
     const handleSearch = (searchText) => {
-        // Filter the assignmentData based on whether the assignment title includes the searchText
         if (searchText) {
-            // Filter the assignmentData based on whether the assignment title includes the searchText
             const results = assignmentData.filter(assignment => 
               assignment.title.toLowerCase().includes(searchText.toLowerCase())
             );
             setSearchResults(results);
           } else {
-            // If the search text is empty, reset the search results to the full assignment data
             setSearchResults(assignmentData);
           }
     };
     
     return (
         <View style={theme.container}>
-            {/* <Text style={[theme.textTitle, { marginTop: 50, verticalAlign: 'middle' }]}>Your Assignments</Text> */}
-                    {/* Search bar */}
             <View style={{marginBottom: 10}}>
                 <Text style={theme.cardTitle}>Assignments for {studentName}</Text>
                 <AssignmentSearchBar onSearch={handleSearch} />
             </View>
             <ScrollView>
-            {searchResults.length > 0 ? ( // Use searchResults here
+            {searchResults.length > 0 ? ( 
                 searchResults.map((assignment, index) => (
                     <TouchableOpacity key={index} style={theme.card2} onPress={() => navigation.navigate('CreatedAssignmentDetailsScreen', { assignment: assignment })}>
                         <View style={theme.cardTextContainer}>

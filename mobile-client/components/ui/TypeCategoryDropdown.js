@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
 import { MultiSelect } from "react-native-element-dropdown";
 import Colors from "../../constants/colors";
-import Ionicons from "@expo/vector-icons/Ionicons"; // make sure to import Ionicons
+import Ionicons from "@expo/vector-icons/Ionicons"; 
 
 const data = [
   { label: "Theory", value: "theory" },
@@ -30,15 +30,9 @@ const TypeCategoryDropdown = (props) => {
     }
     setSelected(newSelected);
 
-    // Notify parent component about the change
     if (props.onCategoryChange) {
       props.onCategoryChange(newSelected);
     }
-
-    // Close the dropdown
-    // if (dropdownRef.current) {
-    //   dropdownRef.current.close();
-    // }
   };
 
   const renderItem = (item) => {
@@ -85,22 +79,14 @@ export default TypeCategoryDropdown;
 const styles = StyleSheet.create({
   container: { 
     paddingVertical: 10,
-    flex: 1, // Takes up equal space within the container
-    marginHorizontal: 5, // Gives some space between the dropdowns 
+    flex: 1, 
+    marginHorizontal: 5,
   },
   dropdown: {
     height: 40,
     backgroundColor: Colors.accentPink,
     borderRadius: 12,
     padding: 12,
-    // shadowColor: "#000",
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 1,
-    // },
-    // shadowOpacity: 0.2,
-    // shadowRadius: 1.41,
-    // elevation: 2,
   },
   placeholderStyle: {
     fontSize: 16,

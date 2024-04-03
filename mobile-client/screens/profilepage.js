@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView, RefreshControl, FlatList, Dimensions } from 'react-native';
 import { useAuth } from '../context/Authcontext';
-import Icon from 'react-native-vector-icons/MaterialIcons'; // Adjust this import based on the icon library you use
+import Icon from 'react-native-vector-icons/MaterialIcons'; 
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import IP_ADDRESS from '../constants/ip_address_temp';
-import Modal from 'react-native-modal'; // Import react-native-modal
+import Modal from 'react-native-modal'; 
 import theme from '../styles/theme';
 
 const ProfileScreen = ({ navigation, route }) => {
@@ -59,7 +59,6 @@ const ProfileScreen = ({ navigation, route }) => {
         console.log("Owned student badge: ", state.inventory.ownedBadgeList);
         setOwnedAvatars(state.inventory.ownedAvatarList);
         setOwnedFrames(state.inventory.ownedFrameList);
-        // await fetchInventoryData(state.userData.id);
       }
     } catch (error) {
       console.error('profilepage.js line 94, Error processing stored data:', error.message);
@@ -163,7 +162,7 @@ const ProfileScreen = ({ navigation, route }) => {
   };
 
   const InventoryModal = () => {
-    const [selectedTab, setSelectedTab] = useState('avatars'); // 'avatars' or 'frames'
+    const [selectedTab, setSelectedTab] = useState('avatars'); 
     
     const renderAvatarItem = ({ item, index }) => (
       <TouchableOpacity
@@ -221,10 +220,10 @@ const ProfileScreen = ({ navigation, route }) => {
       
     return (
       <Modal
-        isVisible={isModalVisible} // Use isVisible prop for visibility
-        onBackdropPress={() => setIsModalVisible(false)} // Close modal on backdrop press
-        onSwipeComplete={() => setIsModalVisible(false)} // Optional: close modal on swipe
-        style={styles.modalOverlay} // Apply custom styles as needed
+        isVisible={isModalVisible} 
+        onBackdropPress={() => setIsModalVisible(false)} 
+        onSwipeComplete={() => setIsModalVisible(false)} 
+        style={styles.modalOverlay}
       >
         
           <View style={styles.modalContainer}>
@@ -336,7 +335,6 @@ const ProfileScreen = ({ navigation, route }) => {
         {userRole !== 'Teacher' && (
           <>
             <View style={styles.statsContainer}>
-              {/* Render stats using StatsCard component */}
               <StatsCard iconName="star" value={userPoints} label="Points" />
 
             </View>

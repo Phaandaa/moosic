@@ -54,8 +54,6 @@ import { Provider } from 'react-redux';
 import store from './store';
 import { AuthProvider, useAuth } from './context/Authcontext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getNotifications } from './context/notificationsContext';
-import { saveNotification } from './context/notificationsContext';
 import axios from 'axios';
 
 Notifications.setNotificationHandler({

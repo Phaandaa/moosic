@@ -23,7 +23,7 @@ const StudentDropdown = ({ onSelectionChange }) => {
               key: student.id, 
               value: student.name,
             }));
-            setStudents(formattedData); // Update the students state with formatted data
+            setStudents(formattedData);
           } catch (error) {
             Alert.alert('Error', error.toString());
           } finally {
@@ -67,36 +67,36 @@ const StudentDropdown = ({ onSelectionChange }) => {
 };
 const styles = StyleSheet.create({
     dropdownBox: {
-        backgroundColor: '#FFFFFF', // Assuming a white background
+        backgroundColor: '#FFFFFF', 
         borderWidth: 1,
-        borderColor: '#CCCCCC', // Light grey border
+        borderColor: '#CCCCCC', 
         borderRadius: 5,
         paddingHorizontal: 20,
         paddingTop: 20,
-        paddingBottom: 10, // Adjust as needed
+        paddingBottom: 10, 
         marginBottom: 20,
     },
     label: {
         fontSize: 16,
-        color: '#000000', // Black text for the label
+        color: '#000000', 
         marginBottom: 10,
         fontWeight: 'bold',
     },
     loadingText: {
         fontSize: 16,
-        color: '#CCCCCC', // Light grey text while loading
+        color: '#CCCCCC', 
     },
     badgeStyles: {
         backgroundColor: Colors.mainPurple,
     },
     badgeTextStyles: {
-        color: 'white', // White text for selected items
+        color: 'white', 
     },
     listParentLabelStyle: {
         fontSize: 16,
     },
     dropDownContainer: {
-        borderWidth: 0, // No border for the dropdown itself
+        borderWidth: 0, 
     },
     
 });

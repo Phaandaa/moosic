@@ -39,15 +39,15 @@ const HomepageSearchBar = ({ onSearch }) => {
           style={{
             flex: 1,
             paddingVertical: 10,
-            fontSize: 16, // Adjust the font size as needed
+            fontSize: 16,
             color: "#333",
           }}
           placeholder="Search"
-          placeholderTextColor={Colors.fontQuaternary} // Adjust the placeholder text color as needed
+          placeholderTextColor={Colors.fontQuaternary}
           value={searchText}
           onChangeText={(text) => {
             setSearchText(text);
-            onSearch(text.toLowerCase()); // Trigger search on every text change
+            onSearch(text.toLowerCase());
           }}
         />
       </View>

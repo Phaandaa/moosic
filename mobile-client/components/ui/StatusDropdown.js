@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
 import { MultiSelect } from "react-native-element-dropdown";
 import Colors from "../../constants/colors";
-import Ionicons from "@expo/vector-icons/Ionicons"; // make sure to import Ionicons
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 const data = [
   { label: `Pending `, value: "pending" },
@@ -30,22 +30,15 @@ const StatusDropdown = (props) => {
     }
     setSelected(newSelected);
 
-    // Notify parent component about the change
     if (props.onCategoryChange) {
       props.onCategoryChange(newSelected);
     }
-
-    // Close the dropdown
-    // if (dropdownRef.current) {
-    //   dropdownRef.current.close();
-    // }
   };
 
   const renderItem = (item) => {
     let iconName;
     let iconColor;
-  
-    // Determine the icon and color based on the item's value
+
     switch (item.value) {
       case 'pending':
         iconName = "timer";
@@ -69,15 +62,13 @@ const StatusDropdown = (props) => {
         style={styles.item}
         onPress={() => handleSelection(item)}
       >
-        {/* Render the icon next to the label text */}
         <Ionicons
           name={iconName}
           size={20}
           color={iconColor}
-          style={{ marginRight: 8 }} // Add some spacing between the icon and the text
+          style={{ marginRight: 8 }}
         />
         <Text style={styles.selectedTextStyle}>{item.label}</Text>
-        {/* You might want to conditionally render a checkmark or other icon here to indicate selection */}
         <Ionicons
           name={isItemSelected(item.value) ? "checkbox" : "square-outline"}
           size={20}
@@ -115,8 +106,8 @@ export default StatusDropdown;
 const styles = StyleSheet.create({
   container: { 
     paddingVertical: 16,
-    flex: 1, // Takes up equal space within the container
-    marginHorizontal: 5, // Gives some space between the dropdowns 
+    flex: 1, 
+    marginHorizontal: 5,
   },
   dropdown: {
     flexDirection: 'row',
@@ -124,14 +115,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.mainPurple,
     borderRadius: 12,
     padding: 12,
-    // shadowColor: "#000",
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 1,
-    // },
-    // shadowOpacity: 0.2,
-    // shadowRadius: 1.41,
-    // elevation: 2,
     alignItems: 'center',
   },
   placeholderStyle: {

@@ -15,7 +15,6 @@ import SuccessModal from '../../components/ui/SuccessModal';
 import { useAuth } from '../../context/Authcontext';
 import axios from 'axios';
 function CreatePracticeScreen({navigation}){
-    // const dispatch = useDispatch();
     const { state } = useAuth();
     const [title, setTitle] = useState('');
     const [comment, setComment] = useState('');
@@ -46,72 +45,58 @@ function CreatePracticeScreen({navigation}){
     }, [])
 
     const submitHandler = async ()=> {
-        console.log('Practice Title on Submit:', title, 'Type:', typeof title );
-        console.log('Student\'s Practice Comments on Submit:', comment, 'Type:', typeof comment );
+      if (!title) {
+        alert('Please fill all fields');
+        return;
+      }
 
-        // Step 2: Validate Data (this is a basic example, you might need more complex validation)
-        // if (!practiceData.title || !practiceData.comment || !practiceData.videos) {
-        if (!title) {
-            alert('Please fill all fields');
-            return;
-        }
-        const storedData = await AsyncStorage.getItem('authData');
-        if (!storedData) {
-          Alert.alert('Error', 'Authentication data is not available. Please login again.');
-          return;
-        }
+      const storedData = await AsyncStorage.getItem('authData');
+      if (!storedData) {
+        Alert.alert('Error', 'Authentication data is not available. Please login again.');
+        return;
+      }
+    
+      const parsedData = JSON.parse(storedData);
+      if (!parsedData.userId || !parsedData.name) {
+        Alert.alert('Error', 'Incomplete authentication data. Please login again.');
+        return;
+      }
+
+      const formData = new FormData();
+
+      const practiceData = {
+        title: title,
+        comment: comment,
+        student_id: parsedData.userId,
+        student_name: parsedData.name,
+        teacher_id: teacher.id,
+        teacher_name: teacher.name
+      };
       
-        const parsedData = JSON.parse(storedData);
-        if (!parsedData.userId || !parsedData.name) {
-          Alert.alert('Error', 'Incomplete authentication data. Please login again.');
-          return;
-        }
+      if (videos.length > 0 && videos[0].uri) {
+          const video = videos[0];
+      
+          formData.append("video", {
+            uri: video.uri,
+            name: video.fileName, 
+          });
+          console.log('videouri: ', video.uri)
+          console.log('vidfilename: ', video.fileName)
+          console.log('vidtype: ', video.type)
 
-       
+      }
+      formData.append("practice", {"string" : JSON.stringify(practiceData), type: 'application/json'});
+      console.log(formData)
 
-        const formData = new FormData();
-
-        // Step 1: Collect Data
-        const practiceData = {
-            title: title,
-            comment: comment,
-            student_id: parsedData.userId,
-            student_name: parsedData.name,
-            teacher_id: teacher.id,
-            teacher_name: teacher.name
-        };
-        console.log('practiceData: ', practiceData)          
-        
-        if (videos.length > 0 && videos[0].uri) {
-            // Assuming `videos[0]` is the video object that you logged
-            const video = videos[0];
-            console.log('video: ',video)
-        
-            // Append the video file to the formData
-            formData.append("video", {
-              uri: video.uri,
-              name: video.fileName, // Use the filename from the video object
-            //   type: 'video/mov' // You can hardcode the type or derive it from the fileName
-            });
-            console.log('videouri: ', video.uri)
-            console.log('vidfilename: ', video.fileName)
-            console.log('vidtype: ', video.type)
-
-        }
-        formData.append("practice", {"string" : JSON.stringify(practiceData), type: 'application/json'});
-        console.log(formData)
-
-        try {
-            const response = axios.post(`${IP_ADDRESS}/practices/create`, formData, state.authHeader);
-              
-            const responseData = await response.data;
-            // dispatch(setCache({ key: 'practiceData', value: practiceData })); 
-            // navigation.navigate('PracticeListStudentScreen');
-            setModalVisible(true);
-        } catch (error) {
-            console.error('Error recording practice:', error);
-            Alert.alert('Error', `Failed to create practice. ${error.response?.data?.message || 'Please try again.'}`);
-        }
+      try {
+          const response = axios.post(`${IP_ADDRESS}/practices/create`, formData, state.authHeader);
+            
+          const responseData = await response.data;
+          setModalVisible(true);
+      } catch (error) {
+          console.error('Error recording practice:', error);
+          Alert.alert('Error', `Failed to create practice. ${error.response?.data?.message || 'Please try again.'}`);
+      }
     }
 
     const uploadVideo = async(mode) => {
@@ -121,7 +106,6 @@ function CreatePracticeScreen({navigation}){
                 await ImagePicker.requestMediaLibraryPermissionsAsync()
                 result = await ImagePicker.launchImageLibraryAsync({
                     mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-                    // allowsEditing: true,
                     aspect: [4,3],
                     quality: 1,
                 })
@@ -168,7 +152,6 @@ function CreatePracticeScreen({navigation}){
             />
             </View>
 
-            {/* <View style={styles.uploadButtons}> */}
                 <View style={styles.attachFilesSection}>
                 <TouchableOpacity style={styles.attachButton} onPress={() => uploadVideo('gallery')}>
                     <Ionicons name="images" size={24} color={Colors.mainPurple} />
@@ -179,10 +162,8 @@ function CreatePracticeScreen({navigation}){
                     )}
                 </TouchableOpacity>
                 </View>            
-          {/* </View> */}
         </View>
         
-        {/* Display Video */}
         {videos.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Ionicons name="cloud-upload-outline" size={50} color="#cccccc" />
@@ -210,7 +191,6 @@ function CreatePracticeScreen({navigation}){
         onButtonPress={handleModalButtonPress}
       />
 
-      {/* Submit button */}
       <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={submitHandler}>
           <Text style={styles.buttonText}>Submit Recording</Text>
       </TouchableOpacity>

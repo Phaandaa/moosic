@@ -12,9 +12,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#f5f5f5', // Optional: change the background color
+    backgroundColor: '#f5f5f5', 
   },
-  // You can add additional styles here if needed
 });
 
 export default LoadingScreen;

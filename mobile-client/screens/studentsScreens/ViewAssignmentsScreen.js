@@ -12,13 +12,9 @@ const trimDate = (date) => {
 
 function ViewAssignmentsScreen({route, navigation}) {
     const { assignment } = route.params;
-    console.log('ViewAssignments.js line 15, assignment:', assignment)
-
-    // const assignmentDataAll = useSelector(state => state.cache.assignmentDataAll) || []; 
 
     return (
         <ScrollView style={theme.container}>
-            {/* <Text style={[theme.textTitle, { marginTop: 50, verticalAlign: 'middle' }]}>Your Assignments</Text> */}
                     <View style={theme.card3}>
                         <View style={theme.cardTextContainer}>
                             
@@ -45,9 +41,6 @@ function ViewAssignmentsScreen({route, navigation}) {
                         <View style={theme.cardTextContainer}>
                             <View style={theme.oneRow}> 
                                 <Text style={theme.cardTitlePink}>My Submission</Text>
-                                {/* <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text> */}
-                                {/* <Text style={theme.cardText}>Attachments:</Text> */}
-
                             </View>
                             {assignment.submissionLinks && assignment.submissionLinks.map((link, linkIndex) => (
                                 <TouchableOpacity key={linkIndex} onPress={() => Linking.openURL(link)} style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -75,8 +68,6 @@ function ViewAssignmentsScreen({route, navigation}) {
                             <View style={theme.cardTextContainer}>
                                 <View style={theme.oneRow}> 
                                     <Text style={theme.cardTitlePink}>Feedback</Text>
-                                    {/* <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text> */}
-                                    {/* <Text style={theme.cardText}>Attachments:</Text> */}
                                         <View style={theme.smallPinkButton}>
                                             <Text style={theme.smallButtonText}>{assignment.points} Points</Text>
                                         </View>

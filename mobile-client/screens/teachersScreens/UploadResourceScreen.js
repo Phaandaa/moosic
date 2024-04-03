@@ -142,8 +142,6 @@ function UploadResourceScreen({ navigation }) {
       });
     }
     
-    // console.log(formData)
-    // formData.append("material_repository", {"string" : JSON.stringify(materialData), type: 'application/json'});
     formData.append("material_repository", JSON.stringify(materialData));
     console.log(formData)
     try {
@@ -213,7 +211,6 @@ function UploadResourceScreen({ navigation }) {
           </View>
         </View>
 
-        {/* Display Images and Document Names */}
         {image == null && uploadedDocument == null ? (
           <View style={styles.emptyContainer}>
             <Ionicons name="cloud-upload-outline" size={50} color="#cccccc" />
@@ -307,7 +304,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center', // Center horizontally
+    justifyContent: 'center', 
     padding: 15,
     flex: 1,
     marginHorizontal: 10
@@ -410,7 +407,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#000000', // Black text for the date
   },
-  // Update existing button styles if necessary
   button: {
     backgroundColor: Colors.mainPurple,
     padding: 15,
@@ -424,11 +420,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   dropdownContainer:{
-    // flexDirection: 'row',
-    // justifyContent: "space-between", // Try 'space-around' for equal spacing
-    // alignItems: 'center', // This centers the dropdowns vertically in the container
-    // height: 60,
-    // marginTop: 10
     marginBottom: 20
 },
 });

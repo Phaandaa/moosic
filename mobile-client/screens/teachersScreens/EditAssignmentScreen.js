@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { TextInput, View, ScrollView, TouchableOpacity, Text, Button, Image, Alert, StyleSheet, Platform, Linking } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
@@ -25,7 +25,6 @@ function EditAssignmentScreen({ route, navigation }) {
   const dispatch = useDispatch();
   const [assignmentDesc, setAssignmentDesc] = useState(assignment.description);
   const [assignmentDeadline, setAssignmentDeadline] = useState(assignment.deadline);
-  // const [selectedStudents, setSelectedStudents] = useState([]);
   const [submissionDate, setSubmissionDate] = useState(new Date());
   const [errors, setErrors] = useState({});
 
@@ -119,12 +118,6 @@ function EditAssignmentScreen({ route, navigation }) {
     return isValid;
   };
 
-  // Handler to update state with selected student IDs in the desired format
-  // const handleStudentSelectionChange = useCallback((selectedIds) => {
-  //   const formattedSelectedStudents = selectedIds.map(id => ({ student_id: id }));
-  //   setSelectedStudents(formattedSelectedStudents);
-  // }, [setSelectedStudents]); // Assuming setSelectedStudents doesn't change, this function is now stable
-
   const submitHandler = async () => {
     if (!validateForm()) {
       Alert.alert('Error', 'Please fill in all required fields.');
@@ -157,7 +150,7 @@ function EditAssignmentScreen({ route, navigation }) {
     images.forEach((image, index) => {
       const { uri, fileName } = image
 
-      if (typeof image.uri === 'string') { // Check if image.uri is a string
+      if (typeof image.uri === 'string') { 
         const uriParts = image.uri.split('.');
         const fileType = uriParts[uriParts.length - 1];
 
@@ -180,7 +173,6 @@ function EditAssignmentScreen({ route, navigation }) {
       });
     });
 
-    // console.log(formData)
     formData.append("assignment", {"string" : JSON.stringify(assignmentData), type: 'application/json'});
     console.log('EditAssignmentScreen.js line 182, formData: ', formData)
 
@@ -190,7 +182,6 @@ function EditAssignmentScreen({ route, navigation }) {
       
 
       const responseData = response.data;
-      console.log('EditAssignmentScreen.js line', responseData);
       dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
       setModalVisible(true);
 
@@ -296,7 +287,6 @@ function EditAssignmentScreen({ route, navigation }) {
           </>
         )}
 
-{/* <StudentDropdown onSelectionChange={handleStudentSelectionChange} style={styles.dropdown} /> */}
       <SuccessModal 
         isModalVisible={isModalVisible} 
         imageSource={require('../../assets/happynote.png')}
@@ -456,7 +446,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#000000', // Black text for the date
   },
-  // Update existing button styles if necessary
   button: {
     backgroundColor: Colors.mainPurple,
     padding: 15,

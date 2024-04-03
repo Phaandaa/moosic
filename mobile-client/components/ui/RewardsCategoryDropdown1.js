@@ -3,12 +3,9 @@ import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
 import { MultiSelect } from "react-native-element-dropdown";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Colors from "../../constants/colors";
-import Ionicons from "@expo/vector-icons/Ionicons"; // make sure to import Ionicons
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 const data = [
-  // { label: "Avatars", value: "digital1" },
-  // { label: "Frames", value: "digital2" },
-  // { label: "Stickers", value: "digital3" },
   { label: "Digital Items", value: "digital" },
   { label: "Physical Items", value: "physical" },
 ];
@@ -33,12 +30,10 @@ const RewardsCategoryDropdown1 = (props) => {
     }
     setSelected(newSelected);
 
-    // Notify parent component about the change
     if (props.onCategoryChange) {
       props.onCategoryChange(newSelected);
     }
 
-    // Close the dropdown
     if (dropdownRef.current) {
       dropdownRef.current.close();
     }
@@ -74,17 +69,7 @@ const RewardsCategoryDropdown1 = (props) => {
         valueField="value"
         placeholder="Select category"
         value={selected}
-        // search
-        // searchPlaceholder="Search..."
         onChange={handleSelection}
-        // renderLeftIcon={() => (
-        //   <AntDesign
-        //     style={styles.icon}
-        //     color="black"
-        //     name="Safety"
-        //     size={20}
-        //   />
-        // )}
         renderItem={renderItem}
         renderSelectedItem={(item) => (
           <TouchableOpacity
@@ -93,8 +78,6 @@ const RewardsCategoryDropdown1 = (props) => {
                 currentSelected.filter((value) => value !== item.value)
               );
               if (props.onCategoryChange) {
-                // Need to ensure props.onCategoryChange is called with the updated state
-                // This might not be reflecting the immediate change due to asynchronous state updates
                 props.onCategoryChange(
                   selected.filter((value) => value !== item.value)
                 );

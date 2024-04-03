@@ -140,11 +140,10 @@ function CreateAssignmentScreen({ route, navigation }) {
     return isValid;
   };
 
-  // Handler to update state with selected student IDs in the desired format
   const handleStudentSelectionChange = useCallback((selectedIds) => {
     const formattedSelectedStudents = selectedIds.map(id => ({ student_id: id }));
     setSelectedStudents(formattedSelectedStudents);
-  }, [setSelectedStudents]); // Assuming setSelectedStudents doesn't change, this function is now stable
+  }, [setSelectedStudents]);
 
   const submitHandler = async () => {
     if (!validateForm()) {
@@ -173,7 +172,6 @@ function CreateAssignmentScreen({ route, navigation }) {
       assignment_desc: assignmentDesc,
       assignment_deadline: assignmentDeadline,
       selected_students: selectedStudents,
-      // selected_students: [{student_id: '5C4Q6ZILqoTBi9YnESwpKQuhMcN2'}],
       repo_file_links: selectedRepoFiles.map(item => item.fileLink),
       points: 0
     };
@@ -183,7 +181,7 @@ function CreateAssignmentScreen({ route, navigation }) {
     images.forEach((image, index) => {
       const { uri, fileName } = image
 
-      if (typeof image.uri === 'string') { // Check if image.uri is a string
+      if (typeof image.uri === 'string') { 
         const uriParts = image.uri.split('.');
         const fileType = uriParts[uriParts.length - 1];
 
@@ -206,9 +204,7 @@ function CreateAssignmentScreen({ route, navigation }) {
       });
     });
 
-    // console.log(formData)
     formData.append("assignment", {"string" : JSON.stringify(assignmentData), type: 'application/json'});
-    console.log('CreateAssignmentScreen.js line 185, formData: ', formData)
 
     try {
       
@@ -290,16 +286,13 @@ function CreateAssignmentScreen({ route, navigation }) {
           </View>
         </View>
 
-        {/* <View style={styles.repoContainer}> */}
           <View style={styles.attachFilesSection}>
             <TouchableOpacity style={styles.attachButton} onPress={() => navigation.navigate('SelectFilesFromRepositoryScreen', { selectedRepoFiles })}>
               <Ionicons name="file-tray-full" size={24} color={Colors.mainPurple} />
               <Text style={styles.attachText}>Choose Files from Repository</Text>
             </TouchableOpacity>
           </View>
-        {/* </View> */}
 
-        {/* Display Images and Document Names */}
         {images.length === 0 && uploadedDocuments.length === 0 && selectedRepoFiles.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Ionicons name="cloud-upload-outline" size={50} color="#cccccc" />
@@ -407,7 +400,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     flexDirection: 'row',
     alignItems: 'center',    
-    justifyContent: 'center', // Center horizontally
+    justifyContent: 'center',
     padding: 15,
     flex: 1,
     marginHorizontal: 10
@@ -515,7 +508,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#000000', // Black text for the date
   },
-  // Update existing button styles if necessary
   button: {
     backgroundColor: Colors.mainPurple,
     padding: 15,

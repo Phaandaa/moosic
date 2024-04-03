@@ -19,7 +19,6 @@ function PracticeListTeacherScreen({route, navigation}){
         setTeacherID(state.userData.id);
     }, []);
 
-    // Fetch practices using studentID
     useEffect(() => {
         const fetchPractices = async() => {
             try {
@@ -30,7 +29,7 @@ function PracticeListTeacherScreen({route, navigation}){
                     return new Date(b.submissionTimestamp) - new Date(a.submissionTimestamp);
                 });
 
-                setPracticeData(sortedData); // Set the state with the response data
+                setPracticeData(sortedData); 
                 setSearchResults(sortedData);
 
                 console.log('PracticeListTeacherScreen.js line 69, practiceDate[0]: ', practiceData[0])
@@ -44,29 +43,24 @@ function PracticeListTeacherScreen({route, navigation}){
     }, [studentID, teacherID]);
 
     const handleSearch = (searchText) => {
-        // Filter the assignmentData based on whether the assignment title includes the searchText
         if (searchText) {
-            // Filter the assignmentData based on whether the assignment title includes the searchText
             const results = practiceData.filter(practice => 
               practice.title.toLowerCase().includes(searchText.toLowerCase())
             );
             setSearchResults(results);
           } else {
-            // If the search text is empty, reset the search results to the full assignment data
             setSearchResults(practiceData);
           }
     };
     
     return (
         <View style={theme.container}>
-            {/* <Text style={[theme.textTitle, { marginTop: 50, verticalAlign: 'middle' }]}>Your Assignments</Text> */}
-                    {/* Search bar */}
             <View style={{marginBottom: 10}}>
                 <Text style={theme.cardTitle}>Practice Log for {studentName}</Text>
                 <AssignmentSearchBar onSearch={handleSearch} />
             </View>
             <ScrollView> 
-                {searchResults.length > 0 ? ( // Use searchResults here
+                {searchResults.length > 0 ? ( 
                     searchResults.map((practice, index) => (
                         <TouchableOpacity key={index} style={theme.card2} onPress={() => navigation.navigate('ViewPracticeTeacherScreen', { practice: practice })}>
                             <View style={theme.cardTextContainer}>

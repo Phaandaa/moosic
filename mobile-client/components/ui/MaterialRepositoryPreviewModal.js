@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import Modal from 'react-native-modal';
-import theme from "../../styles/theme"; // Assuming you have a theme file for consistent styling
-import Colors from "../../constants/colors"; // Assuming you have a colors file for consistent styling
+import theme from "../../styles/theme"; 
+import Colors from "../../constants/colors"; 
 import { Ionicons } from '@expo/vector-icons';
 
 function MaterialRepositoryPreviewModal({ isVisible, onClose, materialData, isCentral }) {

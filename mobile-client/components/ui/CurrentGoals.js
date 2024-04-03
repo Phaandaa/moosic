@@ -92,15 +92,15 @@ const CurrentGoals = ({ isStudent, studentId }) => {
       paddingVertical: 10,
       paddingHorizontal: 10,
       borderRadius: 10,
-      flex: 1, // The flex property allows the card to grow and shrink dynamically
-      margin: 5, // Keep some space between cards
+      flex: 1, 
+      margin: 5,
       alignItems: 'center',
       justifyContent: 'center',
     },
     goalLabel: {
       fontSize: 12,
       color: '#777',
-      marginBottom: 5, // Give some space between the label and the value
+      marginBottom: 5,
       textAlign: 'center',
       color: 'white'
     },
@@ -113,24 +113,24 @@ const CurrentGoals = ({ isStudent, studentId }) => {
       flexDirection: 'row',
       alignItems: 'center',
       margin: 20,
-      position: 'relative', // Ensures the text can be absolutely positioned within
+      position: 'relative', 
   },
   
   progressTrack: {
-      backgroundColor: '#e0e0e0', // Light grey for the unfilled track
+      backgroundColor: '#e0e0e0', 
       borderRadius: 20,
       height: 30,
-      width: '100%', // Ensure it fills the container
-      position: 'hidden', // Position it behind the progress bar
+      width: '100%', 
+      position: 'hidden', 
   },
   
   progressBar: {
-      backgroundColor: 'lightgreen', // Primary color for the filled track
+      backgroundColor: 'lightgreen',
       height: '100%',
       borderRadius: 20,
-      minWidth: 20, // Minimum visibility
-      maxWidth: '100%', // Ensure it doesn't overflow the container
-      position: 'absolute', // Position it behind the progress bar
+      minWidth: 20,
+      maxWidth: '100%',
+      position: 'absolute', 
   },
   
   progressText: {

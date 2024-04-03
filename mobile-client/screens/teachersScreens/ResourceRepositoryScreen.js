@@ -13,7 +13,6 @@ import {
 import HomepageSearchBar from "../../components/ui/homepageSearchbar";
 import IP_ADDRESS from "../../constants/ip_address_temp";
 import Colors from "../../constants/colors";
-import theme from "../../styles/theme";
 import { useAuth } from "../../context/Authcontext";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -24,7 +23,6 @@ import axios from "axios";
 import MaterialRepositoryPreviewModal from "../../components/ui/MaterialRepositoryPreviewModal";
 
 
-// Dimensions to calculate the window width
 const { width } = Dimensions.get("window");
 
 function ResourceRepositoryScreen() {
@@ -220,8 +218,8 @@ const styles = StyleSheet.create({
   shadowContainer: {
     paddingTop: 15,
     paddingHorizontal: 20,
-    paddingBottom: 15, // Optional: If you want some space inside the container
-    backgroundColor: "#fff", // A background color is required
+    paddingBottom: 15, 
+    backgroundColor: "#fff", 
     // iOS shadow styles
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -238,7 +236,6 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    // padding: 10,
     alignItems: "center",
     marginVertical: 0,
     overflow: 'hidden',
@@ -258,7 +255,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffffff',
         borderRadius: 15,
         margin: 5,
-        width: width / 2 - 20, // Two items per row with padding
+        width: width / 2 - 20, 
         alignItems: 'center',
         overflow: 'hidden',
         justifyContent: 'space-between',
@@ -269,8 +266,7 @@ const styles = StyleSheet.create({
         borderColor: Colors.accentGrey,
         borderWidth: 15,
         borderBottomWidth: 0,
-        overflow: 'hidden', // Ensures the image doesn't bleed outside the border radius
-        // height: 200
+        overflow: 'hidden',
     },
     itemImage: {
         width: '100%',
@@ -302,7 +298,6 @@ const styles = StyleSheet.create({
     chipContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        // justifyContent: 'center',
         marginVertical: 10,
         marginHorizontal: 5
     },
@@ -340,16 +335,16 @@ const styles = StyleSheet.create({
     },
     dropdownContainer:{
         flexDirection: 'row',
-        justifyContent: "space-around", // Try 'space-around' for equal spacing
-        alignItems: 'center', // This centers the dropdowns vertically in the container
+        justifyContent: "space-around", 
+        alignItems: 'center', 
         marginVertical: 0
     },
     selectionCount: {
-        textAlign: 'center', // Center the text horizontally
-        color: Colors.fontSecondary, // Use your theme's secondary font color
-        fontSize: 12, // Adjust the size as needed
-        marginTop: 4, // Adjust the space between the dropdown and this text
-        fontWeight: 'bold', // Optional: if you want the text to be bold
+        textAlign: 'center',
+        color: Colors.fontSecondary, 
+        fontSize: 12,
+        marginTop: 4, 
+        fontWeight: 'bold', 
     },
     selectedChip: {
         backgroundColor: Colors.pastelPink,
@@ -362,8 +357,8 @@ const styles = StyleSheet.create({
     },
     selectedChipsContainer:{
         flexDirection: 'row',
-        justifyContent: "space-around", // Try 'space-around' for equal spacing
-        alignItems: 'center', // This centers the dropdowns vertically in the container
+        justifyContent: "space-around", 
+        alignItems: 'center', 
         marginVertical: 3
     },
     pinkSelectedChipText:{

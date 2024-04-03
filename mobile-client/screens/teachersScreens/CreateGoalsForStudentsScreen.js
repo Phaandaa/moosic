@@ -52,12 +52,9 @@ function CreateGoalsForStudents({ route }) {
               points: points, // 
           };
           const editStudentGoalsUrl = `${IP_ADDRESS}/goals/update-goal/${studentID}`;
-          console.log(editStudentGoalsUrl);
-          console.log("CreateGoalsForStudent.js line 55", requestBody);
           await axios.put(editStudentGoalsUrl, requestBody, state.authHeader);
           Alert.alert("Success", "Goals updated successfully.");
       } catch (error) {
-          console.log("CreateGoalsforStudent.js line 57", error);
           Alert.alert("Error", "Failed to update goals.");
       } finally {
           setLoadingState(false);
@@ -69,10 +66,9 @@ function CreateGoalsForStudents({ route }) {
     if (!isNaN(validatedPoints)) {
         setPoints(validatedPoints);
     } else {
-        setPoints(0); // Reset to 0 if the input is not a number
+        setPoints(0);
     }
 };
-  // Counter component
   const Counter = ({ label, count, setCount }) => (
     <View style={styles.goalCounterContainer}>
       <Text style={styles.label}>{label}</Text>
@@ -167,7 +163,7 @@ const styles = StyleSheet.create({
   },
   goalCounterContainer: {
     alignItems: 'center',
-    width: '50%', // Half the container width to fit two counters in one row
+    width: '50%',
   },
   goalRow: {
     flexDirection: 'row',
@@ -182,7 +178,7 @@ const styles = StyleSheet.create({
       textAlign: 'center',
   },
   pointsLabel: {
-    marginBottom: 10, // Add some space above the text input
+    marginBottom: 10, 
   },
   counter: {
     flexDirection: 'row',

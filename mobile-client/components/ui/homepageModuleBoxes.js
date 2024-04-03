@@ -3,14 +3,10 @@ import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-nati
 import { Ionicons } from '@expo/vector-icons'; 
 import theme from '../../styles/theme'
 
-// Get the screen width
 const { width } = Dimensions.get('window');
-// Define the desired space between items and the padding around the FlatList
-const MARGIN = 10; // Margin on each side of a box
-const BOXES_PER_ROW = 2; // We want two boxes per row
-const FLATLIST_PADDING = 20; // Padding on the sides of the FlatList
-
-// Calculate the item width, taking into account margins and FlatList padding
+const MARGIN = 10; 
+const BOXES_PER_ROW = 2; 
+const FLATLIST_PADDING = 20; 
 const ITEM_WIDTH = (width - (FLATLIST_PADDING * 2) - (MARGIN * (BOXES_PER_ROW + 1))) / BOXES_PER_ROW;
 
 const BoxComponent = ({
@@ -30,18 +26,16 @@ const BoxComponent = ({
   return (
     <TouchableOpacity onPress={handleStart} >
       <View style={[styles.box, { backgroundColor: color }]}>
-        {/* Icon centered */}
         {iconName && (
           <View style={styles.iconContainer}>
             <Ionicons
               name={iconName}
-              size={80} // Adjust the size as needed
+              size={80}
               color={iconColor}
             />
           </View>
         )}
 
-        {/* Title and subtitle container */}
         <View style={styles.textContainer}>
           <Text style={styles.title}>
             {title}
@@ -55,20 +49,18 @@ const BoxComponent = ({
   );
 };
 
-// Adjust the styles as needed
 const styles = StyleSheet.create({
   box: {
     margin: MARGIN / 2,
-    alignItems: 'center', // Center children horizontally
-    justifyContent: 'center', // Center children vertically
-    padding: 10, // Add padding as needed
-    borderRadius: 15, // Add border radius
-    height: 200, // Fixed height for the box
-    width: ITEM_WIDTH, // Width calculated based on the screen width
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    padding: 10,
+    borderRadius: 15, 
+    height: 200, 
+    width: ITEM_WIDTH,
     
   },
   iconContainer: {
-    // Container for the icon to center it properly
     justifyContent: 'center',
     alignItems: 'center',
     height: 100,

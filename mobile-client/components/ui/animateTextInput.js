@@ -5,7 +5,6 @@ const AnimatedPlaceholderInput = ({ placeholder, secureTextEntry, textInputConfi
   const animatedValue = new Animated.Value(0);
 
   const handleFocus = () => {
-    // Animate placeholder when the input is focused
     Animated.timing(animatedValue, {
       toValue: 1,
       duration: 200,
@@ -14,7 +13,6 @@ const AnimatedPlaceholderInput = ({ placeholder, secureTextEntry, textInputConfi
   };
 
   const handleBlur = () => {
-    // Animate placeholder back to its original position when the input is blurred
     if (value === '') {
       Animated.timing(animatedValue, {
         toValue: 0,
@@ -31,7 +29,7 @@ const AnimatedPlaceholderInput = ({ placeholder, secureTextEntry, textInputConfi
 
   const fontSize = animatedValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [16, 14], // Adjust these values based on your preference
+    outputRange: [16, 14],
   });
 
   return (
@@ -63,7 +61,7 @@ const styles = StyleSheet.create({
   },
   placeholder: {
     position: 'absolute',
-    bottom: 40, // Adjusted to align with the bottom of the TextInput
+    bottom: 40,
     color: '#A1B2CF',
   },
 });

@@ -166,7 +166,7 @@ export const AuthProvider = ({ children }) => {
       const url = `${IP_ADDRESS}/api/auth/signout/${userId}?expoPushToken=${encodedExpoPushToken}`;
       console.log('Authcontext.js line 169, url: ', url);
       const response = await axios.post(url, {});
-      await clearAuthDataFromCache(); // This function should remove auth data from AsyncStorage
+      await clearAuthDataFromCache();
       dispatch({ type: LOGOUT });
       
     } catch (error) {
