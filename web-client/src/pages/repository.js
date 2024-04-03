@@ -158,7 +158,10 @@ const ApproveMaterialsSection = ({ pendingMaterials, onApprove, onReject }) => {
         </AccordionDetails>
         <RejectionModal
           open={rejectionModalOpen}
-          onClose={() => {setRejectionModalOpen(false); setRejectionReason("")}}
+          onClose={() => {
+            setRejectionModalOpen(false);
+            setRejectionReason("");
+          }}
           onSubmit={handleReject}
           reason={rejectionReason}
           setReason={setRejectionReason}
@@ -216,9 +219,9 @@ const Page = () => {
   });
 
   // Unique values for types, instruments, and grades (you could derive these from your materials data)
-  const types = ["Image", "Document"];
+  const types = ["Sight Reading", "Theory", "Music Sheet"];
   const instruments = ["Piano", "Guitar", "Ukulele", "Violin"];
-  const grades = ["1", "2", "3", "4", "5", "6"];
+  const grades = ["1", "2", "3", "4", "5", "6", "7", "8"];
 
   // Update the state when filters are changed
   const handleFilterChange = (event) => {
@@ -280,21 +283,26 @@ const Page = () => {
     }
   };
 
-
   const filteredAndSearchedMaterials = approvedMaterials.filter((material) => {
     // Filter logic
     const filterMatch =
-      (filters.type ? material.type === filters.type : true) &&
-      (filters.instrument ? material.instrument === filters.instrument : true) &&
-      (filters.grade ? material.grade === filters.grade : true);
+      (!filters.type || (material.type && material.type.includes(filters.type))) &&
+      (!filters.instrument ||
+        (material.instrument && material.instrument.includes(filters.instrument))) &&
+      (!filters.grade || (material.grade && material.grade.includes(filters.grade)));
 
     // Search logic - checks if the search term is included in the material's title
     // You can extend this logic to search in other attributes as well
     const searchMatch =
       material.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      material.instrument?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      material.grade?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      material.type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (material.instrument &&
+        material.instrument.some((instrument) =>
+          instrument.toLowerCase().includes(searchTerm.toLowerCase())
+        )) ||
+      (material.grade &&
+        material.grade.some((grade) => grade.toLowerCase().includes(searchTerm.toLowerCase()))) ||
+      (material.type &&
+        material.type.some((type) => type.toLowerCase().includes(searchTerm.toLowerCase()))) ||
       material.creationTime.toLowerCase().includes(searchTerm.toLowerCase());
 
     return filterMatch && searchMatch;
@@ -323,7 +331,6 @@ const Page = () => {
     if (data.status === "Approved") {
       setMaterials([...materials, data]);
     }
-
   };
 
   const MaterialCard = ({ material }) => (
