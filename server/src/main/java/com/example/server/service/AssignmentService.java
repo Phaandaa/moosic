@@ -55,6 +55,8 @@ public class AssignmentService {
         try {
             List<String> publicUrls = cloudStorageService.uploadFilesToGCS(files, "assignments");
             List<HashMap<String, String>> students = createAssignmentDTO.getSelectedStudents();
+            List<String> repoFileLinks = createAssignmentDTO.getRepoFileLinks();
+            publicUrls.addAll(repoFileLinks);
             String title = createAssignmentDTO.getAssignmentTitle();
             String description = createAssignmentDTO.getAssignmentDesc();
             String teacherId = createAssignmentDTO.getTeacherId();

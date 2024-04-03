@@ -34,14 +34,10 @@ public class CreateAssignmentDTO {
     @JsonProperty("selected_students")
     private ArrayList<HashMap<String, String>> selectedStudents;
 
+    @JsonProperty("repo_file_links")
+    private ArrayList<String> repoFileLinks;
+
     @JsonProperty("points")
     private Integer points;
-
-    @Override
-    public String toString() {
-        return "CreateAssignmentDTO [teacherId=" + teacherId + ", teacherName=" + teacherName + ", assignmentTitle="
-                + assignmentTitle + ", assignmentDesc=" + assignmentDesc + ", assignmentDeadline=" + assignmentDeadline
-                + ", selectedStudents=" + selectedStudents + ", points=" + points + "]";
-    }
     
 }

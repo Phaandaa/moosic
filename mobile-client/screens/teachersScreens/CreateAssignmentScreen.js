@@ -169,6 +169,7 @@ function CreateAssignmentScreen({ route, navigation }) {
       assignment_deadline: assignmentDeadline,
       selected_students: selectedStudents,
       // selected_students: [{student_id: '5C4Q6ZILqoTBi9YnESwpKQuhMcN2'}],
+      repo_file_links: selectedRepoFiles.map(item => item.fileLink),
       points: 0
     };
     console.log('CreateAssignmentScreen.js line 154, assignmentData:', assignmentData)
