@@ -3,6 +3,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Text,
+  TouchableWithoutFeedback,
   Alert,
   StyleSheet,
   View,
@@ -20,176 +21,128 @@ import theme from "../../styles/theme";
 import TypeCategoryDropdown from "../../components/ui/TypeCategoryDropdown";
 import GradeCategoryDropdown from "../../components/ui/GradeCategoryDropdown";
 import InstrumentCategoryDropdown from "../../components/ui/InstrumentCategoryDropdown";
+import { useAuth } from "../../context/Authcontext";
+import axios from "axios";
 
 
 // Dimensions to calculate the window width
 const { width } = Dimensions.get("window");
 
-function SelectFilesFromRepositoryScreen() {
+function SelectFilesFromRepositoryScreen({ navigation, route }) {
+
+    const { state } = useAuth();
     const [files, setFiles] = useState([]);
+    const [selectedFiles, setSelectedFiles] = useState([]);
     const [userData, setUserData] = useState({});
     const [filteredResults, setFilteredResults] = useState([]);
     const [searchText, setSearchText] = useState("");
-    const [modalVisible, setModalVisible] = useState(false);
 
     const [selectedTypes, setSelectedTypes] = useState([]); 
     const [selectedInstruments, setSelectedInstruments] = useState([]);
     const [selectedGrades, setSelectedGrades] = useState([]); 
 
-    // const [selectedItem, setSelectedItem] = useState(null);
-
-    // useEffect(() => {
-    //     const fetchUserData = async () => {
-    //     try {
-    //         const userData = await AsyncStorage.getItem("userData");
-    //         const parsedUserData = JSON.parse(userData);
-    //         setUserData(parsedUserData);
-    //     } catch (error) {
-    //         console.error("Error processing user data", error);
-    //     }
-    //     };
-    //     fetchUserData();
-    // }, []);
-
-    // useEffect(() => {
-    //     const fetchItems = async () => {
-    //     try {
-    //         const response = await fetch(`${IP_ADDRESS}/reward-shop`, {
-    //         method: "GET",
-    //         });
-
-    //         if (!response.ok) {
-    //         const errorText = response.statusText || "Unknown error occurred";
-    //         throw new Error(
-    //             `Request failed with status ${response.status}: ${errorText}`
-    //         );
-    //         }
-    //         const responseData = await response.json();
-    //         setItems(responseData); // Set the state with the response data
-    //         setFilteredResults(responseData);
-    //         console.log('responseData', responseData)
-    //     } catch (error) {
-    //         console.error("Error fetching items:", error);
-    //     }
-    //     };
-    //     fetchItems();
-    // }, []);
+    const selectedRepoFiles = route.params?.selectedRepoFiles;
 
     useEffect(() => {
-        // Combine search and category filters
-        applyFilters();
-    }, [files, searchText, selectedTypes, selectedInstruments, selectedGrades]);
+        if (selectedRepoFiles) {
+          console.log(selectedRepoFiles);
+          setSelectedFiles(selectedRepoFiles);
+        } else {
+          console.log("No files selected or navigated from another screen");
+        }
+    }, [selectedRepoFiles]);
 
-    const applyFilters = () => {
+
+
+    useEffect(() => {
+        const fetchMaterials = async() => {
+            try {
+                const [centralFilesResponse] = await Promise.all([
+                    axios.get(`${IP_ADDRESS}/material-repository/teacher`, state.authHeader)
+                ]);
+                setFiles(centralFilesResponse.data);
+                setFilteredResults(centralFilesResponse.data);
+            } catch (error) {
+                console.error("ResourceRepositoryScreen.js line 94, ", error);
+            }
+        };
+        fetchMaterials();
+    }, [state.authHeader, state.userData.id]);
+
+    useEffect(() => {
+        setFilteredResults(applyFilters(files));
+    }, [selectedTypes, selectedGrades, selectedInstruments, files, applyFilters]);
+
+    const toggleSelection = (file) => {
+        setSelectedFiles(prevSelected => {
+          const isAlreadySelected = prevSelected.some(selectedFile => selectedFile.id === file.id);
+          if (isAlreadySelected) {
+            // Remove the file from the array
+            return prevSelected.filter(selectedFile => selectedFile.id !== file.id);
+          } else {
+            // Add the file to the array
+            return [...prevSelected, file];
+          }
+        });
+    };
+
+    const confirmSelection = () => {
+        navigation.navigate('CreateAssignmentScreen', { selectedFiles });
+    };
+
+
+    const applyFilters = useCallback((files) => {
         let result = files;
 
-        // Filter by search text
         if (searchText) {
-        result = result.filter((file) =>
-            file.fileName.toLowerCase().includes(searchText.toLowerCase())
-        );
+            result = result.filter((file) =>
+                file.title.toLowerCase().includes(searchText.toLowerCase())
+            );
         }
 
-        // Filter by selected types
         if (selectedTypes.length > 0) {
             result = result.filter((file) =>
                 file.type.some(type => selectedTypes.includes(type.toLowerCase()))
             );
         }
     
-        // Filter by selected instruments
         if (selectedInstruments.length > 0) {
             result = result.filter((file) =>
             file.instrument.some(instrument => selectedInstruments.includes(instrument.toLowerCase()))
         )};
 
-        // Filter by selected grades
         if (selectedGrades.length > 0) {
             result = result.filter((file) =>
             file.grade.some(grade => selectedGrades.includes(grade.toLowerCase()))
         )};
         setFilteredResults(result);
-    };
+
+        return result;
+    }, [searchText, selectedTypes, selectedInstruments, selectedGrades]);
 
     const handleSearch = (text) => {
         setSearchText(text);
     };
 
-    // const handleTypeSelectionChange = (types) => {
-    //     setSelectedTypes(types);
-    //     console.log('selectedTypes', selectedTypes);
-    // }; // Assuming setSelectedStudents doesn't change, this function is now stable
-
-    // const handleInstrumentSelectionChange = ((instruments) => {
-    //     setSelectedInstruments(instruments);
-    //     console.log('selectedInstruments', selectedInstruments)
-    // }, [setSelectedInstruments]); // Assuming setSelectedStudents doesn't change, this function is now stable
-
-    // const handleGradeSelectionChange = ((grades) => {
-    //     setSelectedGrades(grades);
-    //     console.log('selectedGrades', selectedGrades)
-    // }, [setSelectedGrades]); // Assuming setSelectedStudents doesn't change, this function is now stable
-
-    useEffect(() => {
-        const MockFiles = [{
-            id: '1', 
-            fileName: 'ABRSM Theory.png',
-            creationTime: '2024-03-21T16:53:25.758+00:00',
-            fileLink:'https://storage.googleapis.com/moosicfyp/shop/438d678a-414d-47b3-a039-23f1de415879_6.png',
-            type: ['Theory', 'Sight Reading'],
-            instrument: ['Piano', 'Guitar'],
-            grade: ['3'],
-            status: 'Pending'
-        }, {
-            id: '2',
-            fileName: 'SightReadingG3.png',
-            creationTime: '2024-03-21T16:54:31.761+00:00',
-            fileLink:'https://storage.googleapis.com/moosicfyp/shop/5040a13d-c236-467d-87cd-1649456aad45_8.png',
-            type: ['Theory', 'Sight Reading'],
-            instrument: ['Piano'],
-            grade: ['3'],
-            status: 'Approved'
-        }, {
-            id: '3',
-            fileName: 'Let It Go.png',
-            creationTime: '2024-03-21T16:54:31.761+00:00',
-            fileLink:'https://storage.googleapis.com/moosicfyp/shop/5040a13d-c236-467d-87cd-1649456aad45_8.png',
-            type: ['Music Sheet'],
-            instrument: ['Violin'],
-            grade: ['1'],
-            status: 'Rejected'
-        }, {
-            id: '4',
-            fileName: 'Beethoven.png',
-            creationTime: '2024-03-21T16:54:31.761+00:00',
-            fileLink:'https://storage.googleapis.com/moosicfyp/shop/5040a13d-c236-467d-87cd-1649456aad45_8.png',
-            type: ['Music Sheet'],
-            instrument: ['Violin'],
-            grade: ['4'],
-            status: 'Rejected'
-        }];
-        
-        setFiles(MockFiles);
-        setFilteredResults(MockFiles);
-        console.log('files: ', files);
-    }, []); // Empty dependency array ensures this effect runs only once on mount
-
-    useEffect(() => {
-        console.log('files: ', files); // This will now log the updated state, but only after re-renders.
-    }, [files]); // Log the `files` state when it changes
-
-    const RepoFile = ({ fileName, instrument, type, grade, fileLink }) => {
+    const RepoFile = ({ title, instrument, type, grade, fileLink, creationTime, status, id }) => {
         return (
-        <TouchableOpacity style={styles.item}>
+        <TouchableOpacity style={styles.item} onPress={() => toggleSelection({id, title, fileLink})}>
             <View style={styles.itemImageContainer}> 
-                <Image
-                    source={{ uri: fileLink }}
-                    style={styles.itemImage}
-                    resizeMode="cover"
-                />
+            <Ionicons
+              name={selectedFiles.some(selectedFile => selectedFile.id === id) ? "checkbox" : "checkbox-outline"}
+              size={24}
+              color={Colors.mainPurple}
+              style={styles.checkboxIcon}
+            />
+                
+            <Image
+                source={{ uri: fileLink }}
+                style={styles.itemImage}
+                resizeMode="cover"
+            />
             </View>
-            <Text style={styles.itemTitle}>{fileName}</Text>
-            <Text style={styles.date}>{'24/03/2024' /* Replace with actual date if needed */}</Text>
+            <Text style={styles.itemTitle}>{title}</Text>
+            <Text style={styles.date}>{creationTime.slice(0, 10)}</Text>
             <View style={styles.chipContainer}>
                 {type.map((typeItem, index) => (
                     <View key={index} style={styles.chip}>
@@ -213,47 +166,42 @@ function SelectFilesFromRepositoryScreen() {
 
     return (
         <View style={styles.container}>
-        <View style={styles.shadowContainer}>
-            <View style={styles.headerButtons}>
-                <HomepageSearchBar onSearch={handleSearch} />
-                {/* <RewardsCategoryDropdown1 onCategoryChange={setSelectedCategories} /> */}
-                <View style={styles.dropdownContainer}> 
-                    <TypeCategoryDropdown onCategoryChange={setSelectedTypes}/>
-                    <InstrumentCategoryDropdown onCategoryChange={setSelectedInstruments}/>
-                    <GradeCategoryDropdown onCategoryChange={setSelectedGrades}/>
+            <View style={styles.shadowContainer}>
+                <View style={styles.headerButtons}>
+                    <HomepageSearchBar onSearch={handleSearch} />
+                    <ScrollView horizontal={true}> 
+                        <View style={styles.dropdownContainer}> 
+                            <TypeCategoryDropdown onCategoryChange={setSelectedTypes}/>
+                            <InstrumentCategoryDropdown onCategoryChange={setSelectedInstruments}/>
+                            <GradeCategoryDropdown onCategoryChange={setSelectedGrades}/>
+                        </View>
+                    </ScrollView>
                 </View>
-                <View style={styles.selectedChipsContainer}>
-                    <View style={styles.selectedChip}>
-                        <Text style={styles.pinkSelectedChipText}>{`${selectedTypes.length} Selected`}</Text>
-                    </View>
-                    <View style={[styles.selectedChip, styles.instrumentChip]}>
-                        <Text style={styles.blueSelectedChipText}>{`${selectedInstruments.length} Selected`}</Text>
-                    </View>
-                    <View style={[styles.selectedChip, styles.gradeChip]}>
-                        <Text style={styles.greenSelectedChipText}>{`${selectedGrades.length} Selected`}</Text>
-                    </View>
+                <View style={styles.header}>
+                    <Text style={styles.headerText}>
+                        {filteredResults?.length ? filteredResults.length : 0} Files Found
+                    </Text>
                 </View>
             </View>
-            <View style={styles.header}>
-            <Text style={styles.headerText}>
-                {filteredResults?.length ? filteredResults.length : 0} Files Found
-            </Text>
-            </View>
-        </View>
 
-        <View style={styles.itemList}>
-            <FlatList
-            data={filteredResults}
-            renderItem={({ item }) => <RepoFile {...item} />}
-            keyExtractor={(item) => item.id}
-            numColumns={2}
-            />
-        </View>
+            <View style={styles.itemList}>
+                <FlatList
+                data={filteredResults}
+                renderItem={({ item }) => <RepoFile {...item} />}
+                keyExtractor={(item) => item.id}
+                numColumns={2}
+                />
+            </View>
+            <View style={styles.confirmButtonContainer}>
+                {selectedFiles.length > 0 && <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={confirmSelection}>
+                <Text style={styles.buttonText}>Confirm File Selection</Text>
+                </TouchableOpacity>}
+            </View>
         </View>
     );
 };
-export default SelectFilesFromRepositoryScreen;
 
+export default SelectFilesFromRepositoryScreen;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#ffffff",
@@ -262,7 +210,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   shadowContainer: {
-    padding: 15, // Optional: If you want some space inside the container
+    paddingTop: 15,
+    paddingHorizontal: 20,
+    paddingBottom: 15, // Optional: If you want some space inside the container
     backgroundColor: "#fff", // A background color is required
     // iOS shadow styles
     shadowColor: "#000",
@@ -277,12 +227,28 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-between",
   },
+  confirmButtonContainer: {
+    padding: 15
+  },
+  button: {
+    backgroundColor: Colors.mainPurple,
+    padding: 15,
+    borderRadius: 15,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     // padding: 10,
     alignItems: "center",
-    paddingTop: 18,
+    marginVertical: 0,
+    overflow: 'hidden',
   },
   headerText: {
     fontSize: 14,
@@ -383,8 +349,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: "space-around", // Try 'space-around' for equal spacing
         alignItems: 'center', // This centers the dropdowns vertically in the container
-        height: 40,
-        marginTop: 10
+        marginVertical: 0
     },
     selectionCount: {
         textAlign: 'center', // Center the text horizontally
@@ -423,5 +388,51 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         fontSize: 16
     },
-
+    navigationRow:{
+        marginTop: 10,
+        flexDirection: 'row',
+        justifyContent: 'center', 
+        width: '100%',
+    },
+    navigationBtn:{
+        padding: 8,
+        backgroundColor: Colors.accentGrey,
+        borderRadius: 12,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: width/3,
+        marginHorizontal: 3
+    },
+    pressedNavigationBtn:{
+        padding: 8,
+        backgroundColor: Colors.mainPurple,
+        borderRadius: 12,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignSelf: 'center',
+        width: width/3,
+        marginHorizontal: 3
+    },
+    navigationText:{
+        fontSize: 12,
+        color: Colors.fontSecondary
+    },
+    statusHeader: {
+        position: "absolute",
+        top: 0,
+        right: 0,
+        zIndex: 1,
+        backgroundColor: '#ffffff',        
+        borderRadius: 50,
+        paddingHorizontal: 2,
+    },
+    pressedNavigationText:{
+        fontSize: 12,
+        color: Colors.bgWhite
+    },
+    checkboxIcon: {
+        position: 'absolute',
+        top: 5,
+        right: 5,
+    },
 });

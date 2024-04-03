@@ -15,7 +15,7 @@ import SuccessModal from '../../components/ui/SuccessModal';
 import { useAuth } from '../../context/Authcontext';
 
 
-function CreateAssignmentScreen({ navigation }) {
+function CreateAssignmentScreen({ route, navigation }) {
   const dispatch = useDispatch();
   const { state } = useAuth();
   const [assignmentName, setAssignmentName] = useState('');
@@ -23,6 +23,9 @@ function CreateAssignmentScreen({ navigation }) {
   const [assignmentDeadline, setAssignmentDeadline] = useState('');
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [submissionDate, setSubmissionDate] = useState(new Date());
+  const [selectedRepoFiles, setSelectedRepoFiles] = useState([]);
+  const [date, setDate] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
   const [errors, setErrors] = useState({});
 
   const [images, setImages] = useState([]);
@@ -35,8 +38,17 @@ function CreateAssignmentScreen({ navigation }) {
     setModalVisible(false);
   };
 
-  const [date, setDate] = useState(new Date());
-  const [showPicker, setShowPicker] = useState(false);
+  const selectedFiles = route.params?.selectedFiles;
+
+  useEffect(() => {
+    if (selectedFiles) {
+      console.log(selectedFiles);
+      setSelectedRepoFiles(selectedFiles);
+    } else {
+      console.log("No files selected or navigated from another screen");
+    }
+  }, [selectedFiles]);
+
 
   const toggleDatepicker = () => {
     setShowPicker(!showPicker);
@@ -96,6 +108,12 @@ function CreateAssignmentScreen({ navigation }) {
 
   const removeDocument = (index) => {
     setUploadedDocuments(currentDocs => currentDocs.filter((_, i) => i !== index));
+  };
+
+  const removeRepoFile = (id) => {
+    setSelectedRepoFiles(prevSelected => {
+      return prevSelected.filter(selectedFile => selectedFile.id !== id);
+    });
   };
 
   const validateForm = () => {
@@ -264,7 +282,7 @@ function CreateAssignmentScreen({ navigation }) {
 
         {/* <View style={styles.repoContainer}> */}
           <View style={styles.attachFilesSection}>
-            <TouchableOpacity style={styles.attachButton} onPress={() => navigation.navigate('SelectFilesFromRepositoryScreen')}>
+            <TouchableOpacity style={styles.attachButton} onPress={() => navigation.navigate('SelectFilesFromRepositoryScreen', { selectedRepoFiles })}>
               <Ionicons name="file-tray-full" size={24} color={Colors.mainPurple} />
               <Text style={styles.attachText}>Choose Files from Repository</Text>
             </TouchableOpacity>
@@ -272,7 +290,7 @@ function CreateAssignmentScreen({ navigation }) {
         {/* </View> */}
 
         {/* Display Images and Document Names */}
-        {images.length === 0 && uploadedDocuments.length === 0 ? (
+        {images.length === 0 && uploadedDocuments.length === 0 && selectedRepoFiles.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Ionicons name="cloud-upload-outline" size={50} color="#cccccc" />
             <Text style={styles.emptyText}>Upload images or documents to your assignment</Text>
@@ -298,6 +316,18 @@ function CreateAssignmentScreen({ navigation }) {
                   <Ionicons name="document-attach" size={24} color="#4F8EF7" />
                   <Text style={styles.documentName}>{doc.name}</Text>
                   <TouchableOpacity onPress={() => removeDocument(index)} style={styles.removeButton}>
+                    <Ionicons name="close-circle" size={24} color="red" />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+
+            <View style={styles.documentContainer}>
+              {selectedRepoFiles.map((repoFile, index) => (
+                <View key={index} style={styles.documentItem}>
+                  <Ionicons name="document-attach" size={24} color="#4F8EF7" />
+                  <Text style={styles.documentName}>{repoFile.title}</Text>
+                  <TouchableOpacity onPress={() => removeRepoFile(repoFile.id)} style={styles.removeButton}>
                     <Ionicons name="close-circle" size={24} color="red" />
                   </TouchableOpacity>
                 </View>
