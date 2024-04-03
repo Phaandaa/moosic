@@ -21,6 +21,7 @@ import TypeCategoryDropdown from "../../components/ui/TypeCategoryDropdown";
 import GradeCategoryDropdown from "../../components/ui/GradeCategoryDropdown";
 import InstrumentCategoryDropdown from "../../components/ui/InstrumentCategoryDropdown";
 import axios from "axios";
+import MaterialRepositoryPreviewModal from "../../components/ui/MaterialRepositoryPreviewModal";
 
 
 // Dimensions to calculate the window width
@@ -35,6 +36,8 @@ function ResourceRepositoryScreen() {
     const [filteredResults, setFilteredResults] = useState([]);
     const [searchText, setSearchText] = useState("");
     const [selectedTab, setSelectedTab] = useState("central");
+    const [materialData, setMaterialData] = useState({});
+    const [modalVisible, setModalVisible] = useState(false);
 
     const [selectedTypes, setSelectedTypes] = useState([]); 
     const [selectedInstruments, setSelectedInstruments] = useState([]);
@@ -50,6 +53,7 @@ function ResourceRepositoryScreen() {
                 setCentralFiles(centralFilesResponse.data);
                 setTeacherFiles(state.resources);
                 setFilteredResults(centralFilesResponse.data);
+                console.log(centralFilesResponse.data);
             } catch (error) {
                 console.error("ResourceRepositoryScreen.js line 94, ", error);
             }
@@ -65,6 +69,17 @@ function ResourceRepositoryScreen() {
             setFilteredResults(applyFilters(teacherFiles));
         }
     }, [files, searchText, selectedTypes, selectedInstruments, selectedGrades, selectedTab]);
+
+    const handleCloseModal = () => {
+        setMaterialData({});
+        setModalVisible(false);
+        
+    };
+
+    const handleOpenModal = (materialData) => {
+        setMaterialData(materialData);
+        setModalVisible(true); 
+    };
 
     const applyFilters = useCallback((files) => {
         let result = files;
@@ -108,9 +123,9 @@ function ResourceRepositoryScreen() {
         setSearchText(text);
     };
 
-    const RepoFile = ({ title, instrument, type, grade, fileLink, creationTime, status }) => {
+    const RepoFile = ({ title, instrument, type, grade, fileLink, creationTime, status, description, reasonForStatus }) => {
         return (
-        <TouchableOpacity style={styles.item}>
+        <TouchableOpacity style={styles.item} onPress={() => handleOpenModal({title, description, fileLink, reasonForStatus})}>
             <View style={styles.itemImageContainer}> 
                 {selectedTab === "teacher" && <View style={styles.statusHeader}>
                     <Ionicons
@@ -151,6 +166,13 @@ function ResourceRepositoryScreen() {
 
     return (
         <View style={styles.container}>
+        <MaterialRepositoryPreviewModal
+            isVisible={modalVisible}
+            onClose={handleCloseModal}
+            onConfirm={handleOpenModal}
+            materialData={materialData}
+            isCentral={selectedTab === "central"}
+        />
         <View style={styles.shadowContainer}>
             <View style={styles.headerButtons}>
                 <HomepageSearchBar onSearch={handleSearch} />
