@@ -4,9 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
-import { useDispatch } from 'react-redux';
 import IP_ADDRESS from '../../constants/ip_address_temp';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Colors from '../../constants/colors';
 import SuccessModal from '../../components/ui/SuccessModal';
@@ -18,8 +16,7 @@ import { useAuth } from '../../context/Authcontext';
 
 function UploadResourceScreen({ navigation }) {
   
-  const { state } = useAuth();
-  const dispatch = useDispatch();
+  const { state, dispatch } = useAuth();
   const [materialTitle, setMaterialTitle] = useState('');
   const [materialDesc, setMaterialDesc] = useState('');
   const [errors, setErrors] = useState({});
@@ -118,28 +115,15 @@ function UploadResourceScreen({ navigation }) {
     const materialData ={
       teacherId: state.userData.id,
       teacherName: state.userData.name,
+      type: selectedTypes,
+      grade: selectedGrades,
+      instrument: selectedInstruments,
       title: materialTitle,
       description: materialDesc,
+      status: "Pending"
     };
 
     console.log('materialData:', materialData)
-  
-    // image.forEach((image, index) => {
-    //   const { uri, fileName } = image
-    //   if (typeof image.uri === 'string') { // Check if image.uri is a string
-    //     const uriParts = image.uri.split('.');
-    //     const fileType = uriParts[uriParts.length - 1];
-
-    //     console.log('Appending file:', image.uri);
-    //     formData.append('files', {
-    //         uri: uri,
-    //         name: fileName,
-    //         type: `image/${fileType}`,
-    //     });
-    //   } else {
-    //     console.warn('Invalid image URI:', image.uri);
-    //   }
-    // });
 
     if (image) {
       const uriParts = image.uri.split('.');
@@ -159,12 +143,19 @@ function UploadResourceScreen({ navigation }) {
     }
     
     // console.log(formData)
-    formData.append("material_repository", {"string" : JSON.stringify(materialData), type: 'application/json'});
+    // formData.append("material_repository", {"string" : JSON.stringify(materialData), type: 'application/json'});
+    formData.append("material_repository", JSON.stringify(materialData));
     console.log(formData)
     try {
-      const response = axios.post(`${IP_ADDRESS}/material-repository/create`, formData, state.authHeader);
-      const responseData = await response.data;
-      setModalVisible(true);
+      const response = await axios.post(`${IP_ADDRESS}/material-repository/create`, formData, state.authHeader);
+      const responseData = response.data;
+      if (response.status == 200) {
+        setModalVisible(true);
+      } else {
+        Alert.alert("Error uploading resources");
+      }
+      const resourcesResponse = await axios.get(`${IP_ADDRESS}/material-repository/teacher/${state.userData.id}`, state.authHeader);
+      dispatch({ type: 'UPDATE_RESOURCE_REPOSITORY', payload: { resources: resourcesResponse.data }});
     } catch (error) {
       console.error('Error recording practice:', error);
       Alert.alert('Error', `Failed to create practice. ${error.response?.data?.message || 'Please try again.'}`);
