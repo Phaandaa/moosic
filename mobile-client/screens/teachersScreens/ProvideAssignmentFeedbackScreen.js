@@ -12,8 +12,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Colors from '../../constants/colors';
 import SuccessModal from '../../components/ui/SuccessModal';
+import { useAuth } from '../../context/Authcontext';
 
 function ProvideAssignmentFeedbackScreen({ navigation, route }) {
+  const { state } = useAuth();
   const {assignmentID} = route.params;
   const [assignmentName, setAssignmentName] = useState('');
   const [teacherFeedback, setTeacherFeedback] = useState('');
@@ -140,21 +142,17 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
 
     try {
 
-      const response = await fetch(`${IP_ADDRESS}/assignments/teacher/${assignmentID}/update?`, {
-          method: 'PUT',
-          body: formData,
-      });
+      const response = await axios.put(`${IP_ADDRESS}/assignments/teacher/${assignmentID}/update?`, formData, state.authHeader);
         
-      if (!response.ok) {
+      if (response.status != 200) {
         const errorText = response.statusText || 'Unknown error occurred';
         throw new Error(`Request failed with status ${response.status}: ${errorText}`);
       }
-      const responseData = await response.json();
-      console.log('ProvideAssignmentFeddbackScreen.js line 166, responseData: ', responseData);
+      
       setModalVisible(true);
 
     } catch (error) {
-      console.error('ProvideAssignmentFeddbackScreen.js line 171, Error adding feedback:', error);
+      console.error('ProvideAssignmentFeddbackScreen.js line 155, Error adding feedback:', error);
       Alert.alert('Error', `Failed to add feedback. ${error.response?.data?.message || 'Please try again.'}`);
     }
   };
