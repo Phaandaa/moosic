@@ -11,8 +11,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.server.dao.MaterialRepositoryRepository;
 import com.example.server.dao.TeacherRepository;
+import com.example.server.dao.UserRepository;
 import com.example.server.entity.MaterialRepository;
 import com.example.server.models.CreateMaterialRepositoryDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class MaterialRepositoryService {
@@ -23,27 +25,35 @@ public class MaterialRepositoryService {
     @Autowired
     private TeacherRepository teacherRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Autowired 
     private CloudStorageService cloudStorageService;
 
     @Autowired
     private NotificationService notificationService;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     // create material repository
     @Transactional
-    public MaterialRepository createMaterialRepository(CreateMaterialRepositoryDTO materialRepositoryDTO, MultipartFile file) {
+    public MaterialRepository createMaterialRepository(String materialRepositoryJSON, MultipartFile file) {
         try {
+            CreateMaterialRepositoryDTO materialRepositoryDTO = objectMapper.readValue(materialRepositoryJSON, CreateMaterialRepositoryDTO.class);
             String fileURL = cloudStorageService.uploadFileToGCS(file, "material-repository");
             String teacherId = materialRepositoryDTO.getTeacherId();
-            teacherRepository.findById(teacherId).orElseThrow(()->
-                new NoSuchElementException("No teacher found with the ID " + teacherId));
+            userRepository.findById(teacherId).orElseThrow(()->
+                new NoSuchElementException("No user found with the ID " + teacherId));
             List<String> type = materialRepositoryDTO.getType();
             List<String> instrument = materialRepositoryDTO.getInstrument();
             List<String> grade = materialRepositoryDTO.getGrade();
             String teacherName = materialRepositoryDTO.getTeacherName();
             String title = materialRepositoryDTO.getTitle();
             String description = materialRepositoryDTO.getDescription();
-            MaterialRepository createdMaterialRepository = new MaterialRepository(title, description, fileURL, "Pending", null, type, instrument, grade, teacherId, teacherName);
+            String status = materialRepositoryDTO.getStatus();
+            MaterialRepository createdMaterialRepository = new MaterialRepository(title, description, fileURL, status, null, type, instrument, grade, teacherId, teacherName);
 
             materialRepositoryRepository.save(createdMaterialRepository);
             return createdMaterialRepository;

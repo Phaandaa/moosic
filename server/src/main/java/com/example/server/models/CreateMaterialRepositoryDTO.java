@@ -16,5 +16,6 @@ public class CreateMaterialRepositoryDTO {
     private List<String> grade;
     private String teacherId;
     private String teacherName;
+    private String status;
     
 }
