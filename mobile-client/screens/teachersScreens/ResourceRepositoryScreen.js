@@ -48,16 +48,14 @@ function ResourceRepositoryScreen() {
                     axios.get(`${IP_ADDRESS}/material-repository/teacher/${state.userData.id}`, state.authHeader),
                 ]);
                 setCentralFiles(centralFilesResponse.data);
-                setTeacherFiles(teacherFilesResponse.data);
-                console.log("Central files: ", centralFilesResponse.data);
-                console.log("Teacher files: ", teacherFilesResponse.data);
+                setTeacherFiles(state.resources);
                 setFilteredResults(centralFilesResponse.data);
             } catch (error) {
                 console.error("ResourceRepositoryScreen.js line 94, ", error);
             }
         };
         fetchMaterials();
-    }, [state.authHeader, state.userData.id]);
+    }, [state.authHeader, state.userData.id, state.resources]);
     
     useEffect(() => {
         if (selectedTab == "central") {

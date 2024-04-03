@@ -25,7 +25,7 @@ import axios from "axios";
 const { width } = Dimensions.get("window");
 
 function RewardsShopScreen() {
-  const { state } = useAuth();
+  const { state, dispatch } = useAuth();
   const [items, setItems] = useState([]);
   const [purchaseHistory, setPurchaseHistory] = useState([]);
   const [userData, setUserData] = useState({});
@@ -109,6 +109,10 @@ function RewardsShopScreen() {
       }));
 
       Alert.alert("Success", "Item redeemed successfully!");
+
+      const inventoryResponse = await axios.get(`${IP_ADDRESS}/student-inventory/${state.userData.id}`, state.authHeader);
+      dispatch({ type: 'UPDATE_INVENTORY', payload: { inventory: inventoryResponse.data }})
+
       setModalVisible(false);
       setSelectedItem(null); // Reset selected item on successful redemption
       if (selectedItem.type === "DIGITAL") {

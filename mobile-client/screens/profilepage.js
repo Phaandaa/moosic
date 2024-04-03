@@ -32,6 +32,7 @@ const ProfileScreen = ({ navigation, route }) => {
   const fetchInventoryData = async (userId) => {
     try {
       const response = await axios.get(`${IP_ADDRESS}/student-inventory/${userId}`, state.authHeader);
+      dispatch({ type: 'UPDATE_INVENTORY', payload: { inventory: response.data }})
       setOwnedAvatars(response.data.ownedAvatarList);
       setOwnedFrames(response.data.ownedFrameList);
       setOwnedBadges(response.data.ownedBadgeList);
@@ -54,7 +55,11 @@ const ProfileScreen = ({ navigation, route }) => {
       setUserPoints(state.userData.pointsCounter);
 
       if (state.userData.role === 'Student') {
-        await fetchInventoryData(state.userData.id);
+        setOwnedBadges(state.inventory.ownedBadgeList);
+        console.log("Owned student badge: ", state.inventory.ownedBadgeList);
+        setOwnedAvatars(state.inventory.ownedAvatarList);
+        setOwnedFrames(state.inventory.ownedFrameList);
+        // await fetchInventoryData(state.userData.id);
       }
     } catch (error) {
       console.error('profilepage.js line 94, Error processing stored data:', error.message);
@@ -66,7 +71,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [state.inventory]);
   
 
   // Handle the sign-out process
