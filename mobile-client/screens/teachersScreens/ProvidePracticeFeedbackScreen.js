@@ -13,6 +13,7 @@ import Colors from '../../constants/colors';
 import SuccessModal from '../../components/ui/SuccessModal';
 import axios from 'axios';
 import { useAuth } from '../../context/Authcontext';
+import PracticeFeedbackDropdown from '../../components/ui/PracticeFeedbackDropdown';
 
 function ProvidePracticeFeedbackScreen({route, navigation}){
     const { state } = useAuth();
@@ -131,7 +132,7 @@ function ProvidePracticeFeedbackScreen({route, navigation}){
           />
         </View>
 
-        <View style={styles.inputContainer}>
+        {/* <View style={styles.inputContainer}>
           <TextInput
             placeholder="Points"
             value={points}
@@ -139,7 +140,9 @@ function ProvidePracticeFeedbackScreen({route, navigation}){
             style={[styles.input, styles.textArea]}
             keyboardType='numeric'
           />
-        </View>
+        </View> */}
+
+        <PracticeFeedbackDropdown onCategoryChange={setPoints}/>
       
         <View style={styles.attachFilesSection}>
           <TouchableOpacity style={styles.attachButton} onPress={() => uploadVideo('gallery')}>

@@ -13,6 +13,7 @@ import axios from 'axios';
 import Colors from '../../constants/colors';
 import SuccessModal from '../../components/ui/SuccessModal';
 import { useAuth } from '../../context/Authcontext';
+import AssgFeedbackDropdown from '../../components/ui/AssgFeedbackDropdown';
 
 function ProvideAssignmentFeedbackScreen({ navigation, route }) {
   const { state } = useAuth();
@@ -21,10 +22,11 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
   const [teacherFeedback, setTeacherFeedback] = useState('');
   const [points, setPoints] = useState('');
   const [errors, setErrors] = useState({});
+  // const [selectedGradePoints, setSelectedGradePoints] = useState(''); 
+
 
   const [images, setImages] = useState([]);
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
-
 
   const [isModalVisible, setModalVisible] = useState(false);
 
@@ -173,7 +175,7 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
           />
         </View>
 
-        <View style={styles.inputContainer}>
+        {/* <View style={styles.inputContainer}>
           <TextInput
             placeholder="Points"
             value={points}
@@ -181,7 +183,9 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
             style={[styles.input, styles.textArea]}
             // keyboardType='numeric'
           />
-        </View>
+        </View> */}
+
+        <AssgFeedbackDropdown onCategoryChange={setPoints} />
       
         <View style={styles.uploadButtons}>
         <View style={styles.attachFilesSection}>
@@ -317,6 +321,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 20,
+    marginTop: 10
   },
   imageContainer: {
     flexDirection: 'row',
