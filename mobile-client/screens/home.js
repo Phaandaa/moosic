@@ -17,6 +17,9 @@ const HomeScreen = ({ navigation }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [loadingstate, setLoadingState] = useState(false);
   const [userToken, setUserToken] = useState('');
+
+  useEffect(() => {
+  }, [state.notifications]);
   
 
   const flatListRef = useRef();

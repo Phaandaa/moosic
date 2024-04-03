@@ -9,6 +9,7 @@ import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import { StatusBar } from 'expo-status-bar';
+import IP_ADDRESS from './constants/ip_address_temp';
 
 // Pages
 import LoginPage from './screens/login';
@@ -55,6 +56,7 @@ import { AuthProvider, useAuth } from './context/Authcontext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getNotifications } from './context/notificationsContext';
 import { saveNotification } from './context/notificationsContext';
+import axios from 'axios';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => {
@@ -239,7 +241,7 @@ const App = () => {
 
 const RootNavigator = () => {
   
-  const { state } = useAuth();
+  const { state, dispatch } = useAuth();
   const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
@@ -253,12 +255,17 @@ const RootNavigator = () => {
 
     notificationListener.current = Notifications.addNotificationReceivedListener(async notification => {
       const updatenotification = async() => {
+
+        var data = await AsyncStorage.getItem('authData');
+        data = JSON.parse(data);
         try {
-            const response = await axios.get(`${IP_ADDRESS}/notifications/${state.userData.id}`, state.authHeader);
-            dispatch({ type: 'UPDATE_NOTIFS', payload: { notifications: response.data } });
+          console.log("Current state", state.userData);
+          const response = await axios.get(`${IP_ADDRESS}/notifications/${data.id}`, state.authHeader);
+          dispatch({ type: 'UPDATE_NOTIFS', payload: { notifications: response.data } });
         } catch (error) {
-            console.error("App.js line 253, ", error);
+          console.error("App.js line 253, ", error);
         }
+        
       };
       updatenotification();
     });
