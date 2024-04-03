@@ -8,7 +8,7 @@ const HANDLERS = {
   SIGN_IN: "SIGN_IN",
   SIGN_OUT: "SIGN_OUT",
   SIGN_UP: "SIGN_UP",
-  REFRESH_TOKEN: 'REFRESH_TOKEN',
+  REFRESH_TOKEN: "REFRESH_TOKEN",
 };
 
 const initialState = {
@@ -60,6 +60,19 @@ const handlers = {
       user: null,
     };
   },
+  [HANDLERS.REFRESH_TOKEN]: (state, action) => {
+    const { idToken, refreshToken, expiresIn, expirationTime } = action.payload;
+    return {
+      ...state,
+      user: {
+        ...state.user,
+        idToken,
+        refreshToken,
+        expiresIn,
+        expirationTime,
+      },
+    };
+  },
 };
 
 const reducer = (state, action) =>
@@ -75,25 +88,47 @@ export const AuthProvider = ({ children }) => {
   const initialized = useRef(false);
   const refreshTimer = useRef(null);
 
-  const scheduleTokenRefresh = (expiresIn) => {
-    // Subtract a buffer to ensure we refresh before the token actually expires
-    const refreshBuffer = 60; // Refresh 1 minute before expiry
-    const msUntilExpiry = (expiresIn - refreshBuffer) * 1000;
-  
-    // Clear any existing refresh timeout
+  console.log("AuthContext state", state);
+  console.log("AuthContext cookies", cookies);
+
+  const scheduleTokenRefresh = () => {
+    // Clear any existing timeout to prevent multiple schedules
     if (refreshTimer.current) {
       clearTimeout(refreshTimer.current);
+      refreshTimer.current = null;
     }
   
-    // Set up the refresh timeout
+    const currentTime = new Date().getTime();
+    const expirationTime = cookies.expirationTime ? parseInt(cookies.expirationTime, 10) : 0;
+    const expiresInMilliseconds = expirationTime - currentTime;
+  
+    if (expiresInMilliseconds <= 0) {
+      // If the calculated time is already passed, clear the token immediately
+      clearToken();
+      return;
+    }
+  
+    // Schedule the token refresh to happen 1 minute before the token expires
     refreshTimer.current = setTimeout(() => {
       refreshToken();
-    }, msUntilExpiry);
+    }, expiresInMilliseconds - 60000); // Subtracting 1 minute as a buffer
+  };
+
+  const clearToken = () => {
+    removeCookie("idToken", { path: "/" });
+    removeCookie("user", { path: "/" });
+    removeCookie("authenticated", { path: "/" });
+    removeCookie("expirationTime", { path: "/" }); // Assuming you also want to clear this
+
+    dispatch({
+      type: HANDLERS.SIGN_OUT,
+    });
   };
 
   useEffect(() => {
-    if (state.user?.idToken && state.user?.expiresIn) {
-      scheduleTokenRefresh(state.user.expiresIn);
+    // Ensure to call `scheduleTokenRefresh` only when necessary
+    if (state.user?.idToken && state.user?.expirationTime) {
+      scheduleTokenRefresh();
     }
   
     return () => {
@@ -101,9 +136,7 @@ export const AuthProvider = ({ children }) => {
         clearTimeout(refreshTimer.current);
       }
     };
-  }, [state.user?.idToken, state.user?.expiresIn]); // Depend on idToken and expiresIn
-  
-  
+  }, [state.user?.idToken, state.user?.expirationTime]); // Use expirationTime from state or cookie to control the refresh logic
 
   const initialize = async () => {
     // Prevent from calling twice in development mode with React.StrictMode enabled
@@ -152,14 +185,13 @@ export const AuthProvider = ({ children }) => {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json(); // Assuming the response body will be in JSON format
-      console.log("signIn response", data);
-      console.log("idToken", data.idToken);
+
+      const expiresInMilliseconds = data.expiresIn * 1000; // Convert expiresIn to milliseconds
+      const expirationTime = new Date().getTime() + expiresInMilliseconds;
       setCookie("idToken", data.idToken, { path: "/" });
-
+      setCookie("expirationTime", expirationTime, { path: "/" });
       setCookie("authenticated", "true", { path: "/" });
-      setCookie("user", JSON.stringify(data), { path: "/" });
-
-      console.log("idToken cookies", cookies.idToken);
+      setCookie("user", JSON.stringify({...data, expirationTime}), { path: "/" });
 
       dispatch({
         type: HANDLERS.SIGN_IN,
@@ -189,8 +221,12 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json(); // Assuming the response body will be in JSON format
       console.log("signUp response", data);
 
+      const expiresInMilliseconds = data.expiresIn * 1000; // Convert expiresIn to milliseconds
+      const expirationTime = new Date().getTime() + expiresInMilliseconds;
+      setCookie("expirationTime", expirationTime, { path: "/" });
+
       setCookie("authenticated", "true", { path: "/" });
-      setCookie("user", JSON.stringify(data), { path: "/" });
+      setCookie("user", JSON.stringify({...data, expirationTime}), { path: "/" });
       setCookie("idToken", data.idToken, { path: "/" });
 
       dispatch({
@@ -207,47 +243,70 @@ export const AuthProvider = ({ children }) => {
     removeCookie("authenticated", { path: "/" });
     removeCookie("user", { path: "/" });
     removeCookie("idToken", { path: "/" });
+    removeCookie("expirationTime", { path: "/" });
     dispatch({
       type: HANDLERS.SIGN_OUT,
     });
   };
 
   const refreshToken = async () => {
-    const { userId, refreshToken } = state.user || {};
-  
+    const { userId, refreshToken, idToken } = state.user || {};
+
     if (!userId || !refreshToken) {
-      console.error('Cannot refresh token: missing user ID or refresh token');
+      console.error("Cannot refresh token: missing user ID or refresh token");
+
       return;
     }
-  
+
     try {
-      const response = await postAsync(`api/auth/request-new-token/${userId}?refreshToken=${refreshToken}`);
-  
+      const response = await postAsync(
+        `api/auth/request-new-token/${userId}?refreshToken=${refreshToken}`,
+        null,
+        idToken
+      );
+
       if (!response.ok) {
+        console.log("HTTP error! status:", response.status);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-  
+
       const data = await response.json();
+      console.log("Refreshed token successfully", data);
+
+      const expiresInMilliseconds = data.expiresIn * 1000; // Convert expiresIn to milliseconds
+      const expirationTime = new Date().getTime() + expiresInMilliseconds;
+
+      setCookie("expirationTime", expirationTime, { path: "/" });
+
       setCookie("idToken", data.id_token, { path: "/" });
-      setCookie('user', JSON.stringify({ ...state.user, idToken: data.id_token, refreshToken: data.refresh_token, expiresIn: data.expires_in }), { path: '/' });
-  
+      setCookie(
+        "user",
+        JSON.stringify({
+          ...state.user,
+          idToken: data.id_token,
+          refreshToken: data.refresh_token,
+          expiresIn: data.expires_in,
+          expirationTime, // Store the absolute expiration timestamp
+        }),
+        { path: "/" }
+      );
+
       dispatch({
         type: HANDLERS.REFRESH_TOKEN,
         payload: {
           ...state.user,
           idToken: data.id_token,
           refreshToken: data.refresh_token,
-          expiresIn: data.expires_in
+          expiresIn: data.expires_in,
         },
       });
-  
+
       // Schedule the next refresh using expiresIn
       scheduleTokenRefresh(data.expires_in);
     } catch (error) {
-      console.error('Error refreshing token:', error);
+      console.error("Error refreshing token:", error);
     }
   };
-  
 
   return (
     <AuthContext.Provider
