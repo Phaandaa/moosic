@@ -21,6 +21,7 @@ const Page = () => {
   const [students, setStudents] = useState([]);
   const [teachers, setTeachers] = useState([]);
   const [items, setItems] = useState([]);
+  const [pendingApprovals, setPendingApprovals] = useState([]);
 
   const countAccountsByCategory = (accounts, fieldName, category) => {
     return accounts.filter((account) => account[fieldName] === category).length;
@@ -58,9 +59,21 @@ const Page = () => {
       }
     };
 
+    const fetchPendingApprovals = async () => {
+      try {
+        const response = await getAsync(`material-repository/admin`, user.idToken);
+        const data = await response.json();
+        console.log("Pending Approvals:", data);
+        setPendingApprovals(data.filter((item) => item.status === "Pending"));
+      } catch (error) {
+        console.error("Error fetching pending approvals:", error);
+      }
+    };
+
     fetchStudents();
     fetchTeachers();
     fetchItems();
+    fetchPendingApprovals();
   }, []);
 
   return (
@@ -120,7 +133,13 @@ const Page = () => {
               />
             </Grid>
             <Grid xs={12} sm={6} lg={3}>
-              <OverviewTotalProfit sx={{ height: "100%" }} value="$15k" />
+              <OverviewTotalCustomers
+                // difference={16}
+                // positive={false}
+                sx={{ height: "100%" }}
+                value={pendingApprovals?.length ? pendingApprovals.length : 0}
+                title="Pending Approvals"
+              />
             </Grid>
             {/* <Grid xs={12} lg={4}>
               <OverviewSales
