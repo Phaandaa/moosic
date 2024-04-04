@@ -158,19 +158,49 @@ function CreatePracticeScreen({navigation}){
       //   Alert.alert('Error', `Failed to create practice. ${error.response?.data?.message || 'Please try again.'}`);
       // }
 
-      console.log('Current state.authHeader contents:', state.authHeader);
+      console.log('Current state.authHeader contents:', state.authHeader.headers);
 
       try {
         const response = await fetch(`${IP_ADDRESS}/practices/create`, {
-            method: 'POST',
-            headers:{...state.authHeader.headers},
-            body: formData,
+          method: 'POST',
+          headers: {
+            ...state.authHeader.headers,
+            // body: formData, (if i put this here error 403 comes up)
+          },
+          body: formData, // (if i put this here network error comes up, by right this is the correct format)
         });
+      
           
+        // Check if the response status indicates success but no content
+        if (response.status === 204) {
+          console.log('No content to parse.');
+          // Handle no content response
+          setModalVisible(true);
+          return;
+        }
+
         if (!response.ok) {
           const errorText = response.statusText || 'Unknown error occurred';
-          throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+          if (response.headers.get("Content-Length") !== "0") {
+            const errorResponse = await response.json(); // Only parse if there's content
+            throw new Error(`Request failed with status ${response.status}: ${errorResponse.message || errorText}`);
+          } else {
+            throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+          }
         }
+
+        // Ensure there's content before parsing
+        if (response.headers.get("Content-Length") !== "0") {
+          const responseData = await response.json();
+          console.log(responseData);
+          // Handle successful response
+          setModalVisible(true);
+        } else {
+          console.log('Response was successful but no JSON content was returned.');
+          // Handle empty but successful response
+          setModalVisible(true);
+        }
+      
         const responseData = await response.json();
         console.log(responseData);
         // dispatch(setCache({ key: 'practiceData', value: practiceData })); 
