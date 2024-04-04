@@ -19,9 +19,9 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { SeverityPill } from 'src/components/severity-pill';
 
 const statusMap = {
-  pending: 'warning',
-  delivered: 'success',
-  refunded: 'error'
+  Pending: 'warning',
+  Approved: 'success',
+  Rejected: 'error'
 };
 
 export const OverviewLatestOrders = (props) => {
@@ -29,17 +29,17 @@ export const OverviewLatestOrders = (props) => {
 
   return (
     <Card sx={sx}>
-      <CardHeader title="Latest Orders" />
+      <CardHeader title="Latest Materials" />
       <Scrollbar sx={{ flexGrow: 1 }}>
         <Box sx={{ minWidth: 800 }}>
           <Table>
             <TableHead>
               <TableRow>
                 <TableCell>
-                  Order
+                  Material Title
                 </TableCell>
                 <TableCell>
-                  Customer
+                  Uploaded By
                 </TableCell>
                 <TableCell sortDirection="desc">
                   Date
@@ -51,7 +51,7 @@ export const OverviewLatestOrders = (props) => {
             </TableHead>
             <TableBody>
               {orders.map((order) => {
-                const createdAt = format(order.createdAt, 'dd/MM/yyyy');
+                const createdAt = format(new Date(order.creationTime), "dd/MM/yyyy HH:mm:ss")
 
                 return (
                   <TableRow
@@ -59,10 +59,10 @@ export const OverviewLatestOrders = (props) => {
                     key={order.id}
                   >
                     <TableCell>
-                      {order.ref}
+                      {order.title}
                     </TableCell>
                     <TableCell>
-                      {order.customer.name}
+                      {order.teacherName}
                     </TableCell>
                     <TableCell>
                       {createdAt}
@@ -83,6 +83,7 @@ export const OverviewLatestOrders = (props) => {
       <CardActions sx={{ justifyContent: 'flex-end' }}>
         <Button
           color="inherit"
+          href='/repository'
           endIcon={(
             <SvgIcon fontSize="small">
               <ArrowRightIcon />

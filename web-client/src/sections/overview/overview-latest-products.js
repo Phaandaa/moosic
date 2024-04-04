@@ -27,7 +27,7 @@ export const OverviewLatestProducts = (props) => {
   });
 
   // Slice the array to get the top 5 most recent products
-  const recentProducts = sortedProducts.slice(0, 5);
+  const recentProducts = sortedProducts.slice(0, 4);
   return (
     <Card sx={sx}>
       <CardHeader title="Latest Products" />
