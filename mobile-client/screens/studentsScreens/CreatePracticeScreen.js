@@ -165,9 +165,9 @@ function CreatePracticeScreen({navigation}){
           method: 'POST',
           headers: {
             ...state.authHeader.headers,
-            
+            // body: formData, (if i put this here error 403 comes up)
           },
-          body: formData,
+          body: formData, // (if i put this here network error comes up, by right this is the correct format)
         });
       
           
