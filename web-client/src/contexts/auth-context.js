@@ -2,13 +2,13 @@ import { createContext, useContext, useEffect, useReducer, useRef } from "react"
 import PropTypes from "prop-types";
 import { postAsync } from "src/utils/utils";
 import { useCookies } from "react-cookie";
+import { useRouter } from "next/router";
 
 const HANDLERS = {
   INITIALIZE: "INITIALIZE",
   SIGN_IN: "SIGN_IN",
   SIGN_OUT: "SIGN_OUT",
   SIGN_UP: "SIGN_UP",
-  REFRESH_TOKEN: "REFRESH_TOKEN",
 };
 
 const initialState = {
@@ -60,19 +60,6 @@ const handlers = {
       user: null,
     };
   },
-  [HANDLERS.REFRESH_TOKEN]: (state, action) => {
-    const { idToken, refreshToken, expiresIn, expirationTime } = action.payload;
-    return {
-      ...state,
-      user: {
-        ...state.user,
-        idToken,
-        refreshToken,
-        expiresIn,
-        expirationTime,
-      },
-    };
-  },
 };
 
 const reducer = (state, action) =>
@@ -85,58 +72,30 @@ export const AuthContext = createContext({ undefined });
 export const AuthProvider = ({ children }) => {
   const [cookies, setCookie, removeCookie] = useCookies(["authenticated", "user"]);
   const [state, dispatch] = useReducer(reducer, initialState);
+  const router = useRouter(); // Using useRouter hook for redirection
   const initialized = useRef(false);
-  const refreshTimer = useRef(null);
 
   console.log("AuthContext state", state);
   console.log("AuthContext cookies", cookies);
 
-  const scheduleTokenRefresh = () => {
-    // Clear any existing timeout to prevent multiple schedules
-    if (refreshTimer.current) {
-      clearTimeout(refreshTimer.current);
-      refreshTimer.current = null;
-    }
-  
+  const checkTokenExpiration = () => {
     const currentTime = new Date().getTime();
     const expirationTime = cookies.expirationTime ? parseInt(cookies.expirationTime, 10) : 0;
-    const expiresInMilliseconds = expirationTime - currentTime;
-  
-    if (expiresInMilliseconds <= 0) {
-      // If the calculated time is already passed, clear the token immediately
-      clearToken();
-      return;
+
+    if (currentTime >= expirationTime) {
+      signOut(); // Automatically log out the user
+      router.push("/auth/login"); // Redirect user to login page
     }
-  
-    // Schedule the token refresh to happen 1 minute before the token expires
-    refreshTimer.current = setTimeout(() => {
-      refreshToken();
-    }, expiresInMilliseconds - 60000); // Subtracting 1 minute as a buffer
-  };
-
-  const clearToken = () => {
-    removeCookie("idToken", { path: "/" });
-    removeCookie("user", { path: "/" });
-    removeCookie("authenticated", { path: "/" });
-    removeCookie("expirationTime", { path: "/" }); // Assuming you also want to clear this
-
-    dispatch({
-      type: HANDLERS.SIGN_OUT,
-    });
   };
 
   useEffect(() => {
-    // Ensure to call `scheduleTokenRefresh` only when necessary
-    if (state.user?.idToken && state.user?.expirationTime) {
-      scheduleTokenRefresh();
-    }
-  
-    return () => {
-      if (refreshTimer.current) {
-        clearTimeout(refreshTimer.current);
-      }
-    };
-  }, [state.user?.idToken, state.user?.expirationTime]); // Use expirationTime from state or cookie to control the refresh logic
+    const intervalId = setInterval(() => {
+      checkTokenExpiration();
+      console.log("Checking token expiration...");
+    }, 1000 * 60 * 5); // check every 5 minutes
+
+    return () => clearInterval(intervalId);
+  }, [cookies.expirationTime, state.isAuthenticated]);
 
   const initialize = async () => {
     // Prevent from calling twice in development mode with React.StrictMode enabled
@@ -191,7 +150,7 @@ export const AuthProvider = ({ children }) => {
       setCookie("idToken", data.idToken, { path: "/" });
       setCookie("expirationTime", expirationTime, { path: "/" });
       setCookie("authenticated", "true", { path: "/" });
-      setCookie("user", JSON.stringify({...data, expirationTime}), { path: "/" });
+      setCookie("user", JSON.stringify({ ...data, expirationTime }), { path: "/" });
 
       dispatch({
         type: HANDLERS.SIGN_IN,
@@ -226,7 +185,7 @@ export const AuthProvider = ({ children }) => {
       setCookie("expirationTime", expirationTime, { path: "/" });
 
       setCookie("authenticated", "true", { path: "/" });
-      setCookie("user", JSON.stringify({...data, expirationTime}), { path: "/" });
+      setCookie("user", JSON.stringify({ ...data, expirationTime }), { path: "/" });
       setCookie("idToken", data.idToken, { path: "/" });
 
       dispatch({
@@ -244,68 +203,10 @@ export const AuthProvider = ({ children }) => {
     removeCookie("user", { path: "/" });
     removeCookie("idToken", { path: "/" });
     removeCookie("expirationTime", { path: "/" });
+    router.push("/auth/login"); // Redirect user to login page
     dispatch({
       type: HANDLERS.SIGN_OUT,
     });
-  };
-
-  const refreshToken = async () => {
-    const { userId, refreshToken, idToken } = state.user || {};
-
-    if (!userId || !refreshToken) {
-      console.error("Cannot refresh token: missing user ID or refresh token");
-
-      return;
-    }
-
-    try {
-      const response = await postAsync(
-        `api/auth/request-new-token/${userId}?refreshToken=${refreshToken}`,
-        null,
-        idToken
-      );
-
-      if (!response.ok) {
-        console.log("HTTP error! status:", response.status);
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log("Refreshed token successfully", data);
-
-      const expiresInMilliseconds = data.expiresIn * 1000; // Convert expiresIn to milliseconds
-      const expirationTime = new Date().getTime() + expiresInMilliseconds;
-
-      setCookie("expirationTime", expirationTime, { path: "/" });
-
-      setCookie("idToken", data.id_token, { path: "/" });
-      setCookie(
-        "user",
-        JSON.stringify({
-          ...state.user,
-          idToken: data.id_token,
-          refreshToken: data.refresh_token,
-          expiresIn: data.expires_in,
-          expirationTime, // Store the absolute expiration timestamp
-        }),
-        { path: "/" }
-      );
-
-      dispatch({
-        type: HANDLERS.REFRESH_TOKEN,
-        payload: {
-          ...state.user,
-          idToken: data.id_token,
-          refreshToken: data.refresh_token,
-          expiresIn: data.expires_in,
-        },
-      });
-
-      // Schedule the next refresh using expiresIn
-      scheduleTokenRefresh(data.expires_in);
-    } catch (error) {
-      console.error("Error refreshing token:", error);
-    }
   };
 
   return (
