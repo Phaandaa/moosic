@@ -92,7 +92,7 @@ function ProvidePracticeFeedbackScreen({route, navigation}){
     
         formData.append("video", {
           uri: video.uri,
-          name: video.fileName,
+          name: video.fileName || "UntitledVideo",
         });
         console.log('ProvidePracticeFeedbackScreen.js line 112, videouri: ', video.uri)
         console.log('ProvidePracticeFeedbackScreen.js line 113, vidfilename: ', video.fileName)
@@ -165,7 +165,7 @@ function ProvidePracticeFeedbackScreen({route, navigation}){
             <View style={styles.documentContainer}>
                 <View style={styles.documentItem}>
                 <Ionicons name="document-attach" size={24} color="#4F8EF7" />
-                <Text style={styles.documentName}>{videos[0].fileName}</Text>
+                <Text style={styles.documentName}>{videos[0].fileName ? videos[0].fileName : "UntitledVideo"}</Text>
                 <TouchableOpacity onPress={removeVideo} style={styles.removeButton}>
                     <Ionicons name="close-circle" size={24} color="red" />
                 </TouchableOpacity>

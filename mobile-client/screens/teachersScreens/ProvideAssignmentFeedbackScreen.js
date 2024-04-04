@@ -120,7 +120,7 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
         console.log('ProvideAssignmentFeddbackScreen.js line 129, Appending file:', image.uri);
         formData.append('files', {
             uri: uri,
-            name: fileName,
+            name: fileName || "UntitledFile",
             type: `image/${fileType}`,
         });
       } else {
@@ -132,7 +132,7 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
       formData.append(`files`, {
         uri: doc.uri,
         type: doc.mimeType,
-        name: doc.name
+        name: doc.name || "UntitledFile"
       });
     });
 
@@ -227,7 +227,7 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
               {uploadedDocuments.map((doc, index) => (
                 <View key={index} style={styles.documentItem}>
                   <Ionicons name="document-attach" size={24} color="#4F8EF7" />
-                  <Text style={styles.documentName}>{doc.name}</Text>
+                  <Text style={styles.documentName}>{doc.name ? doc.name : "UntitledFile"}</Text>
                   <TouchableOpacity onPress={() => removeDocument(index)} style={styles.removeButton}>
                     <Ionicons name="close-circle" size={24} color="red" />
                   </TouchableOpacity>

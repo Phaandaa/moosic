@@ -14,6 +14,7 @@ import Colors from '../../constants/colors';
 import SuccessModal from '../../components/ui/SuccessModal';
 import { useAuth } from '../../context/Authcontext';
 import axios from 'axios';
+
 function CreatePracticeScreen({navigation}){
     const { state } = useAuth();
     const [title, setTitle] = useState('');
@@ -29,12 +30,47 @@ function CreatePracticeScreen({navigation}){
       setModalVisible(false);
     };
 
+    // useEffect(() => {
+    //   const fetchTeacher = async () => {
+    //     try {
+    //       const response = await axios.get(`${IP_ADDRESS}/teachers/student/${state.userData.id}`, state.authHeader);
+    //       const responseData = response.data;
+    //       setTeacher(responseData);
+    //       console.log('teacher axios', teacher);
+
+    //     } catch (error) {
+    //       console.error('Error fetching teacher:', error);
+    //       Alert.alert('Error', `Failed to fetch teacher. Please try again.`);
+    //     }
+    //   };
+    
+    //   fetchTeacher();
+    //   console.log('teacher axios 2', teacher);
+    // }, [])
+
     useEffect(() => {
       const fetchTeacher = async () => {
         try {
-          const response = await axios.get(`${IP_ADDRESS}/teachers/student/${state.userData.id}`, state.authHeader);
-          const responseData = response.data;
+          const storedData = await AsyncStorage.getItem('authData');
+          if (!storedData) {
+            Alert.alert('Error', 'Authentication data is not available. Please login again.');
+            return;
+          }
+    
+          // const parsedData = JSON.parse(storedData);
+          const response = await fetch(`${IP_ADDRESS}/teachers/student/${state.userData.id}`, {
+            method: 'GET',
+            headers:{...state.authHeader.headers}
+          });
+          
+          if (!response.ok) {
+            const errorText = response.statusText || 'Unknown error occurred';
+            throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+          }
+          
+          const responseData = await response.json();
           setTeacher(responseData);
+          console.log('teacher', teacher);
         } catch (error) {
           console.error('Error fetching teacher:', error);
           Alert.alert('Error', `Failed to fetch teacher. Please try again.`);
@@ -72,32 +108,79 @@ function CreatePracticeScreen({navigation}){
         teacher_id: teacher.id,
         teacher_name: teacher.name
       };
+      console.log('practiceData', practiceData)
       
       if (videos.length > 0 && videos[0].uri) {
           const video = videos[0];
       
           formData.append("video", {
             uri: video.uri,
-            name: video.fileName, 
+            name: video.fileName ? video.fileName : "UntitledVideo.mp4", 
           });
           console.log('videouri: ', video.uri)
           console.log('vidfilename: ', video.fileName)
           console.log('vidtype: ', video.type)
+          console.log(`Appending video to formData with name: ${video.fileName ? video.fileName : "UntitledVideo.mp4"}`);
 
       }
       formData.append("practice", {"string" : JSON.stringify(practiceData), type: 'application/json'});
       console.log(formData)
 
-      try {
-          const response = axios.post(`${IP_ADDRESS}/practices/create`, formData, state.authHeader);
+      // try {
+      //     const response = axios.post(`${IP_ADDRESS}/practices/create`, formData, state.authHeader);
             
-          const responseData = await response.data;
-          setModalVisible(true);
+      //     const responseData = await response.data;
+      //     setModalVisible(true);
+      // } catch (error) {
+      //     console.error('Error recording practice:', error);
+      //     Alert.alert('Error', `Failed to create practice. ${error.response?.data?.message || 'Please try again.'}`);
+      // }
+
+      // try {
+      //   const response = await fetch(`${IP_ADDRESS}/practices/create`, {
+      //       method: 'POST',
+      //       headers:{...state.authHeader.headers},
+      //       body: formData,
+      //   });
+          
+      //   if (!response.ok) {
+      //     const errorText = response.statusText || 'Unknown error occurred';
+      //     throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+      //   }
+        
+      //   const responseData = await response.json();
+      //   console.log(responseData);
+      //   // dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
+      //   setModalVisible(true);
+  
+      // } catch (error) {
+      //   console.error('Error creating practice:', error);
+      //   Alert.alert('Error', `Failed to create practice. ${error.response?.data?.message || 'Please try again.'}`);
+      // }
+
+      console.log('Current state.authHeader contents:', state.authHeader);
+
+      try {
+        const response = await fetch(`${IP_ADDRESS}/practices/create`, {
+            method: 'POST',
+            headers:{...state.authHeader.headers},
+            body: formData,
+        });
+          
+        if (!response.ok) {
+          const errorText = response.statusText || 'Unknown error occurred';
+          throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+        }
+        const responseData = await response.json();
+        console.log(responseData);
+        // dispatch(setCache({ key: 'practiceData', value: practiceData })); 
+        // navigation.navigate('PracticeListStudentScreen');
+        setModalVisible(true);
       } catch (error) {
           console.error('Error recording practice:', error);
           Alert.alert('Error', `Failed to create practice. ${error.response?.data?.message || 'Please try again.'}`);
       }
-    }
+    };
 
     const uploadVideo = async(mode) => {
         try {
@@ -127,6 +210,7 @@ function CreatePracticeScreen({navigation}){
     const saveVideo = (newVideo) => {
         setVideos((currentVideos) => [...currentVideos, newVideo]);
         setLoadingStates((currentLoadingStates) => ({ ...currentLoadingStates, [newVideo]: true }));
+        console.log('newVideo:', newVideo)
     };
     
     
@@ -174,7 +258,7 @@ function CreatePracticeScreen({navigation}){
             <View style={styles.documentContainer}>
                 <View style={styles.documentItem}>
                 <Ionicons name="document-attach" size={24} color="#4F8EF7" />
-                <Text style={styles.documentName}>{videos[0].fileName}</Text>
+                <Text style={styles.documentName}>{videos[0].fileName ? videos[0].fileName : "UntitledVideo.mp4"}</Text>
                 <TouchableOpacity onPress={removeVideo} style={styles.removeButton}>
                     <Ionicons name="close-circle" size={24} color="red" />
                 </TouchableOpacity>

@@ -211,26 +211,50 @@ function CreateAssignmentScreen({ route, navigation }) {
 
     formData.append("assignment", {"string" : JSON.stringify(assignmentData), type: 'application/json'});
 
-    try {
+    // try {
       
-      const response = await axios.post(`${IP_ADDRESS}/assignments/create`, formData, state.authHeader);
+    //   const response = await axios.post(`${IP_ADDRESS}/assignments/create`, formData, state.authHeader);
 
-      if (response.status == 200) {
-        const responseData = response.data;
-        console.log('CreateAssignmentScreen.js line 201, responseData: ', responseData);
-        dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
-        setModalVisible(true);
-      } else {
-        Alert.alert(`Error creating assignment: ${response.data.message}`);
+    //   if (response.status == 200) {
+    //     const responseData = response.data;
+    //     console.log('CreateAssignmentScreen.js line 201, responseData: ', responseData);
+    //     dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
+    //     setModalVisible(true);
+    //   } else {
+    //     Alert.alert(`Error creating assignment: ${response.data.message}`);
+    //   }
+      
+
+    // } catch (error) {
+    //   console.error('CreateAssignmentScreen.js line 206, Error creating assignment:', error);
+    //   Alert.alert('Error', `Failed to create assignment. ${error.response?.data?.message || 'Please try again.'}`);
+    // }
+
+    console.log('Current state.authHeader contents:', state.authHeader);
+
+    try {
+     
+      const response = await fetch(`${IP_ADDRESS}/assignments/create`, {
+          method: 'POST',
+          headers:{...state.authHeader.headers},
+          body: formData,
+      });
+        
+      if (!response.ok) {
+        const errorText = response.statusText || 'Unknown error occurred';
+        throw new Error(`Request failed with status ${response.status}: ${errorText}`);
       }
       
+      const responseData = await response.json();
+      console.log(responseData);
+      dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
+      setModalVisible(true);
 
     } catch (error) {
-      console.error('CreateAssignmentScreen.js line 206, Error creating assignment:', error);
+      console.error('Error creating assignment:', error);
       Alert.alert('Error', `Failed to create assignment. ${error.response?.data?.message || 'Please try again.'}`);
     }
   };
-
 
   return (
     <ScrollView style={styles.container}>

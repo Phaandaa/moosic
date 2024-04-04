@@ -84,15 +84,7 @@ function SubmitAssignmentScreen({ navigation, route }) {
     //   newErrors.assignmentName = 'Assignment name is required.';
     //   isValid = false;
     // }
-    // if (!assignmentDesc.trim()) {
-    //   newErrors.assignmentDesc = 'Description is required.';
-    //   isValid = false;
-    // }
-    // if (!assignmentDeadline) {
-    //   newErrors.assignmentDeadline = 'Deadline is required.';
-    //   isValid = false;
-    // }
-    // setErrors(newErrors);
+    setErrors(newErrors);
     return isValid;
   };
 
@@ -147,16 +139,39 @@ function SubmitAssignmentScreen({ navigation, route }) {
 
     console.log('SubmitAssignment.js line 147: formData', formData)
 
-    try {
+    // try {
 
-      const response = await axios.put(`${IP_ADDRESS}/assignments/student/${assignmentID}/update?`, formData, state.authHeader);
-      if (response.status == 200) {
-        setModalVisible(true);
-      } else {
-        Alert.alert(`Error Submitting assignment: ${response.data.message}`);
+    //   const response = await axios.put(`${IP_ADDRESS}/assignments/student/${assignmentID}/update?`, formData, state.authHeader);
+    //   if (response.status == 200) {
+    //     setModalVisible(true);
+    //   } else {
+    //     Alert.alert(`Error Submitting assignment: ${response.data.message}`);
+    //   }
+    // } catch (error) {
+    //   console.error('SubmitAssignment.js line 166, Error submitting assignment:', error);
+    //   Alert.alert('Error', `Failed to submit assignment. ${error.response?.data?.message || 'Please try again.'}`);
+    // }
+    console.log('Current state.authHeader contents:', state.authHeader);
+
+    try {
+     
+      const response = await fetch(`${IP_ADDRESS}/assignments/student/${assignmentID}/update?`, {
+          method: 'PUT',
+          headers:{...state.authHeader.headers},
+          body: formData,
+      });
+        
+      if (!response.ok) {
+        const errorText = response.statusText || 'Unknown error occurred';
+        throw new Error(`Request failed with status ${response.status}: ${errorText}`);
       }
+      
+      const responseData = await response.json();
+      console.log(responseData);
+      setModalVisible(true);
+
     } catch (error) {
-      console.error('SubmitAssignment.js line 166, Error submitting assignment:', error);
+      console.error('Error submitting assignment:', error);
       Alert.alert('Error', `Failed to submit assignment. ${error.response?.data?.message || 'Please try again.'}`);
     }
   };
