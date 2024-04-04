@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     fontSize: 16,
-    color: Colors.mainPurple,
+    color: Colors.fontTertiary,
   },
   selectedTextStyle: {
     fontSize: 14,
