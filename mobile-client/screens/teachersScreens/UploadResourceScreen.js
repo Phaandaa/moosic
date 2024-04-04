@@ -144,23 +144,43 @@ function UploadResourceScreen({ navigation }) {
     
     formData.append("material_repository", JSON.stringify(materialData));
     console.log(formData)
+
+    // try {
+    //   const response = await axios.post(`${IP_ADDRESS}/material-repository/create`, formData, state.authHeader);
+    //   const responseData = response.data;
+    //   if (response.status == 200) {
+    //     setModalVisible(true);
+    //   } else {
+    //     Alert.alert("Error uploading resources");
+    //   }
+    //   const resourcesResponse = await axios.get(`${IP_ADDRESS}/material-repository/teacher/${state.userData.id}`, state.authHeader);
+    //   dispatch({ type: 'UPDATE_RESOURCE_REPOSITORY', payload: { resources: resourcesResponse.data }});
+    // } catch (error) {
+    //   console.error('Error recording practice:', error);
+    //   Alert.alert('Error', `Failed to create practice. ${error.response?.data?.message || 'Please try again.'}`);
+    // }
     try {
-      const response = await axios.post(`${IP_ADDRESS}/material-repository/create`, formData, state.authHeader);
-      const responseData = response.data;
-      if (response.status == 200) {
-        setModalVisible(true);
-      } else {
-        Alert.alert("Error uploading resources");
+     
+      const response = await fetch(`${IP_ADDRESS}/material-repository/create`, {
+          method: 'POST',
+          headers:{...state.authHeader.headers},
+          body: formData,
+      });
+        
+      if (!response.ok) {
+        const errorText = response.statusText || 'Unknown error occurred';
+        throw new Error(`Request failed with status ${response.status}: ${errorText}`);
       }
-      const resourcesResponse = await axios.get(`${IP_ADDRESS}/material-repository/teacher/${state.userData.id}`, state.authHeader);
-      dispatch({ type: 'UPDATE_RESOURCE_REPOSITORY', payload: { resources: resourcesResponse.data }});
+      
+      const responseData = await response.json();
+      dispatch({ type: 'UPDATE_RESOURCE_REPOSITORY', payload: { resources: responseData.data }});
+      console.log(responseData);
+      setModalVisible(true);
     } catch (error) {
-      console.error('Error recording practice:', error);
-      Alert.alert('Error', `Failed to create practice. ${error.response?.data?.message || 'Please try again.'}`);
+      console.error('Error uploading resource:', error);
+      Alert.alert('Error', `Failed to upload resource. ${error.response?.data?.message || 'Please try again.'}`);
     }
-
   };
-
 
   return (
     <ScrollView style={styles.container}>

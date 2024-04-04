@@ -142,20 +142,41 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
 
     console.log('ProvideAssignmentFeddbackScreen.js line 152, formData: ', formData)
 
-    try {
+    // try {
 
-      const response = await axios.put(`${IP_ADDRESS}/assignments/teacher/${assignmentID}/update?`, formData, state.authHeader);
+    //   const response = await axios.put(`${IP_ADDRESS}/assignments/teacher/${assignmentID}/update?`, formData, state.authHeader);
         
-      if (response.status != 200) {
+    //   if (response.status != 200) {
+    //     const errorText = response.statusText || 'Unknown error occurred';
+    //     throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+    //   }
+      
+    //   setModalVisible(true);
+
+    // } catch (error) {
+    //   console.error('ProvideAssignmentFeddbackScreen.js line 155, Error adding feedback:', error);
+    //   Alert.alert('Error', `Failed to add feedback. ${error.response?.data?.message || 'Please try again.'}`);
+    // }
+    try {
+     
+      const response = await fetch(`${IP_ADDRESS}/assignments/teacher/${assignmentID}/update?`, {
+          method: 'PUT',
+          headers:{...state.authHeader.headers},
+          body: formData,
+      });
+        
+      if (!response.ok) {
         const errorText = response.statusText || 'Unknown error occurred';
         throw new Error(`Request failed with status ${response.status}: ${errorText}`);
       }
       
+      const responseData = await response.json();
+      console.log(responseData);
       setModalVisible(true);
 
     } catch (error) {
-      console.error('ProvideAssignmentFeddbackScreen.js line 155, Error adding feedback:', error);
-      Alert.alert('Error', `Failed to add feedback. ${error.response?.data?.message || 'Please try again.'}`);
+      console.error('Error submitting feedback:', error);
+      Alert.alert('Error', `Failed to submit feedback. ${error.response?.data?.message || 'Please try again.'}`);
     }
   };
 

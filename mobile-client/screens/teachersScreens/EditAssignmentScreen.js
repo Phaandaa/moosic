@@ -176,21 +176,40 @@ function EditAssignmentScreen({ route, navigation }) {
     formData.append("assignment", {"string" : JSON.stringify(assignmentData), type: 'application/json'});
     console.log('EditAssignmentScreen.js line 182, formData: ', formData)
 
-    try {
-      const updateAssignmentURL = `${IP_ADDRESS}/assignments/teacher/${assignment.assignmentId}/update-details`;
-      const response = await axios.put(updateAssignmentURL, formData , state.authHeader);
+    // try {
+    //   const updateAssignmentURL = `${IP_ADDRESS}/assignments/teacher/${assignment.assignmentId}/update-details`;
+    //   const response = await axios.put(updateAssignmentURL, formData , state.authHeader);
       
 
-      const responseData = response.data;
-      dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
+    //   const responseData = response.data;
+    //   dispatch(setCache({ key: 'assignmentDataAll', value: responseData }));
+    //   setModalVisible(true);
+
+    // } catch (error) {
+    //   console.error('EditAssignmentScreen.js line 204, Error editing assignment:', error);
+    //   Alert.alert('Error', `Failed to edit assignment. ${error.response?.data?.message || 'Please try again.'}`);
+    // }
+    try {
+      const response = await fetch(`${IP_ADDRESS}/assignments/teacher/${assignment.assignmentId}/update-details`, {
+          method: 'PUT',
+          headers:{...state.authHeader.headers},
+          body: formData,
+      });
+        
+      if (!response.ok) {
+        const errorText = response.statusText || 'Unknown error occurred';
+        throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+      }
+      
+      const responseData = await response.json();
+      console.log(responseData);
       setModalVisible(true);
 
     } catch (error) {
-      console.error('EditAssignmentScreen.js line 204, Error editing assignment:', error);
-      Alert.alert('Error', `Failed to edit assignment. ${error.response?.data?.message || 'Please try again.'}`);
+      console.error('Error submitting feedback:', error);
+      Alert.alert('Error', `Failed to submit feedback. ${error.response?.data?.message || 'Please try again.'}`);
     }
   };
-
 
   return (
     <ScrollView style={styles.container}>
