@@ -112,10 +112,14 @@ function CreatePracticeScreen({navigation}){
       
       if (videos.length > 0 && videos[0].uri) {
           const video = videos[0];
+          const uriArray = video.uri.split(".");
+          const fileExtension = uriArray[uriArray.length - 1];  
+          const fileTypeExtended = `${video.type}/${fileExtension}`; 
       
           formData.append("video", {
             uri: video.uri,
-            name: video.fileName ? video.fileName : "UntitledVideo.mp4", 
+            name: video.fileName ? video.fileName : "UntitledVideo.mp4",
+            type: fileTypeExtended 
           });
           console.log('videouri: ', video.uri)
           console.log('vidfilename: ', video.fileName)
