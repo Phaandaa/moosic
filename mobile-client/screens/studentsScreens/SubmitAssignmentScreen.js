@@ -192,12 +192,15 @@ function SubmitAssignmentScreen({ navigation, route }) {
         </View>
       
         <View style={styles.uploadButtons}>
+        
+        {Platform.OS === 'ios' && (
         <View style={styles.attachFilesSection}>
           <TouchableOpacity style={styles.attachButton} onPress={() => uploadImage('gallery')}>
             <Ionicons name="images" size={24} color={Colors.mainPurple} />
             <Text style={styles.attachText}>Upload Image</Text>
           </TouchableOpacity>
         </View>
+        )}
 
           <View style={styles.attachFilesSection}>
             <TouchableOpacity style={styles.attachButton} onPress={uploadDocument}>
@@ -295,6 +298,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   attachFilesSection: {
+    flex: 1,
     backgroundColor: '#F7F7F7',
     borderRadius: 5,
     marginBottom: 15,
@@ -305,11 +309,14 @@ const styles = StyleSheet.create({
   attachButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%'
   },
   attachText: {
     marginLeft: 10,
     fontSize: 16,
     color: Colors.mainPurple,
+    alignItems: 'center',
   },
   textArea: {
     minHeight: 100,

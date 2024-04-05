@@ -300,12 +300,14 @@ function CreateAssignmentScreen({ route, navigation }) {
         )}
         {errors.documents && <Text style={styles.errorText}>{errors.documents}</Text>}
         <View style={styles.uploadButtons}>
-        <View style={styles.attachFilesSection}>
-          <TouchableOpacity style={styles.attachButton} onPress={() => uploadImage('gallery')}>
-            <Ionicons name="images" size={24} color={Colors.mainPurple} />
-            <Text style={styles.attachText}>Upload Image</Text>
-          </TouchableOpacity>
-        </View>
+        {Platform.OS === 'ios' && (
+          <View style={styles.attachFilesSection}>
+            <TouchableOpacity style={styles.attachButton} onPress={() => uploadImage('gallery')}>
+              <Ionicons name="images" size={24} color={Colors.mainPurple} />
+              <Text style={styles.attachText}>Upload Image</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
           <View style={styles.attachFilesSection}>
             <TouchableOpacity style={styles.attachButton} onPress={uploadDocument}>
