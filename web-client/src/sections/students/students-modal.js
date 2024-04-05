@@ -13,7 +13,7 @@ import { SvgIcon } from "@mui/material";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { postAsync } from "src/utils/utils";
 import { useAuth } from "src/hooks/use-auth";
-import { set } from "nprogress";
+import generatePassword, { generate } from "generate-password";
 
 export default function StudentsModal({ onAddStudent }) {
   const { user } = useAuth();
@@ -25,8 +25,6 @@ export default function StudentsModal({ onAddStudent }) {
   const [instrument, setInstrument] = React.useState("");
   const [gradeLevel, setGradeLevel] = React.useState("");
   const [tuitionDay, setTuitionDay] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [passwordCfm, setPasswordCfm] = React.useState("");
 
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState("");
@@ -52,14 +50,6 @@ export default function StudentsModal({ onAddStudent }) {
     setTuitionDay(event.target.value);
   };
 
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
-
-  const handlePasswordCfmChange = (event) => {
-    setPasswordCfm(event.target.value);
-  };
-
   const handleClickOpen = () => {
     setOpen(true);
     setStep(1); // Reset to step 1 when opening the modal
@@ -72,13 +62,22 @@ export default function StudentsModal({ onAddStudent }) {
   const handleSubmit = (event) => {
     event.preventDefault();
     // Perform validation or any other pre-submission logic here
-    if (step !== 2 || !password || !passwordCfm || password !== passwordCfm) {
+    if (!studentName || !studentEmail || !instrument || !gradeLevel || !tuitionDay) {
       console.error("Form validation failed");
       setSnackbarMessage("Validation failed. Please check the form.");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
       return;
     }
+    // Generate a random password for the student
+    const generatedPassword = generatePassword.generate({
+      length: 10,
+      numbers: true,
+      symbols: true,
+      uppercase: true,
+      excludeSimilarCharacters: true,
+      strict: true,
+    });
 
     // Assuming postAsync is correctly defined elsewhere and handles the asynchronous POST request
     const submitData = async () => {
@@ -87,7 +86,7 @@ export default function StudentsModal({ onAddStudent }) {
           name: studentName,
           email: studentEmail,
           role: "Student",
-          password: password,
+          password: generatedPassword,
           info: {
             instrument: instrument,
             grade: gradeLevel,
@@ -124,8 +123,6 @@ export default function StudentsModal({ onAddStudent }) {
         setStudentEmail("");
         setInstrument("");
         setGradeLevel("");
-        setPassword("");
-        setPasswordCfm("");
         setTuitionDay("");
       }
     };
@@ -157,150 +154,93 @@ export default function StudentsModal({ onAddStudent }) {
       >
         <DialogTitle>{step === 1 ? "Student Details" : "Login Details"}</DialogTitle>
         <DialogContent>
-          {step === 1 && (
-            // Step 1: Student Details
-            <>
-              <DialogContentText>
-                To create an account, please enter the student's details.
-              </DialogContentText>
-              {/* Student Details Form Fields */}
-              <TextField
-                autoFocus
-                required
-                margin="dense"
-                id="name"
-                name="name"
-                label="Student Full Name"
-                type="text"
-                fullWidth
-                variant="standard"
-                onChange={handleNameChange} // Add onChange
-                value={studentName} // Control the component
-              />
-              <TextField
-                autoFocus
-                required
-                margin="dense"
-                id="stu-email"
-                name="stu-email"
-                label="Student Email Address"
-                type="text"
-                fullWidth
-                variant="standard"
-                onChange={handleEmailChange} // Add onChange
-                value={studentEmail} // Control the component
-              />
-              <FormControl fullWidth variant="standard" margin="dense">
-                <InputLabel id="instrument-label">Instrument</InputLabel>
-                <Select
-                  labelId="instrument-label"
-                  id="instrument"
-                  name="instrument"
-                  value={instrument}
-                  onChange={handleInstrumentChange}
-                  required
-                >
-                  <MenuItem value="Piano">Piano</MenuItem>
-                  <MenuItem value="Guitar">Guitar</MenuItem>
-                  <MenuItem value="Ukulele">Ukulele</MenuItem>
-                  <MenuItem value="Violin">Violin</MenuItem>
-                </Select>
-              </FormControl>
+          <DialogContentText>
+            To create an account, please enter the student's details.
+          </DialogContentText>
+          {/* Student Details Form Fields */}
+          <TextField
+            autoFocus
+            required
+            margin="dense"
+            id="name"
+            name="name"
+            label="Student Full Name"
+            type="text"
+            fullWidth
+            variant="standard"
+            onChange={handleNameChange} // Add onChange
+            value={studentName} // Control the component
+          />
+          <TextField
+            autoFocus
+            required
+            margin="dense"
+            id="stu-email"
+            name="stu-email"
+            label="Student Email Address"
+            type="text"
+            fullWidth
+            variant="standard"
+            onChange={handleEmailChange} // Add onChange
+            value={studentEmail} // Control the component
+          />
+          <FormControl fullWidth variant="standard" margin="dense">
+            <InputLabel id="instrument-label">Instrument</InputLabel>
+            <Select
+              labelId="instrument-label"
+              id="instrument"
+              name="instrument"
+              value={instrument}
+              onChange={handleInstrumentChange}
+              required
+            >
+              <MenuItem value="Piano">Piano</MenuItem>
+              <MenuItem value="Guitar">Guitar</MenuItem>
+              <MenuItem value="Ukulele">Ukulele</MenuItem>
+              <MenuItem value="Violin">Violin</MenuItem>
+            </Select>
+          </FormControl>
 
-              <TextField
-                autoFocus
-                margin="dense"
-                id="age"
-                name="age"
-                label="Grade Level"
-                type="number"
-                fullWidth
-                variant="standard"
-                onChange={handleGradeLevelChange} // Add onChange
-                value={gradeLevel} // Control the component
-              />
-              <FormControl fullWidth variant="standard" margin="dense">
-                <InputLabel id="tuition-day-label">Tuition Day</InputLabel>
-                <Select
-                  labelId="tuition-day-label"
-                  id="tuition-day"
-                  name="tuition-day"
-                  value={tuitionDay}
-                  onChange={handleTuitionDayChange}
-                  required
-                >
-                  <MenuItem value="monday">Monday</MenuItem>
-                  <MenuItem value="tuesday">Tuesday</MenuItem>
-                  <MenuItem value="wednesday">Wednesday</MenuItem>
-                  <MenuItem value="thursday">Thursday</MenuItem>
-                  <MenuItem value="friday">Friday</MenuItem>
-                  <MenuItem value="saturday">Saturday</MenuItem>
-                  <MenuItem value="sunday">Sunday</MenuItem>
-                </Select>
-              </FormControl>
-            </>
-          )}
-
-          {step === 2 && (
-            // Step 2: Parent Details
-            <>
-              <DialogContentText>Please enter the password details.</DialogContentText>
-              {/* Parent Details Form Fields */}
-              <TextField
-                autoFocus
-                required
-                margin="dense"
-                id="password"
-                name="password"
-                label="Password"
-                type="password"
-                fullWidth
-                variant="standard"
-                onChange={handlePasswordChange} // Add onChange
-                value={password} // Control the component
-              />
-              <TextField
-                required
-                margin="dense"
-                id="password-cfm"
-                name="password-cfm"
-                label="Confirm Password"
-                type="password"
-                fullWidth
-                variant="standard"
-                onChange={handlePasswordCfmChange} // Add onChange
-                value={passwordCfm} // Control the component
-              />
-              <span style={{ color: "red", fontSize: "0.75rem" }}>
-                {password !== passwordCfm ? "Passwords do not match" : ""}
-              </span>
-            </>
-          )}
+          <TextField
+            autoFocus
+            margin="dense"
+            id="age"
+            name="age"
+            label="Grade Level"
+            type="number"
+            fullWidth
+            variant="standard"
+            onChange={handleGradeLevelChange} // Add onChange
+            value={gradeLevel} // Control the component
+          />
+          <FormControl fullWidth variant="standard" margin="dense">
+            <InputLabel id="tuition-day-label">Tuition Day</InputLabel>
+            <Select
+              labelId="tuition-day-label"
+              id="tuition-day"
+              name="tuition-day"
+              value={tuitionDay}
+              onChange={handleTuitionDayChange}
+              required
+            >
+              <MenuItem value="monday">Monday</MenuItem>
+              <MenuItem value="tuesday">Tuesday</MenuItem>
+              <MenuItem value="wednesday">Wednesday</MenuItem>
+              <MenuItem value="thursday">Thursday</MenuItem>
+              <MenuItem value="friday">Friday</MenuItem>
+              <MenuItem value="saturday">Saturday</MenuItem>
+              <MenuItem value="sunday">Sunday</MenuItem>
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions>
-          {step === 1 && (
-            <>
-              <Button onClick={handleClose}>Cancel</Button>
-              <Button
-                onClick={() => setStep(2)}
-                disabled={!studentName || !studentEmail || !instrument}
-              >
-                Next
-              </Button>
-            </>
-          )}
-
-          {step === 2 && (
-            <>
-              <Button onClick={() => setStep(1)}>Back</Button>
-              <Button
-                type="submit"
-                disabled={!password || !passwordCfm || password !== passwordCfm}
-              >
-                Create
-              </Button>
-            </>
-          )}
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button
+            type="submit"
+            disabled={!studentName || !studentEmail || !instrument || !gradeLevel || !tuitionDay}
+          >
+            Submit
+          </Button>
         </DialogActions>
       </Dialog>
       <Snackbar
@@ -312,7 +252,7 @@ export default function StudentsModal({ onAddStudent }) {
         <Alert
           onClose={() => setSnackbarOpen(false)}
           severity={snackbarSeverity}
-          sx= {{ width: "100%" }}
+          sx={{ width: "100%" }}
         >
           {snackbarMessage}
         </Alert>

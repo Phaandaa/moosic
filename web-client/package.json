@@ -29,6 +29,7 @@
     "apexcharts": "3.44.2",
     "date-fns": "2.30.0",
     "formik": "2.4.5",
+    "generate-password": "^1.7.1",
     "next": "14.0.4",
     "nprogress": "0.2.0",
     "prop-types": "15.8.1",
