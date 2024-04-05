@@ -169,19 +169,12 @@ function CreatePracticeScreen({navigation}){
           method: 'POST',
           headers: {
             ...state.authHeader.headers,
-            // body: formData, (if i put this here error 403 comes up)
+            
           },
-          body: formData, // (if i put this here network error comes up, by right this is the correct format)
+          body: formData, 
         });
       
           
-        // Check if the response status indicates success but no content
-        if (response.status === 204) {
-          console.log('No content to parse.');
-          // Handle no content response
-          setModalVisible(true);
-          return;
-        }
 
         if (!response.ok) {
           const errorText = response.statusText || 'Unknown error occurred';
@@ -192,23 +185,11 @@ function CreatePracticeScreen({navigation}){
             throw new Error(`Request failed with status ${response.status}: ${errorText}`);
           }
         }
-
-        // Ensure there's content before parsing
-        if (response.headers.get("Content-Length") !== "0") {
-          const responseData = await response.json();
-          console.log(responseData);
-          // Handle successful response
-          setModalVisible(true);
-        } else {
-          console.log('Response was successful but no JSON content was returned.');
-          // Handle empty but successful response
-          setModalVisible(true);
-        }
       
         const responseData = await response.json();
         console.log(responseData);
         // dispatch(setCache({ key: 'practiceData', value: practiceData })); 
-        // navigation.navigate('PracticeListStudentScreen');
+        navigation.navigate('PracticeListStudentScreen');
         setModalVisible(true);
       } catch (error) {
           console.error('Error recording practice:', error);
