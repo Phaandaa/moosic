@@ -88,11 +88,15 @@ function ProvidePracticeFeedbackScreen({route, navigation}){
     
     if (videos.length > 0 && videos[0].uri) {
         const video = videos[0];
+        const uriArray = video.uri.split(".");
+        const fileExtension = uriArray[uriArray.length - 1];  
+        const fileTypeExtended = `${video.type}/${fileExtension}`; 
         console.log('ProvidePracticeFeedbackScreen.js line 104, video: ',video)
     
         formData.append("video", {
           uri: video.uri,
           name: video.fileName || "UntitledVideo",
+          type: fileTypeExtended 
         });
         console.log('ProvidePracticeFeedbackScreen.js line 112, videouri: ', video.uri)
         console.log('ProvidePracticeFeedbackScreen.js line 113, vidfilename: ', video.fileName)
@@ -105,7 +109,15 @@ function ProvidePracticeFeedbackScreen({route, navigation}){
     console.log('ProvidePracticeFeedbackScreen.js line 120, formData: ', formData)
 
     try {
-      const response = await axios.put(`${IP_ADDRESS}/practices/feedback/${practiceID}?`, formData, state.authHeader);
+      const response = await fetch(`${IP_ADDRESS}/practices/feedback/${practiceID}?`, {
+        method: 'PUT',
+        headers: {
+          ...state.authHeader.headers,
+        },
+        body: formData, 
+      });
+
+      
       if (response.status == 200) {
         const responseData = response.data;
         setModalVisible(true);
