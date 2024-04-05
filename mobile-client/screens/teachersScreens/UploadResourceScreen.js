@@ -173,7 +173,8 @@ function UploadResourceScreen({ navigation }) {
       }
       
       const responseData = await response.json();
-      dispatch({ type: 'UPDATE_RESOURCE_REPOSITORY', payload: { resources: responseData.data }});
+      const resourcesResponse = await axios.get(`${IP_ADDRESS}/material-repository/teacher/${state.userData.id}`, state.authHeader);
+      dispatch({ type: 'UPDATE_RESOURCE_REPOSITORY', payload: { resources: resourcesResponse.data }});
       console.log(responseData);
       setModalVisible(true);
     } catch (error) {

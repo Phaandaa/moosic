@@ -77,7 +77,7 @@ function CreateAssignmentScreen({ route, navigation }) {
       if (!result.canceled) {
         console.log('CreateAssignmentScreen.js line 64, result.assets[0]:', result.assets[0])
         saveImage(result.assets[0]); 
-        console.log('CreateAssignmentScreen.js line 66, images: ', images);
+        console.log('CreateAssignmentScreen.js line 80, images: ', images);
       }
     }
   };
