@@ -7,6 +7,7 @@ import AssignmentSearchBar from '../../components/ui/assignmentSearchBar';
 import trimDate from '../../components/ui/trimDate';
 import { useAuth } from '../../context/Authcontext';
 import axios from 'axios';
+import { useFocusEffect } from '@react-navigation/native';
 
 function PracticeListTeacherScreen({route, navigation}){
     const { state } = useAuth();
@@ -19,28 +20,29 @@ function PracticeListTeacherScreen({route, navigation}){
         setTeacherID(state.userData.id);
     }, []);
 
-    useEffect(() => {
-        const fetchPractices = async() => {
-            try {
+    useFocusEffect(
+        React.useCallback(() => {
+          const fetchPractices = async () => {
+            if (teacherID && studentID) {
+              try {
                 const response = await axios.get(`${IP_ADDRESS}/practices/${studentID}/${teacherID}`, state.authHeader);
                 const responseData = response.data;
-
                 const sortedData = responseData.sort((a, b) => {
-                    return new Date(b.submissionTimestamp) - new Date(a.submissionTimestamp);
+                  return new Date(b.submissionTimestamp) - new Date(a.submissionTimestamp);
                 });
-
+    
                 setPracticeData(sortedData); 
                 setSearchResults(sortedData);
-
-                console.log('PracticeListTeacherScreen.js line 69, practiceDate[0]: ', practiceData[0])
-            } catch (error) {
+              } catch (error) {
                 console.error('PracticeListTeacherScreen.js line 71, Error fetching practice:', error);
+              }
             }
-        };
-        if(teacherID){
-            fetchPractices();
-        }
-    }, [studentID, teacherID]);
+          };
+    
+          fetchPractices();
+        }, [teacherID, studentID])
+    );
+    
 
     const handleSearch = (searchText) => {
         if (searchText) {
