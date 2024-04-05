@@ -201,15 +201,15 @@ function CreatePracticeScreen({navigation}){
         try {
             let result = {};
             if (mode==='gallery'){
-                await ImagePicker.requestMediaLibraryPermissionsAsync()
-                result = await ImagePicker.launchImageLibraryAsync({
-                    mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-                    aspect: [4,3],
-                    quality: 1,
-                })
-            } 
-            if(!result.canceled){
+              await ImagePicker.requestMediaLibraryPermissionsAsync();
+              result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+                quality: 0, // Choose from 0 to 1, with 1 being the highest quality
+                videoExportPreset: ImagePicker.VideoExportPreset.LowQuality, // This is where you control the quality
+              });
+              if (!result.canceled) {
                 await saveVideo(result.assets[0]);
+              }
             }
         } catch (error){
             alert("error uploading video:"+ error.message

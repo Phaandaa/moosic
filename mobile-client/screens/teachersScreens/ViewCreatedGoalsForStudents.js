@@ -77,15 +77,15 @@ function ViewCreatedGoalsForStudents ({ navigation }) {
                     <Text style={[theme.textTitle, {marginTop: 10}]}>My Students</Text>
                     {filteredStudents.map((student, index) => (
                         student.name ? (
-                            <TouchableOpacity key={index} style={styles.card}>
-                                <View style={styles.cardTextContainer}>
-                                    <Text style={theme.cardTextBold}>{student.name || "Unnamed Student"}</Text>
+                            <TouchableOpacity key={index} style={theme.card2} onPress={() => navigation.navigate('CreateGoalsForStudents', {
+                              studentID: student.id,
+                              studentName: student.name,
+                            })}>
+                                <View style={theme.cardTextContainer}>
+                                    <Text style={theme.cardTitle}>{student.name || "Unnamed Student"}</Text>
                                 </View>
                                 <View style={theme.buttonContainer}>
-                                    <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('CreateGoalsForStudents', {
-                                          studentID: student.id,
-                                          studentName: student.name,
-                                        })}>
+                                    <TouchableOpacity style={theme.smallButton}>
                                         <Text style={theme.smallButtonText}>Update Goal</Text>
                                     </TouchableOpacity>
                           
