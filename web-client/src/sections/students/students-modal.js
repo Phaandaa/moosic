@@ -130,11 +130,13 @@ export default function StudentsModal({ onAddStudent }) {
           // Handle email send failure
         });
 
-        const passwordResetResponse = await postAsync(`api/auth/request-password-reset/${user.userId}`, null, user.idToken, false);
+        const passwordResetResponse = await postAsync(`api/auth/request-password-reset/${data.id}`, null, user.idToken, false);
 
         if (!passwordResetResponse.ok) {
           console.error("Server error:", passwordResetResponse.status, passwordResetResponse.statusText);
           throw new Error("Password reset function error");
+        } else {
+          console.log("Password reset email sent successfully");
         }
 
         console.log("Form submitted successfully");

@@ -36,7 +36,7 @@ export const StudentsTable = (props) => {
 
   const selectedSome = selected.length > 0 && selected.length < items.length;
   const selectedAll = items.length > 0 && selected.length === items.length;
-  
+  console.log("items", items)
   return (
     <Card>
       <Scrollbar>
