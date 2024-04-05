@@ -37,8 +37,17 @@ const Page = () => {
         await auth.signIn(values.email, values.password);
         router.push("/");
       } catch (err) {
+        console.log(err.message.slice(-3));
+        if (err.message.slice(-3) === "400") {
+          helpers.setErrors({ submit: "Invalid email or password." });
+        }
+        else if (err.message.slice(-3) === "500") {
+          helpers.setErrors({ submit: "Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later." });
+        } else {
+          helpers.setErrors({ submit: err.message });
+        }
         helpers.setStatus({ success: false });
-        helpers.setErrors({ submit: err.message });
+        // helpers.setErrors({ submit: err.message });
         helpers.setSubmitting(false);
       }
     },

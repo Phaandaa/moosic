@@ -92,7 +92,7 @@ export const AuthProvider = ({ children }) => {
     const intervalId = setInterval(() => {
       checkTokenExpiration();
       console.log("Checking token expiration...");
-    }, 1000 * 60); // check every 5 minutes
+    }, 1000 * 60); // check every minute
 
     return () => clearInterval(intervalId);
   }, [cookies.expirationTime, state.isAuthenticated]);
