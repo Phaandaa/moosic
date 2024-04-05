@@ -14,6 +14,8 @@ import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { postAsync } from "src/utils/utils";
 import { useAuth } from "src/hooks/use-auth";
 import generatePassword from "generate-password";
+import emailjs from 'emailjs-com';
+import { useEffect } from "react";
 
 export default function StudentsModal({ onAddStudent }) {
   const { user } = useAuth();
@@ -59,6 +61,10 @@ export default function StudentsModal({ onAddStudent }) {
     setOpen(false);
   };
 
+  useEffect(() => {
+    emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_USER_ID); // <-- Add your User ID
+  }, []);
+
   const handleSubmit = (event) => {
     event.preventDefault();
     // Perform validation or any other pre-submission logic here
@@ -102,6 +108,27 @@ export default function StudentsModal({ onAddStudent }) {
         const data = await response.json();
         console.log("Server response:", data);
         onAddStudent(data); // Call the callback function to update the student list
+
+        // Send an email to the student with the generated password
+        const emailParams = {
+          to_email: studentEmail,
+          to_name: studentName,
+          email: studentEmail,
+          password: generatedPassword,
+          from_name: "Learn2Play Moosic Admin"
+        };
+
+        const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+        const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+
+        emailjs.send(serviceId, templateId, emailParams)
+        .then((response) => {
+          console.log('Email sent!', response.status, response.text);
+          // Handle email sent confirmation
+        }, (error) => {
+          console.log('Failed to send email.', error);
+          // Handle email send failure
+        });
 
         console.log("Form submitted successfully");
         setSnackbarMessage("Student added successfully!");
