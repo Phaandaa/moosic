@@ -203,7 +203,6 @@ export default function StudentsEditModal({ student, onEditStudent }) {
                   name="tuition-day"
                   value={tuitionDay}
                   onChange={handleTuitionDayChange}
-                  required
                 >
                   <MenuItem value="monday">Monday</MenuItem>
                   <MenuItem value="tuesday">Tuesday</MenuItem>

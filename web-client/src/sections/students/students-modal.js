@@ -13,7 +13,7 @@ import { SvgIcon } from "@mui/material";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { postAsync } from "src/utils/utils";
 import { useAuth } from "src/hooks/use-auth";
-import generatePassword, { generate } from "generate-password";
+import generatePassword from "generate-password";
 
 export default function StudentsModal({ onAddStudent }) {
   const { user } = useAuth();
