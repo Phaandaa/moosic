@@ -49,7 +49,7 @@ export const Layout = (props) => {
                 width: 32
               }}
             >
-              <Logo />
+              <img src="/learn2play-logo-nobg.png" alt="Logo" />
             </Box>
           </Box>
           {children}
@@ -106,7 +106,7 @@ export const Layout = (props) => {
                 sx={{ color: '#EF4822' }}
                 target="_blank"
               >
-                Music
+                Moosic
               </Box>
             </Typography>
             <Typography
