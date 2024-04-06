@@ -20,7 +20,6 @@ import { useEffect } from "react";
 export default function StudentsModal({ onAddStudent }) {
   const { user } = useAuth();
   const [open, setOpen] = React.useState(false);
-  const [step, setStep] = React.useState(1); // New state for tracking the step
 
   const [studentName, setStudentName] = React.useState("");
   const [studentEmail, setStudentEmail] = React.useState("");
@@ -54,7 +53,6 @@ export default function StudentsModal({ onAddStudent }) {
 
   const handleClickOpen = () => {
     setOpen(true);
-    setStep(1); // Reset to step 1 when opening the modal
   };
 
   const handleClose = () => {
@@ -62,7 +60,7 @@ export default function StudentsModal({ onAddStudent }) {
   };
 
   useEffect(() => {
-    emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_USER_ID); // <-- Add your User ID
+    emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_USER_ID);
   }, []);
 
   const handleSubmit = (event) => {
@@ -123,10 +121,10 @@ export default function StudentsModal({ onAddStudent }) {
 
         emailjs.send(serviceId, templateId, emailParams)
         .then((response) => {
-          console.log('Email sent!', response.status, response.text);
+          console.log('Email sent to student!', response.status, response.text);
           // Handle email sent confirmation
         }, (error) => {
-          console.log('Failed to send email.', error);
+          console.log('Failed to send email to student.', error);
           // Handle email send failure
         });
 
@@ -188,7 +186,7 @@ export default function StudentsModal({ onAddStudent }) {
           onSubmit: handleSubmit,
         }}
       >
-        <DialogTitle>{step === 1 ? "Student Details" : "Login Details"}</DialogTitle>
+        <DialogTitle>Student Details</DialogTitle>
         <DialogContent>
           <DialogContentText>
             To create an account, please enter the student's details.

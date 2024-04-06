@@ -12,17 +12,18 @@ import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import { FormControl, InputLabel, Select, MenuItem, SvgIcon } from "@mui/material";
 import { postAsync } from "src/utils/utils";
 import { useAuth } from "src/hooks/use-auth";
+import generatePassword from "generate-password";
+import emailjs from "emailjs-com";
+import { useEffect } from "react";
 
 export default function TeachersModal({ onAddTeacher }) {
   const { user } = useAuth();
   const [open, setOpen] = React.useState(false);
-  const [step, setStep] = React.useState(1);
+
   const [teacherName, setTeacherName] = React.useState("");
   const [teacherEmail, setTeacherEmail] = React.useState("");
   const [instrument, setInstrument] = React.useState("");
   const [teacherPhone, setTeacherPhone] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [passwordCfm, setPasswordCfm] = React.useState("");
 
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState("");
@@ -30,7 +31,6 @@ export default function TeachersModal({ onAddTeacher }) {
 
   const handleClickOpen = () => {
     setOpen(true);
-    setStep(1); // Start from first step
   };
 
   const handleClose = () => {
@@ -54,49 +54,88 @@ export default function TeachersModal({ onAddTeacher }) {
     console.log("Phone:", event.target.value);
   };
 
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
-
-  const handlePasswordCfmChange = (event) => {
-    setPasswordCfm(event.target.value);
-  };
+  useEffect(() => {
+    emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_USER_ID);
+  }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();
     // Perform validation or any other pre-submission logic here
-    if (step !== 2 || !password || !passwordCfm || password !== passwordCfm) {
+    if (!teacherName || !teacherEmail || !instrument || !teacherPhone) {
       console.error("Form validation failed");
       setSnackbarMessage("Validation failed. Please check the form.");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
       return;
     }
+    // Generate a random password for the teacher
+    const generatedPassword = generatePassword.generate({
+      length: 10,
+      numbers: true,
+      symbols: true,
+      uppercase: true,
+      excludeSimilarCharacters: true,
+      strict: true,
+    });
 
     // Assuming postAsync is correctly defined elsewhere and handles the asynchronous POST request
     const submitData = async () => {
       try {
         console.log(teacherPhone);
-        const response = await postAsync("users/create", {
-          name: teacherName,
-          email: teacherEmail,
-          role: "Teacher",
-          password: password, // Make sure your API expects this structure
-          info: {
-            instrument: instrument,
-            phone: teacherPhone.toString(),
+        const response = await postAsync(
+          "users/create",
+          {
+            name: teacherName,
+            email: teacherEmail,
+            role: "Teacher",
+            password: generatedPassword,
+            info: {
+              instrument: instrument,
+              phone: teacherPhone.toString(),
+            },
           },
-        }, user.idToken);
+          user.idToken
+        );
         if (!response.ok) {
           console.error("Server error:", response.status, response.statusText);
           throw new Error("Server error");
         }
         const data = await response.json();
         console.log("Server response:", data);
-        onAddTeacher(data); // Call the callback function to update the student list
+        onAddTeacher(data); // Call the callback function to update the teacher list
+
+        // Send an email to the teacher with the generated password
+        const emailParams = {
+          to_email: teacherEmail,
+          to_name: teacherName,
+          email: teacherEmail,
+          password: generatedPassword,
+          from_name: "Learn2Play Moosic Admin"
+        };
+
+        const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+        const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+
+        emailjs.send(serviceId, templateId, emailParams)
+        .then((response) => {
+          console.log('Email sent to teacher!', response.status, response.text);
+          // Handle email sent confirmation
+        }, (error) => {
+          console.log('Failed to send email to teacher.', error);
+          // Handle email send failure
+        });
+
+        const passwordResetResponse = await postAsync(`api/auth/request-password-reset/${data.id}`, null, user.idToken, false);
+
+        if (!passwordResetResponse.ok) {
+          console.error("Server error:", passwordResetResponse.status, passwordResetResponse.statusText);
+          throw new Error("Password reset function error");
+        } else {
+          console.log("Password reset email sent successfully");
+        }
 
         console.log("Form submitted successfully");
-        setSnackbarMessage("Student added successfully!");
+        setSnackbarMessage("Teacher added successfully!");
         setSnackbarSeverity("success");
         setSnackbarOpen(true);
 
@@ -115,8 +154,6 @@ export default function TeachersModal({ onAddTeacher }) {
         setTeacherEmail("");
         setInstrument("");
         setTeacherPhone("");
-        setPassword("");
-        setPasswordCfm("");
       }
     };
 
@@ -145,128 +182,73 @@ export default function TeachersModal({ onAddTeacher }) {
           onSubmit: handleSubmit,
         }}
       >
-        <DialogTitle>{step === 1 ? "Teacher Details" : "Login Details"}</DialogTitle>
+        <DialogTitle>Teacher Details</DialogTitle>
         <DialogContent>
-          {step === 1 && (
-            // Step 1: Teacher Details
-            <>
-              <DialogContentText>
-                To create a teacher account, please enter the teacher's details.
-              </DialogContentText>
-              <TextField
-                autoFocus
-                required
-                margin="dense"
-                id="tchr-name"
-                name="tchr-name"
-                label="Full Name"
-                type="text"
-                fullWidth
-                variant="standard"
-                onChange={handleNameChange}
-                value={teacherName}
-              />
-              <TextField
-                required
-                margin="dense"
-                id="tchr-email"
-                name="tchr-email"
-                label="Email Address"
-                type="email"
-                fullWidth
-                variant="standard"
-                onChange={handleEmailChange}
-                value={teacherEmail}
-              />
-              <FormControl fullWidth variant="standard" margin="dense">
-                <InputLabel id="instrument-label">Instrument</InputLabel>
-                <Select
-                  labelId="instrument-label"
-                  id="instrument"
-                  name="instrument"
-                  value={instrument}
-                  onChange={handleInstrumentChange}
-                  required
-                >
-                  <MenuItem value="Piano">Piano</MenuItem>
-                  <MenuItem value="Guitar">Guitar</MenuItem>
-                  <MenuItem value="Ukulele">Ukulele</MenuItem>
-                  <MenuItem value="Violin">Violin</MenuItem>
-                </Select>
-              </FormControl>
-              <TextField
-                margin="dense"
-                id="tchr-phone"
-                name="tchr-phone"
-                label="Phone Number"
-                type="tel"
-                fullWidth
-                variant="standard"
-                onChange={handlePhoneChange}
-                value={teacherPhone}
-                required
-              />
-            </>
-          )}
-          {step === 2 && (
-            // Step 2: Login Details
-            <>
-              <DialogContentText>Please enter the password details.</DialogContentText>
-
-              <TextField
-                autoFocus
-                required
-                margin="dense"
-                id="password"
-                name="password"
-                label="Password"
-                type="password"
-                fullWidth
-                variant="standard"
-                onChange={handlePasswordChange} // Add onChange
-                value={password} // Control the component
-              />
-              <TextField
-                required
-                margin="dense"
-                id="password-cfm"
-                name="password-cfm"
-                label="Confirm Password"
-                type="password"
-                fullWidth
-                variant="standard"
-                onChange={handlePasswordCfmChange} // Add onChange
-                value={passwordCfm} // Control the component
-              />
-              <span style={{ color: "red", fontSize: "0.75rem" }}>
-                {password !== passwordCfm ? "Passwords do not match" : ""}
-              </span>
-            </>
-          )}
+          <DialogContentText>
+            To create a teacher account, please enter the teacher's details.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            required
+            margin="dense"
+            id="tchr-name"
+            name="tchr-name"
+            label="Full Name"
+            type="text"
+            fullWidth
+            variant="standard"
+            onChange={handleNameChange}
+            value={teacherName}
+          />
+          <TextField
+            required
+            margin="dense"
+            id="tchr-email"
+            name="tchr-email"
+            label="Email Address"
+            type="email"
+            fullWidth
+            variant="standard"
+            onChange={handleEmailChange}
+            value={teacherEmail}
+          />
+          <FormControl fullWidth variant="standard" margin="dense">
+            <InputLabel id="instrument-label">Instrument</InputLabel>
+            <Select
+              labelId="instrument-label"
+              id="instrument"
+              name="instrument"
+              value={instrument}
+              onChange={handleInstrumentChange}
+              required
+            >
+              <MenuItem value="Piano">Piano</MenuItem>
+              <MenuItem value="Guitar">Guitar</MenuItem>
+              <MenuItem value="Ukulele">Ukulele</MenuItem>
+              <MenuItem value="Violin">Violin</MenuItem>
+            </Select>
+          </FormControl>
+          <TextField
+            margin="dense"
+            id="tchr-phone"
+            name="tchr-phone"
+            label="Phone Number"
+            type="tel"
+            fullWidth
+            variant="standard"
+            onChange={handlePhoneChange}
+            value={teacherPhone}
+            required
+          />
         </DialogContent>
         <DialogActions>
-          {step === 1 && (
-            <>
-              <Button onClick={handleClose}>Cancel</Button>
-              <Button
-                onClick={() => setStep(2)}
-                disabled={!teacherName || !teacherEmail || !instrument || !teacherPhone}
-              >
-                Next
-              </Button>
-            </>
-          )}
-          {step === 2 && (
-            <>
-              <Button onClick={() => setStep(1)}>Back</Button>
-              <Button
-                type="submit"
-                disabled={!password || !passwordCfm || password !== passwordCfm}
-              >
-                Create
-              </Button>
-            </>
-          )}
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button
+            type="submit"
+            disabled={!teacherName || !teacherEmail || !instrument || !teacherPhone}
+          >
+            Create
+          </Button>
         </DialogActions>
       </Dialog>
       <Snackbar
@@ -278,7 +260,7 @@ export default function TeachersModal({ onAddTeacher }) {
         <Alert
           onClose={() => setSnackbarOpen(false)}
           severity={snackbarSeverity}
-          sx= {{ width: "100%" }}
+          sx={{ width: "100%" }}
         >
           {snackbarMessage}
         </Alert>
