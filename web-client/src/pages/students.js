@@ -9,16 +9,80 @@ import { StudentsTable } from "src/sections/students/students-table";
 import { StudentsSearch } from "src/sections/students/students-search";
 import { applyPagination } from "src/utils/apply-pagination";
 import StudentsModal from "src/sections/students/students-modal";
-import { getAsync } from "src/utils/utils";
+import { getAsync, deleteAsync } from "src/utils/utils";
 import { Card } from "@mui/material";
 import { convertArrayToCSV } from "src/utils/utils";
 import { useAuth } from "src/hooks/use-auth";
-
+import AccConfirmDeletionModal from "src/sections/students/students-confirm-delete";
+import SnackbarAlert from "src/components/alert";
+import { alpha } from '@mui/material/styles';
 
 const Page = () => {
   const { user } = useAuth();
   const [studentData, setStudentData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+
+  // confirm deletion modal states
+  const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [studentsToDelete, setStudentsToDelete] = useState([]);
+
+  // snackbar alert states
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
+  const handleDeleteConfirmationOpen = () => {
+    setStudentsToDelete(studentsSelection.selected);
+    setConfirmModalOpen(true);
+  };
+
+  const handleDeleteConfirmationClose = () => {
+    setConfirmModalOpen(false);
+  };
+
+  const onTriggerSnackbar = (message, severity) => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
+
+  const handleDeleteConfirmed = async (accounts) => {
+    console.log("Deleting students:", accounts);
+    // Promise.all will execute all delete requests in parallel
+    const deletePromises = accounts.map((studentId) =>
+      deleteAsync(`students/${studentId}/delete`, user.idToken)
+    );
+
+    try {
+      // Wait for all delete requests to finish
+      await Promise.all(deletePromises);
+      
+      // Filter out the deleted students from the state.
+      setStudentData((currentStudentData) =>
+        currentStudentData.filter((student) => !accounts.includes(student.id))
+      );
+
+      // Clear the selection state and close the modal
+      studentsSelection.handleDeselectAll();
+      // Show a success message
+      // Assuming you have a method to show toast notifications
+      onTriggerSnackbar("Students deleted successfully.", "success");
+    } catch (error) {
+      // If any request fails, you may decide to stop the deletion process
+      // and show an error message
+      // Or handle the individual failures accordingly
+      console.error("Error deleting students:", error);
+      onTriggerSnackbar("Failed to delete students.", "error");
+    } finally {
+      // Close the modal
+      setConfirmModalOpen(false);
+      setStudentsToDelete([]);
+    }
+  };
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -76,24 +140,22 @@ const Page = () => {
   };
 
   const handleAddStudent = (newStudent) => {
-    setStudentData((prevStudents) => [newStudent,...prevStudents]);
+    setStudentData((prevStudents) => [newStudent, ...prevStudents]);
   };
 
   const handleEditStudent = (updatedStudent) => {
     setStudentData((prevStudents) =>
-      prevStudents.map((student) =>
-        student.id === updatedStudent.id ? updatedStudent : student
-      )
+      prevStudents.map((student) => (student.id === updatedStudent.id ? updatedStudent : student))
     );
   };
 
   const handleExport = () => {
     const csvData = convertArrayToCSV(studentData);
-    const blob = new Blob([csvData], { type: 'text/csv' });
+    const blob = new Blob([csvData], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.setAttribute('download', 'students-data.csv');
+    link.setAttribute("download", "students-data.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -119,7 +181,7 @@ const Page = () => {
                 <Stack alignItems="center" direction="row" spacing={1}></Stack>
               </Stack>
               <div>
-                <StudentsModal onAddStudent={handleAddStudent}/>
+                <StudentsModal onAddStudent={handleAddStudent} />
               </div>
             </Stack>
 
@@ -137,18 +199,29 @@ const Page = () => {
               >
                 Export
               </Button>
-              <Button
-                color="inherit"
+              {studentsSelection.selected.length !== 0 && (
+                <Button
                 startIcon={
                   <SvgIcon fontSize="small">
                     <TrashIcon />
                   </SvgIcon>
                 }
-                onClick={handleExport}
+                onClick={handleDeleteConfirmationOpen}
                 style={{ marginLeft: "15px" }}
+                disabled={studentsSelection.selected.length === 0}
+                sx={{
+                  backgroundColor: "#EE4242",
+                  color: "#ffffff",
+                  '&:hover': {
+                    backgroundColor: alpha("#EE4242",0.2), // lighter red on hover
+                    color: "#000000", // black font color on hover
+                  },
+                  marginLeft: "15px"
+                }}
               >
                 Delete
               </Button>
+              )}
             </Card>
 
             <StudentsTable
@@ -168,6 +241,18 @@ const Page = () => {
           </Stack>
         </Container>
       </Box>
+      <AccConfirmDeletionModal
+        open={isConfirmModalOpen}
+        onClose={handleDeleteConfirmationClose}
+        onConfirm={handleDeleteConfirmed}
+        accounts={studentsToDelete}
+      />
+      <SnackbarAlert
+        open={snackbarOpen}
+        severity={snackbarSeverity}
+        message={snackbarMessage}
+        handleClose={handleCloseSnackbar}
+      />
     </>
   );
 };
