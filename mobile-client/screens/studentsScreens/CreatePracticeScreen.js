@@ -189,7 +189,7 @@ function CreatePracticeScreen({navigation}){
         const responseData = await response.json();
         console.log(responseData);
         // dispatch(setCache({ key: 'practiceData', value: practiceData })); 
-        navigation.navigate('PracticeListStudentScreen');
+        // navigation.navigate('PracticeListStudentScreen');
         setModalVisible(true);
       } catch (error) {
           console.error('Error recording practice:', error);
