@@ -70,7 +70,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     loadData();
-  }, [state.inventory]);
+  }, [state.inventory, state.userData]);
   
 
   // Handle the sign-out process

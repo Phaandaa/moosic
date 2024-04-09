@@ -44,19 +44,27 @@ function RewardsShopScreen() {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-
+        
         const [itemResponse, purchaseHistoryResponse] = await Promise.all([
           axios.get(`${IP_ADDRESS}/reward-shop`, state.authHeader),
           axios.get(`${IP_ADDRESS}/purchase-history/${state.userData.id}`, state.authHeader),
         ]);
         setItems(itemResponse.data); 
         setPurchaseHistory(purchaseHistoryResponse.data); 
+        const [userDataResponse, inventoryResponse] = await Promise.all([
+          axios.get(`${IP_ADDRESS}/students/${state.userData.id}`, state.authHeader),
+          axios.get(`${IP_ADDRESS}/student-inventory/${state.userData.id}`, state.authHeader),
+        ]);
+  
+        dispatch({ type: 'UPDATE_USER_DATA', payload: { userData: userDataResponse.data } }) 
+  
+        dispatch({ type: 'UPDATE_INVENTORY', payload: { inventory: inventoryResponse.data }})
       } catch (error) {
         console.error("RewardsShopScreen.js line 64, Error fetching items:", error);
       }
     };
     fetchItems();
-  }, [purchaseCounter, state.userData]);
+  }, [purchaseCounter]);
 
   useEffect(() => {
     // Combine search and category filters
@@ -107,13 +115,12 @@ function RewardsShopScreen() {
         ...previousUserData,
         pointsCounter: previousUserData.pointsCounter - updatedItem.points, // Subtract points from user's total
       }));
-
       Alert.alert("Success", "Item redeemed successfully!");
 
-      const inventoryResponse = await axios.get(`${IP_ADDRESS}/student-inventory/${state.userData.id}`, state.authHeader);
-      dispatch({ type: 'UPDATE_INVENTORY', payload: { inventory: inventoryResponse.data }})
-
       setModalVisible(false);
+
+      
+
       setSelectedItem(null); // Reset selected item on successful redemption
       if (selectedItem.type === "DIGITAL") {
         setPurchaseCounter((prevPurchaseCounter) => prevPurchaseCounter + 1); // just for refreshing the page bro dont delete hehe
