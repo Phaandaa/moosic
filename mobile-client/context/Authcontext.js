@@ -129,7 +129,8 @@ export const AuthProvider = ({ children }) => {
         const refreshTokenResponse = await axios.post(`${IP_ADDRESS}/api/auth/request-new-token/${cachedAuthData.userId}?refreshToken=${cachedAuthData.refreshToken}`, {});
         const newRefreshToken = refreshTokenResponse.data.refresh_token
         const newIdToken = refreshTokenResponse.data.id_token;
-        cachedAuthData = {...cachedAuthData, idToken: newIdToken, refreshToken: newRefreshToken}
+        const authHeader = { headers: { Authorization: `Bearer ${newIdToken}` } };
+        cachedAuthData = {...cachedAuthData, idToken: newIdToken, refreshToken: newRefreshToken, authHeader}
         await saveAuthDataToCache(cachedAuthData);
         loggingInAndRetrieveUserData(cachedAuthData, dispatch);
       }
@@ -143,9 +144,11 @@ export const AuthProvider = ({ children }) => {
         console.log("Authcontext.js line 75: Here lies the expo push token ", expoPushToken);
         const response = await axios.post(`${IP_ADDRESS}/api/auth/signin`, { email, password, expoPushToken });
         const { data } = response;
-        console.log("Authcontext.js line 78, to be savedAuthData:", data);
+        console.log("Authcontext.js line 147, to be savedAuthData:", data);
         if (response.status === 200 && data.userId) {
-            await saveAuthDataToCache(data);
+            const authHeader = { headers: { Authorization: `Bearer ${response.data.idToken}` } };
+            const dataWithAuthHeader = {...data, authHeader}
+            await saveAuthDataToCache(dataWithAuthHeader);
             loggingInAndRetrieveUserData(data, dispatch);
         } else {
             const errorMessage = data.message || 'Failed to sign in';

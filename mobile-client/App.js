@@ -257,8 +257,9 @@ const RootNavigator = () => {
         var data = await AsyncStorage.getItem('authData');
         data = JSON.parse(data);
         try {
+          console.log("Got the notification!");
           console.log("Current state", state.userData);
-          const response = await axios.get(`${IP_ADDRESS}/notifications/${data.id}`, state.authHeader);
+          const response = await axios.get(`${IP_ADDRESS}/notifications/${data.userId}`, data.authHeader);
           dispatch({ type: 'UPDATE_NOTIFS', payload: { notifications: response.data } });
         } catch (error) {
           console.error("App.js line 253, ", error);
