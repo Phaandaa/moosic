@@ -130,8 +130,8 @@ public class NotificationService {
     @Scheduled(cron = "0 5 0 * * *") 
     public void removeOldNotifications() {
         try {
-            Instant oneWeekAgo = Instant.now().minus(7, ChronoUnit.DAYS);
-            List<Notification> oldNotifications = notificationRepository.findAllOlderThanAWeek(oneWeekAgo);
+            Instant threeDaysAgo = Instant.now().minus(3, ChronoUnit.DAYS);
+            List<Notification> oldNotifications = notificationRepository.findAllOlderThanThreeDays(threeDaysAgo);
             notificationRepository.deleteAll(oldNotifications);
 
         } catch (Exception e) {

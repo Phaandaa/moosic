@@ -14,6 +14,6 @@ public interface NotificationRepository extends MongoRepository<Notification, St
     public List<Notification> findByRecipientId(String studentId);
 
     @Query("{ 'creation_time' : { $lt: ?0 } }")
-    List<Notification> findAllOlderThanAWeek(Instant oneWeekAgo);
+    List<Notification> findAllOlderThanThreeDays(Instant threeDaysAgo);
     
 }
