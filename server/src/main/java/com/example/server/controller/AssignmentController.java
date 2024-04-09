@@ -79,8 +79,8 @@ public class AssignmentController {
     @PutMapping(path = "/teacher/{assignmentId}/update", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> updateAssignment(@PathVariable String assignmentId,
             @RequestParam(value = "points") Integer points, 
-            @RequestPart("files") List<MultipartFile> files, 
-            @RequestParam(value = "teacherFeedback", required = false) String teacherFeedback){
+            @RequestPart(value = "files", required = false) List<MultipartFile> files, 
+            @RequestParam(value = "teacherFeedback") String teacherFeedback){
                 
         Assignment updatedAssignment = assignmentService.updateAssignmentStudentPointsAndComments(assignmentId, files, points, teacherFeedback);
 

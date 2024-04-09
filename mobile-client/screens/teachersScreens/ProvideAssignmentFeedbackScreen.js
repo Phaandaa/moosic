@@ -85,14 +85,18 @@ function ProvideAssignmentFeedbackScreen({ navigation, route }) {
   };
 
   const validateForm = () => {
-    let newErrors = {};
-    let isValid = true;
-    return isValid;
+    if (teacherFeedback.trim() === "") {
+      return false;
+    }
+    if (points === "") {
+      return false;
+    }
+    return true;
   };
 
   const submitHandler = async () => {
     if (!validateForm()) {
-      Alert.alert('Error', 'Please fill in all required fields.');
+      Alert.alert('Error', 'Please fill in feedback and points given.');
       return;
     }
   

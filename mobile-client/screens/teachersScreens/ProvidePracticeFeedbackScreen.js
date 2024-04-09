@@ -62,13 +62,18 @@ function ProvidePracticeFeedbackScreen({route, navigation}){
     };
     
   const validateForm = () => {
-    let isValid = true;
-    return isValid;
+    if (teacherFeedback.trim() === "") {
+      return false;
+    }
+    if (points === "") {
+      return false;
+    }
+    return true;
   };
 
   const submitHandler = async () => {
     if (!validateForm()) {
-      Alert.alert('Error', 'Please fill in all required fields.');
+      Alert.alert('Error', 'Please fill in the feedback and points given');
       return;
     }
   
