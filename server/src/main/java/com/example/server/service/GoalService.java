@@ -91,20 +91,6 @@ public class GoalService {
         }
     }
 
-    @Scheduled(cron = "0 0 0 * * MON")
-    public void resetWeeklyGoal() {
-        System.out.println("Trying the weekly reset process...");
-        try {
-            List<Goal> goals = goalRepository.findAll();
-            for (Goal goal : goals) {
-                goal.weeklyReset();
-            }
-            goalRepository.saveAll(goals);
-        } catch (Exception e) {
-            System.out.println("Error doing weekly goal reset");
-        }
-    }
-
     @Scheduled(cron = "0 0 0 * * *") 
     public void resetPreviousDayGoals() {
         LocalDate today = LocalDate.now();
