@@ -13,7 +13,6 @@ import com.example.server.dao.TeacherRepository;
 import com.example.server.dao.UserRepository;
 import com.example.server.entity.Student;
 import com.example.server.entity.Teacher;
-import com.example.server.entity.User;
 
 @Service
 public class TeacherService {

@@ -186,7 +186,6 @@ public class RewardShopService {
         }
     }
 
-    // update image of reward item
     public RewardShop updateRewardShopItemImage(String id, MultipartFile file){
         try {
             RewardShop rewardShopItem = rewardShopRepository.findById(id).orElseThrow(()->
@@ -210,30 +209,23 @@ public class RewardShopService {
             RewardShop rewardShopItem = rewardShopRepository.findById(id).orElseThrow(()->
                 new NoSuchElementException("Reward Shop item not found with the ID " + id));
 
-            // check if student has exceeded limitation count
             Integer itemLimitCount = rewardShopItem.getLimitation();
             List<PurchaseHistory> studentPurchaseHistories = purchaseHistoryRepository.findByStudentIdAndItemId(studentId, id);
             PurchaseHistory.hasExceededLimit(purchaseAmount, itemLimitCount, studentPurchaseHistories);
 
-            // kurangin stock
             rewardShopItem.deductStock(purchaseAmount);
             rewardShopRepository.save(rewardShopItem);
 
-            // kurangin points murid
             Student student = studentRepository.findById(studentId).orElseThrow(()->
                 new NoSuchElementException("Student not found with the ID " + id));
             Integer totalPrice = rewardShopItem.getPoints() * purchaseAmount;
             student.deductPoints(totalPrice);
             studentRepository.save(student);
 
-            // add to inventory if not physical
-
-            // tambahin points log murid
             String pointsLogDesc = "Bought " + rewardShopItem.getDescription() + " from shop";
             PointsLog pointsLog = new PointsLog(studentId, pointsLogDesc, -totalPrice);
             pointsLogRepository.save(pointsLog);
 
-            // tambahin purchase history murid 
             PurchaseHistory purchaseHistory = new PurchaseHistory(
                 studentId, 
                 student.getName(), 
@@ -263,23 +255,19 @@ public class RewardShopService {
             RewardShop rewardShopItem = rewardShopRepository.findById(id).orElseThrow(()->
                 new NoSuchElementException("Reward Shop item not found with the ID " + id));
 
-            // check if student has exceeded limitation count
             Integer itemLimitCount = rewardShopItem.getLimitation();
             List<PurchaseHistory> studentPurchaseHistories = purchaseHistoryRepository.findByStudentIdAndItemId(studentId, id);
             PurchaseHistory.hasExceededLimit(purchaseAmount, itemLimitCount, studentPurchaseHistories);
 
-            // kurangin stock
-            rewardShopItem.deductStock(purchaseAmount); // sebenrnya g perlu si buat digital tp bebas la hahahah
+            rewardShopItem.deductStock(purchaseAmount);
             rewardShopRepository.save(rewardShopItem);
 
-            // kurangin points murid
             Student student = studentRepository.findById(studentId).orElseThrow(()->
                 new NoSuchElementException("Student not found with the ID " + studentId));
             Integer totalPrice = rewardShopItem.getPoints();
             student.deductPoints(totalPrice);
             studentRepository.save(student);
 
-            // add to inventory if not physical
             StudentInventory studentInventory = studentInventoryRepository.findByStudentId(studentId).orElseThrow(()->
                 new NoSuchElementException("Student Inventory not found for student ID " + studentId));
             studentInventory.addInventoryItem(rewardShopItem.getSubtype(), rewardShopItem.getImageLink());

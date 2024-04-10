@@ -209,7 +209,6 @@ public class AssignmentService {
                 assignment.setTeacherFeedback(teacherFeedback);
             }
 
-            // Update feedback document links
             if (feedbackDocuments != null && !feedbackDocuments.isEmpty()) {
                 List<String> feedbackDocumentLinks = cloudStorageService.uploadFilesToGCS(feedbackDocuments, "assignments");
                 assignment.setFeedbackDocumentLinks(feedbackDocumentLinks);

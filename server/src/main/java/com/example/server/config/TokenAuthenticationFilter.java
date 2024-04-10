@@ -149,5 +149,4 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             System.out.println("Error decoding token header: " + e.getMessage());
         }
     }
-    
 }

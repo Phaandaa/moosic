@@ -20,7 +20,6 @@ public class PointsLogService {
     @Autowired
     private StudentRepository studentRepository;
 
-    // get points log by student 
     public List<PointsLog> getPointsLogByStudent(String studentId) {
         try {
             studentRepository.findById(studentId).orElseThrow(()->

@@ -17,8 +17,7 @@ import lombok.Setter;
 @Setter
 @Document(collection = "assignments")
 public class Assignment {
-    // TODO: check implementation on how deadline can be used as Date object
-    // TODO: add created date field 
+
     @Id
     private String assignmentId;
     private String title;

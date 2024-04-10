@@ -37,7 +37,6 @@ public class MaterialRepositoryService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    // create material repository
     @Transactional
     public MaterialRepository createMaterialRepository(String materialRepositoryJSON, MultipartFile file) {
         try {
@@ -68,7 +67,6 @@ public class MaterialRepositoryService {
         
     }
 
-    // fetch all material repository
     public List<MaterialRepository> getAllMaterialRepository() {
         try {
             List<MaterialRepository> materials = materialRepositoryRepository.findAllSortedByCreationTime();
@@ -84,7 +82,6 @@ public class MaterialRepositoryService {
         }
     }
 
-    // fetch approved material repository
     public List<MaterialRepository> getAllApprovedMaterialRepository() {
         try {
             List<MaterialRepository> materials = materialRepositoryRepository.findApprovedSorted();
@@ -100,8 +97,6 @@ public class MaterialRepositoryService {
         }
     }
 
-
-    // approve/reject material repositry and give reasonFroStatus
     @Transactional
     public MaterialRepository approveMaterialAndReason(String materialId, String newStatus, String reasonForStatus) {
         try {
@@ -128,7 +123,6 @@ public class MaterialRepositoryService {
         }
     }
 
-    // update attached file
     @Transactional
     public MaterialRepository updateFileForMaterialRepository(String materialId, MultipartFile file) {
         try {
@@ -152,7 +146,6 @@ public class MaterialRepositoryService {
         }
     }
 
-    // fetch material repository by teacherId
     public List<MaterialRepository> getMaterialRepositoryByTeacherId(String teacherId) {
         try {
             teacherRepository.findById(teacherId).orElseThrow(()->

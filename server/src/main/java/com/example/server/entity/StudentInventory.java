@@ -60,7 +60,4 @@ public class StudentInventory {
         return "StudentInventory [id=" + id + ", studentId=" + studentId + ", ownedAvatarList=" + ownedAvatarList
                 + ", ownedBadgeList=" + ownedBadgeList + ", ownedFrameList=" + ownedFrameList + "]";
     }
-
-
-    
 }
