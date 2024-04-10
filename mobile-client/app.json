@@ -12,7 +12,7 @@
       "backgroundColor": "#ffffff"
     },
     "notification": {
-      "icon": "./path/to/your/notification-icon.png",
+      "icon": "./assets/note.png",
       "androidMode": "collapse"
     },
     "assetBundlePatterns": [
