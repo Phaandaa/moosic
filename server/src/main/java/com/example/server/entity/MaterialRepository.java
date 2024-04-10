@@ -42,6 +42,7 @@ public class MaterialRepository {
         this.grade = grade;
         this.teacherId = teacherId;
         this.teacherName = teacherName;
+        this.creationTime = new Date();
         this.textDate = LocalDateTime.now().toString();
     }
     
