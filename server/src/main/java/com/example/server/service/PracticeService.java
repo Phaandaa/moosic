@@ -160,12 +160,10 @@ public class PracticeService {
 
             practiceRepository.save(practice);
 
-            // Add points log for submitting practice
             String pointsLogDescription = "Finished " + practice.getTitle() + " practice";
             PointsLog newPointsLog = new PointsLog(practice.getStudentId(), pointsLogDescription, points);
             pointsLogRepository.save(newPointsLog);
 
-            // TODO: Check with goals and add points if goal is finished
             String studentId = practice.getStudentId();
             Student student = studentRepository.findById(studentId).orElseThrow(()->
                 new NoSuchElementException("No student found with the ID " + studentId));

@@ -21,10 +21,6 @@ import com.example.server.models.CreateUserDTO;
 import com.example.server.models.FirebaseToken;
 import com.example.server.models.RefreshTokenResponse;
 import com.example.server.models.SignInResponseDTO;
-import com.example.server.models.SignOutDTO;
-
-
-// TODO: Handle possible exceptions, please check with example from OOP project
 
 @Service
 public class UserService {

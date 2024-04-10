@@ -59,7 +59,6 @@ public class GoalService {
         }
     }
 
-    // get goal by student id 
     public Goal getGoalByStudentId(String studentId) {
         try {
             studentRepository.findById(studentId).orElseThrow(()->

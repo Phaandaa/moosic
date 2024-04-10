@@ -1,8 +1,6 @@
 package com.example.server.controller;
 
-
 import com.example.server.models.SignInResponseDTO;
-import com.example.server.models.SignOutDTO;
 import com.example.server.service.FirebaseAuthService;
 import com.example.server.service.UserService;
 
@@ -36,11 +34,6 @@ public class AuthController {
     @Autowired
     private UserRepository userRepository;
 
-    // @Autowired
-    // public AuthController(FirebaseAuthService firebaseAuthService) {
-    //     this.firebaseAuthService = firebaseAuthService;
-    // }
-    
     @Operation(summary = "User sign in with email and password")
     @PostMapping("/signin")
     public ResponseEntity<SignInResponseDTO> signInWithEmailAndPassword(@RequestBody AuthRequest authRequest) {
