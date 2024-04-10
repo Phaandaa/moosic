@@ -121,7 +121,7 @@ function ResourceRepositoryScreen() {
         setSearchText(text);
     };
 
-    const RepoFile = ({ title, instrument, type, grade, fileLink, creationTime, status, description, reasonForStatus }) => {
+    const RepoFile = ({ title, instrument, type, grade, fileLink, textDate, status, description, reasonForStatus }) => {
         return (
         <TouchableOpacity style={styles.item} onPress={() => handleOpenModal({title, description, fileLink, reasonForStatus})}>
             <View style={styles.itemImageContainer}> 
@@ -140,7 +140,7 @@ function ResourceRepositoryScreen() {
                 />
             </View>
             <Text style={styles.itemTitle}>{title}</Text>
-            <Text style={styles.date}>{creationTime.slice(0, 10)}</Text>
+            <Text style={styles.date}>{textDate?.slice(0, 10)}</Text>
             <View style={styles.chipContainer}>
                 {type.map((typeItem, index) => (
                     <View key={index} style={styles.chip}>
