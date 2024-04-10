@@ -11,6 +11,10 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "notification": {
+      "icon": "./path/to/your/notification-icon.png",
+      "androidMode": "collapse"
+    },
     "assetBundlePatterns": [
       "**/*"
     ],
