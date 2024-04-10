@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView, RefreshControl, FlatList, Dimensions } from 'react-native';
 import { useAuth } from '../context/Authcontext';
 import Icon from 'react-native-vector-icons/MaterialIcons'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import IP_ADDRESS from '../constants/ip_address_temp';
@@ -77,7 +78,8 @@ const ProfileScreen = ({ navigation, route }) => {
   const handleSignOut = async () => {
     setIsLoading(true);
     try {
-      await signOut(userId, expoPushToken);
+      const cachedExpoToken = await AsyncStorage.getItem('expoPushToken');
+      await signOut(userId, cachedExpoToken || "");
       //await signOut();
     } catch (error) {
       console.error('profilepage.js line 150, Error signing out', error);

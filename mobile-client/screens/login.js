@@ -16,7 +16,8 @@ const LoginPage = ({ route, navigation }) => {
   const handleLogin = async () => {
     setIsLoading(true);
     try {
-      const response = await signIn(email, password, expoPushToken);
+      const cachedExpoToken = await AsyncStorage.getItem('expoPushToken');
+      const response = await signIn(email, password, cachedExpoToken || "");
       
       if (response != null){
         navigation.navigate('Home');

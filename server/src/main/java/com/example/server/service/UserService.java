@@ -217,15 +217,19 @@ public class UserService {
                 case "Student":
                     Student selectedStudent = studentRepository.findById(userId).orElseThrow(()->
                         new NoSuchElementException("No student found with ID " + userId));
-                    selectedStudent.removeDevice(expoPushToken);
-                    studentRepository.save(selectedStudent);
+                    if (selectedStudent.getExpoPushToken().contains(expoPushToken)) {
+                        selectedStudent.removeDevice(expoPushToken);
+                        studentRepository.save(selectedStudent);
+                    }
                     break;
                 
                 case "Teacher":
                     Teacher selectedTeacher = teacherRepository.findById(userId).orElseThrow(()->
                         new NoSuchElementException("No teacher found with ID " + userId));
-                    selectedTeacher.removeDevice(expoPushToken);
-                    teacherRepository.save(selectedTeacher);
+                    if (selectedTeacher.getExpoPushToken().contains(expoPushToken)) {
+                        selectedTeacher.removeDevice(expoPushToken);
+                        teacherRepository.save(selectedTeacher);
+                    }
                     break;
                 
                 case "Admin":

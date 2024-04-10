@@ -100,7 +100,7 @@ async function registerForPushNotificationsAsync() {
     token = await Notifications.getExpoPushTokenAsync({
       projectId: "266a78dd-0994-4876-8ba9-92801ff17fb2",
     });
-    console.log("App.js line 99, expoPushToken: " + token);
+    await AsyncStorage.setItem('expoPushToken', token.data);
   } else {
     alert('Must use physical device for Push Notifications');
   }
