@@ -35,8 +35,8 @@ public class Assignment {
     private List<String> feedbackDocumentLinks;
     private String createdAtDate;
     private String studentComment;
-    private Date submissionTimestamp;
-    private Date feedbackTimestamp;
+    private String submissionTimestamp;
+    private String feedbackTimestamp;
 
     @Field(name = "creation_time")
     private Date creationTime;

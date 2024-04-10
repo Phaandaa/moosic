@@ -1,5 +1,6 @@
 package com.example.server.entity;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import org.springframework.data.annotation.Id;
@@ -48,10 +49,10 @@ public class Practice {
     private String feedbackLinks;
 
     @Field(name = "practiceSubmissionTimestamp")
-    private Date submissionTimestamp;
+    private String submissionTimestamp;
 
     @Field(name = "feedbackTimestamp")
-    private Date feedbackTimestamp;
+    private String feedbackTimestamp;
 
     @Field(name = "creation_time")
     private Date creationTime;

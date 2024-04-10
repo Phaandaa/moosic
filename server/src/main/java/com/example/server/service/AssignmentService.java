@@ -1,5 +1,6 @@
 package com.example.server.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -171,8 +172,7 @@ public class AssignmentService {
                 assignment.setStudentComment(studentComment);
             }
 
-            Date timestamp = new Date();
-            assignment.setSubmissionTimestamp(timestamp);
+            assignment.setSubmissionTimestamp(LocalDateTime.now().toString());
 
             notificationService.sendNotification(
                 "Teacher", 
@@ -215,8 +215,7 @@ public class AssignmentService {
                 assignment.setFeedbackDocumentLinks(feedbackDocumentLinks);
             }
 
-            Date timestamp = new Date();
-            assignment.setFeedbackTimestamp(timestamp);
+            assignment.setFeedbackTimestamp(LocalDateTime.now().toString());
 
             String pointsLogDescription = "Finished " + assignment.getTitle() + " practice";
             PointsLog newPointsLog = new PointsLog(studentId, pointsLogDescription, points);

@@ -1,5 +1,6 @@
 package com.example.server.entity;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -26,10 +27,12 @@ public class MaterialRepository {
     private String teacherId;
     private String teacherName;
     private Date creationTime;
+    private String textDate;
 
 
     public MaterialRepository(String title, String description, String fileLink, String status, String reasonForStatus, List<String> type,
         List<String> instrument, List<String> grade, String teacherId, String teacherName) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         this.title = title;
         this.description = description;
         this.fileLink = fileLink;
@@ -40,7 +43,8 @@ public class MaterialRepository {
         this.grade = grade;
         this.teacherId = teacherId;
         this.teacherName = teacherName;
-        this.creationTime = new Date();
+        creationTime = new Date();
+        this.textDate = sdf.format(creationTime);
     }
     
 }

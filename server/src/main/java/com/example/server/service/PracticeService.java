@@ -1,5 +1,6 @@
 package com.example.server.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -58,8 +59,7 @@ public class PracticeService {
             Practice createdPractice = new Practice(studentId, studentName, teacherId, teacherName, videoURL, title,
                     comment,null,null, new Date());
 
-            Date timestamp = new Date();
-            createdPractice.setSubmissionTimestamp(timestamp);
+            createdPractice.setSubmissionTimestamp(LocalDateTime.now().toString());
             practiceRepository.save(createdPractice);
 
             notificationService.sendNotification(
@@ -156,8 +156,7 @@ public class PracticeService {
                 studentRepository.save(student);
             });
 
-            Date timestamp = new Date();
-            practice.setFeedbackTimestamp(timestamp);
+            practice.setFeedbackTimestamp(LocalDateTime.now().toString());
 
             practiceRepository.save(practice);
 
