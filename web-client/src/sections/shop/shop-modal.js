@@ -408,7 +408,7 @@ export const ItemDetailModal = ({
             </Grid>
           </Grid>
           <Divider />
-          {type === "physical" && (
+          {type === "PHYSICAL" && (
             <>
               <DialogContentText sx={{ my: 2 }}>Redeem Points</DialogContentText>
               <Box display={"flex"} justifyContent={"space-between"}>
