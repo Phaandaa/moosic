@@ -49,11 +49,11 @@ export const AccountProfileDetails = () => {
     >
       <Card>
         <CardHeader
-          subheader="The information can be edited"
+          subheader="The information is for viewing purposes only"
           title="Profile"
         />
         <CardContent sx={{ pt: 0 }}>
-          <Box sx={{ m: -1.5 }}>
+          <Box sx={{ m: 1.5 }}>
             <Grid
               container
               spacing={3}
@@ -64,11 +64,11 @@ export const AccountProfileDetails = () => {
               >
                 <TextField
                   fullWidth
-                  helperText="Please specify full name"
+                  // helperText="Please specify full name"
                   label="Full name"
                   name="firstName"
                   onChange={handleChange}
-                  required
+                  // required
                   value={user.name ? user.name : "Loading..."}
                 />
               </Grid>
@@ -81,7 +81,7 @@ export const AccountProfileDetails = () => {
                   label="Email Address"
                   name="email"
                   onChange={handleChange}
-                  required
+                  // required
                   value={user.email ? user.email : "Loading..."}
                 />
               </Grid>
@@ -110,11 +110,11 @@ export const AccountProfileDetails = () => {
           </Box>
         </CardContent>
         <Divider />
-        <CardActions sx={{ justifyContent: 'flex-end' }}>
+        {/* <CardActions sx={{ justifyContent: 'flex-end' }}>
           <Button variant="contained">
             Save details
           </Button>
-        </CardActions>
+        </CardActions> */}
       </Card>
     </form>
   );

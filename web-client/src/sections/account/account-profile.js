@@ -19,7 +19,7 @@ import { useAuth } from "src/hooks/use-auth";
 //   timezone: "GTM-7",
 // };
 
-export const AccountProfile = () => {
+export const  AccountProfile = () => {
   const { user } = useAuth();
 
   return (
@@ -46,11 +46,11 @@ export const AccountProfile = () => {
         </Box>
       </CardContent>
       <Divider />
-      <CardActions>
+      {/* <CardActions>
         <Button fullWidth variant="text">
           Upload picture
         </Button>
-      </CardActions>
+      </CardActions> */}
     </Card>
   );
 };
