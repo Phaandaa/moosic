@@ -59,7 +59,7 @@ export const AccountPopover = (props) => {
         }}
       >
         <MenuItem onClick={handleProfile}>Profile</MenuItem>
-        <MenuItem onClick={handleSettings}>Settings</MenuItem>
+        {/* <MenuItem onClick={handleSettings}>Settings</MenuItem> */}
         <Divider />
         <MenuItem onClick={handleSignOut}>Sign out</MenuItem>
       </MenuList>
