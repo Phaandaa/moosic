@@ -66,7 +66,7 @@ export default function StudentsModal({ onAddStudent }) {
   const handleSubmit = (event) => {
     event.preventDefault();
     // Perform validation or any other pre-submission logic here
-    if (!studentName || !studentEmail || !instrument || !gradeLevel || !tuitionDay) {
+    if (!studentName || !studentEmail || !instrument) {
       console.error("Form validation failed");
       setSnackbarMessage("Validation failed. Please check the form.");
       setSnackbarSeverity("error");
@@ -218,7 +218,7 @@ export default function StudentsModal({ onAddStudent }) {
             onChange={handleEmailChange} // Add onChange
             value={studentEmail} // Control the component
           />
-          <FormControl fullWidth variant="standard" margin="dense">
+          <FormControl fullWidth variant="standard" margin="dense" required>
             <InputLabel id="instrument-label">Instrument</InputLabel>
             <Select
               labelId="instrument-label"
@@ -226,7 +226,6 @@ export default function StudentsModal({ onAddStudent }) {
               name="instrument"
               value={instrument}
               onChange={handleInstrumentChange}
-              required
             >
               <MenuItem value="Piano">Piano</MenuItem>
               <MenuItem value="Guitar">Guitar</MenuItem>
@@ -271,7 +270,7 @@ export default function StudentsModal({ onAddStudent }) {
           <Button onClick={handleClose}>Cancel</Button>
           <Button
             type="submit"
-            disabled={!studentName || !studentEmail || !instrument || !gradeLevel || !tuitionDay}
+            disabled={!studentName || !studentEmail || !instrument}
           >
             Submit
           </Button>
