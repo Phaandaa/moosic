@@ -107,7 +107,10 @@ const Page = () => {
         ? studentData.filter(
             (student) =>
               student.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              student.email?.toLowerCase().includes(searchTerm.toLowerCase())
+              student.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              student.tuitionDay?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              student.instrument?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              student.grade?.toLowerCase().includes(searchTerm.toLowerCase())
           )
         : studentData;
 
