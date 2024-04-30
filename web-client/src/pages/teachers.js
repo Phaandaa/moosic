@@ -106,7 +106,8 @@ const Page = () => {
         ? teacherData.filter(
             (teacher) =>
               teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              teacher.email.toLowerCase().includes(searchTerm.toLowerCase())
+              teacher.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              teacher.instrument.toLowerCase().includes(searchTerm.toLowerCase())
           )
         : teacherData;
 
