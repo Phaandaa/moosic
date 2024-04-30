@@ -36,7 +36,7 @@ import { useAuth } from "src/hooks/use-auth";
 import SnackbarAlert from "src/components/alert";
 import { format } from "date-fns";
 import { DeleteMaterialConfirmModal } from "src/sections/repository/repo-delete-confirm";
-import { set } from "nprogress";
+import { DeleteRejectedModal } from "src/sections/repository/repo-delete-rejected";
 
 const ApproveMaterialsSection = ({ pendingMaterials, onApprove, onReject }) => {
   const [rejectionModalOpen, setRejectionModalOpen] = useState(false);
@@ -225,6 +225,11 @@ const Page = () => {
   // When rendering pending materials:
   const pendingMaterials = materials.filter((material) => material.status === "Pending");
 
+  // When rendering rejected materials:
+  const [showRejectedMaterials, setShowRejectedMaterials] = useState(false);
+  const rejectedMaterials = materials.filter((material) => material.status === "Rejected");
+  const [deleteRejectedOpen, setDeleteRejectedOpen] = useState(false);
+
   const [viewType, setViewType] = useState("icons"); // 'icons' or 'list'
 
   // SEARCH FUNCTION
@@ -339,6 +344,36 @@ const Page = () => {
     }
   };
 
+  const handleDeleteRejected = async () => {
+    console.log("Deleting rejected materials:", rejectedMaterials);
+    // Convert Set to Array and execute all delete requests in parallel
+    const deletePromises = rejectedMaterials.map((material) =>
+      deleteAsync(`material-repository/${material.id}`, user.idToken)
+    );
+
+    try {
+      // Wait for all delete requests to finish
+      await Promise.all(deletePromises);
+
+      // Update the state to reflect the deleted materials
+      setMaterials((prevMaterials) =>
+        prevMaterials.filter((material) => material.status !== "Rejected")
+      );
+
+      // Close the modal and show a success message
+      setDeleteRejectedOpen(false);
+      onTriggerSnackbar("Rejected materials deleted successfully.", "success");
+    } catch (error) {
+      // Log and show an error if the deletion fails
+      console.error("Error deleting rejected materials:", error);
+      onTriggerSnackbar("Failed to delete rejected materials.", "error");
+    } finally {
+      // Always fetch the materials again to update the UI
+      setDeleteRejectedOpen(false);
+      fetchMaterials();
+    }
+  };
+
   const filteredAndSearchedMaterials = approvedMaterials.filter((material) => {
     // Filter logic
     const filterMatch =
@@ -414,7 +449,7 @@ const Page = () => {
           </Typography>
         </Box>
       )}
-      <Typography variant="h6">{material.title}</Typography>
+      <Typography variant="subtitle2">Uploaded by: {material.teacherName}</Typography>
       <Typography variant="subtitle2">Type: {material.type.join(", ")}</Typography>
       <Typography variant="subtitle2">Instrument: {material.instrument.join(", ")}</Typography>
       <Typography variant="subtitle2">Grade: {material.grade.join(", ")}</Typography>
@@ -484,7 +519,7 @@ const Page = () => {
             checked={selectedMaterials.has(material.id)}
             onChange={() => toggleSelection(material.id)}
             color="primary"
-            sx={{marginRight: "10px"}}
+            sx={{ marginRight: "10px" }}
           />
           <ListItemText
             primary={material.title}
@@ -492,6 +527,9 @@ const Page = () => {
               ", "
             )} - Grade: ${material.grade.join(", ")}`}
           />
+          <Typography variant="body2" sx={{ marginRight: 2, alignSelf: "center" }}>
+            Uploaded by: {material.teacherName}
+          </Typography>
           <Button
             component="a"
             href={material.fileLink}
@@ -606,6 +644,93 @@ const Page = () => {
                 </Box>
               </AccordionDetails>
             </Accordion>
+            <Button
+              onClick={() => setShowRejectedMaterials((prev) => !prev)}
+              sx={{
+                mb: 2,
+                alignSelf: "flex-start",
+                color: showRejectedMaterials ? figmaColors.accentRed : figmaColors.mainPurple,
+              }}
+            >
+              {showRejectedMaterials ? "Hide Rejected Materials" : "Show Rejected Materials"}
+            </Button>
+
+            {showRejectedMaterials && (
+              <Accordion expanded>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1-content"
+                  id="panel1-header"
+                  sx={{
+                    p: 2,
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Box sx={{ flex: 1, mr: 2 }}>
+                    <Typography variant="h5">Rejected Materials</Typography>
+                    <Typography sx={{ fontSize: "14px", color: figmaColors.fontTertiary, mt: 1 }}>
+                      You have {rejectedMaterials.length} rejected materials
+                    </Typography>
+                  </Box>
+                  {rejectedMaterials.length !== 0 && <Button
+                      color="inherit"
+                      startIcon={
+                        <SvgIcon fontSize="small">
+                          <TrashIcon />
+                        </SvgIcon>
+                      }
+                      onClick={() => setDeleteRejectedOpen(true)}
+                      sx={{
+                        backgroundColor: "#EE4242",
+                        color: "#ffffff",
+                        "&:hover": {
+                          backgroundColor: alpha("#EE4242", 0.2), // lighter red on hover
+                          color: "#000000", // black font color on hover
+                        },
+                        marginLeft: "auto",
+                        marginRight: "20px",
+                      }}
+                    >
+                      Delete All
+                    </Button>}
+                </AccordionSummary>
+                <AccordionDetails>
+                  <List>
+                    {rejectedMaterials.map((material) => (
+                      <ListItem key={material.id} divider>
+                        <ListItemText
+                          primary={material.title}
+                          secondary={`Instrument: ${
+                            material.instrument.length !== 0
+                              ? material.instrument.join(", ")
+                              : "NIL"
+                          } - Grade: ${
+                            material.grade.length !== 0 ? material.grade.join(", ") : "NIL"
+                          }`}
+                        />
+                        <Typography variant="body2" sx={{ marginRight: 2, alignSelf: "center" }}>
+                          Uploaded by: {material.teacherName}
+                        </Typography>
+                        <Button
+                          component="a"
+                          href={material.fileLink}
+                          startIcon={
+                            <SvgIcon>
+                              <ArrowUpOnSquareIcon />
+                            </SvgIcon>
+                          }
+                        >
+                          View Material
+                        </Button>
+                      </ListItem>
+                    ))}
+                  </List>
+                </AccordionDetails>
+              </Accordion>
+            )}
           </Stack>
         </Container>
         <DeleteMaterialConfirmModal
@@ -619,6 +744,18 @@ const Page = () => {
         >
           Are you sure you want to delete the selected {selectedMaterials.size} item(s)?
         </DeleteMaterialConfirmModal>
+
+        <DeleteRejectedModal
+          open={deleteRejectedOpen}
+          onClose={() => setDeleteRejectedOpen(false)}
+          onConfirm={() => {
+            handleDeleteRejected();
+            setDeleteRejectedOpen(false); // Close modal after confirmation
+          }}
+          title="Confirm Deletion"
+        >
+          Are you sure you want to delete all rejected materials?
+        </DeleteRejectedModal>
 
         <SnackbarAlert
           open={snackbarOpen}
