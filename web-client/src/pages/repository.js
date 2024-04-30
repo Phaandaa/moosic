@@ -23,7 +23,7 @@ import {
 import Head from "next/head";
 import RepoAdd from "src/sections/repository/repo-add";
 import { RepoSearch } from "src/sections/repository/repo-search";
-import { ArrowUpOnSquareIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { ArrowUpOnSquareIcon, TrashIcon, EyeIcon } from "@heroicons/react/24/solid";
 import { alpha } from "@mui/material/styles";
 import { RejectionModal } from "src/sections/repository/repo-modal";
 import { ApprovalModal } from "src/sections/repository/repo-modal";
@@ -37,6 +37,7 @@ import SnackbarAlert from "src/components/alert";
 import { format } from "date-fns";
 import { DeleteMaterialConfirmModal } from "src/sections/repository/repo-delete-confirm";
 import { DeleteRejectedModal } from "src/sections/repository/repo-delete-rejected";
+import { ViewRejectionReasonModal } from "src/sections/repository/repo-view-rejection-reason.js";
 
 const ApproveMaterialsSection = ({ pendingMaterials, onApprove, onReject }) => {
   const [rejectionModalOpen, setRejectionModalOpen] = useState(false);
@@ -194,6 +195,9 @@ const Page = () => {
 
   const [selectedMaterials, setSelectedMaterials] = useState(new Set());
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+
+  const [rejectionReasonModalOpen, setRejectionReasonModalOpen] = useState(false);
+  const [currentRejectionReason, setCurrentRejectionReason] = useState("");
 
   const toggleSelection = (materialId) => {
     setSelectedMaterials((prevSelected) => {
@@ -675,7 +679,8 @@ const Page = () => {
                       You have {rejectedMaterials.length} rejected materials
                     </Typography>
                   </Box>
-                  {rejectedMaterials.length !== 0 && <Button
+                  {rejectedMaterials.length !== 0 && (
+                    <Button
                       color="inherit"
                       startIcon={
                         <SvgIcon fontSize="small">
@@ -695,7 +700,8 @@ const Page = () => {
                       }}
                     >
                       Delete All
-                    </Button>}
+                    </Button>
+                  )}
                 </AccordionSummary>
                 <AccordionDetails>
                   <List>
@@ -714,6 +720,20 @@ const Page = () => {
                         <Typography variant="body2" sx={{ marginRight: 2, alignSelf: "center" }}>
                           Uploaded by: {material.teacherName}
                         </Typography>
+                        <Button
+                          onClick={() => {
+                            setCurrentRejectionReason(material.reasonForStatus);
+                            setRejectionReasonModalOpen(true);
+                          }}
+                          startIcon={
+                            <SvgIcon>
+                              <EyeIcon />
+                            </SvgIcon>
+                          }
+                        >
+                          View Rejection Reason
+                        </Button>
+
                         <Button
                           component="a"
                           href={material.fileLink}
@@ -744,7 +764,6 @@ const Page = () => {
         >
           Are you sure you want to delete the selected {selectedMaterials.size} item(s)?
         </DeleteMaterialConfirmModal>
-
         <DeleteRejectedModal
           open={deleteRejectedOpen}
           onClose={() => setDeleteRejectedOpen(false)}
@@ -756,6 +775,13 @@ const Page = () => {
         >
           Are you sure you want to delete all rejected materials?
         </DeleteRejectedModal>
+        <ViewRejectionReasonModal
+          open={rejectionReasonModalOpen}
+          onClose={() => setRejectionReasonModalOpen(false)}
+          title="Rejection Reason"
+        >
+          {currentRejectionReason}
+        </ViewRejectionReasonModal>
 
         <SnackbarAlert
           open={snackbarOpen}
