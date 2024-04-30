@@ -18,6 +18,7 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Checkbox,
 } from "@mui/material";
 import Head from "next/head";
 import RepoAdd from "src/sections/repository/repo-add";
@@ -35,6 +36,7 @@ import { useAuth } from "src/hooks/use-auth";
 import SnackbarAlert from "src/components/alert";
 import { format } from "date-fns";
 import { DeleteMaterialConfirmModal } from "src/sections/repository/repo-delete-confirm";
+import { set } from "nprogress";
 
 const ApproveMaterialsSection = ({ pendingMaterials, onApprove, onReject }) => {
   const [rejectionModalOpen, setRejectionModalOpen] = useState(false);
@@ -305,16 +307,36 @@ const Page = () => {
   };
 
   const handleDeleteSelected = async () => {
-    // You would need to create API calls here to delete the selected materials
-    selectedMaterials.forEach(async (materialId) => {
-      // Assuming an API endpoint that deletes a single material
-      const response = await fetch(`/delete-material/${materialId}`, { method: "DELETE" });
-      if (response.ok) {
-        // On successful delete, remove from UI state
-        toggleSelection(materialId); // Remove from selection
-        fetchMaterials(); // Re-fetch materials list
-      }
-    });
+    console.log("Deleting materials:", selectedMaterials);
+    // Convert Set to Array and execute all delete requests in parallel
+    const deletePromises = Array.from(selectedMaterials).map((materialId) =>
+      deleteAsync(`material-repository/${materialId}`, user.idToken)
+    );
+
+    try {
+      // Wait for all delete requests to finish
+      await Promise.all(deletePromises);
+
+      // Update the state to reflect the deleted materials
+      setMaterials((prevMaterials) =>
+        prevMaterials.filter((material) => !selectedMaterials.has(material.id))
+      );
+      // Clear the selected materials after deletion
+      setSelectedMaterials(new Set());
+
+      // Close the modal and show a success message
+      setDeleteConfirmationOpen(false);
+      onTriggerSnackbar("Materials deleted successfully.", "success");
+    } catch (error) {
+      // Log and show an error if the deletion fails
+      console.error("Error deleting materials:", error);
+      onTriggerSnackbar("Failed to delete materials.", "error");
+    } finally {
+      // Always fetch the materials again to update the UI
+      setDeleteConfirmationOpen(false);
+      setSelectedMaterials(new Set());
+      fetchMaterials();
+    }
   };
 
   const filteredAndSearchedMaterials = approvedMaterials.filter((material) => {
@@ -360,10 +382,10 @@ const Page = () => {
   const handleAddFile = (data) => {
     console.log("File added:", data);
     if (data.status === "Pending") {
-      setMaterials([...materials, data]);
+      setMaterials([data, ...materials]);
     }
     if (data.status === "Approved") {
-      setMaterials([...materials, data]);
+      setMaterials([data, ...materials]);
     }
   };
 
@@ -458,6 +480,12 @@ const Page = () => {
     <List>
       {materials.map((material) => (
         <ListItem key={material.id} divider>
+          <Checkbox
+            checked={selectedMaterials.has(material.id)}
+            onChange={() => toggleSelection(material.id)}
+            color="primary"
+            sx={{marginRight: "10px"}}
+          />
           <ListItemText
             primary={material.title}
             secondary={`Instrument: ${material.instrument.join(
@@ -584,12 +612,12 @@ const Page = () => {
           open={deleteConfirmationOpen}
           onClose={() => setDeleteConfirmationOpen(false)}
           onConfirm={() => {
-            handleDeleteSelected();
+            handleDeleteSelected(selectedMaterials);
             setDeleteConfirmationOpen(false); // Close modal after confirmation
           }}
           title="Confirm Deletion"
         >
-          Are you sure you want to delete the selected  {selectedMaterials.size} item(s)?
+          Are you sure you want to delete the selected {selectedMaterials.size} item(s)?
         </DeleteMaterialConfirmModal>
 
         <SnackbarAlert
