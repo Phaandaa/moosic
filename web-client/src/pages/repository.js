@@ -34,6 +34,7 @@ import { getAsync, putAsync, postAsync } from "src/utils/utils";
 import { useAuth } from "src/hooks/use-auth";
 import SnackbarAlert from "src/components/alert";
 import { format } from "date-fns";
+import { DeleteMaterialConfirmModal } from "src/sections/repository/repo-delete-confirm";
 
 const ApproveMaterialsSection = ({ pendingMaterials, onApprove, onReject }) => {
   const [rejectionModalOpen, setRejectionModalOpen] = useState(false);
@@ -189,6 +190,21 @@ const Page = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
+  const [selectedMaterials, setSelectedMaterials] = useState(new Set());
+  const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+
+  const toggleSelection = (materialId) => {
+    setSelectedMaterials((prevSelected) => {
+      const newSelected = new Set(prevSelected);
+      if (newSelected.has(materialId)) {
+        newSelected.delete(materialId);
+      } else {
+        newSelected.add(materialId);
+      }
+      return newSelected;
+    });
+  };
+
   const onTriggerSnackbar = (message, severity) => {
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);
@@ -288,6 +304,19 @@ const Page = () => {
     }
   };
 
+  const handleDeleteSelected = async () => {
+    // You would need to create API calls here to delete the selected materials
+    selectedMaterials.forEach(async (materialId) => {
+      // Assuming an API endpoint that deletes a single material
+      const response = await fetch(`/delete-material/${materialId}`, { method: "DELETE" });
+      if (response.ok) {
+        // On successful delete, remove from UI state
+        toggleSelection(materialId); // Remove from selection
+        fetchMaterials(); // Re-fetch materials list
+      }
+    });
+  };
+
   const filteredAndSearchedMaterials = approvedMaterials.filter((material) => {
     // Filter logic
     const filterMatch =
@@ -370,7 +399,7 @@ const Page = () => {
       <Typography variant="subtitle2">
         Created: {format(new Date(material.creationTime), "dd/MM/yyyy HH:mm:ss")}
       </Typography>
-      <Box display={"flex"} justifyContent={"center"}>
+      <Box display={"flex"} justifyContent={"center"} flexDirection={"column"}>
         <Button
           component="a"
           href={material.fileLink}
@@ -383,6 +412,32 @@ const Page = () => {
           sx={{ backgroundColor: alpha("#6F66FF", 0.05), mt: 2 }}
         >
           View Material
+        </Button>
+        <Button
+          fullWidth
+          sx={{
+            border: 1,
+            borderColor: selectedMaterials.has(material.id)
+              ? figmaColors.accentGreen
+              : figmaColors.fontQuaternary,
+            backgroundColor: selectedMaterials.has(material.id)
+              ? figmaColors.accentGreen
+              : "transparent",
+            color: selectedMaterials.has(material.id) ? "white" : "black",
+            mt: 2,
+            "&:hover": {
+              backgroundColor: selectedMaterials.has(material.id)
+                ? figmaColors.accentGreen
+                : "transparent", // Keeps the background color the same on hover
+              color: selectedMaterials.has(material.id) ? "white" : "black", // Keeps the text color the same on hover
+              borderColor: selectedMaterials.has(material.id)
+                ? figmaColors.accentGreen
+                : figmaColors.fontQuaternary, // Keeps the border color the same on hover
+            },
+          }}
+          onClick={() => toggleSelection(material.id)}
+        >
+          Select
         </Button>
       </Box>
     </Card>
@@ -472,18 +527,28 @@ const Page = () => {
               <AccordionDetails>
                 <Card sx={{ p: 2, display: "flex", width: "100%" }}>
                   <RepoSearch handleSearchChange={handleSearchChange} />
-                  <Button
-                    color="inherit"
-                    startIcon={
-                      <SvgIcon fontSize="small">
-                        <TrashIcon />
-                      </SvgIcon>
-                    }
-                    //   onClick={handleExport}
-                    style={{ marginLeft: "15px" }}
-                  >
-                    Delete
-                  </Button>
+                  {selectedMaterials.size > 0 && (
+                    <Button
+                      color="inherit"
+                      startIcon={
+                        <SvgIcon fontSize="small">
+                          <TrashIcon />
+                        </SvgIcon>
+                      }
+                      onClick={() => setDeleteConfirmationOpen(true)}
+                      sx={{
+                        backgroundColor: "#EE4242",
+                        color: "#ffffff",
+                        "&:hover": {
+                          backgroundColor: alpha("#EE4242", 0.2), // lighter red on hover
+                          color: "#000000", // black font color on hover
+                        },
+                        marginLeft: "15px",
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  )}
                 </Card>
                 <Box>
                   <FilterDropdowns
@@ -515,6 +580,18 @@ const Page = () => {
             </Accordion>
           </Stack>
         </Container>
+        <DeleteMaterialConfirmModal
+          open={deleteConfirmationOpen}
+          onClose={() => setDeleteConfirmationOpen(false)}
+          onConfirm={() => {
+            handleDeleteSelected();
+            setDeleteConfirmationOpen(false); // Close modal after confirmation
+          }}
+          title="Confirm Deletion"
+        >
+          Are you sure you want to delete the selected  {selectedMaterials.size} item(s)?
+        </DeleteMaterialConfirmModal>
+
         <SnackbarAlert
           open={snackbarOpen}
           severity={snackbarSeverity}
