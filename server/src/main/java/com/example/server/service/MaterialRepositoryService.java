@@ -163,4 +163,18 @@ public class MaterialRepositoryService {
         }
     }
 
+    public String deleteMaterialRepositoryById(String materialId) {
+        try {
+            materialRepositoryRepository.findById(materialId).orElseThrow(()->
+                new NoSuchElementException("No material found with the ID " + materialId));
+            materialRepositoryRepository.deleteById(materialId);
+            return "Material deleted successfully";
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Error deleting material from repository with ID: " + materialId + " " + e.getMessage());
+        }
+    }
+
 }

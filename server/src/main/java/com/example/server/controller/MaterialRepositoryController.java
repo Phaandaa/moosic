@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,6 +43,13 @@ public class MaterialRepositoryController {
     @GetMapping("/teacher/{teacherId}")
     public ResponseEntity<?> getMaterialRepositoryById(@PathVariable String teacherId) {
         return ResponseEntity.ok(materialRepositoryService.getMaterialRepositoryByTeacherId(teacherId));
+    }
+
+    // delete item 
+    @Operation(summary = "Delete material in repository by material ID")
+    @DeleteMapping("/{materialId}")
+    public ResponseEntity<String> deleteMaterialRepositoryById(@PathVariable String materialId) {
+        return ResponseEntity.ok(materialRepositoryService.deleteMaterialRepositoryById(materialId));
     }
 
     @Operation(summary = "Create new material repository")
