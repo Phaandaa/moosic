@@ -30,7 +30,7 @@ import { figmaColors } from "src/theme/colors";
 import Pagination from "@mui/material/Pagination";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { FilterDropdowns } from "src/sections/repository/repo-filter-dropdowns";
-import { getAsync, putAsync, postAsync } from "src/utils/utils";
+import { getAsync, putAsync, deleteAsync } from "src/utils/utils";
 import { useAuth } from "src/hooks/use-auth";
 import SnackbarAlert from "src/components/alert";
 import { format } from "date-fns";

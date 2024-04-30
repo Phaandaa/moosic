@@ -151,7 +151,7 @@ export default function RepoAdd({ onAddFile }) {
         const data = await response.json();
         console.log("Server response:", data);
         console.log("Form submitted successfully");
-        onTriggerSnackbar("Student added successfully", "success");
+        onTriggerSnackbar("Material created successfully", "success");
         onAddFile(data);
         setOpen(false); // Close the modal on successful submission
       } catch (error) {
