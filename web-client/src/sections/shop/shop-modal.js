@@ -432,6 +432,7 @@ export const ItemDetailModal = ({
                   color="success"
                   sx={{ minWidth: 150 }}
                   onClick={handleRedeemPoints}
+                  disabled={!studentId}
                 >
                   Redeem Points
                 </Button>

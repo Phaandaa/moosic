@@ -182,8 +182,9 @@ export default function AddItem({ onAddItem }) {
               value={description}
               placeholder="e.g. Capo, Guitar Strings, etc."
               onChange={handleDescriptionChange}
+              required
             />
-            <FormControl variant="filled" sx={{ mb: 2 }} fullWidth>
+            <FormControl variant="filled" sx={{ mb: 2 }} fullWidth required>
               <InputLabel id="type-label">Item Type</InputLabel>
               <Select
                 labelId="type-label"
@@ -201,7 +202,7 @@ export default function AddItem({ onAddItem }) {
               </Select>
             </FormControl>
             {type === "DIGITAL" && (
-              <FormControl variant="filled" sx={{ mb: 2 }} fullWidth>
+              <FormControl variant="filled" sx={{ mb: 2 }} fullWidth required>
                 <InputLabel id="subtype-label">Item Subtype</InputLabel>
                 <Select
                   labelId="subtype-label"
@@ -227,6 +228,7 @@ export default function AddItem({ onAddItem }) {
               sx={{ mb: 2 }}
               value={points}
               onChange={handlePointsChange}
+              required
             />
             <TextField
               label="Limit Per Student"
@@ -236,6 +238,7 @@ export default function AddItem({ onAddItem }) {
               sx={{ mb: 2 }}
               value={limit}
               onChange={handleLimitChange}
+              required
             />
             <TextField
               label="No of Stock Available"
@@ -244,6 +247,7 @@ export default function AddItem({ onAddItem }) {
               fullWidth
               value={stock}
               onChange={handleStockChange}
+              required
             />
           </Box>
           <Box display={"flex"} justifyContent={"space-between"} mt={1} alignItems={"center"}>

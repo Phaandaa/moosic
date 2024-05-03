@@ -212,7 +212,7 @@ export default function TeachersModal({ onAddTeacher }) {
             onChange={handleEmailChange}
             value={teacherEmail}
           />
-          <FormControl fullWidth variant="standard" margin="dense">
+          <FormControl fullWidth variant="standard" margin="dense" required>
             <InputLabel id="instrument-label">Instrument</InputLabel>
             <Select
               labelId="instrument-label"
@@ -220,7 +220,6 @@ export default function TeachersModal({ onAddTeacher }) {
               name="instrument"
               value={instrument}
               onChange={handleInstrumentChange}
-              required
             >
               <MenuItem value="Piano">Piano</MenuItem>
               <MenuItem value="Guitar">Guitar</MenuItem>
