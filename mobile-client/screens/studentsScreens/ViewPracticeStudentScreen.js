@@ -28,11 +28,11 @@ function ViewPracticeStudentScreen({route, navigation}){
                             
                             <Text style={theme.cardTitle}>{practice.title}</Text>
                             <Text style={theme.cardText}>{practice.comment}</Text>
-                            <Text style={theme.cardTextSecondary}>Created on: {trimDate(practice.submissionTimestamp)}</Text>
                                 <TouchableOpacity onPress={() => Linking.openURL(practice.videoLink)} style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <Ionicons name="link" size={24} color="#525F7F" />
                                     <Text style={theme.documentName}>{getFileNameFromUrl(practice.videoLink)}</Text>
                                 </TouchableOpacity>
+                            <Text style={theme.cardTextSecondary}>Created on: {trimDate(practice.submissionTimestamp)}</Text>
                         </View>
                     </View>
 

@@ -21,13 +21,14 @@ function ViewAssignmentsScreen({route, navigation}) {
                             <Text style={theme.cardTitle}>{assignment.title}</Text>
                             <Text style={theme.cardText}>{assignment.description}</Text>
                             <Text style={theme.cardText}><Ionicons name="calendar-outline" size={16} color="#525F7F" /> {assignment.deadline}</Text>
-                            <Text style={theme.cardText}>Created on: {trimDate(assignment.createdAtDate)}</Text>
                             {assignment.assignmentDocumentLinks.map((link, linkIndex) => (
                                 <TouchableOpacity key={linkIndex} onPress={() => Linking.openURL(link)} style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <Ionicons name="link" size={24} color="#525F7F" />
                                     <Text style={theme.documentName}> {getFileNameFromUrl(link)}</Text>
                                 </TouchableOpacity>
                             ))}
+                            <Text style={theme.cardTextSecondary}>Created on: {trimDate(assignment.createdAtDate)}</Text>
+
                         </View>
                         <View style={theme.buttonContainer2}>
                             <TouchableOpacity style={theme.smallButton} onPress={() => navigation.navigate('SubmitAssignmentScreen', {assignmentID: assignment.assignmentId})}>
@@ -40,7 +41,7 @@ function ViewAssignmentsScreen({route, navigation}) {
                     <View style={theme.card3}>
                         <View style={theme.cardTextContainer}>
                             <View style={theme.oneRow}> 
-                                <Text style={theme.cardTitlePink}>My Submission</Text>
+                                <Text style={theme.cardTitlePurple}>My Submission</Text>
                             </View>
                             {assignment.submissionLinks && assignment.submissionLinks.map((link, linkIndex) => (
                                 <TouchableOpacity key={linkIndex} onPress={() => Linking.openURL(link)} style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -49,7 +50,7 @@ function ViewAssignmentsScreen({route, navigation}) {
                                 </TouchableOpacity>
                             ))}
                             <Text style={theme.cardText}>{assignment.studentComment}</Text>
-                            <Text style={theme.cardText}>Submitted on: {trimDate(assignment.submissionTimestamp)}</Text>
+                            <Text style={theme.cardTextSecondary}>Submitted on: {trimDate(assignment.submissionTimestamp)}</Text>
 
                         </View>
                     </View>
@@ -67,8 +68,8 @@ function ViewAssignmentsScreen({route, navigation}) {
                         <View style={theme.card3}>
                             <View style={theme.cardTextContainer}>
                                 <View style={theme.oneRow}> 
-                                    <Text style={theme.cardTitlePink}>Feedback</Text>
-                                        <View style={theme.smallPinkButton}>
+                                    <Text style={theme.cardTitlePurple}>Feedback</Text>
+                                        <View style={theme.smallButton}>
                                             <Text style={theme.smallButtonText}>{assignment.points} Points</Text>
                                         </View>
                                 </View>
@@ -79,7 +80,7 @@ function ViewAssignmentsScreen({route, navigation}) {
                                     </TouchableOpacity>
                                 ))}
                                 <Text style={theme.cardText}>{assignment.teacherFeedback}</Text>
-                                <Text style={theme.cardText}>Posted on: {trimDate(assignment.feedbackTimestamp)}</Text>
+                                <Text style={theme.cardTextSecondary}>Posted on: {trimDate(assignment.feedbackTimestamp)}</Text>
 
                             </View>
                         </View>
