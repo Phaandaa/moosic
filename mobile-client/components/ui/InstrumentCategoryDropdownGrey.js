@@ -8,6 +8,7 @@ const data = [
   { label: "Piano", value: "piano" },
   { label: "Guitar", value: "guitar" },
   { label: "Violin", value: "violin" },
+  { label: "Ukelele", value: "ukelele" },
 ];
 
 const InstrumentCategoryDropdownGrey = (props) => {
