@@ -9,4 +9,4 @@
 
 ***Server***
 - Windows: cd server; mvnw spring-boot:run
-- Mac: 
+- Mac: cd server; mvnw spring-boot:run
